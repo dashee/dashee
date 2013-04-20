@@ -6,6 +6,28 @@
 #include <stdio.h>
 #include <unistd.h>
 
+int maestroGetError(int fd)
+{
+    unsigned char command[] = { 0xA1 };
+    if (write(fd, command, sizeof(command)) == -1)
+    {
+        perror("error getting Error");
+        return -1;
+    }
+    
+    unsigned char response[2];
+    if(read(fd,response,2) != 2)
+    {
+        perror("error reading");
+        return -1;
+    }
+    
+    //printf("Error first: %d\n", response[0]);
+    //printf("Error secon: %d\n", response[1]);
+
+    return response[0] + 256*response[1];
+}
+
 // Gets the position of a Maestro channel.
 // See the "Serial Servo Commands" section of the user's guide.
 int maestroGetPosition(int fd, unsigned char channel)
@@ -51,6 +73,9 @@ int main()
         perror(device);
         return 1;
     }
+
+    int error = maestroGetError(fd);
+    printf("Error is %d.\n", error); 
 
     int position = maestroGetPosition(fd, 1);
     printf("Current position is %d.\n", position); 
