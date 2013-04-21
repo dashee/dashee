@@ -1,4 +1,4 @@
-include makefile.common
+include ../makefile.common
 
 BINDIR=bin
 LIBDIR=lib64
@@ -16,11 +16,6 @@ $(LIBDIR):
 $(BINDIR)/servocontroller: $(BINDIR) src/servocontroller.cpp
 	$(CC) src/servocontroller.cpp -o $(BINDIR)/servocontroller
 
-.PHONY: playground
-playground:
-	cd playground; make
-
 clean:
 	$(RM) $(BINDIR)
 	$(RM) $(LIBDIR)
-	cd playground; make clean
