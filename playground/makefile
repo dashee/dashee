@@ -2,7 +2,7 @@ include ../makefile.common
 
 BINDIR=bin
 
-BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver)
+BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver udpclient.jar)
 
 all: $(BINARIES)
 
