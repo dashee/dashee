@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Andronee</string>
+    <string name="app_name">Androneee Remote</string>
     <string name="edit_message">Enter a message dumbass</string>
     <string name="button_send">Send</string>
     <string name="action_settings">Settings</string>
