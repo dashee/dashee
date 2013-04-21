@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <math.h>
 
 /**
  * This command will return the error number on the Pololu Maestro Board
@@ -46,7 +47,7 @@ int maestroGetError(int fd)
     //printf("Error first: %d\n", response[0]);
     //printf("Error secon: %d\n", response[1]);
 
-    return response[0] + 256*response[1];
+    return (int)sqrt(response[0] + 256*response[1]);
 }
 
 /**
@@ -127,7 +128,10 @@ int main()
     }
 
     int error = maestroGetError(fd);
-    printf("Error is %d.\n", error); 
+    if (error > 0)
+    {
+        fprintf(stderr, "Error is %d.\n", error); 
+    }
 
     int position = maestroGetPosition(fd, 1);
     printf("Current position is %d.\n", position); 
