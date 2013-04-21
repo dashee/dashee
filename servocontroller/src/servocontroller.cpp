@@ -5,11 +5,19 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <stdlib.h>
+
+#include "Servo.h"
 
 #define BUFFER_SIZE 1024
 
 int main()
 {
+    Servo s("/dev/ttyACM0");
+    int error = s.getError();
+    if (error > 0)
+        fprintf(stderr, "Servo Error: %d", error);
+
     int socketfd;
     int port = 2047;
 
@@ -51,9 +59,32 @@ int main()
             perror("Recieving from client failed");
             return -3;
         }
+        
+        int target = atoi(buffer);
+        printf("Set to: %d\n", target);
 
-        if (sendto(socketfd, "OK\n", 3, 0, (struct sockaddr *) &client_in, client_in_length) == -1)
-            perror("Sending to client failed");
+        if (target > 0 && target <= 100)
+        {
+            //int target = (s.getTarget(2) < 6000) ? 8000 : 992;
+            //printf("Channel 1: %d\n", target);
+            
+            if (target == 1) 
+                target = 992;
+            else if (target == 100)
+                target = 8000;
+            else
+                target = ((7008/100) * target) + 992;
+
+            s.setTarget(1, target);
+
+            printf("Channel 1: %d\n", target);
+        }
+        else
+        {   
+            const char message[] = "Error: Invalid Range, number must be between 1-100\n";
+            if (sendto(socketfd, message, sizeof(message), 0, (struct sockaddr *) &client_in, client_in_length) == -1)
+                perror("Sending to client failed");
+        }
     
         //Make sure its not empty lines
         printf("Message: %s", buffer);
