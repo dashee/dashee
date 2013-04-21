@@ -2,13 +2,18 @@ include ../makefile.common
 
 BINDIR=bin
 
-all: $(BINDIR)/helloworld
+BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver)
+
+all: $(BINARIES)
 
 $(BINDIR):
 	$(MKDIR) bin
 
 $(BINDIR)/helloworld: $(BINDIR) src/helloworld.cpp
 	$(CC) src/helloworld.cpp -o $(BINDIR)/helloworld
+
+$(BINDIR)/udpserver: $(BINDIR) src/udpserver.cpp
+	$(CC) src/udpserver.cpp -o $(BINDIR)/udpserver
 
 clean:
 	$(RM) $(BINDIR)
