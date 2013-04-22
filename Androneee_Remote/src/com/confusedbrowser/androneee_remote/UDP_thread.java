@@ -18,13 +18,15 @@ public class UDP_thread extends Thread {
 	String ip_address;
 	int port_num;
 	Context main_context;
+	String position;
 
-	public UDP_thread(Context context, String ip, int port)
+	public UDP_thread(Context context, String ip, int port, String position)
 	{
 		super();
 		ip_address = ip;
 		port_num = port;
 		main_context = context;
+		this.position = position;
 	}
 	
 	public void run() 
@@ -33,7 +35,7 @@ public class UDP_thread extends Thread {
 		 DatagramSocket clientSocket = new DatagramSocket();
 		 InetAddress IPAddress = InetAddress.getByName(ip_address);
 		 byte[] receiveData = new byte[1024];
-		 String sentence = "FU from Daves Galaxy Nexus\n";
+		 String sentence = this.position+"\n";
 		 byte[] sendData = sentence.getBytes("US-ASCII");
 		 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port_num);
 		 clientSocket.send(sendPacket);
