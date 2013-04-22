@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         
         connection = new UDP_thread(this, "54.246.151.139", 2047);
         connection.start();
-
+        // Android is shite!!!
     }
 
     @Override
