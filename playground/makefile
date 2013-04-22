@@ -2,18 +2,19 @@ include ../makefile.common
 
 BINDIR=bin
 
-BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver udpclient.jar)
+BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver)
 
 all: $(BINARIES)
 
 $(BINDIR):
-	$(MKDIR) bin
+	@echo "Directory '$@' created."
+	@$(MKDIR) $@
 
-$(BINDIR)/helloworld: $(BINDIR) src/helloworld.cpp
-	$(CC) src/helloworld.cpp -o $(BINDIR)/helloworld
+$(BINDIR)/helloworld: src/helloworld.cpp $(BINDIR)
+	$(CC) $< -o $@
 
-$(BINDIR)/udpserver: $(BINDIR) src/udpserver.cpp
-	$(CC) src/udpserver.cpp -o $(BINDIR)/udpserver
+$(BINDIR)/udpserver: src/udpserver.cpp $(BINDIR)
+	$(CC) $< -o $@
 
 clean:
-	$(RM) $(BINDIR)
+	@$(RM) $(BINDIR)
