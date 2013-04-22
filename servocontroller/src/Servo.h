@@ -1,3 +1,6 @@
+#ifndef SERVO_H
+#define SERVO_H
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <math.h>
@@ -25,3 +28,5 @@ class Servo
 
         ~Servo();
 };
+
+#endif
