@@ -70,5 +70,9 @@ public class UDP_thread extends Thread {
 			}
 		}
     }
+	
+	public void stop_sending(){
+		clientSocket.close();
+	}
     
 }

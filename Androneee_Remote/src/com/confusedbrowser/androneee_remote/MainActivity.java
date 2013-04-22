@@ -10,7 +10,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.SeekBar;
 
-import java.util.concurrent.*;
 import java.io.*;
 import java.net.*;
 
@@ -57,5 +56,18 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     public void onStopTrackingTouch(SeekBar seekBar) {
         //mTrackingText.setText(getString(R.string.seekbar_tracking_off));
     }
+    
+    @Override
+	protected void onResume() 
+	{
+		super.onResume();
+	}
+
+	protected void onStop()
+	{
+		super.onStop();
+		connection.stop_sending();
+		this.finish();
+	}
     
 }
