@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.SeekBar;
 
+import java.util.concurrent.*;
 import java.io.*;
 import java.net.*;
 
@@ -30,6 +31,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         mSeekBar = (SeekBar)findViewById(R.id.servoBar);
         mSeekBar.setOnSeekBarChangeListener(this);
         
+        connection = new UDP_thread(this, "192.168.1.12", 2047, 50);
+		connection.start();
         /*connection = new UDP_thread(this, "192.168.1.12", 2047);
         connection.start();*/
         // Android is shite!!!
@@ -43,10 +46,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
     
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-		 
-    	connection = new UDP_thread(this, "192.168.1.12", 2047, Integer.toString(progress));
-		 connection.start();
-	 	mProgressText.setText(progress);
+    	connection.setPosition(progress);
+	 	mProgressText.setText(progress+"");
     }
  
     public void onStartTrackingTouch(SeekBar seekBar) {
