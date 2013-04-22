@@ -9,7 +9,7 @@ Servo::Servo(const char * dev)
     std::fill_n(channels, 32, -1);
 
     if (fd == -1)
-        throw Exception_Servo("Setting the device failed in Servo::Servo");
+        throw Exception_Servo();
 }
 
 Servo::~Servo()
@@ -23,10 +23,10 @@ int Servo::getError()
     unsigned char response[2];
 
     if (write(fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("Write failed in Servo::getChannel");
+        throw Exception_Servo();
     
     if(read(fd,response,2) != 2)
-        throw Exception_Servo("Read failed in Servo::getChannel");
+        throw Exception_Servo();
 
     return (int)sqrt(response[0] + 256*response[1]);
 }
@@ -38,11 +38,11 @@ int Servo::getTarget(const unsigned char channel)
     command[1] = channel;
 
     if(write(this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("Write failed in Servo::getChannel");
+        throw Exception_Servo();
 
     unsigned char response[2];
     if(read(fd,response,2) != 2)
-        throw Exception_Servo("Read failed in Servo::getChannel");
+        throw Exception_Servo();
 
     return response[0] + 256*response[1];
 }
@@ -56,7 +56,7 @@ void Servo::setTarget(const unsigned char channel, const short int target)
     command[3] = (target >> 7) & 127;
 
     if (write(this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("Write failed in Servo::setChannel");
+        throw Exception_Servo();
     
     //Set the target
     channels[(short int)channel] = target;
