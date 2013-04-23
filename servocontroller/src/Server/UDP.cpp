@@ -31,7 +31,7 @@ bool Server_UDP::read()
 bool Server_UDP::write(const char * message)
 {
     //const char message[] = "Error: Invalid Range, number must be between 1-100\n";
-    if (sendto(socketfd, message, BUFFER_SIZE, 0, (struct sockaddr *) &client_in, client_in_length) == -1)
+    if (sendto(socketfd, message, sizeof(message), 0, (struct sockaddr *) &client_in, client_in_length) == -1)
         return false;
 
     return true;

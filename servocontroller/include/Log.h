@@ -7,11 +7,11 @@
  * @date        Sun Oct 28 2012
  */
 
-#include <ctime>
 #include <iostream>
+#include <ctime>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
+//#include <stdarg.h>
 #include <time.h>
 
 #ifndef LOG_H
@@ -36,20 +36,19 @@ private:
     
     //The print function, declerations
     static void print(const int, const char *);
-    static void print(const int, const std::string &);
 
 public:
     static unsigned int verbosity;
 
     //Functions called by user
     static void info(const char *, const unsigned int = 1);
-    static void info(const std::string &, const unsigned int = 1);
+    static void info(std::string, const unsigned int = 1);
     static void warning(const char *, const unsigned int = 1);
-    static void warning(const std::string &, const unsigned int = 1);
+    static void warning(std::string, const unsigned int = 1);
     static void error(const char *);
-    static void error(const std::string &);
+    static void error(std::string);
     static void fatal(const char *);
-    static void fatal(const std::string &);
+    static void fatal(std::string);
 
 protected:
 

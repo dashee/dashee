@@ -6,7 +6,7 @@ void Log::print(const int x, const char *c)
     tm *ltm = localtime(&now);
 
     if (x > 3) { Log::fatal("No print type"); }
-
+    
     printf(
         "%04u-%02u-%02u %02u:%02u:%02u %6s: %s\n", 
         (1900 + ltm->tm_year), 
@@ -20,11 +20,6 @@ void Log::print(const int x, const char *c)
     );
 }
 
-void Log::print(const int x, const std::string &c) 
-{
-    print(x, c.c_str());
-}
-
 void Log::info(const char *c, const unsigned int v)
 {
     if (v <= verbosity)
@@ -33,12 +28,10 @@ void Log::info(const char *c, const unsigned int v)
     }
 }
 
-
-void Log::info(const std::string &c, const unsigned int v)
+void Log::info(std::string c, const unsigned int v)
 {
     info(c.c_str(), v);
 }
-
 
 void Log::warning(const char *c, const unsigned int v)
 {
@@ -48,7 +41,7 @@ void Log::warning(const char *c, const unsigned int v)
     }
 }
 
-void Log::warning(const std::string &c, const unsigned int v)
+void Log::warning(std::string c, const unsigned int v)
 {
     warning(c.c_str(), v);
 }
@@ -58,9 +51,9 @@ void Log::error(const char *c)
     Log::print(LOG_ERROR, c); 
 }
 
-void Log::error(const std::string &c) 
+void Log::error(std::string c) 
 { 
-    error(c.c_str());
+    Log::error(c.c_str()); 
 }
 
 /* Fatal function is designed to run an exit
@@ -76,9 +69,9 @@ void Log::fatal(const char *c)
     exit(-1);
 }
 
-void Log::fatal(const std::string &c)
-{
-    fatal(c.c_str());
+void Log::fatal(std::string c) 
+{ 
+    Log::fatal(c.c_str()); 
 }
 
 //Initialize our static variables
@@ -90,4 +83,3 @@ char Log::logstatus[4][6] = {
 };
 
 unsigned int Log::verbosity = 1;
-
