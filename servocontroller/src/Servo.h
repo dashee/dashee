@@ -24,6 +24,7 @@ class Servo
         int getError();
         int getTarget(const unsigned char);
         void setTarget(const unsigned char, const short int);
+        void calculateTarget(short int &);
 
         int getChannels();
 

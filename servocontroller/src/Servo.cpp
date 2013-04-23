@@ -14,7 +14,7 @@ Servo::Servo(const char * dev)
 
 Servo::~Servo()
 {
-   close(this->fd);    
+    close(this->fd);    
 }
 
 int Servo::getError()
@@ -47,8 +47,10 @@ int Servo::getTarget(const unsigned char channel)
     return response[0] + 256*response[1];
 }
 
-void Servo::setTarget(const unsigned char channel, const short int target)
+void Servo::setTarget(const unsigned char channel, short int target)
 {
+    calculateTarget(target);
+ 
     unsigned char command[4];
     command[0] = 0x84;
     command[1] = channel;
@@ -60,6 +62,28 @@ void Servo::setTarget(const unsigned char channel, const short int target)
     
     //Set the target
     channels[(short int)channel] = target;
+}
+
+void Servo::calculateTarget(short int & target)
+{
+    if (target >= 0 && target <= 100)
+    {
+        // If it is 1, set to 0% value
+        if (target == 0) 
+            target = 3968;
+
+        // Other wise set to 100% value
+        else if (target == 100)
+            target = 8000;
+
+        // Other wise get a percentage number between the range
+        // 992-8000, Note that for calculations sake we calculate from 0-7008
+        // then add 992, to get the correct value
+        else
+            target = ((4032/100) * target) + 3968;
+    }
+    else
+        throw Exception_Servo("Invalid Target!\n");
 }
 
 int Servo::getChannels()

@@ -5,7 +5,7 @@ LIBDIR=lib64
 DIRECTORIES:= $(BINDIR) $(LIBDIR)
 
 BINARIES := $(addprefix $(BINDIR)/, servocontroller)
-OBJECTS := $(addprefix src/, Servo.o)
+OBJECTS := $(addprefix src/, Servo.o Server.o Server/UDP.o)
 
 all: $(BINARIES)
 
@@ -16,8 +16,8 @@ $(DIRECTORIES):
 $(OBJECTS): %.o: %.cpp
 	$(CC) -c $< -o $@
 
-$(BINDIR)/servocontroller: src/servocontroller.cpp $(BINDIR) src/Servo.o
-	$(CC) src/Servo.o $< -o $@
+$(BINDIR)/servocontroller: src/servocontroller.cpp $(BINDIR) $(OBJECTS)
+	$(CC) $(OBJECTS) $< -o $@
 
 clean:
 	@$(RM) $(shell find src -name "*.o")
