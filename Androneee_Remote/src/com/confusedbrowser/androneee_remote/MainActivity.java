@@ -1,6 +1,8 @@
 package com.confusedbrowser.androneee_remote;
 
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View;
 import android.app.Activity;
 import android.view.Menu;
@@ -18,23 +20,33 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 	SeekBar mSeekBar;
     TextView mProgressText;
 	InetAddress serverAddr;
-	UDP_thread connection;
+	SendControlsThread sendControls;
+	VehicleStatusThread vehicleStatus;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Remove title and go full screen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        // Set the XML view for this activity
         setContentView(R.layout.activity_main);
         
-        //servoBar
+        // Create threads for send and receiving data from the vehicle  
+        sendControls = new SendControlsThread(this, "192.168.1.12", 2047, 50);
+        sendControls.start();
+        
+        vehicleStatus = new VehicleStatusThread("192.168.1.12", 2047);
+        vehicleStatus.start();
+        
+        // Set up slider control to pass to sendControls
         mProgressText = (TextView)findViewById(R.id.serverPos);
         mSeekBar = (SeekBar)findViewById(R.id.servoBar);
         mSeekBar.setOnSeekBarChangeListener(this);
-        
-        connection = new UDP_thread(this, "192.168.1.12", 2047, 50);
-		connection.start();
-        /*connection = new UDP_thread(this, "192.168.1.12", 2047);
-        connection.start();*/
-        // Android is shite!!!
+
     }
 
     @Override
@@ -45,7 +57,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
     
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-    	connection.setPosition(progress);
+    	sendControls.setPosition(progress);
 	 	mProgressText.setText(progress+"");
     }
  
@@ -66,7 +78,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 	protected void onStop()
 	{
 		super.onStop();
-		connection.stop_sending();
+		sendControls.stop_sending();
+		vehicleStatus.stop_listening();
 		this.finish();
 	}
     
