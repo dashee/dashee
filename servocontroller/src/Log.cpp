@@ -33,10 +33,12 @@ void Log::info(const char *c, const unsigned int v)
     }
 }
 
+
 void Log::info(const std::string &c, const unsigned int v)
 {
     info(c.c_str(), v);
 }
+
 
 void Log::warning(const char *c, const unsigned int v)
 {

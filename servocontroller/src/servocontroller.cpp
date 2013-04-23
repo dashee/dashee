@@ -6,7 +6,6 @@
 
 int main()
 {
-
     try
     {
         Servo s("/dev/ttyACM0");
@@ -32,11 +31,13 @@ int main()
 
             try
             {
-                // Set the target for channel 1 as requested
-                s.setTarget(1, target);
                 
                 // Print out to the server,
                 printf("setTarget(1, %d)\n", target);
+                //Log::info("Target is set");
+
+                // Set the target for channel 1 as requested
+                s.setTarget(1, target);
             }
             //User is out of range, only then do you print the error message
             catch (Exception_Servo& e)
@@ -45,7 +46,7 @@ int main()
                     throw Exception_Server("Write failed");
                 
                 //Helpfull error message
-                printf("!setTarget(1, %d)\n", target);
+                printf("Invalid Target\n");
             }
         }
     }

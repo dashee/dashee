@@ -2,7 +2,7 @@
  * Provides an interface for loggin to with printf
  *
  * @file        Log.h
- * @author      Shahmir Javaid (me@shahmirj.com)
+ * @author      Shahmir Javaid
  * @copyright   Shahmir Javaid
  * @date        Sun Oct 28 2012
  */
@@ -11,11 +11,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <time.h>
 
-#ifndef _LOG_
-#define _LOG_
+#ifndef LOG_H
+#define LOG_H
 
 //Predefintions
 #define LOG_INFO    0
