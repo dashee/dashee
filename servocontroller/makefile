@@ -1,11 +1,13 @@
 include ../makefile.common
 
+CFLAGS=-Iinclude
+
 BINDIR=bin
 LIBDIR=lib64
 DIRECTORIES:= $(BINDIR) $(LIBDIR)
 
 BINARIES := $(addprefix $(BINDIR)/, servocontroller)
-OBJECTS := $(addprefix src/, Servo.o Server.o Server/UDP.o)
+OBJECTS := $(addprefix src/, Servo.o Server.o Server/UDP.o Log.o)
 
 all: $(BINARIES)
 
@@ -14,10 +16,10 @@ $(DIRECTORIES):
 	@echo "Directory '$@' Created"
 
 $(OBJECTS): %.o: %.cpp
-	$(CC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BINDIR)/servocontroller: src/servocontroller.cpp $(BINDIR) $(OBJECTS)
-	$(CC) $(OBJECTS) $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@
 
 clean:
 	@$(RM) $(shell find src -name "*.o")

@@ -2,9 +2,11 @@
 
 #include "Servo.h"
 #include "Server/UDP.h"
+#include "Log.h"
 
 int main()
 {
+
     try
     {
         Servo s("/dev/ttyACM0");
