@@ -5,29 +5,23 @@
 #include "Server/UDP.h"
 #include "Log.h"
 
-
-std::string toString(int i)
-{
-    std::string s;
-    std::stringstream out;
-    out << i;
-    return out.str();
-}
+#define SERVO_DEVICE "/dev/ttyACM0"
+#define SERVER_PORT 2047
 
 int main()
 {
     try
     {
-        Servo s("/dev/ttyACM0");
-        Log::info("Device '/dev/ttyACM0' initialized.");
+        Servo s(SERVO_DEVICE);
+        Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
 
         //Print and clear any errors
         int error = s.getError();
         if (error > 0)
-            Log::error("Servo failed with eccode " + toString(error));
+            Log::error("Servo failed with eccode %d", error);
 
-        Server_UDP x(2047);
-        Log::info("Port initialized on 2047.");
+        Server_UDP x(SERVER_PORT);
+        Log::info(1, "Port initialized on %d.", SERVER_PORT);
 
         //Keep listening, for stuff
         while (true)
@@ -44,7 +38,7 @@ int main()
             try
             {
                 // Print out to the server,
-                Log::info("setTarget(1, " + toString(target) + ")");
+                Log::info(1, "setTarget(1, %d)" ,target);
 
                 // Set the target for channel 1 as requested
                 s.setTarget(1, target);
@@ -53,19 +47,23 @@ int main()
             catch (Exception_Servo& e)
             {   
                 //Helpfull error message
-                Log::warning("Invalid Target");
+                Log::warning(1, "Invalid Target %d", target);
 
-                if (!x.write(e.what())) 
+                if (!x.write("Invalid Target\n")) 
                     throw Exception_Server("Write failed");
             }
         }
     }
+    catch (Exception_Servo e)
+    {
+        Log::error("EXCEPTION! %s", e.what());
+        return -2;
+    }
     catch (std::runtime_error e)
     {
-        Log::error("EXCEPTION! " + (std::string)e.what());
+        Log::error("EXCEPTION! %s", e.what());
         return -2;
     }
 
-    //printf("Hello to the world of tomrow");
     return 0;
 }
