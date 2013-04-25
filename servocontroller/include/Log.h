@@ -2,7 +2,7 @@
  * The log Header file, designed to be a singleton
  * Provides an interface for loggin to with using printf
  *
- * @author      Shahmir Javaid
+ * @author Shahmir Javaid
  */
 
 #include <iostream>

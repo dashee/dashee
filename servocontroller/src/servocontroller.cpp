@@ -71,9 +71,9 @@ int main()
             catch (Exception_Servo& e)
             {   
                 // Helpfull error message
-                Log::warning(1, "Invalid Target %d", target);
+                Log::warning(1, "%d is an invalid target.", target);
 
-                if (!x.write("Invalid Target\n")) 
+                if (!x.write(e.what())) 
                     throw Exception_Server("Write failed");
             }
         }
