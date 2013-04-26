@@ -34,6 +34,7 @@ public class SendControlsThread extends Thread {
 		this.prevPos = position;
 		try {
 			IPAddress = InetAddress.getByName(ip_address);
+			Log.d("androneee", IPAddress.toString());
 			clientSocket = new DatagramSocket();
 		}catch (Exception e) {
 			 e.printStackTrace();
@@ -53,6 +54,7 @@ public class SendControlsThread extends Thread {
 					 byte[] sendData = sentence.getBytes("US-ASCII");
 					 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port_num);
 					 clientSocket.send(sendPacket);
+					 
 					 /*TextView t = new TextView(MainActivity.this); 
 					 t= main_context.findViewById(R.id.server_message); 
 					 t.setText(modifiedSentence);*/

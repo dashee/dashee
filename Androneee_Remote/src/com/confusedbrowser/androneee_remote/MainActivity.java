@@ -22,7 +22,7 @@ import java.net.*;
 
 public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
 	
-	static String ipAddress = "192.168.1.12";
+	static String ipAddress = "54.246.151.139";
 	SeekBar mSeekBar;
     TextView mProgressText;
 	InetAddress serverAddr;
@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        Log.v("androneee", "HERE!!!!!!!!!!!!!!");
         // Remove title and go full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -45,13 +45,13 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
-        
+        Log.d("androneee", "IP ADDRESS IS:"+ ipAddress);
         // Create threads for send and receiving data from the vehicle  
         sendControls = new SendControlsThread(this, ipAddress, 2047, 50);
         sendControls.start();
         
-        vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
-        vehicleStatus.start();
+        /*vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
+        vehicleStatus.start();*/
         
         // Set up slider control to pass to sendControls
         mProgressText = (TextView)findViewById(R.id.serverPos);
@@ -80,6 +80,9 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     	           pitch.setText("Pitch: "+pitch_val);
     	           roll.setText("Roll: "+roll_val);
     	           yaw.setText("Yaw: "+yaw_val);
+    	           int progress = (int)mapping(pitch_val,30,-30,0,100);
+    	           mSeekBar.setProgress(progress);
+    	           sendControls.setPosition(progress);
 
     	        }
     	        @Override  
@@ -91,6 +94,16 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     	     SensorManager.SENSOR_DELAY_NORMAL);
 
     }
+	
+	public float mapping(float value, float leftMin, float leftMax, float rightMin, float rightMax){
+        //Figure out how 'wide' each range is
+        float leftSpan = leftMax - leftMin;
+        float rightSpan = rightMax - rightMin;
+        //Convert the left range into a 0-1 range (float)
+        float valueScaled = (value - leftMin) / (leftSpan);
+        //Convert the 0-1 range into a value in the right range.
+        return rightMin + (valueScaled * rightSpan); 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,7 +113,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
     
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-    	sendControls.setPosition(progress);
 	 	mProgressText.setText(progress+"");
     }
  
