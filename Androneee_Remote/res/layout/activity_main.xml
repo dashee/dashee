@@ -17,7 +17,24 @@
             android:id="@+id/serverPos"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:layout_margin="10dp"
-            android:text="25" />
+            android:layout_margin="10dp" />
+        
+        <TextView
+            android:id="@+id/pitch"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_margin="10dp"/>
+        
+        <TextView
+            android:id="@+id/roll"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_margin="10dp" />
+        
+        <TextView
+            android:id="@+id/yaw"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_margin="10dp" />
     
 </LinearLayout>

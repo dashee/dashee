@@ -6,22 +6,33 @@ import android.view.WindowManager;
 import android.view.View;
 import android.app.Activity;
 import android.view.Menu;
+import android.content.Context;
 import android.content.Intent;
 import android.widget.EditText;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.SeekBar;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.hardware.Sensor;
 
 import java.io.*;
 import java.net.*;
 
-public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
 	
+	static String ipAddress = "192.168.1.12";
 	SeekBar mSeekBar;
     TextView mProgressText;
 	InetAddress serverAddr;
 	SendControlsThread sendControls;
 	VehicleStatusThread vehicleStatus;
+	private float[] m_rotationMatrix = new float[16];
+	private float[] m_orientation = new float[4];
+	
+	
+	
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +47,48 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         setContentView(R.layout.activity_main);
         
         // Create threads for send and receiving data from the vehicle  
-        sendControls = new SendControlsThread(this, "192.168.1.12", 2047, 50);
+        sendControls = new SendControlsThread(this, ipAddress, 2047, 50);
         sendControls.start();
         
-        vehicleStatus = new VehicleStatusThread("192.168.1.12", 2047);
+        vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
         vehicleStatus.start();
         
         // Set up slider control to pass to sendControls
         mProgressText = (TextView)findViewById(R.id.serverPos);
         mSeekBar = (SeekBar)findViewById(R.id.servoBar);
         mSeekBar.setOnSeekBarChangeListener(this);
+        
+        
+      //listener for accelerometer, use anonymous class for simplicity
+    	((SensorManager)getSystemService(Context.SENSOR_SERVICE)).registerListener(
+    	     new SensorEventListener() {    
+    	        @Override  
+    	        public void onSensorChanged(SensorEvent event) {  
+    	           TextView pitch = (TextView) findViewById(R.id.pitch);
+    	           TextView roll = (TextView) findViewById(R.id.roll);
+    	           TextView yaw = (TextView) findViewById(R.id.yaw);
+    	           pitch.setText("pitch: "+event.values[0]);
+    	           pitch.append(" | "+event.values[1]);
+    	           pitch.append(" | "+event.values[2]);
+    	           SensorManager.getRotationMatrixFromVector (m_rotationMatrix, event.values);
+    	           SensorManager.getOrientation(m_rotationMatrix, m_orientation);
+    	           
+    	           float yaw_val = m_orientation[0] * 57.2957795f;
+    	           float pitch_val = m_orientation[1] * 57.2957795f;
+    	           float roll_val = m_orientation[2] * 57.2957795f;
+    	           
+    	           pitch.setText("Pitch: "+pitch_val);
+    	           roll.setText("Roll: "+roll_val);
+    	           yaw.setText("Yaw: "+yaw_val);
+
+    	        }
+    	        @Override  
+    	        public void onAccuracyChanged(Sensor sensor, int accuracy) {} //ignore
+
+    	    },
+    	    ((SensorManager)getSystemService(Context.SENSOR_SERVICE))
+    	    .getSensorList(Sensor.TYPE_ROTATION_VECTOR).get(0),   
+    	     SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 
