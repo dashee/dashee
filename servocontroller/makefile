@@ -7,7 +7,7 @@ LIBDIR=lib64
 DIRECTORIES:= $(BINDIR) $(LIBDIR)
 
 BINARIES := $(addprefix $(BINDIR)/, servocontroller)
-OBJECTS := $(addprefix src/, Servo.o Server.o Server/UDP.o Log.o)
+OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Server.o Server/UDP.o Log.o)
 
 all: $(BINARIES)
 

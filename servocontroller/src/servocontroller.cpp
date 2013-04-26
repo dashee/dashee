@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <sstream>
 
-#include "Servo.h"
+#include "Servo/USB.h"
 #include "Server/UDP.h"
 #include "Log.h"
 
@@ -37,7 +37,7 @@ int main()
     try
     {
         // Create a Servo
-        Servo s(SERVO_DEVICE);
+        Servo_USB s(SERVO_DEVICE);
         Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
 
         // Print and clear any Servo specific errors
