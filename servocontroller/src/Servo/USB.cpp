@@ -7,9 +7,8 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_USB::Servo_USB(const char * dev)
+Servo_USB::Servo_USB(const char * dev) : Servo(dev)
 {
-    this->dev = dev;
     fd = open(this->dev, O_RDWR | O_NOCTTY);
 
     if (fd == -1)

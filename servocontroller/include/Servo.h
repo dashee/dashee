@@ -21,6 +21,18 @@ class Servo
         
     protected:
         
+        /**
+         * This variable is set during the construct
+         * It represents the textual format of the file currently open
+         * Great for debugging purposes. And as this class is called once
+         * this should only be set once, so it wont add a performance hit on runtime
+         * unless the object is being created every time
+         */
+        const char * dev;
+        
+        //Set the @dev
+        explicit Servo(const char *);
+        
     public:
         //Get the last error from the board
         virtual short int getError() = 0;
