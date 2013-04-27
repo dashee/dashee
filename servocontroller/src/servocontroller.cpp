@@ -38,10 +38,10 @@ int main()
     try
     {
         // Create a Servo
-        //Servo_USB s(SERVO_DEVICE);
-        //Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
+        Servo_USB s(SERVO_DEVICE);
+        Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
 
-        Servo_Dummy s("data/Servo.bin");
+        //Servo_Dummy s("data/Servo.bin");
 
         // Print and clear any Servo specific errors
         int error = s.getError();

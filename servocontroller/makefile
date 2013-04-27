@@ -1,4 +1,9 @@
-include ../makefile.common
+include makefile.common
+
+CC=g++
+MKDIR=mkdir -p
+RM=rm -Rfv
+
 
 CFLAGS=-Iinclude
 
