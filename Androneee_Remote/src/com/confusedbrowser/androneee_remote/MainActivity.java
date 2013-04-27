@@ -37,7 +37,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("androneee", "HERE!!!!!!!!!!!!!!");
         // Remove title and go full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -45,13 +44,12 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
-        Log.d("androneee", "IP ADDRESS IS:"+ ipAddress);
         // Create threads for send and receiving data from the vehicle  
         sendControls = new SendControlsThread(this, ipAddress, 2047, 50);
         sendControls.start();
         
-        /*vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
-        vehicleStatus.start();*/
+        vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
+        vehicleStatus.start();
         
         // Set up slider control to pass to sendControls
         mProgressText = (TextView)findViewById(R.id.serverPos);
@@ -64,26 +62,14 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     	     new SensorEventListener() {    
     	        @Override  
     	        public void onSensorChanged(SensorEvent event) {  
-    	           TextView pitch = (TextView) findViewById(R.id.pitch);
-    	           TextView roll = (TextView) findViewById(R.id.roll);
-    	           TextView yaw = (TextView) findViewById(R.id.yaw);
-    	           pitch.setText("pitch: "+event.values[0]);
-    	           pitch.append(" | "+event.values[1]);
-    	           pitch.append(" | "+event.values[2]);
     	           SensorManager.getRotationMatrixFromVector (m_rotationMatrix, event.values);
     	           SensorManager.getOrientation(m_rotationMatrix, m_orientation);
-    	           
-    	           float yaw_val = m_orientation[0] * 57.2957795f;
-    	           float pitch_val = m_orientation[1] * 57.2957795f;
-    	           float roll_val = m_orientation[2] * 57.2957795f;
-    	           
-    	           pitch.setText("Pitch: "+pitch_val);
-    	           roll.setText("Roll: "+roll_val);
-    	           yaw.setText("Yaw: "+yaw_val);
-    	           int progress = (int)mapping(pitch_val,30,-30,0,100);
+    	           /*float yaw_val = m_orientation[0] * 57.2957795f;
+    	           float pitch_val = m_orientation[2] * 57.2957795f;*/
+    	           float roll_val = m_orientation[1];
+    	           int progress = (int)mapping(roll_val,0.523,-0.523,0,100);
     	           mSeekBar.setProgress(progress);
     	           sendControls.setPosition(progress);
-
     	        }
     	        @Override  
     	        public void onAccuracyChanged(Sensor sensor, int accuracy) {} //ignore
@@ -95,12 +81,12 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 
     }
 	
-	public float mapping(float value, float leftMin, float leftMax, float rightMin, float rightMax){
+	public double mapping(float value, double leftMin, double leftMax, double rightMin, double rightMax){
         //Figure out how 'wide' each range is
-        float leftSpan = leftMax - leftMin;
-        float rightSpan = rightMax - rightMin;
+		double leftSpan = leftMax - leftMin;
+		double rightSpan = rightMax - rightMin;
         //Convert the left range into a 0-1 range (float)
-        float valueScaled = (value - leftMin) / (leftSpan);
+		double valueScaled = (value - leftMin) / (leftSpan);
         //Convert the 0-1 range into a value in the right range.
         return rightMin + (valueScaled * rightSpan); 
     }
