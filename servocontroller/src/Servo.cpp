@@ -23,7 +23,7 @@ Servo::Servo(const char * dev)
  * TODO: Create its own exception 
  * @throw Exception_Servo - If the target is out of range
  */
-void Servo::calculateTarget(short int & target)
+void Servo::calculateTarget(unsigned short int & target)
 {
     int zero = 3968;
     int hundred = 8000;

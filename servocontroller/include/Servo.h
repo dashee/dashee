@@ -2,10 +2,12 @@
  * This class defines the implementation required for the Servo classes
  * you should be able to control a servo using some major public functions
  * defined here
+ *
+ * @author Shahmir Javaid
  */
 
-#ifndef SERVO_H
-#define SERVO_H
+#ifndef SERVO_H_
+#define SERVO_H_
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -38,13 +40,13 @@ class Servo
         virtual short int getError() = 0;
 
         //Get the target of a given channel
-        virtual short int getTarget(const unsigned char) = 0;
+        virtual unsigned short int getTarget(const unsigned char) = 0;
 
         //Set the target of a given channel
-        virtual void setTarget(const unsigned char, const short int) = 0;
+        virtual void setTarget(const unsigned char, unsigned short int) = 0;
 
         //Calculate the Target, turn 0-100 to be from 3968-8000
-        virtual void calculateTarget(short int &);
+        virtual void calculateTarget(unsigned short int &);
     
         //TODO: get all the channel values from the board
         virtual int getChannels() = 0;

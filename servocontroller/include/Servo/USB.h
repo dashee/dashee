@@ -11,8 +11,8 @@
  * @author Shahmir Javaid
  */
 
-#ifndef SERVO_USB_H
-#define SERVO_USB_H
+#ifndef SERVO_USB_H_
+#define SERVO_USB_H_
 
 #include "Servo.h"
 
@@ -36,10 +36,10 @@ class Servo_USB : public Servo
         short int getError();
 
         //Get the target of a given channel
-        short int getTarget(const unsigned char);
+        unsigned short int getTarget(const unsigned char);
 
         //Set the target of a given channel
-        void setTarget(const unsigned char, const short int);
+        void setTarget(const unsigned char, unsigned short int);
     
         //TODO: get all the channel values from the board
         int getChannels();
