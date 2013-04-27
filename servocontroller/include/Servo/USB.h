@@ -11,23 +11,14 @@
  * @author Shahmir Javaid
  */
 
-#ifndef SERVO_USB_H
-#define SERVO_USB_H
+#ifndef SERVO_USB_H_
+#define SERVO_USB_H_
 
 #include "Servo.h"
 
 class Servo_USB : public Servo
 {
     private:
-        
-        /**
-         * This variable is set during the construct
-         * It represents the textual format of the file currently open
-         * Great for debugging purposes. And as this class is called once
-         * this should only be set once, so it wont add a performance hit on runtime
-         * unless the object is being created every time
-         */
-        const char * dev;
 
         /**
          * Given our @dev variable we open this device, which returns the appropriate
@@ -39,16 +30,16 @@ class Servo_USB : public Servo
         
     public:
         //Open our Servo Device
-        Servo_USB(const char *);
+        explicit Servo_USB(const char *);
 
         //Get the last error from the board
         short int getError();
 
         //Get the target of a given channel
-        short int getTarget(const unsigned char);
+        unsigned short int getTarget(const unsigned char);
 
         //Set the target of a given channel
-        void setTarget(const unsigned char, const short int);
+        void setTarget(const unsigned char, unsigned short int);
     
         //TODO: get all the channel values from the board
         int getChannels();

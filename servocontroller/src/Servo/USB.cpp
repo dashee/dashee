@@ -7,9 +7,8 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_USB::Servo_USB(const char * dev)
+Servo_USB::Servo_USB(const char * dev) : Servo(dev)
 {
-    this->dev = dev;
     fd = open(this->dev, O_RDWR | O_NOCTTY);
 
     if (fd == -1)
@@ -51,7 +50,7 @@ short int Servo_USB::getError()
         throw Exception_Servo();
     
     //TODO This needs to be fixed, its wrong at the moment
-    return (int)sqrt(response[0] + 256*response[1]);
+    return (short int)sqrt(response[0] + 256*response[1]);
 }
 
 /**
@@ -72,7 +71,7 @@ short int Servo_USB::getError()
  *
  * @return int - The value of the channel 
  */
-short int Servo_USB::getTarget(const unsigned char channel)
+unsigned short int Servo_USB::getTarget(const unsigned char channel)
 {
     unsigned char command[2];
     command[0] = 0x90;
@@ -103,7 +102,7 @@ short int Servo_USB::getTarget(const unsigned char channel)
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_USB::setTarget(const unsigned char channel, short int target)
+void Servo_USB::setTarget(const unsigned char channel, unsigned short int target)
 {
     calculateTarget(target);
  

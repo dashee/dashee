@@ -1,5 +1,18 @@
 #include "Servo.h"
 
+/** 
+ * This constructor sets our @dev variable, 
+ * The dev variable is defined by param dev.
+ * This constructer is initialized by derved clases
+ *
+ * TODO: create a setDev function
+ * @param (const char *)dev - The device name
+ */
+Servo::Servo(const char * dev)
+{
+    this->dev = dev;
+}
+
 /**
  * This function takes the number 0-100, and converts it into servo
  * frequency value, represented from 3968-8000, It does a check weather or not
@@ -10,7 +23,7 @@
  * TODO: Create its own exception 
  * @throw Exception_Servo - If the target is out of range
  */
-void Servo::calculateTarget(short int & target)
+void Servo::calculateTarget(unsigned short int & target)
 {
     int zero = 3968;
     int hundred = 8000;

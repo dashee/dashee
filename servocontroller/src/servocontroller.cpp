@@ -22,6 +22,7 @@
 #include <sstream>
 
 #include "Servo/USB.h"
+#include "Servo/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
 
@@ -37,8 +38,10 @@ int main()
     try
     {
         // Create a Servo
-        Servo_USB s(SERVO_DEVICE);
-        Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
+        //Servo_USB s(SERVO_DEVICE);
+        //Log::info(1, "Device '%s' initialized.", SERVO_DEVICE);
+
+        Servo_Dummy s("data/Servo.bin");
 
         // Print and clear any Servo specific errors
         int error = s.getError();
@@ -66,6 +69,9 @@ int main()
 
                 // Set the target for channel 1 as requested
                 s.setTarget(1, target);
+                
+                // Set the target for channel 1 as requested
+                Log::info(1, "getTarget(1): %d", s.getTarget(1));
             }
             // User is out of range, only then do you print the error message
             catch (Exception_Servo& e)
