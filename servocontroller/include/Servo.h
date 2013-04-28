@@ -36,6 +36,10 @@ class Servo
         explicit Servo(const char *);
         
     public:
+        
+        //Set the @dev
+        explicit Servo(){};
+
         //Get the last error from the board
         virtual short int getError() = 0;
 
@@ -50,6 +54,8 @@ class Servo
     
         //TODO: get all the channel values from the board
         virtual int getChannels() = 0;
+
+        virtual ~Servo(){};
 };
 
 #endif
