@@ -29,6 +29,7 @@
 
 #define SERVO_DEVICE "/dev/ttyACM0"
 #define SERVER_PORT 2047
+#define SERVER_TIMEOUT 4
 
 /**
  * This function will set our given options, See intilization for full details
@@ -90,33 +91,37 @@ int main(int argc, char **argv)
         // Loop through read and write our server
         while (true)
         {
-            // Recieave from client        
-            if (!x.read())
-                Log::fatal("Recieving from client failed");
-                
-            int target = atoi(x.getBuffer());
-        
-            // @throw Exception_Servo
-            try
+            // Recieave from client and timeout after 4 seconds
+            if (x.read(SERVER_TIMEOUT))
             {
-                // Print out to the server,
-                Log::info(2, "setTarget(1, %d)" ,target);
+                int target = atoi(x.getBuffer());
+            
+                // @throw Exception_Servo
+                try
+                {
+                    // Print out to the server,
+                    Log::info(2, "setTarget(1, %d)" ,target);
 
-                // Set the target for channel 1 as requested
-                s->setTarget(1, target);
-                
-                // Good for testing
-                // Set the target for channel 1 as requested
-                //Log::info(1, "getTarget(1): %d", s->getTarget(1));
+                    // Set the target for channel 1 as requested
+                    s->setTarget(1, target);
+                    
+                    // Good for testing
+                    // Set the target for channel 1 as requested
+                    //Log::info(1, "getTarget(1): %d", s->getTarget(1));
+                }
+                // User is out of range, only then do you print the error message
+                catch (Exception_Servo& e)
+                {   
+                    // Helpfull error message
+                    Log::warning(2, "%d is an invalid target.", target);
+
+                    if (!x.write(e.what())) 
+                        throw Exception_Server("Write failed");
+                }
             }
-            // User is out of range, only then do you print the error message
-            catch (Exception_Servo& e)
-            {   
-                // Helpfull error message
-                Log::warning(2, "%d is an invalid target.", target);
-
-                if (!x.write(e.what())) 
-                    throw Exception_Server("Write failed");
+            else
+            {
+                Log::info(3, "read() timeout");
             }
         }
     }

@@ -4,8 +4,7 @@ CC=g++
 MKDIR=mkdir -p
 RM=rm -Rfv
 
-
-CFLAGS=-Iinclude
+CFLAGS=-Wall -Iinclude
 
 BINDIR=bin
 LIBDIR=lib64
@@ -18,6 +17,7 @@ BINARIES := $(addprefix $(BINDIR)/, servocontroller)
 ##
 # Create all required binaries, This will build every thing but the test
 all: $(BINARIES)
+	ctags -R
 
 ## 
 # This is our main handler for created directories,
@@ -60,3 +60,4 @@ cleantest:
 clean:
 	@$(RM) $(shell find src -name "*.o")
 	@$(RM) $(DIRECTORIES)
+	@$(RM) tags

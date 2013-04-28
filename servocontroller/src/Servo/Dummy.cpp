@@ -99,5 +99,6 @@ void Servo_Dummy::setTarget(const unsigned char channel, unsigned short int targ
  * TODO finish the implimentation of this function
  */
 int Servo_Dummy::getChannels()
-{      
+{
+    return 0;      
 }

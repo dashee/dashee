@@ -128,5 +128,6 @@ void Servo_USB::setTarget(const unsigned char channel, unsigned short int target
  * TODO finish the implimentation of this function
  */
 int Servo_USB::getChannels()
-{      
+{
+    return 0;      
 }
