@@ -42,7 +42,7 @@ int volatile EXIT = 0;
  * A helpfull variable set by catch exceptions, which change the return value for the main
  * function
  */
-int volatile RETURN = 0;
+int volatile RETVAL = 0;
 
 /**
  * Our signal handler as overwritten by our main function
@@ -82,7 +82,6 @@ int main(int argc, char **argv)
     
     // Call our setoptions which will change the following functions
     setoptions(argc, argv, &servotype, &servo, &port);
-    
 
     try
     {
@@ -154,12 +153,12 @@ int main(int argc, char **argv)
     catch (Exception e)
     {
         Log::warning(1, "Exception: %s.", e.what());
-        RETURN = -1;
+        RETVAL = -1;
     }
     catch (std::runtime_error e)
     {
         Log::warning(3, "Exception: %s.", e.what());
-        RETURN = -2;
+        RETVAL = -2;
     }
 
     Log::warning(3, "Exiting program.");
@@ -167,8 +166,8 @@ int main(int argc, char **argv)
     Log::info(4, "Performing cleanups, deleting pointors");
     delete s;
 
-    Log::info(4, "Program will now return %s", RETURN);
-    return RETURN;
+    Log::info(4, "Program will now return %d", RETVAL);
+    return RETVAL;
 }
 
 
