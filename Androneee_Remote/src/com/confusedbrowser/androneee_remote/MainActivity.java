@@ -24,7 +24,7 @@ import java.util.Observer;
 
 public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener, Observer{
 	
-	static String ipAddress = "54.246.151.139";
+	static String ipAddress = "192.168.0.11";
 	SeekBar mSeekBar;
     TextView mProgressText;
 	InetAddress serverAddr;
@@ -106,7 +106,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 	@Override
 	public void update(Observable o, Object arg) {
 		PhonePosition pp = (PhonePosition) o;
-		int progress = (int)mapping(pp.roll_val,0.523,-0.523,0,100);
+		int progress = (int)mapping(-pp.roll_val,-0.523,0.523,0,100);
         wheelPos(progress);
 	}
 	
@@ -118,6 +118,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         //Convert the left range into a 0-1 range (float)
 		double valueScaled = (value - leftMin) / (leftSpan);
         //Convert the 0-1 range into a value in the right range.
+		if(value<leftMin) return rightMin;
+		if(value>leftMax) return rightMax;
         return rightMin + (valueScaled * rightSpan); 
     }
     
