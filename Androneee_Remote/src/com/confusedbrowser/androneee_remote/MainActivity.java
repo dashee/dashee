@@ -24,7 +24,7 @@ import java.util.Observer;
 
 public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener, Observer{
 	
-	static String ipAddress = "192.168.0.11";
+	static String ipAddress = "86.26.9.105";
 	SeekBar mSeekBar;
     TextView mProgressText;
 	InetAddress serverAddr;
