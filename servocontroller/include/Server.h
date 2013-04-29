@@ -12,6 +12,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <signal.h>
+
+#include "Exception/Server.h"
 
 #ifndef SERVER_H_
 #define SERVER_H_
@@ -63,12 +66,19 @@ protected:
     /** 
      * Set our select timeout
      */
-    struct timeval select_timeout;
+    struct timespec pselect_timeout;
 
     /**
      * Our read select fd
      */
-     fd_set select_read;
+    fd_set select_read;
+    
+    /** 
+     * This is our mask set in the constructor which is 
+     * required by pselect
+     */
+    sigset_t mask;
+    sigset_t origmask;
 
     // Set the port and initialize our server and client variables
     Server(int port);
@@ -85,7 +95,7 @@ public:
     char * getBuffer();
     
     // Set our timeout value
-    void setTimeout(time_t, suseconds_t = 0);
+    void setTimeout(long, long = 0);
     
     // Read from the client
     virtual bool read() = 0;

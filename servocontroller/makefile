@@ -17,7 +17,6 @@ BINARIES := $(addprefix $(BINDIR)/, servocontroller)
 ##
 # Create all required binaries, This will build every thing but the test
 all: $(BINARIES)
-	ctags -R
 
 ## 
 # This is our main handler for created directories,
@@ -53,6 +52,12 @@ $(DATADIR)/Servo.bin:
 # This will remove our data/Servo.bin file, to build it again 
 cleantest:
 	@$(RM) $(DATADIR)/Servo.bin
+
+##
+# Will generate ctags for vim
+tags:
+	@ctags -R
+    
 
 ##
 # Cleans all the .o files from our src directory

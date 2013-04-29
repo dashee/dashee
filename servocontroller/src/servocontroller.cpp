@@ -32,6 +32,24 @@
 #define SERVER_TIMEOUT 4
 
 /**
+ * This is our main variable that controls wheather or not the program should be running
+ * As soon as this variable is set to 1, all threads should start exiting gracefully, 
+ * and pselect() would have by this time timed out
+ */
+int volatile EXIT = 0;
+
+/**
+ * A helpfull variable set by catch exceptions, which change the return value for the main
+ * function
+ */
+int volatile RETURN = 0;
+
+/**
+ * Our signal handler as overwritten by our main function
+ */
+void sighandler(int);
+
+/**
  * This function will set our given options, See intilization for full details
  */ 
 void setoptions(int, char **, unsigned int *, char **, unsigned int *);
@@ -48,15 +66,23 @@ void setoptions(int, char **, unsigned int *, char **, unsigned int *);
  */
 int main(int argc, char **argv)
 {
+    //Create a dummy Servo to be initiated later
+    Servo *s;
+    
+    // Set our sigaction
+    struct sigaction act;
+    act.sa_handler = sighandler;
+    if (sigaction(SIGINT, &act, 0))
+        throw new std::runtime_error("Sigaction failed");
+
+    // Variables that will be overwritten by the user
     unsigned int servotype = 1;
     char * servo = (char *)SERVO_DEVICE;
     unsigned int port = SERVER_PORT;
     
-    //Call our setoptions which will change the following functions
+    // Call our setoptions which will change the following functions
     setoptions(argc, argv, &servotype, &servo, &port);
-        
-    //It will be initiated below
-    Servo *s;
+    
 
     try
     {
@@ -89,7 +115,7 @@ int main(int argc, char **argv)
         Log::info(1, "Port initialized on %d.", port);
 
         // Loop through read and write our server
-        while (true)
+        while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
             if (x.read(SERVER_TIMEOUT))
@@ -110,7 +136,7 @@ int main(int argc, char **argv)
                     //Log::info(1, "getTarget(1): %d", s->getTarget(1));
                 }
                 // User is out of range, only then do you print the error message
-                catch (Exception_Servo& e)
+                catch (Exception_Servo e)
                 {   
                     // Helpfull error message
                     Log::warning(2, "%d is an invalid target.", target);
@@ -125,20 +151,38 @@ int main(int argc, char **argv)
             }
         }
     }
-    catch (Exception_Servo e)
+    catch (Exception e)
     {
-        Log::fatal("EXCEPTION! %s", e.what());
+        Log::warning(1, "Exception: %s.", e.what());
+        RETURN = -1;
     }
     catch (std::runtime_error e)
     {
-        Log::fatal("EXCEPTION! %s", e.what());
+        Log::warning(3, "Exception: %s.", e.what());
+        RETURN = -2;
     }
+
+    Log::warning(3, "Exiting program.");
     
-    //TODO Fix this with signals, to ensure every thing is well developed
+    Log::info(4, "Performing cleanups, deleting pointors");
     delete s;
 
-    return 0;
+    Log::info(4, "Program will now return %s", RETURN);
+    return RETURN;
 }
+
+
+/**
+ * Our signal handler as overwritten by our main function
+ *
+ * @param (int)sig - The signal that was thrown
+ */
+void sighandler(int sig)
+{
+    EXIT = 1;
+    Log::info(3, "Signal %d called.", sig);
+}
+
 
 /**
  * We need to be able to change the server behaviour using command line arguments.

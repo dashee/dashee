@@ -10,9 +10,19 @@
 Server::Server(int port)
 {
     this->port = port;
-
+    
     client_in_length = sizeof(client_in);
+
+    // 0 our server_in variable
     memset((char *) &server_in, 0, sizeof(server_in));
+    
+    // Initaize our @mask variable as pselect will jump out on
+    // SIGTERM
+    sigemptyset (&mask);
+    sigaddset (&mask, SIGINT);
+
+    if (sigprocmask(SIG_BLOCK, &mask, &origmask) < 0)
+        throw Exception_Server();
 }
 
 /**
@@ -39,13 +49,13 @@ char * Server::getBuffer()
  * This function will set our timeout value
  * Note if it is set to 0, then our select will never return.
  *
- * @param (time_t)seconds - Number of seconds to timeout
- * @param (suseconds_t)microseconds - Number of microseconds to timeout
+ * @param (long)seconds - Number of seconds to timeout
+ * @param (long)nanoseconds - Number of nanoseconds to timeout
  */
-void Server::setTimeout(time_t seconds, suseconds_t microseconds)
+void Server::setTimeout(long seconds, long nanoseconds)
 {
-    select_timeout.tv_sec = seconds;
-    select_timeout.tv_usec = microseconds;
+    pselect_timeout.tv_sec = seconds;
+    pselect_timeout.tv_nsec = nanoseconds;
 }
 
 /**
@@ -60,7 +70,7 @@ int Server::wait()
     FD_ZERO(&select_read);
     FD_SET(socketfd, &select_read);
     
-    return select(socketfd+1, &select_read, NULL, NULL, &select_timeout);
+    return pselect(socketfd+1, &select_read, NULL, NULL, &pselect_timeout, &origmask);
 }
 
 /**

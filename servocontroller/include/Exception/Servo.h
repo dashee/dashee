@@ -1,34 +1,21 @@
-#ifndef EXCEPTION_SERVO_H
-#define EXCEPTION_SERVO_H
+#include "../Exception.h"
 
-#include <stdexcept>
+#ifndef EXCEPTION_SERVO_H_
+#define EXCEPTION_SERVO_H_
 
-class Exception_Servo: public std::runtime_error
+class Exception_Servo: public Exception
 {
     public:
-        explicit Exception_Servo() : runtime_error("Board Error")
+        explicit Exception_Servo() : Exception()
         {
-            this->ec = errno;
-            this->message = strerror(this->ec);
-        }
-        explicit Exception_Servo(const int ec) : runtime_error("Board Error") 
-        { 
-            this->message = "Board Error";
-            this->ec = ec; 
-        }
-        explicit Exception_Servo(const std::string msg) : runtime_error(msg) 
-        {
-            message = msg.c_str();    
         }
 
-        virtual ~Exception_Servo() throw(){}
-        virtual const char* what()
-        {
-            return message;
+        explicit Exception_Servo(const int ec) : Exception(ec)
+        { 
         }
-    protected:
-        const char *message;
-        unsigned short int ec;
+        explicit Exception_Servo(std::string msg) : Exception(msg)
+        { 
+        }
 };
 
 #endif

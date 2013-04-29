@@ -56,24 +56,35 @@ bool Server_UDP::read()
  *
  * 0 value will set the timeout to nothing, so select will be instantanious
  *
- * @param (time_t)seconds - Number of seconds to timeout
- * @param (suseconds_t)microseconds - Number of microseconds to timeout
+ * @param (long)seconds - Number of seconds to timeout
+ * @param (long)nanoseconds - Number of nanoseconds to timeout
  *
  * @throws - Exception_Server - If write fails
  *
  * @returns bool - true, if there was something read. false on timeout
  */ 
-bool Server_UDP::read(time_t seconds, suseconds_t microseconds)
+bool Server_UDP::read(long seconds, long nanoseconds)
 {
-    setTimeout(seconds, microseconds);
+    setTimeout(seconds, nanoseconds);
 
     int select_return = wait();
+    
+
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {
         return read();
     }
     else if (select_return == -1)
+    {
+        // If the errno is set to EINTR, that means
+        // A signal went off in wait(), so throw an exception
+        // Which can be caught correctly by our main program
+        if (errno == EINTR) 
+            throw Exception_Server_Signal();
+
+        // Throw an exception so the main can set error
         throw Exception_Server("Read failed with -1.");
+    }
 
     return false;
 }

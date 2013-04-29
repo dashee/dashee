@@ -5,13 +5,13 @@
  * @author Shahmir Javaid
  */
 
-#ifndef SERVER_UDP_H_
-#define SERVER_UDP_H_
-
 #include <stdio.h>
 
 #include "../Server.h"
-#include "../Exception/Server.h"
+#include "../Exception/Server/Signal.h"
+
+#ifndef SERVER_UDP_H_
+#define SERVER_UDP_H_
 
 class Server_UDP: public Server
 {
@@ -26,7 +26,7 @@ public:
     bool read();
     
     //Read bytes, given a timeout
-    bool read(time_t, suseconds_t = 0);
+    bool read(long, long = 0);
 
     //Write bytes from the reciever
     bool write(const char *);

@@ -6,9 +6,6 @@
  * @author Shahmir Javaid
  */
 
-#ifndef SERVO_H_
-#define SERVO_H_
-
 #include <fcntl.h>
 #include <stdio.h>
 #include <math.h>
@@ -16,6 +13,9 @@
 #include <string.h>
 #include <errno.h>
 #include "Exception/Servo.h"
+
+#ifndef SERVO_H_
+#define SERVO_H_
 
 class Servo
 {
