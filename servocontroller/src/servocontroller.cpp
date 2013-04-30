@@ -132,7 +132,7 @@ int main(int argc, char **argv)
                     
                     // Good for testing
                     // Set the target for channel 1 as requested
-                    //Log::info(1, "getTarget(1): %d", s->getTarget(1));
+                    Log::info(3, "getTarget(1): %d", s->getTarget(1));
                 }
                 // User is out of range, only then do you print the error message
                 catch (Exception_Servo e)
