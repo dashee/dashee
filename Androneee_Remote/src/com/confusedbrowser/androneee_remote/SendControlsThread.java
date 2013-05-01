@@ -22,12 +22,18 @@ public class SendControlsThread extends Thread {
 	int prevPos;
 	DatagramSocket clientSocket;
 	InetAddress IPAddress;
+	private boolean abort_ = false;
+	private Object mPauseLock;
+	private boolean mPaused;
+    private boolean mFinished;
 
 	public SendControlsThread(Context context, String ip, int port, int position)
 	{
 		super();
 		ip_address = ip;
-		
+		mPauseLock = new Object();
+        mPaused = false;
+        mFinished = false;
 		port_num = port;
 		main_context = context;
 		this.position = position;
@@ -45,9 +51,18 @@ public class SendControlsThread extends Thread {
 		this.position = position;
 	}
 	
+	public void setIp(String ip){
+		ip_address = ip;
+		try {
+			IPAddress = InetAddress.getByName(ip_address);
+		}catch (Exception e) {
+			 e.printStackTrace();
+		}
+	}
+	
 	public void run() 
     {    
-		while(true){
+		while(!mFinished){
 			if(this.position != this.prevPos){
 				 try {
 					 String sentence = this.position+"\n";
@@ -63,11 +78,39 @@ public class SendControlsThread extends Thread {
 				 }
 				 this.prevPos = this.position;
 			}
+			
+			synchronized (mPauseLock) {
+	            while (mPaused) {
+	                try {
+	                    mPauseLock.wait();
+	                } catch (InterruptedException e) {
+	                }
+	            }
+	        }
 		}
     }
 	
-	public void stop_sending(){
-		clientSocket.close();
+	/**
+     * Call this on pause.
+     */
+    public void onPause() {
+        synchronized (mPauseLock) {
+            mPaused = true;
+        }
+    }
+
+    /**
+     * Call this on resume.
+     */
+    public void onResume() {
+        synchronized (mPauseLock) {
+            mPaused = false;
+            mPauseLock.notifyAll();
+        }
+    }
+	
+	public void start_sending(){
+		
 	}
     
 }
