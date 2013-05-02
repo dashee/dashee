@@ -189,6 +189,10 @@ int main(int argc, char **argv)
             }
         }
     }
+    catch (Exception_Server_Signal e)
+    {
+        Log::info(4, "caught(Exception_Server_Signal): %s", e.what());
+    }
     catch (Exception e)
     {
         Log::warning(1, "caught(Exception): %s.", e.what());
