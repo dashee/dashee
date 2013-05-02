@@ -66,8 +66,9 @@ void setoptions(int, char **, unsigned int *, char **, unsigned int *);
  */
 int main(int argc, char **argv)
 {
-    //Create a dummy Servo to be initiated later
-    Servo *s;
+    // Create a dummy Servo to be initiated later
+    // Initialising to NULL is important otherwise you will seg fault
+    Servo *s = NULL;
     
     // Set our sigaction
     struct sigaction act;
@@ -119,29 +120,67 @@ int main(int argc, char **argv)
             // Recieave from client and timeout after 4 seconds
             if (x.read(SERVER_TIMEOUT))
             {
-                int target = atoi(x.getBuffer());
-            
-                // @throw Exception_Servo
-                try
-                {
-                    // Print out to the server,
-                    Log::info(2, "setTarget(1, %d)" ,target);
-
-                    // Set the target for channel 1 as requested
-                    s->setTarget(1, target);
-                    
-                    // Good for testing
-                    // Set the target for channel 1 as requested
-                    Log::info(3, "getTarget(1): %d", s->getTarget(1));
-                }
-                // User is out of range, only then do you print the error message
-                catch (Exception_Servo e)
+                // ---------
+                // 000000001 &
+                // 00000000-
+                if ((x.getBuffer()[0] & 1) == 1)
                 {   
-                    // Helpfull error message
-                    Log::warning(2, "%d is an invalid target.", target);
+                    // @throw Exception_Servo
+                    try
+                    {
+                        // --------
+                        // 00001110 & 14
+                        // 0000---0 >> 1
+                        // 00000---
+                        unsigned char command = (x.getBuffer()[0] & 14) >> 1;
+                        Log::info(3, "Command: %d", (unsigned short int)command);
 
-                    if (!x.write(e.what())) 
-                        throw Exception_Server("Write failed");
+                        // --------
+                        // 11110000 & 240
+                        // ----0000 >> 4
+                        // 0000----
+                        unsigned char channel = (x.getBuffer()[0] & 240) >> 4;
+                        Log::info(3, "Channel: %d", (unsigned short int)channel);
+
+                        switch (command)
+                        {
+                            case 0:
+                            {
+                                // -------- >> 1
+                                // 0-------
+                                unsigned char target = (x.getBuffer()[1] >> 1);
+                                
+                                // Print out to the server,
+                                Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
+
+                                // Set the target for channel 1 as requested
+                                s->setTarget(channel, target);
+                                
+                                // Good for testing
+                                // Set the target for channel 1 as requested
+                                Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, s->getTarget(channel));
+
+                                break;
+                            }
+                            case 1:
+                                Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
+                                break;
+                            case 2:
+                                Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
+                                break;
+                            default:
+                                throw Exception_Servo("Invalid Command!");
+                                break;
+                                
+                        }
+                    }
+                    // User is out of range, only then do you print the error message
+                    catch (Exception_Servo e)
+                    {   
+                        Log::info(1, e.what());
+                        if (!x.write(e.what())) 
+                            throw Exception_Server("Write failed");
+                    }
                 }
             }
             else
@@ -152,21 +191,19 @@ int main(int argc, char **argv)
     }
     catch (Exception e)
     {
-        Log::warning(1, "Exception: %s.", e.what());
+        Log::warning(1, "caught(Exception): %s.", e.what());
         RETVAL = -1;
     }
     catch (std::runtime_error e)
     {
-        Log::warning(3, "Exception: %s.", e.what());
+        Log::warning(3, "caught(runtime_error): %s.", e.what());
         RETVAL = -2;
     }
-
-    Log::warning(3, "Exiting program.");
     
-    Log::info(4, "Performing cleanups, deleting pointors");
+    Log::info(4, "Performing cleanups.");
     delete s;
 
-    Log::info(4, "Program will now return %d", RETVAL);
+    Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
 }
 

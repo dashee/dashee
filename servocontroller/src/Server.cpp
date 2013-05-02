@@ -40,7 +40,7 @@ int Server::getSocketfd()
  *
  * @returns char * - The @buffer variable
  */
-char * Server::getBuffer()
+unsigned char * Server::getBuffer()
 {
     return buffer;
 }

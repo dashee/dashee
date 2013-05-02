@@ -4,9 +4,13 @@ CC=g++
 MKDIR=mkdir -p
 RM=rm -Rfv
 
-CFLAGS=-Wall -Iinclude
+WOPTIONS=-Wall
+INCLUDES=-Iinclude
+LIBS=
+CFLAGS=$(WOPTIONS) $(INCLUDES)
 
 BINDIR=bin
+
 LIBDIR=lib64
 DATADIR=data
 
@@ -17,6 +21,9 @@ BINARIES := $(addprefix $(BINDIR)/, servocontroller)
 ##
 # Create all required binaries, This will build every thing but the test
 all: $(BINARIES)
+
+debug: CFLAGS += -g -DDEBUG
+debug: $(BINARIES)
 
 ## 
 # This is our main handler for created directories,

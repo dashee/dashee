@@ -19,7 +19,7 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#define SERVER_BUFFER_SIZE 1024
+#define SERVER_BUFFER_SIZE 32
 
 class Server
 {
@@ -61,7 +61,7 @@ protected:
      * it usually should be set to 2 bytes, and longer
      * commands should just reread the buffer till its empty
      */ 
-    char buffer[SERVER_BUFFER_SIZE];
+    unsigned char buffer[SERVER_BUFFER_SIZE];
 
     /** 
      * Set our select timeout
@@ -92,7 +92,7 @@ public:
     int getSocketfd();
 
     // Get the @buffer
-    char * getBuffer();
+    unsigned char * getBuffer();
     
     // Set our timeout value
     void setTimeout(long, long = 0);
