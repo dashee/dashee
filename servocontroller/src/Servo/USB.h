@@ -14,7 +14,7 @@
 #ifndef SERVO_USB_H_
 #define SERVO_USB_H_
 
-#include "Servo.h"
+#include "../Servo.h"
 
 class Servo_USB : public Servo
 {

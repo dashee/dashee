@@ -20,7 +20,7 @@
 //#define SERVO_DUMMY_CHANNEL 6
 //#endif
 
-#include "Servo.h"
+#include "../Servo.h"
 
 class Servo_Dummy : public Servo
 {

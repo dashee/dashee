@@ -1,4 +1,4 @@
-#include "Servo/USB.h"
+#include "USB.h"
 
 /**
  * The constructor of servo which takes in the device to open

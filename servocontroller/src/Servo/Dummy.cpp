@@ -1,4 +1,4 @@
-#include "Servo/Dummy.h"
+#include "Dummy.h"
 
 /**
  * This constructor opens a stream to the file name, so it can be used for 
