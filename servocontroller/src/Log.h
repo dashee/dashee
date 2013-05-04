@@ -12,8 +12,8 @@
 #include <stdarg.h>
 #include <time.h>
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef LOG_H_
+#define LOG_H_
 
 // Define some index's which 
 // represent the log level

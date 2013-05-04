@@ -26,10 +26,11 @@
 #include "Servo/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
+#include "Config.h"
 
 #define SERVO_DEVICE "/dev/ttyACM0"
-#define SERVER_PORT 2047
-#define SERVER_TIMEOUT 4
+#define SERVER_PORT 2047u
+#define SERVER_TIMEOUT 4u
 
 /**
  * This is our main variable that controls wheather or not the program should be running
@@ -50,9 +51,9 @@ int volatile RETVAL = 0;
 void sighandler(int);
 
 /**
- * This function will set our given options, See intilization for full details
+ * This function will set our given options from command line, See intilization for full details
  */ 
-void setoptions(int, char **, unsigned int *, char **, unsigned int *);
+void setconfig(int, char **);
 
 /**
  * Our main function is designed to take in arguments from the command line
@@ -75,14 +76,17 @@ int main(int argc, char **argv)
     act.sa_handler = sighandler;
     if (sigaction(SIGINT, &act, 0))
         throw new std::runtime_error("Sigaction failed");
+    Config::print();
 
-    // Variables that will be overwritten by the user
-    unsigned int servotype = 1;
-    char * servo = (char *)SERVO_DEVICE;
-    unsigned int port = SERVER_PORT;
+    // Call our setCommandOptions which will change the variables which are passed through
+    // Need to send @argc and @argv for @setCommandOptions to use the getopts function
+    // Also will set our Config class, with the variables required
+    setconfig(argc, argv);
     
-    // Call our setoptions which will change the following functions
-    setoptions(argc, argv, &servotype, &servo, &port);
+    //Store the required variables in our stack, for easy access.
+    const char * servo = Config::get("servo");
+    const unsigned int servotype = Config::get_uint("servotype");
+    const unsigned int port = Config::get_uint("port");
 
     try
     {
@@ -103,7 +107,7 @@ int main(int argc, char **argv)
 
         // Fail as the options must fall within the above
         else
-            Log::fatal("Servotype invalid");
+            Log::fatal("Servotype invalid, set to %u.", servotype);
 
         // Print and clear any Servo specific errors
         int error = s->getError();
@@ -205,12 +209,12 @@ int main(int argc, char **argv)
     }
     
     Log::info(4, "Performing cleanups.");
+    Config::cleanup(); //Really really important, as we use set_int
     delete s;
 
     Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
 }
-
 
 /**
  * Our signal handler as overwritten by our main function
@@ -223,7 +227,6 @@ void sighandler(int sig)
     Log::info(3, "Signal %d called.", sig);
 }
 
-
 /**
  * We need to be able to change the server behaviour using command line arguments.
  * do do that we use this function which takes in argc and argv amongst other arguments
@@ -235,7 +238,7 @@ void sighandler(int sig)
  * @param (char **)servo - The file name for the servo
  * @param (unsigned int *)port - The port the server will run on
  */
-void setoptions(int argc, char ** argv, unsigned int * servotype, char ** servo, unsigned int * port)
+void setconfig(int argc, char ** argv)
 {
     int c;
     static struct option long_options[] = {
@@ -259,17 +262,20 @@ void setoptions(int argc, char ** argv, unsigned int * servotype, char ** servo,
                 switch (long_index)
                 {
                     case 0:
-                        *servotype = (unsigned int)atoi(optarg);
-                        if (*servotype <= 0 && *servotype > 2) { Log::fatal("Invalid sevotype"); }
-                        Log::info(3, "Option 'servotype' set to '%d'.", *servotype);
+                    {
+                        unsigned int servotype = (unsigned int)atoi(optarg);
+                        if (servotype <= 0 && servotype > 2) { Log::fatal("Invalid sevotype"); }
+                        Config::set("servotype", optarg);
+                        Log::info(3, "Option 'servotype' set to '%s'.",Config::get("servotype"));
                         break;
+                    }
                     case 1:
-                        *servo = optarg;
-                        Log::info(3, "Option 'servo' set to '%s'.", *servo);
+                        Config::set("servo", optarg);
+                        Log::info(3, "Option 'servo' set to '%s'.", Config::get("servo"));
                         break;
                     case 2:
-                        *port = (unsigned int)atoi(optarg);
-                        Log::info(3, "Option 'port' set to '%d'.", *port);
+                        Config::set("port", optarg);
+                        Log::info(3, "Option 'port' set to '%s'.", Config::get("port"));
                         break;
                 }
                 break;
@@ -291,4 +297,10 @@ void setoptions(int argc, char ** argv, unsigned int * servotype, char ** servo,
                 break;
         }
     }
+
+    // Now that we have set our, values from the command line, we default our system values
+    // Into our configs, Its is better to put this here, as -vvvvvvvvv will effect the Config class
+    Config::set("servo", SERVO_DEVICE, 0);
+    Config::set_uint("port", SERVER_PORT, 0);
+    Config::set_uint("servotype", 1, 0);
 }
