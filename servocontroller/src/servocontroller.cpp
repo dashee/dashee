@@ -53,7 +53,7 @@ void sighandler(int);
 /**
  * This function will set our given options from command line, See intilization for full details
  */ 
-void setconfig(int, char **);
+void setconfig(int, char **, Config *);
 
 /**
  * Our main function is designed to take in arguments from the command line
@@ -70,23 +70,22 @@ int main(int argc, char **argv)
     // Create a dummy Servo to be initiated later
     // Initialising to NULL is important otherwise you will seg fault
     Servo *s = NULL;
+    Config *conf = new Config();
     
     // Set our sigaction
     struct sigaction act;
     act.sa_handler = sighandler;
     if (sigaction(SIGINT, &act, 0))
         throw new std::runtime_error("Sigaction failed");
-    Config::print();
 
-    // Call our setCommandOptions which will change the variables which are passed through
-    // Need to send @argc and @argv for @setCommandOptions to use the getopts function
-    // Also will set our Config class, with the variables required
-    setconfig(argc, argv);
-    
+    // Call our setconfig which will look for command line arguments, and set it
+    // in our @conf variables. The command line arguments are read from @argv
+    setconfig(argc, argv, conf);
+
     //Store the required variables in our stack, for easy access.
-    const char * servo = Config::get("servo");
-    const unsigned int servotype = Config::get_uint("servotype");
-    const unsigned int port = Config::get_uint("port");
+    const char * servo = conf->get("servo");
+    const unsigned int servotype = conf->get_uint("servotype");
+    const unsigned int port = conf->get_uint("port");
 
     try
     {
@@ -209,7 +208,7 @@ int main(int argc, char **argv)
     }
     
     Log::info(4, "Performing cleanups.");
-    Config::cleanup(); //Really really important, as we use set_int
+    delete conf;
     delete s;
 
     Log::info(4, "Returning with %d.", RETVAL);
@@ -238,7 +237,7 @@ void sighandler(int sig)
  * @param (char **)servo - The file name for the servo
  * @param (unsigned int *)port - The port the server will run on
  */
-void setconfig(int argc, char ** argv)
+void setconfig(int argc, char ** argv, Config *conf)
 {
     int c;
     static struct option long_options[] = {
@@ -265,17 +264,17 @@ void setconfig(int argc, char ** argv)
                     {
                         unsigned int servotype = (unsigned int)atoi(optarg);
                         if (servotype <= 0 && servotype > 2) { Log::fatal("Invalid sevotype"); }
-                        Config::set("servotype", optarg);
-                        Log::info(3, "Option 'servotype' set to '%s'.",Config::get("servotype"));
+                        conf->set("servotype", optarg);
+                        Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
                         break;
                     }
                     case 1:
-                        Config::set("servo", optarg);
-                        Log::info(3, "Option 'servo' set to '%s'.", Config::get("servo"));
+                        conf->set("servo", optarg);
+                        Log::info(3, "Option 'servo' set to '%s'.", conf->get("servo"));
                         break;
                     case 2:
-                        Config::set("port", optarg);
-                        Log::info(3, "Option 'port' set to '%s'.", Config::get("port"));
+                        conf->set("port", optarg);
+                        Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
                         break;
                 }
                 break;
@@ -300,7 +299,7 @@ void setconfig(int argc, char ** argv)
 
     // Now that we have set our, values from the command line, we default our system values
     // Into our configs, Its is better to put this here, as -vvvvvvvvv will effect the Config class
-    Config::set("servo", SERVO_DEVICE, 0);
-    Config::set_uint("port", SERVER_PORT, 0);
-    Config::set_uint("servotype", 1, 0);
+    conf->set("servo", SERVO_DEVICE, 0);
+    conf->set_uint("port", SERVER_PORT, 0);
+    conf->set_uint("servotype", 1, 0);
 }

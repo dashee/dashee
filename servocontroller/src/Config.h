@@ -41,7 +41,7 @@ private:
      *
      * Note because this is static, it has to initialized in Config.cpp
      */
-    static std::map<const char *, char *> configs;
+    std::map<const char *, char *> configs;
     
     /** 
      * HACK, READ THIS
@@ -52,39 +52,40 @@ private:
      * 
      * So we create this map, which holds all the keys in the configs that are dynamic
      */
-    static std::map<const char *, char *> dynamic_keys;
+    std::map<const char *, char *> dynamic_keys;
 
-public:
-    
     /**
      * This function is sent to all log::info and log::waring, It is a handy way
      * to turn the loging up, for just the config class, by default it should be set to
      * 5
      */
-    static int loglevel;
+    int loglevel;
+
+public:
     
-    Config() {  }
+    // Initialize our log levels
+    Config();
 
     // Set a given value
-    static void set(const char *, const char *, const unsigned short int = 1);
+    void set(const char *, const char *, const unsigned short int = 1);
 
     // Set a given value
-    static void set_uint(const char *, const unsigned int, const unsigned short int = 1);
+    void set_uint(const char *, const unsigned int, const unsigned short int = 1);
     
     // Get a given value
-    static const char * get(const char *, const char * = NULL);
+    const char * get(const char *, const char * = NULL);
     
     // Get a given value
-    static const unsigned int get_uint(const char *, const unsigned int = 0);
+    const unsigned int get_uint(const char *, const unsigned int = 0);
 
     // Read values from a file
-    static void read(const char *);
+    void read(const char *);
     
     // A helpfull print function
-    static void print();
+    void print();
     
     // A helpfull print function
-    static void cleanup();
+    void cleanup();
     
     // Cleanup
     ~Config();

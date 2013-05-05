@@ -18,6 +18,7 @@ Server::Server(int port)
     
     // Initaize our @mask variable as pselect will jump out on
     // SIGTERM
+    memset((sigset_t *)&mask, 0, sizeof(mask));
     sigemptyset (&mask);
     sigaddset (&mask, SIGINT);
 

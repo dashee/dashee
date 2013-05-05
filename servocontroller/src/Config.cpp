@@ -8,6 +8,14 @@
 #include "Config.h"
 
 /** 
+ * Initialize our maps, and internal variables
+ */
+Config::Config()
+{
+    loglevel = 5;
+}
+
+/** 
  * This function will set a value in our @configs map, the first parameter
  * represents the key value, the second represents the value to set, and the third
  * is a flag that will enable disable override of a key if present. The @override
@@ -35,7 +43,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     // If threading, this requires locking. otherwise the world will blow up
     std::map<const char *, char *>::iterator dynamic_keys_it = dynamic_keys.find(key);
     if (dynamic_keys_it != dynamic_keys.end())
-        delete dynamic_keys_it->second;
+        delete [] dynamic_keys_it->second;
         
     // Set our value
     Log::info(loglevel+1, "Config::set %s, %s", key, value);
@@ -169,12 +177,3 @@ Config::~Config()
     Log::info(loglevel+5, "Deleting ~Config()");
     cleanup();
 }
-
-//initialize our static variable configs, as per required by this language
-std::map<const char *, char *> Config::configs;
-
-//Pointors to dynamic keys
-std::map<const char *, char *> Config::dynamic_keys;
-
-//Set our loglevel
-int Config::loglevel = 5;
