@@ -21,8 +21,7 @@ Config::Config()
  * is a flag that will enable disable override of a key if present. The @override
  * key is by default set to 1 representing the variable will be overwritten
  *
- * The keys array needs to be deleted if it existed previously, this way the allocated memory
- * is being destroyed as its being used
+ * Every time we set a new value, we delete the previous pointer
  * 
  * @param (const char *) key - The key to set
  * @param (const char *) value - The value to set the key
@@ -30,25 +29,43 @@ Config::Config()
  */
 void Config::set(const char * key, const char * value, const unsigned short int override)
 {
+    // A previous, key exists. and we should delete the char array from memory
+    // If threading, this requires locking. otherwise the world will blow up
+    configs_it = configs.find((char *)key);
+
     // Override is not allowed, and the key was found, so dont set
     // We only know the key is found, by seeing wheather the find iterator
     // is not on the end, os it must be pointing at a found element
-    if (override == 0 && configs.find(key) != configs.end())
+    if (override == 0 && configs_it != configs.end())
     {
-        Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key, value);
+        Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key);
         return;
     }
     
-    // A previous, key exists. and we should delete the char array from memory
-    // If threading, this requires locking. otherwise the world will blow up
-    std::map<const char *, char *>::iterator dynamic_keys_it = dynamic_keys.find(key);
-    if (dynamic_keys_it != dynamic_keys.end())
-        delete [] dynamic_keys_it->second;
-        
+    // Create a new space in memory, for our map to refer to
+    char *pvalue = new char[strlen(value)];
+    memcpy(pvalue, value, strlen(value)+1);
+    
+    // Create a new space in memory, for our map to refer to
+    char *pkey = new char[strlen(key)];
+    memcpy(pkey, key, strlen(key)+1);
+    
+    // If we found a previous value delete the previous
+    // And point to the new.
+    if (configs_it != configs.end())
+    {
+        delete [] configs_it->second;
+        configs_it->second = pvalue;
+    }
+    else
+    {
+        configs.insert(std::pair<const char *, char *>(key, pvalue));
+        //Log::info(1, "TESTING %s", pvalue);
+    }
+
     // Set our value
-    Log::info(loglevel+1, "Config::set %s, %s", key, value);
-    configs[key] = (char *)value;
-    Log::info(loglevel+4, "Config::set-get %s, %s", key, configs[key]);
+    Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
+    //Log::info(loglevel+4, "Config::set-get %s, %s", key, configs[key]);
 }
 
 /** 
@@ -72,12 +89,9 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
     
     // Create a new buf, and send to Config::set
     // Also create and add new key value
-    char * buf = new char[20];
+    char buf[20];
     sprintf(buf, "%d", value);
     set(key, buf, override);
-
-    //Now that we allocated, set our key
-    dynamic_keys[key] = buf;
 
     return;
 }
@@ -93,10 +107,11 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
  */
 const char * Config::get(const char * key, const char * defaultvalue)
 {
-    if (configs.find(key) != configs.end())
+    configs_it = configs.find((char *)key);
+    if (configs_it != configs.end())
     {
-        Log::info(loglevel+1, "Config::get %s: %s", key, configs[key]);
-        return configs[key];
+        Log::info(loglevel+1, "Config::get %s: %s", key, configs_it->second);
+        return configs_it->second;
     }
     
     Log::info(loglevel+1, "Config::get %s: default(%s)", key, defaultvalue);
@@ -106,7 +121,8 @@ const char * Config::get(const char * key, const char * defaultvalue)
 /** 
  * Similar to the get function, except this deals in getting back a const unsigned int
  * 
- * @param 
+ * @param (const char *)key - The key value to get
+ * @param (const unsigned int)defaultvalue - The default values to return if none is found
  */
 const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
 {
@@ -133,6 +149,122 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
  */
 void Config::read(const char * file)
 {
+    FILE * fd;
+    fd = fopen(file, "r");
+    
+    // Problem with a file, not intrested, fall out gracefully
+    if (fd == NULL) { return; }
+
+    int c;
+    do
+    {
+        c = fgetc(fd);
+        //if (c == EOF) { break; }
+        
+        // The first character is a comment character;
+        // Read till the end of line, and reset
+        if (c == '#') 
+        {
+            // Keep going, till a next line is found
+            while(c != '\n')
+            {
+                c = fgetc(fd);
+                
+                //There maybecases, where the config file ends with a comment
+                // In this case break out
+                if (c == EOF) { break; }
+            }
+        }
+        
+        // break out as we are at the end of file, no need to continue
+        // As the only reason why we got to this one is that we were reading a comment
+        // And it ended with the end of file
+        if (c == EOF) 
+            break; 
+        
+        // If we get a next line, continue, so the next iteration
+        // Will pick up the slack
+        if (c == '\n')
+            continue;
+        
+        // Create a dynamic key, see below for cleanup comments
+        char * key = new char[25];
+        int keyN = 0;
+        
+        // Create a dynamic value, see below for cleanup comments
+        char * value = new char[80];
+        int valueN = 0;
+        
+        // A variable that tells us wheather we are reading, 
+        // a key or a value.
+        bool iskey = true;
+
+        // OK all the saftey checks for empty or comment lines
+        // Are done, so we must be at a key value pair.
+        while (c != '\n') 
+        {   
+            // If there is '=' character switch to value
+            if (c == '=') { iskey = false; }
+            
+            // If iskey but there is a space, NOT allowed
+            else if (iskey && c == ' ') { c = fgetc(fd); continue; }
+            
+            // If is key is not in the range of [a-zA-Z0-9]
+            else if (
+                iskey && 
+                !(
+                    (c >= 97 && c <= 122) || //a-z
+                    (c >= 48 && c <= 57) || //0-9
+                    (c >= 65 && c <= 90) //A-Z
+                )
+            ) { c = fgetc(fd); continue; }
+            
+            // Set our key
+            if (iskey)
+            {
+                key[keyN] = c;
+                keyN++;
+            }
+            //Set our value
+            else
+            {   
+                // The starting value is garbage, overwrite it, by taking the pointer back
+                // This will ensure left triming the string
+                if (value[0] == ' ' || value[0] == '=') { valueN--; }
+                value[valueN] = c;
+
+                valueN++;
+            }
+            
+            // Get the next character, Positioning of this
+            // Must be at the end of the loop as we already have a character 
+            // In our c value from the start of the read loop
+            c = fgetc(fd);
+        }
+
+        // Only add the config, if the key is set, Note the clean up
+        // of the set varibles are done by the destructor, this also the reason
+        // Why we push our @key to our @dynamic_keys stack
+        // Otherwise do some cleanup as we didnt use any arrays
+        if (key[0] != 0)
+        {
+            if (configs.find((char *)key) != configs.end())
+            {
+                Log::info(1, "FOUND");
+            }
+                
+            set(key, value);
+            dynamic_keys.push(key);
+        }
+
+        // We didnt use the allocated memory, clean up please
+        else
+        {   
+            delete [] key;
+            delete [] value;
+        }
+
+    } while (c != EOF);
 }
 
 /** 
@@ -142,30 +274,36 @@ void Config::read(const char * file)
 void Config::print()
 {
     for (
-        std::map<const char *, char *>::iterator it=configs.begin();
-        it != configs.end();
-        ++it
+        configs_it=configs.begin();
+        configs_it != configs.end();
+        ++configs_it
     )
     {
-        Log::info(loglevel, "Config[%s] %s", it->first, it->second);
+        Log::info(loglevel, "Config[%s] %s", configs_it->first, configs_it->second);
     }
 }
 
 /**
- * This will delete the pointers, allocated in dynamic_keys. And also clear, the
+ * This will delete the pointers, allocated in configs. And also clear, the
  * maps
  */
 void Config::cleanup()
 {
     for (
-        std::map<const char *, char *>::iterator it=dynamic_keys.begin();
-        it != dynamic_keys.end();
-        ++it
+        configs_it=configs.begin();
+        configs_it != configs.end();
+        ++configs_it
     )
     {
-        delete it->second;
+        delete [] configs_it->second;
     }
-    dynamic_keys.clear();
+    
+    //Ugly fix, but has to be done
+    while (!dynamic_keys.empty())
+    {
+        delete [] dynamic_keys.top();
+        dynamic_keys.pop();
+    }
     configs.clear();
 }
 

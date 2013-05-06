@@ -81,11 +81,18 @@ int main(int argc, char **argv)
     // Call our setconfig which will look for command line arguments, and set it
     // in our @conf variables. The command line arguments are read from @argv
     setconfig(argc, argv, conf);
+    conf->read("config.conf");
+    
 
     //Store the required variables in our stack, for easy access.
+    //const char * servo = SERVO_DEVICE;
+    //const unsigned int servotype = 10;
+    //const unsigned int port = SERVER_PORT;
     const char * servo = conf->get("servo");
     const unsigned int servotype = conf->get_uint("servotype");
     const unsigned int port = conf->get_uint("port");
+
+    conf->print();
 
     try
     {
@@ -177,10 +184,14 @@ int main(int argc, char **argv)
                                 
                         }
                     }
-                    // User is out of range, only then do you print the error message
+                    // User is out of range, only then do you print the error message, Otherwise,
+                    // other exceptions are errors, 
+                    // 
+                    // TODO Make this Exception_Servo_Outofrange, for clairty
+                    // so we dont catch fatal errors
                     catch (Exception_Servo e)
                     {   
-                        Log::info(1, e.what());
+                        Log::warning(1, e.what());
                         if (!x.write(e.what())) 
                             throw Exception_Server("Write failed");
                     }
@@ -299,7 +310,7 @@ void setconfig(int argc, char ** argv, Config *conf)
 
     // Now that we have set our, values from the command line, we default our system values
     // Into our configs, Its is better to put this here, as -vvvvvvvvv will effect the Config class
-    conf->set("servo", SERVO_DEVICE, 0);
-    conf->set_uint("port", SERVER_PORT, 0);
-    conf->set_uint("servotype", 1, 0);
+    conf->set("servo", SERVO_DEVICE,0);
+    conf->set_uint("port", SERVER_PORT,0);
+    conf->set_uint("servotype", 1,0);
 }

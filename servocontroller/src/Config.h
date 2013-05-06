@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <stack>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -42,17 +43,10 @@ private:
      * Note because this is static, it has to initialized in Config.cpp
      */
     std::map<const char *, char *> configs;
-    
-    /** 
-     * HACK, READ THIS
-     * Due to the limitation of integers being converted to char[] that only
-     * exist inside there called scope. we use memory allocation for this.
-     * Because the map does its own cleanup, we are only intereseted in storing
-     * those keys that the configs map will not delete.
-     * 
-     * So we create this map, which holds all the keys in the configs that are dynamic
-     */
-    std::map<const char *, char *> dynamic_keys;
+
+    std::map<const char *, char *>::iterator configs_it;
+
+    std::stack<const char *> dynamic_keys;
 
     /**
      * This function is sent to all log::info and log::waring, It is a handy way
