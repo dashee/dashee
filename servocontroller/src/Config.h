@@ -27,6 +27,20 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+
+/* This is our comparitor class override, that is used by the multimap
+ * to actually compare the values of char *, rather than just pointers
+ * 
+ * See the definition of @configs and @configs_it in the class @Config below
+ */
+class Config_Comparitor
+{
+public:
+
+    //return true if 1st param matched character is less than its 2nd param
+    bool operator()(const char *, const char *) const;
+};
+
 class Config
 {
 private:
@@ -40,13 +54,13 @@ private:
      * We choose a map as it gives us a quick an efficient way to get to our any given
      * key value
      *
+     * We also define the iterator to save us redefining it every turn of the function
+     * as this class is non threaded, this is a good idea. Need to change this otherwise
+     *
      * Note because this is static, it has to initialized in Config.cpp
      */
-    std::map<const char *, char *> configs;
-
-    std::map<const char *, char *>::iterator configs_it;
-
-    std::stack<const char *> dynamic_keys;
+    std::map<const char *, char *, Config_Comparitor> configs;
+    std::map<const char *, char *, Config_Comparitor>::iterator configs_it;
 
     /**
      * This function is sent to all log::info and log::waring, It is a handy way

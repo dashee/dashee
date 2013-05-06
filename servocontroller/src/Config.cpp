@@ -8,6 +8,22 @@
 #include "Config.h"
 
 /** 
+ * This will ensure when comparing our char * string in maps, that it compares
+ * the actual value of the char * rather than its pointer position. 
+ *
+ * @param (const char *)lhs - Left hand side to be compared with the @rhs
+ * @param (const char *)rhs - The right hand side to be compared against @lhs
+ *
+ * @return bool - true if the first character in lhs is less than the rhs counterpart
+ */
+bool Config_Comparitor::operator()(const char * lhs, const char * rhs) const
+{
+    int comparison = strcmp(lhs, rhs);
+    if (comparison < 0) { return true; }
+    return false;
+}
+
+/** 
  * Initialize our maps, and internal variables
  */
 Config::Config()
@@ -31,7 +47,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
 {
     // A previous, key exists. and we should delete the char array from memory
     // If threading, this requires locking. otherwise the world will blow up
-    configs_it = configs.find((char *)key);
+    configs_it = configs.find(key);
 
     // Override is not allowed, and the key was found, so dont set
     // We only know the key is found, by seeing wheather the find iterator
@@ -43,29 +59,31 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     }
     
     // Create a new space in memory, for our map to refer to
-    char *pvalue = new char[strlen(value)];
+    char *pvalue = new char[strlen(value)+1];
     memcpy(pvalue, value, strlen(value)+1);
-    
-    // Create a new space in memory, for our map to refer to
-    char *pkey = new char[strlen(key)];
-    memcpy(pkey, key, strlen(key)+1);
-    
+        
     // If we found a previous value delete the previous
     // And point to the new.
     if (configs_it != configs.end())
     {
-        delete [] configs_it->second;
+        char * pointedkey = configs_it->second;
         configs_it->second = pvalue;
+        delete [] pointedkey;
+
+        // Set our value
+        Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
     }
+    
+    // No previous key was found, so Create a new one
     else
     {
-        configs.insert(std::pair<const char *, char *>(key, pvalue));
-        //Log::info(1, "TESTING %s", pvalue);
-    }
+        // Create a new space in memory, for our map to refer to
+        char *pkey = new char[strlen(key)+1];
+        memcpy(pkey, key, strlen(key)+1);
+        configs[pkey] = pvalue;
 
-    // Set our value
-    Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
-    //Log::info(loglevel+4, "Config::set-get %s, %s", key, configs[key]);
+        Log::info(loglevel+1, "Config::set* %s, %s", pkey, pvalue);
+    }
 }
 
 /** 
@@ -189,10 +207,12 @@ void Config::read(const char * file)
         
         // Create a dynamic key, see below for cleanup comments
         char * key = new char[25];
+        memset(key, 0, sizeof(key)); //Important, other wise the comparison goes wrong
         int keyN = 0;
         
         // Create a dynamic value, see below for cleanup comments
         char * value = new char[80];
+        memset(value, 0, sizeof(value));
         int valueN = 0;
         
         // A variable that tells us wheather we are reading, 
@@ -232,7 +252,6 @@ void Config::read(const char * file)
                 // This will ensure left triming the string
                 if (value[0] == ' ' || value[0] == '=') { valueN--; }
                 value[valueN] = c;
-
                 valueN++;
             }
             
@@ -247,22 +266,11 @@ void Config::read(const char * file)
         // Why we push our @key to our @dynamic_keys stack
         // Otherwise do some cleanup as we didnt use any arrays
         if (key[0] != 0)
-        {
-            if (configs.find((char *)key) != configs.end())
-            {
-                Log::info(1, "FOUND");
-            }
-                
             set(key, value);
-            dynamic_keys.push(key);
-        }
-
-        // We didnt use the allocated memory, clean up please
-        else
-        {   
-            delete [] key;
-            delete [] value;
-        }
+        
+        //Delete the keys, as they are being set in the set function
+        delete [] key;
+        delete [] value;
 
     } while (c != EOF);
 }
@@ -295,15 +303,10 @@ void Config::cleanup()
         ++configs_it
     )
     {
+        delete [] configs_it->first;
         delete [] configs_it->second;
     }
     
-    //Ugly fix, but has to be done
-    while (!dynamic_keys.empty())
-    {
-        delete [] dynamic_keys.top();
-        dynamic_keys.pop();
-    }
     configs.clear();
 }
 
