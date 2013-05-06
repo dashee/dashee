@@ -273,6 +273,8 @@ void Config::read(const char * file)
         delete [] value;
 
     } while (c != EOF);
+    
+    fclose(fd);
 }
 
 /** 

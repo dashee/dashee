@@ -19,9 +19,15 @@ OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o Server/U
 BINARIES := $(addprefix $(BINDIR)/, servocontroller)
 
 ##
-# Create all required binaries, This will build every thing but the test
-all: $(BINARIES)
+# Create all required binaries, but in debug mode, for release create makerelease
+all: debug
 
+##
+# Creates the binaries, in non debug mode
+release: $(BINARIES)
+
+##
+# A helpfull function for debug configurations
 debug: CFLAGS += -g -DDEBUG
 debug: $(BINARIES)
 
