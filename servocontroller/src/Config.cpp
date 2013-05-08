@@ -60,7 +60,6 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     
     // Create a new space in memory, for our map to refer to
     char *pvalue = new char[strlen(value)+1];
-    memset(pvalue, 0, sizeof(pvalue)*(strlen(value)+1));
     memcpy(pvalue, value, strlen(value)+1);
         
     // If we found a previous value delete the previous
@@ -80,7 +79,6 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     {
         // Create a new space in memory, for our map to refer to
         char *pkey = new char[strlen(key)+1];
-        memset(pkey, 0, sizeof(pkey)*(strlen(key)+1));
         memcpy(pkey, key, strlen(key)+1);
         configs[pkey] = pvalue;
 
