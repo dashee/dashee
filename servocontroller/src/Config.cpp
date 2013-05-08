@@ -60,6 +60,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     
     // Create a new space in memory, for our map to refer to
     char *pvalue = new char[strlen(value)+1];
+    memset(pvalue, 0, sizeof(pvalue)*(strlen(value)+1));
     memcpy(pvalue, value, strlen(value)+1);
         
     // If we found a previous value delete the previous
@@ -79,6 +80,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     {
         // Create a new space in memory, for our map to refer to
         char *pkey = new char[strlen(key)+1];
+        memset(pkey, 0, sizeof(pkey)*(strlen(key)+1));
         memcpy(pkey, key, strlen(key)+1);
         configs[pkey] = pvalue;
 
@@ -207,12 +209,12 @@ void Config::read(const char * file)
         
         // Create a dynamic key, see below for cleanup comments
         char * key = new char[25];
-        memset(key, 0, sizeof(key)); //Important, other wise the comparison goes wrong
+        memset(key, 0, sizeof(char)*25); //Important, other wise the comparison goes wrong
         int keyN = 0;
         
         // Create a dynamic value, see below for cleanup comments
         char * value = new char[80];
-        memset(value, 0, sizeof(value));
+        memset(value, 0, sizeof(char)*80);
         int valueN = 0;
         
         // A variable that tells us wheather we are reading, 
@@ -221,10 +223,10 @@ void Config::read(const char * file)
 
         // OK all the saftey checks for empty or comment lines
         // Are done, so we must be at a key value pair.
-        while (c != '\n') 
+        while (c != '\n')
         {   
             // If there is '=' character switch to value
-            if (c == '=') { iskey = false; }
+            if (iskey && c == '=') { iskey = false; }
             
             // If iskey but there is a space, NOT allowed
             else if (iskey && c == ' ') { c = fgetc(fd); continue; }
@@ -232,19 +234,18 @@ void Config::read(const char * file)
             // If is key is not in the range of [a-zA-Z0-9]
             else if (
                 iskey && 
-                !(
+                (
                     (c >= 97 && c <= 122) || //a-z
                     (c >= 48 && c <= 57) || //0-9
-                    (c >= 65 && c <= 90) //A-Z
+                    (c >= 65 && c <= 90) || //A-Z
+                    (c == '-')
                 )
-            ) { c = fgetc(fd); continue; }
-            
-            // Set our key
-            if (iskey)
+            ) 
             {
                 key[keyN] = c;
                 keyN++;
             }
+            
             //Set our value
             else
             {   
