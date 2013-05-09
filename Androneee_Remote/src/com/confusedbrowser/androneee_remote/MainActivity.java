@@ -28,19 +28,19 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener, Observer{
-	
-	String ipAddress;
-	public static final String PREFS_NAME = "preferences";
-	SeekBar mSeekBar;
+    String ipAddress;
+    public static final String PREFS_NAME = "preferences";
+    SeekBar mSeekBar;
     TextView mProgressText;
-	InetAddress serverAddr;
-	SendControlsThread sendControls;
-	LinearLayout Hud;
-	//VehicleStatusThread vehicleStatus;
-	public PhonePosition phonePos;
+    InetAddress serverAddr;
+    SendControlsThread sendControls;
+    LinearLayout Hud;
+    //VehicleStatusThread vehicleStatus;
+    public PhonePosition phonePos;
 	
-	@Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) 
+    {
         super.onCreate(savedInstanceState);
         // Remove title and go full screen
         /*requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -76,53 +76,58 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         
     }
 	
-	public void wheelPos(int pos){
-		//mSeekBar.setProgress(pos);
+    public void wheelPos(int pos)
+    {    
+        //mSeekBar.setProgress(pos);
         sendControls.setPosition(pos);
         //LinearLayout ll = (LinearLayout) findViewById(R.id.canvas);
         Hud.setRotation(-1*(pos - 50));
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) 
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        
         return true;
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-        case R.id.action_dot_settings:
-        	Intent settingsActivity = new Intent(getBaseContext(), Preferences.class);
-        	startActivity(settingsActivity);
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) 
+        {
+            case R.id.action_dot_settings:
+                Intent settingsActivity = new Intent(getBaseContext(), Preferences.class);
+                startActivity(settingsActivity);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
     
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-	 	//mProgressText.setText(progress+"");
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) 
+    {
+        //mProgressText.setText(progress+"");
     }
  
-    public void onStartTrackingTouch(SeekBar seekBar) {
+    public void onStartTrackingTouch(SeekBar seekBar) 
+    {
     	//mProgressText.setText(getString(R.string.seekbar_tracking_on));
     }
  
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onStopTrackingTouch(SeekBar seekBar) 
+    {
         //mTrackingText.setText(getString(R.string.seekbar_tracking_off));
     }
     
     @Override
-	protected void onResume() 
-	{
-		super.onResume();
-		sendControls.onResume();
-		phonePos.monitor();
-	}
+    protected void onResume() 
+    {
+        super.onResume();
+        sendControls.onResume();
+        phonePos.monitor();
+    }
     
     protected void onPause() {
         super.onPause();
@@ -130,32 +135,31 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         phonePos.stopMonitor();
     }
 
-	protected void onStop()
-	{
-		super.onStop();
-		
-		//vehicleStatus.stop_listening();
-		//this.finish();
-	}
+    protected void onStop()
+    {
+        super.onStop();
+        //vehicleStatus.stop_listening();
+        //this.finish();
+    }
 
-	@Override
-	public void update(Observable o, Object arg) {
-		PhonePosition pp = (PhonePosition) o;
-		int progress = (int)mapping(-pp.roll_val,-0.523,0.523,0,100);
+    @Override
+    public void update(Observable o, Object arg) 
+    {
+        PhonePosition pp = (PhonePosition) o;
+        int progress = (int)mapping(-pp.roll_val,-0.523,0.523,0,100);
         wheelPos(progress);
-	}
+    }
 	
-	public double mapping(float value, double leftMin, double leftMax, double rightMin, double rightMax){
+    public double mapping(float value, double leftMin, double leftMax, double rightMin, double rightMax){
 		
         //Figure out how 'wide' each range is
-		double leftSpan = leftMax - leftMin;
-		double rightSpan = rightMax - rightMin;
+        double leftSpan = leftMax - leftMin;
+        double rightSpan = rightMax - rightMin;
         //Convert the left range into a 0-1 range (float)
-		double valueScaled = (value - leftMin) / (leftSpan);
+        double valueScaled = (value - leftMin) / (leftSpan);
         //Convert the 0-1 range into a value in the right range.
-		if(value<leftMin) return rightMin;
-		if(value>leftMax) return rightMax;
+        if(value<leftMin) return rightMin;
+        if(value>leftMax) return rightMax;
         return rightMin + (valueScaled * rightSpan); 
     }
-    
 }

@@ -16,10 +16,16 @@ public class DrawHud extends View
         super(mContext);
         context = mContext;
     }
-
+    
+    /*
+     * This function will draw our artificial horizon, which works at an oposing angle
+     * to that of the phone. The rotation is handeled outside, but this function deals with
+     * drawing our horizon boxes just big enough so there are no white spaces
+     */
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
+
         // Upper Colour: #00CC99
         Paint upper = new Paint();
         upper.setColor(0x00CC99);
@@ -35,15 +41,22 @@ public class DrawHud extends View
         lower.setStrokeWidth(3.0f);
         lower.setStyle(Paint.Style.FILL);
         lower.setAntiAlias(true);
-        //WindowManager mWinMgr = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        int displayWidth = 30;
-        int displayHeight = 30;
-        int circleRadius = 100;
+
+        // Our box's half width must be equal to exactly the width from the center of the screen to
+        // a corner. Let this value be C, and given pythagoras theorm (C^2=A^2+B^2) we can calculate C where A = screenWidth/2 
+        // and B = screenHeight / 2. The reason we divide by 2 is because the center point to the edge, is half the screen[Width/Height]
         int sqWidth = (int) ((int) ( Math.sqrt((Math.pow(canvas.getWidth()/2,2) + Math.pow(canvas.getHeight()/2,2)))));
-        canvas.translate( (canvas.getWidth()/2-(sqWidth)), (canvas.getHeight()/2-(sqWidth)));
+    
+        // This will translate our given canvas to be center of our bigger square, so we can draw the 
+        // Rectangles using 0,0 as starting point
+        canvas.translate( (canvas.getWidth()-(2*sqWidth))/2, (canvas.getHeight()-(2*sqWidth))/2); 
+        
+        // Draw our sky
         canvas.drawRect(0, 0, sqWidth*2, sqWidth, upper);
+
+        // Draw our ground
         canvas.drawRect(0, sqWidth, 2*sqWidth, 2*sqWidth, lower);
+
         invalidate();
     }
-
 }
