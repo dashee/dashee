@@ -40,7 +40,7 @@ public class DrawHud extends View
         int displayHeight = 30;
         int circleRadius = 100;
         int sqWidth = (int) ((int) ( Math.sqrt((Math.pow(canvas.getWidth()/2,2) + Math.pow(canvas.getHeight()/2,2)))));
-        canvas.translate( (canvas.getWidth()-(2*sqWidth))/2, (canvas.getHeight()-(2*sqWidth))/2); 
+        canvas.translate( (canvas.getWidth()/2-(sqWidth)), (canvas.getHeight()/2-(sqWidth)));
         canvas.drawRect(0, 0, sqWidth*2, sqWidth, upper);
         canvas.drawRect(0, sqWidth, 2*sqWidth, 2*sqWidth, lower);
         invalidate();
