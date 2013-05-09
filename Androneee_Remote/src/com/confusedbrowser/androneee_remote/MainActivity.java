@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-        case R.id.action_settings:
+        case R.id.action_dot_settings:
         	Intent settingsActivity = new Intent(getBaseContext(), Preferences.class);
         	startActivity(settingsActivity);
             return true;

@@ -26,6 +26,7 @@ public class DrawHud extends View
         upper.setAlpha(255);
         upper.setStrokeWidth(3.0f);
         upper.setStyle(Paint.Style.FILL);
+        upper.setAntiAlias(true);
         
         // Lower Colour: #CC6633
         Paint lower = new Paint();
@@ -33,6 +34,7 @@ public class DrawHud extends View
         lower.setAlpha(255);
         lower.setStrokeWidth(3.0f);
         lower.setStyle(Paint.Style.FILL);
+        lower.setAntiAlias(true);
         //WindowManager mWinMgr = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         int displayWidth = 30;
         int displayHeight = 30;
