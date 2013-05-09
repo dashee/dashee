@@ -47,9 +47,8 @@ public class DrawHud extends View
         // and B = screenHeight / 2. The reason we divide by 2 is because the center point to the edge, is half the screen[Width/Height]
         int sqWidth = (int) ((int) ( Math.sqrt((Math.pow(canvas.getWidth()/2,2) + Math.pow(canvas.getHeight()/2,2)))));
     
-        // This will translate our given canvas to be center of our bigger square, so we can draw the 
-        // Rectangles using 0,0 as starting point
-        canvas.translate( (canvas.getWidth()-(2*sqWidth))/2, (canvas.getHeight()-(2*sqWidth))/2); 
+        // Center square use screen height / width over 2 and then move back 1/2 the square width (sqWidth) 
+        canvas.translate( (canvas.getWidth()/2-(sqWidth)), (canvas.getHeight()/2-(sqWidth)));
         
         // Draw our sky
         canvas.drawRect(0, 0, sqWidth*2, sqWidth, upper);
