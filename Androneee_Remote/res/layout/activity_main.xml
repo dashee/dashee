@@ -3,20 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
+    android:clipChildren="false">
+    
+    <LinearLayout
+        android:id="@+id/canvas"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1.24"
+        android:orientation="vertical" >
 
-        <SeekBar
-            android:id="@+id/servoBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-        	android:progress="25"
-            android:layout_margin="10dp" />
+        <!-- currently empty --> 
 
-        <TextView
+
+    </LinearLayout>
+
+    <!--  SeekBar
+        android:id="@+id/servoBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:max="100"
+        android:progress="25" /-->
+
+        <!--  TextView
             android:id="@+id/serverPos"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:layout_margin="10dp" />
+            android:layout_margin="10dp" /-->
     
 </LinearLayout>

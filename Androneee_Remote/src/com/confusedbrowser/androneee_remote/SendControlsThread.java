@@ -26,6 +26,8 @@ public class SendControlsThread extends Thread {
 	private Object mPauseLock;
 	private boolean mPaused;
     private boolean mFinished;
+    private int timeOut = 500; // Time to send same value again
+    private long timeValueSent = 0; // Time when last value was set
 
 	public SendControlsThread(Context context, String ip, int port, int position)
 	{
@@ -63,18 +65,19 @@ public class SendControlsThread extends Thread {
 	public void run() 
     {    
 		while(!mFinished){
-			if(this.position != this.prevPos){
+			long curTime = System.currentTimeMillis();
+			if(this.position != this.prevPos || (curTime-timeValueSent > timeOut)){
 				 try {
-    
-                                        byte sendData[] = new byte[]{ 17, (byte)(this.position << 1), 10 };
+                     byte sendData[] = new byte[]{ 17, (byte)(this.position << 1) };
 
 					 //String sentence = this.position+"\n";
 					 //byte[] sendData = sentence.getBytes("US-ASCII");
 					 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port_num);
 					 clientSocket.send(sendPacket);
-					 
-					 /*TextView t = new TextView(MainActivity.this); 
-					 t= main_context.findViewById(R.id.server_message); 
+					 timeValueSent = System.currentTimeMillis();
+					 //Log.d("androneee", "Time Diff: "+timeValueSent);
+					 /*TextView t = new TextView(MainActivity.this);
+					 t= main_context.findViewById(R.id.server_message);
 					 t.setText(modifiedSentence);*/
 				 } catch (Exception e) {
 					 e.printStackTrace();

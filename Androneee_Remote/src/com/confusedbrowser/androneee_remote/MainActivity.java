@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.widget.EditText;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.SeekBar;
 import android.hardware.SensorEvent;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     TextView mProgressText;
 	InetAddress serverAddr;
 	SendControlsThread sendControls;
+	LinearLayout Hud;
 	//VehicleStatusThread vehicleStatus;
 	public PhonePosition phonePos;
 	
@@ -61,19 +63,24 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         vehicleStatus.start();*/
         
         // Set up slider control to pass to sendControls
-        mProgressText = (TextView)findViewById(R.id.serverPos);
-        mSeekBar = (SeekBar)findViewById(R.id.servoBar);
-        mSeekBar.setOnSeekBarChangeListener(this);
+        //mProgressText = (TextView)findViewById(R.id.serverPos);
+        //mSeekBar = (SeekBar)findViewById(R.id.servoBar);
+        //mSeekBar.setOnSeekBarChangeListener(this);
         
         phonePos = new PhonePosition(getBaseContext());
         phonePos.addObserver (this);
         
+        Hud = (LinearLayout) findViewById(R.id.canvas);
+        DrawHud pcc = new DrawHud (this);
+        Hud.addView(pcc);
         
     }
 	
 	public void wheelPos(int pos){
-		mSeekBar.setProgress(pos);
+		//mSeekBar.setProgress(pos);
         sendControls.setPosition(pos);
+        //LinearLayout ll = (LinearLayout) findViewById(R.id.canvas);
+        Hud.setRotation(-1*(pos - 50));
     }
 
     @Override
@@ -98,7 +105,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
     
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-	 	mProgressText.setText(progress+"");
+	 	//mProgressText.setText(progress+"");
     }
  
     public void onStartTrackingTouch(SeekBar seekBar) {
