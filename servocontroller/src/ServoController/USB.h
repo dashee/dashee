@@ -11,36 +11,33 @@
  * @author Shahmir Javaid
  */
 
-#ifndef SERVO_USB_H_
-#define SERVO_USB_H_
+#ifndef SERVOCONTROLLER_USB_H_
+#define SERVOCONTROLLER_USB_H_
 
-#include "../Servo.h"
+#include "../ServoController.h"
+#include "../Servo/USB.h"
 
-class Servo_USB : public Servo
+class ServoController_USB : public ServoController
 {
 private:
-    
 
 protected:
-    
-    /** 
-     * The pointer of the filedescriptor help by ServoController,
-     * we use this to actually read and write to the device
+        
+    /**
+     * Given our @dev variable we open this device, which returns the appropriate
+     * file handler.
      */
-    int * fd;
+    int fd;
     
 public:
-    //Open our Servo Device
-    explicit Servo_USB(int *, const unsigned short int);
-
-    //Get the target of a given channel
-    unsigned short int getTarget();
-
-    //Set the target of a given channel
-    void setTarget(unsigned short int);
+    // Open our device, and set our @servos array
+    explicit ServoController_USB(const char *, const unsigned short int = 15);
     
-    //Close the device
-    ~Servo_USB();
+    // Get the error from the board
+    virtual short int getError();
+    
+    // Close the device
+    virtual ~ServoController_USB();
 };
 
 #endif

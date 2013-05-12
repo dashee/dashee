@@ -115,13 +115,34 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
 }
 
 /** 
+ * Same as Config::set_uint, except uses float in sprintf
+ * 
+ * @param (const char *)key - The key to set
+ * @param (const float)value - The float to turn into a new char array
+ * @param (const unsigned short int)override - Weather or not to leave the variable alone if 
+ *  it is set
+ */
+void Config::set_float(const char * key, const float value, const unsigned short int override)
+{
+    Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
+    
+    // Create a new buf, and send to Config::set
+    // Also create and add new key value
+    char buf[20];
+    sprintf(buf, "%f", value);
+    set(key, buf, override);
+
+    return;
+}
+
+/** 
  * This will return a unsigne char * of the value from the @configs map in our class
  * The @defaultvalue set to NULL is returned if no key is found. 
  * 
  * @param (const char *)key - The key to look for
  * @param (const char *)defaultvalue - The default value to return if no key was found
  *
- * @return unsigned char * - The key value as found
+ * @return unsigned char * - The key value as found, otherwise default
  */
 const char * Config::get(const char * key, const char * defaultvalue)
 {
@@ -141,6 +162,8 @@ const char * Config::get(const char * key, const char * defaultvalue)
  * 
  * @param (const char *)key - The key value to get
  * @param (const unsigned int)defaultvalue - The default values to return if none is found
+ *
+ * @returns const usigned int - The number if found, otherwise default
  */
 const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
 {
@@ -152,6 +175,26 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
 
     //Converts a buffer to an int
     return strtol((char *)Config::get(key, buf.str().c_str()), (char **)NULL, 10);
+}
+
+/** 
+ * Similar to the Config::get_uint, except deals in float
+ * 
+ * @param (const char *)key - The key value to get
+ * @param (const float)defaultvalue - The default values to return if none is found
+ *
+ * @returns const float - The number if found, otherwise default
+ */
+const float Config::get_float(const char * key, const float defaultvalue)
+{
+    Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
+    
+    //returns the value, in a buffer
+    std::stringstream buf;
+    buf << defaultvalue;
+
+    //Converts a buffer to a float
+    return strtof((char *)Config::get(key, buf.str().c_str()), (char **)NULL);
 }
 
 /** 

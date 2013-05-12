@@ -24,49 +24,43 @@
 
 class Servo_Dummy : public Servo
 {
-    private:
+private:
 
-        /**
-         * Given our @dev variable we open this device, which returns the appropriate
-         * file handler for the stream
-         */
-        FILE * fd;
-        
-        /**
-         * Holds the value of the header byte size
-         */
-	static const unsigned short int headerByteSize = 2;
-
-        /**
-         * Holds the value of the channel byte size
-         */
-        static const unsigned short int channelByteSize = 6;
-        
-        /**
-         * 2 Byte buffere used to read and write to our binary file
-         */
-        char buffer[2];
+    /**
+     * Given our @dev variable we open this device, which returns the appropriate
+     * file handler for the stream
+     */
+    FILE * fd;
     
-    protected:
-        
-    public:
-        //Open our Servo Device
-        explicit Servo_Dummy(const char *);
+    /**
+     * Holds the value of the header byte size
+     */
+    static const unsigned short int headerByteSize = 2;
 
-        //Get the last error from the board
-        short int getError();
-
-        //Get the target of a given channel
-        unsigned short int getTarget(const unsigned char);
-
-        //Set the target of a given channel
-        void setTarget(const unsigned char, unsigned short int);
+    /**
+     * Holds the value of the channel byte size
+     */
+    static const unsigned short int channelByteSize = 6;
     
-        //TODO: get all the channel values from the board
-        int getChannels();
-        
-        //Close the device
-        ~Servo_Dummy();
+    /**
+     * 2 Byte buffere used to read and write to our binary file
+     */
+    char buffer[2];
+
+protected:
+    
+public:
+    //Open our Servo Device
+    explicit Servo_Dummy(FILE *, const unsigned short int);
+
+    //Get the target of a given channel
+    unsigned short int getTarget();
+
+    //Set the target of a given channel
+    void setTarget(unsigned short int);
+    
+    //Close the device
+    ~Servo_Dummy();
 };
 
 #endif

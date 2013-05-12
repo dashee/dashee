@@ -1,16 +1,8 @@
 #include "Servo.h"
 
-/** 
- * This constructor sets our @dev variable, 
- * The dev variable is defined by param dev.
- * This constructer is initialized by derved clases
- *
- * TODO: create a setDev function
- * @param (const char *)dev - The device name
- */
-Servo::Servo(const char * dev)
+Servo::Servo(const unsigned short int channel)
 {
-    this->dev = dev;
+    this->channel = channel;
 }
 
 /**

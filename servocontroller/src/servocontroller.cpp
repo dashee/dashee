@@ -22,15 +22,15 @@
 #include <sstream>
 #include <getopt.h> /* for getopts_long() */
 
-#include "Servo/USB.h"
-#include "Servo/Dummy.h"
+#include "ServoController/USB.h"
+#include "ServoController/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
 #include "Config.h"
 
 #define SERVO_DEVICE "/dev/ttyACM0"
 #define SERVER_PORT 2047u
-#define SERVER_TIMEOUT 4u
+#define SERVER_TIMEOUT 2u
 
 /**
  * This is our main variable that controls wheather or not the program should be running
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 {
     // Create a dummy Servo to be initiated later
     // Initialising to NULL is important otherwise you will seg fault
-    Servo *s = NULL;
+    ServoController *s = NULL;
     Config *conf = new Config();
     
     // Set our sigaction
@@ -82,7 +82,6 @@ int main(int argc, char **argv)
     // in our @conf variables. The command line arguments are read from @argv
     setconfig(argc, argv, conf);
     conf->read("config.conf");
-    
 
     //Store the required variables in our stack, for easy access.
     //const char * servo = SERVO_DEVICE;
@@ -91,6 +90,8 @@ int main(int argc, char **argv)
     const char * servo = conf->get("servo");
     const unsigned int servotype = conf->get_uint("servotype");
     const unsigned int port = conf->get_uint("port");
+    const unsigned int readtimeout = conf->get_uint("readtimeout");
+    const unsigned int readtimeoutN = conf->get_uint("readtimeoutM", 0) * 10000000;
 
     conf->print();
 
@@ -101,21 +102,23 @@ int main(int argc, char **argv)
         {
             // Create a Servo
             Log::info(1, "Loading device '%s'.", servo);
-            s = new Servo_USB(servo);
+            s = new ServoController_USB(servo);
         }
 
         // Set our servo to the Binary file
         else if(servotype == 2)
         {
             Log::info(1, "Loading device '%s'.", servo);
-            s = new Servo_Dummy(servo);
+            s = new ServoController_Dummy(servo, 6);
         }
 
         // Fail as the options must fall within the above
         else
             Log::fatal("Servotype invalid, set to %u.", servotype);
 
-        // Print and clear any Servo specific errors
+        // Print and clear any Servo specific errors.
+        // This should not be fatal, as the servo only stores last errors.
+        // Which should be printed
         int error = s->getError();
         if (error > 0)
             Log::error("Servo failed with eccode %d", error);
@@ -128,8 +131,10 @@ int main(int argc, char **argv)
         while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
-            if (x.read(SERVER_TIMEOUT))
+            if (x.read(readtimeout, readtimeoutN))
             {
+                //if (EXIT) { break; }
+                
                 // ---------
                 // 000000001 &
                 // 00000000-
@@ -143,14 +148,13 @@ int main(int argc, char **argv)
                         // 0000---0 >> 1
                         // 00000---
                         unsigned char command = (x.getBuffer()[0] & 14) >> 1;
-                        Log::info(3, "Command: %d", (unsigned short int)command);
 
                         // --------
                         // 11110000 & 240
                         // ----0000 >> 4
                         // 0000----
                         unsigned char channel = (x.getBuffer()[0] & 240) >> 4;
-                        Log::info(3, "Channel: %d", (unsigned short int)channel);
+                        Log::info(3, "Command: %02d:%02d", (unsigned short int)channel, (unsigned short int)command);
 
                         switch (command)
                         {
@@ -168,7 +172,7 @@ int main(int argc, char **argv)
                                 
                                 // Good for testing
                                 // Set the target for channel 1 as requested
-                                Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, s->getTarget(channel));
+                                //Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, s->getTarget(channel));
 
                                 break;
                             }
@@ -189,7 +193,7 @@ int main(int argc, char **argv)
                     // 
                     // TODO Make this Exception_Servo_Outofrange, for clairty
                     // so we dont catch fatal errors
-                    catch (Exception_Servo e)
+                    catch (Exception_ServoController e)
                     {   
                         Log::warning(1, e.what());
                         if (!x.write(e.what())) 
@@ -310,7 +314,9 @@ void setconfig(int argc, char ** argv, Config *conf)
 
     // Now that we have set our, values from the command line, we default our system values
     // Into our configs, Its is better to put this here, as -vvvvvvvvv will effect the Config class
-    conf->set("servo", SERVO_DEVICE,0);
-    conf->set_uint("port", SERVER_PORT,0);
-    conf->set_uint("servotype", 1,0);
+    conf->set("servo", SERVO_DEVICE, 0);
+    conf->set_uint("port", SERVER_PORT, 0);
+    conf->set_uint("servotype", 1, 0);
+    conf->set_uint("readtimeout", SERVER_TIMEOUT, 0);
+    conf->set_uint("readtimeoutM", 0, 0);
 }

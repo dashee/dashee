@@ -9,18 +9,14 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_Dummy::Servo_Dummy(const char * dev) : Servo(dev)
+Servo_Dummy::Servo_Dummy(FILE * fd, const unsigned short int channel) : Servo(channel)
 {
-    fd = fopen(this->dev, "r+b");
-
-    if (fd == NULL)
-        throw Exception_Servo();
+    this->fd = fd;
     
     //Make sure the binary file is of correct size
     fseek(fd, 0, SEEK_END);
     if (ftell(fd) != (headerByteSize + (channelByteSize * 6)))
         throw Exception_Servo("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
-
 }
 
 /**
@@ -28,23 +24,6 @@ Servo_Dummy::Servo_Dummy(const char * dev) : Servo(dev)
  */
 Servo_Dummy::~Servo_Dummy()
 {
-    fclose(this->fd);    
-}
-
-/**
- * The function gets the error from the file, The error is stored in the first two bytes
- *
- * The response is returned in a two byte represented by char, Only one bit is always set in
- * these two bytes, The error number is represeted by the nth bit set, For example
- * 
- *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
- * 
- * @reuturn short int - The integer response
- */
-short int Servo_Dummy::getError()
-{
-    fseek(fd, 0, SEEK_SET);
-    return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));
 }
 
 /**
@@ -52,15 +31,13 @@ short int Servo_Dummy::getError()
  * which hold the target information. Make sure to flush any write data
  * left over otherwise things will start looking messy.
  *
- * @param (const unsigned char)channel - The Channel to get
- * 
  * @throw Exception_Servo() - If a read write error occurs
  *
  * @return int - The value of the channel 
  */
-unsigned short int Servo_Dummy::getTarget(const unsigned char channel)
+unsigned short int Servo_Dummy::getTarget()
 {
-    if (fseek(fd, headerByteSize + (((int)channel-1) * channelByteSize), SEEK_SET) != 0)
+    if (fseek(fd, headerByteSize + (((int)this->channel-1) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in getTarget");
 
     //Flush the stream, as we write one byte at a time
@@ -75,16 +52,15 @@ unsigned short int Servo_Dummy::getTarget(const unsigned char channel)
  * This function will write to our binary file give a channel number.
  * The target is always written to the first two bytes of the channel.
  *
- * @param (const unsigned char)channel - The channel number represented in one byte
- * @paran (short int)target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param (short int)target - Our target to set represented in 2 byte, with a value of 0-100
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_Dummy::setTarget(const unsigned char channel, unsigned short int target)
+void Servo_Dummy::setTarget(unsigned short int target)
 {
     calculateTarget(target);
         
-    if (fseek(fd, headerByteSize + (((int)channel-1) * channelByteSize), SEEK_SET) != 0)
+    if (fseek(fd, headerByteSize + (((int)this->channel-1) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in setTarget");
     
     //Create our buffer
@@ -93,12 +69,4 @@ void Servo_Dummy::setTarget(const unsigned char channel, unsigned short int targ
     
     //Write to our servo
     fwrite((const char *)buffer, 2, sizeof(buffer), fd);
-}
-
-/**
- * TODO finish the implimentation of this function
- */
-int Servo_Dummy::getChannels()
-{
-    return 0;      
 }

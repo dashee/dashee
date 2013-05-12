@@ -69,7 +69,6 @@ bool Server_UDP::read(long seconds, long nanoseconds)
 
     int select_return = wait();
     
-
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {
         return read();

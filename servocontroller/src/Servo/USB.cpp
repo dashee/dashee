@@ -7,12 +7,9 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_USB::Servo_USB(const char * dev) : Servo(dev)
+Servo_USB::Servo_USB(int * fd, const unsigned short int channel) : Servo(channel)
 {
-    fd = open(this->dev, O_RDWR | O_NOCTTY);
-
-    if (fd == -1)
-        throw Exception_Servo();
+    this->fd = fd;
 }
 
 /**
@@ -20,37 +17,6 @@ Servo_USB::Servo_USB(const char * dev) : Servo(dev)
  */
 Servo_USB::~Servo_USB()
 {
-    close(this->fd);    
-}
-
-/**
- * The Pololu board provides a error handling, This function is designed to 
- * get the last error from the Pololy Maestro USB Servo board, Note on retriving 
- * the error, the error is reset. So it is always a good idea to periodicly
- * pole the board.
- *
- * For performance reason we allow the user to worry about errors at his/hers perfernce
- *
- * The response is returned in a two byte represented by char, Only one bit is always set in
- * these two bytes, The error number is represeted by the nth bit set, For example
- * 
- *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
- * 
- * @reuturn short int - The integer response
- */
-short int Servo_USB::getError()
-{
-    unsigned char command[] = { 0xA1 };
-    unsigned char response[2];
-
-    if (write(fd, command, sizeof(command)) == -1)
-        throw Exception_Servo();
-    
-    if(read(fd,response,2) != 2)
-        throw Exception_Servo();
-    
-    //TODO This needs to be fixed, its wrong at the moment
-    return (short int)sqrt(response[0] + 256*response[1]);
 }
 
 /**
@@ -65,23 +31,21 @@ short int Servo_USB::getError()
  * tells is we are using getTarget from the board, and the second tells it which channel
  * The byte to get is 0x90 as set by Pololu
  *
- * @param (const unsigned char)channel - The Channel to get
- * 
  * @throw Exception_Servo() - If a read write error occurs
  *
- * @return int - The value of the channel 
+ * @return int - The Target value of a channel 
  */
-unsigned short int Servo_USB::getTarget(const unsigned char channel)
+unsigned short int Servo_USB::getTarget()
 {
     unsigned char command[2];
     command[0] = 0x90;
-    command[1] = channel;
+    command[1] = (char)this->channel;
 
-    if(write(this->fd, command, sizeof(command)) == -1)
+    if(write(*fd, command, sizeof(command)) == -1)
         throw Exception_Servo();
 
     unsigned char response[2];
-    if(read(fd,response,2) != 2)
+    if(read(*fd,response,2) != 2)
         throw Exception_Servo("Invalid Target");
 
     return response[0] + 256*response[1];
@@ -97,18 +61,17 @@ unsigned short int Servo_USB::getTarget(const unsigned char channel)
  * represents the channel, and the 3rd and 4rth represent the value. Note that the 4th
  * and third byte have there Most significant byte set to 0.
  *
- * @param (const unsigned char)channel - The channel number represented in one byte
  * @paran (short int)target - Our target to set represented in 2 byte, with a value of 0-100
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_USB::setTarget(const unsigned char channel, unsigned short int target)
+void Servo_USB::setTarget(unsigned short int target)
 {
     calculateTarget(target);
  
     unsigned char command[4];
     command[0] = 0x84;
-    command[1] = channel;
+    command[1] = this->channel;
 
     // Given an integer needs to be crammed into 2 bytes, with there MSB
     // Set to 0, we need to use 
@@ -120,14 +83,6 @@ void Servo_USB::setTarget(const unsigned char channel, unsigned short int target
     command[2] = target & 127;
     command[3] = (target >> 7) & 127;
 
-    if (write(this->fd, command, sizeof(command)) == -1)
+    if (write(*this->fd, command, sizeof(command)) == -1)
         throw Exception_Servo();
-}
-
-/**
- * TODO finish the implimentation of this function
- */
-int Servo_USB::getChannels()
-{
-    return 0;      
 }

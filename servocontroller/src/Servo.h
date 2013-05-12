@@ -19,43 +19,30 @@
 
 class Servo
 {
-    private:
-        
-    protected:
-        
-        /**
-         * This variable is set during the construct
-         * It represents the textual format of the file currently open
-         * Great for debugging purposes. And as this class is called once
-         * this should only be set once, so it wont add a performance hit on runtime
-         * unless the object is being created every time
-         */
-        const char * dev;
-        
-        //Set the @dev
-        explicit Servo(const char *);
-        
-    public:
-        
-        //Set the @dev
-        explicit Servo(){};
-
-        //Get the last error from the board
-        virtual short int getError() = 0;
-
-        //Get the target of a given channel
-        virtual unsigned short int getTarget(const unsigned char) = 0;
-
-        //Set the target of a given channel
-        virtual void setTarget(const unsigned char, unsigned short int) = 0;
-
-        //Calculate the Target, turn 0-100 to be from 3968-8000
-        virtual void calculateTarget(unsigned short int &);
+private:
     
-        //TODO: get all the channel values from the board
-        virtual int getChannels() = 0;
+protected:
+    
+    /** 
+     * The channel this Servo class represents
+     */
+    unsigned short int channel;
 
-        virtual ~Servo(){};
+    //Set the @dev
+    explicit Servo(const unsigned short int channel);
+    
+public:
+
+    //Get the target of a given channel
+    virtual unsigned short int getTarget() = 0;
+
+    //Set the target of a given channel
+    virtual void setTarget(unsigned short int) = 0;
+
+    //Calculate the Target, turn 0-100 to be from 3968-8000
+    void calculateTarget(unsigned short int &);
+
+    virtual ~Servo(){};
 };
 
 #endif

@@ -79,12 +79,18 @@ public:
 
     // Set a given value
     void set_uint(const char *, const unsigned int, const unsigned short int = 1);
+
+    // Set a given value
+    void set_float(const char *, const float, const unsigned short int = 1);
     
     // Get a given value
     const char * get(const char *, const char * = NULL);
     
     // Get a given value
     const unsigned int get_uint(const char *, const unsigned int = 0);
+    
+    // Get a given value
+    const float get_float(const char *, const float = 0.0f);
 
     // Read values from a file
     void read(const char *);
