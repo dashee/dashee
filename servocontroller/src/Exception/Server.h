@@ -5,16 +5,16 @@
 
 class Exception_Server: public Exception
 {
-    public:
-        explicit Exception_Server() : Exception()
-        {
-        }
-        explicit Exception_Server(const int ec) : Exception(ec)
-        { 
-        }
-        explicit Exception_Server(std::string msg) : Exception(msg)
-        { 
-        }
+public:
+    explicit Exception_Server() : Exception()
+    {
+    }
+    explicit Exception_Server(const int ec) : Exception(ec)
+    { 
+    }
+    explicit Exception_Server(std::string msg) : Exception(msg)
+    { 
+    }
 };
 
 #endif

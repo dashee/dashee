@@ -5,17 +5,16 @@
 
 class Exception_ServoController: public Exception
 {
-    public:
-        explicit Exception_ServoController() : Exception()
-        {
-        }
-
-        explicit Exception_ServoController(const int ec) : Exception(ec)
-        { 
-        }
-        explicit Exception_ServoController(std::string msg) : Exception(msg)
-        { 
-        }
+public:
+    explicit Exception_ServoController() : Exception()
+    {
+    }
+    explicit Exception_ServoController(const int ec) : Exception(ec)
+    { 
+    }
+    explicit Exception_ServoController(std::string msg) : Exception(msg)
+    { 
+    }
 };
 
 #endif

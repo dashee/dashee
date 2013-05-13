@@ -45,6 +45,9 @@ ServoController::~ServoController()
  */
 unsigned short int ServoController::getTarget(const unsigned short int channel)
 {
+    if (channel >= this->size())
+        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to get.");
+
     return servos[channel]->getTarget();
 }
 
@@ -65,5 +68,19 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  */
 void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
 {
+    if (channel >= this->size())
+        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set.");
+
     return servos[channel]->setTarget(target);
+}
+
+/** 
+ * This function will return the size of @servos, it is a pass through
+ * to the std::vector.size() function for the variable @servos
+ *
+ * @return unsigned int - Unsigned integral type
+ */
+unsigned int ServoController::size()
+{
+    return servos.size();
 }

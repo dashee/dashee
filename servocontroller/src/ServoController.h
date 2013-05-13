@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "Exception/ServoController.h"
+#include "Exception/ServoController/OutOfBound.h"
 #include "Servo.h"
 
 #ifndef SERVOCONTROLLER_H_
@@ -51,6 +52,9 @@ public:
     
     // Get the error
     virtual short int getError() = 0;
+    
+    // Get the channel size
+    virtual unsigned int size();
     
     // Delete and empty our @servo's array
     virtual ~ServoController();
