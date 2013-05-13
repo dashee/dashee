@@ -7,6 +7,11 @@
  * the derived class to populate the @servos variable. Cleanup of servos should be
  * left to this class. Doing it in the base class, will work effiecently as 
  * this class will have no pointers to delete.
+ *
+ * This class's main job is to open the handel to our device, and send the readwrite
+ * commands to our Servo class, which is stored in our servos
+ *
+ * @author Shahmir Javaid
  */
 
 #include <vector>

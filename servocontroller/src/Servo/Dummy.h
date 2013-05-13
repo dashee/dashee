@@ -8,7 +8,11 @@
  * the first represents the channel number, the second Target, the third Speed
  * and the last acceleration. 
  *
- * This program presumes that there are SERVO_DUMMY_CHANNEL's in our file
+ * This program presumes that there are SERVO_DUMMY_CHANNEL's in our file.
+ * 
+ *
+ * This class represents one servo/channel at a time, The handel is held externally
+ * usually in the ServoController class, or its ServoController_<CounterPart> version
  *
  * @author Shahmir Javaid
  */

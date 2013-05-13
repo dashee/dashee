@@ -1,12 +1,9 @@
 /**
  * This is a class which handels communications with the Pololu board
  * it is a wrapper over the read and write commands sent to usually /dev/ttyACM0
- * 
- * The /dev/ttyACM0 is OS dependant, and be use a later Numerical value if the OS
- * alread has a device running with the similar name
- * 
- * You can see the full documentaion of the Pololu boart at http://www.pololu.com/docs/0J40/all
- * Please read and understand the above to understand in detail the protocol's used in this code
+ *
+ * This class represents one servo/channel at a time, The handel is held externally
+ * usually in the ServoController class, or its ServoController_<CounterPart> version
  *
  * @author Shahmir Javaid
  */
