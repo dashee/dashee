@@ -69,7 +69,7 @@ cleantest:
 ##
 # Will generate ctags for vim
 tags:
-	@ctags -R
+	@ctags -R .
     
 
 ##

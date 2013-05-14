@@ -257,6 +257,7 @@ void Config::read(const char * file)
         char * value = new char[80];
         memset(value, 0, sizeof(char)*80);
         int valueN = 0;
+        int valueTrim = 0;
         
         // A variable that tells us wheather we are reading, 
         // a key or a value.
@@ -295,6 +296,11 @@ void Config::read(const char * file)
                 if (value[0] == ' ' || value[0] == '=') { valueN--; }
                 value[valueN] = c;
                 valueN++;
+                
+                // valueTrim will hold the last position, which held
+                // a character other than ' ', This number + 1 should be
+                // set to 0 to rtrim the char array.
+                if (c != ' ') { valueTrim=valueN; }
             }
             
             // Get the next character, Positioning of this
@@ -308,7 +314,10 @@ void Config::read(const char * file)
         // Why we push our @key to our @dynamic_keys stack
         // Otherwise do some cleanup as we didnt use any arrays
         if (key[0] != 0)
+        {
+            value[valueTrim] = 0; // Trim our value
             set(key, value);
+        }
         
         //Delete the keys, as they are being set in the set function
         delete [] key;
