@@ -12,11 +12,6 @@
 Servo_Dummy::Servo_Dummy(FILE * fd, const unsigned short int channel) : Servo(channel)
 {
     this->fd = fd;
-    
-    //Make sure the binary file is of correct size
-    fseek(fd, 0, SEEK_END);
-    if (ftell(fd) != (headerByteSize + (channelByteSize * 6)))
-        throw Exception_Servo("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
 }
 
 /**

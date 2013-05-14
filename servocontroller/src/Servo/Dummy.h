@@ -20,10 +20,6 @@
 #ifndef SERVO_DUMMY_H_
 #define SERVO_DUMMY_H_
 
-//#ifndef SERVO_DUMMY_CHANNEL
-//#define SERVO_DUMMY_CHANNEL 6
-//#endif
-
 #include "../Servo.h"
 
 class Servo_Dummy : public Servo
@@ -52,6 +48,12 @@ private:
     char buffer[2];
 
 protected:
+    
+    /**
+     * The controller needs to be able to access channelByteSize and headerByteSize
+     * for initialization checks, so we nee to create a friendship. 
+     */
+    friend class ServoController_Dummy;
     
 public:
     //Open our Servo Device

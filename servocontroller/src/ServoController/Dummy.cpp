@@ -19,6 +19,11 @@ ServoController_Dummy::ServoController_Dummy(const char * dev, const unsigned sh
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
         servos.push_back(new Servo_Dummy(fd, x));
+    
+    //Make sure the binary file is of correct size
+    fseek(fd, 0, SEEK_END);
+    if (ftell(fd) != (Servo_Dummy::headerByteSize + (Servo_Dummy::channelByteSize * channels)))
+        throw Exception_Servo("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
 }
 
 /**
