@@ -29,6 +29,7 @@
 #include "Config.h"
 
 #define SERVO_DEVICE "/dev/ttyACM0"
+#define SERVO_DUMMY_CHANNELS 6
 #define SERVER_PORT 2047u
 #define SERVER_TIMEOUT 2u
 
@@ -109,7 +110,7 @@ int main(int argc, char **argv)
         else if(servotype == 2)
         {
             Log::info(1, "Loading device '%s'.", servo);
-            s = new ServoController_Dummy(servo, 6);
+            s = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
         }
 
         // Fail as the options must fall within the above
