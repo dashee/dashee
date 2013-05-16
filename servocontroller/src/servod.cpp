@@ -202,6 +202,8 @@ int main(int argc, char **argv)
                     }
                 }
             }
+
+            // Timeout and set the servo's in fallback mode
             else
             {
                 s->fallback();

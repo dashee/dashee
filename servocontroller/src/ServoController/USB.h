@@ -31,7 +31,7 @@ protected:
     
 public:
     // Open our device, and set our @servos array
-    explicit ServoController_USB(const char *, const unsigned short int = 5);
+    explicit ServoController_USB(const char *, const unsigned short int = 8);
     
     // Get the error from the board
     virtual short int getError();

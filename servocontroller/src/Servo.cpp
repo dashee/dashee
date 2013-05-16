@@ -1,16 +1,19 @@
 #include "Servo.h"
 
+/** 
+ * Initiate the Servo's defaults, fallback and current
+ * structs to be set to 0, and also set the channel
+ *
+ * @param (const unsigned short int)channel - The channel that this servo belongs to
+ */
 Servo::Servo(const unsigned short int channel)
 {
     this->channel = channel;
-
-    defaults.target = 0;
-    defaults.speed = 0;
-    defaults.acceleration = 0;
     
-    fallbacks.target = 0;
-    fallbacks.speed = 0;
-    fallbacks.acceleration = 0;
+    // Reset all values to 0;   
+    memset(&defaults, 0, sizeof(defaults));
+    memset(&fallbacks, 0, sizeof(fallbacks));
+    memset(&current, 0, sizeof(current));
 }
 
 /**
@@ -49,13 +52,25 @@ void Servo::calculateTarget(unsigned short int & target)
         throw Exception_Servo("Invalid Target!\n");
 }
 
+/** 
+ * This function will set the Target, Speed and Acceleration
+ * to fallback mode
+ */
 void Servo::fallback()
 {
+    current.target = getTarget();
+    //current.speed = getSpeed();
+    //current.acceleration = getAcceleration();
+
     setTarget(fallbacks.target);
     //setSpeed(fallbacks.speed);
     //setAcelleration(fallbacks.acceleration);
 }
 
+/** 
+ * This function will set the Target, Speed and Acceleration
+ * back to its last known current position
+ */
 void Servo::revert()
 {
     setTarget(current.target);

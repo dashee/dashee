@@ -3,7 +3,8 @@
 /** 
  * This constructor sets our @dev variable, 
  * The dev variable is defined by param dev.
- * This constructer is initialized by derved clases
+ * This constructer is initialized by derved clases, 
+ * Also set the fallbackmode to false, in the begining
  *
  * @param (const char *)dev - The device name
  */
@@ -11,7 +12,7 @@ ServoController::ServoController(const char * dev)
 {
     this->dev = dev;
 
-    fallbackStarted = false;
+    fallbackmode = false;
 }
 
 /** 
@@ -70,7 +71,7 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  */
 void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
 {
-    if (fallbackStarted)
+    if (fallbackmode)
         revert();
 
     if (channel >= this->size())
@@ -90,21 +91,37 @@ unsigned int ServoController::size()
     return servos.size();
 }
 
+/** 
+ * Given the current state of @fallbackmode, we iterate
+ * through all servo's and set them to fallback mode, If
+ * we have already fallen back then the flag should be true
+ * in this case dont do any thing.
+ *
+ * turn @fallbackmode to true at the end
+ */
 void ServoController::fallback()
 {
-    if (fallbackStarted) { return; }
+    if (fallbackmode) { return; }
+
+    Log::warning(1, "Sending all servos to fallback mode.");
 
     for (unsigned int x = 0; x < servos.size(); x++)
         servos[x]->fallback();
 
-    fallbackStarted = true;
+    fallbackmode = true;
 }
 
+/** 
+ * Given the current state of @fallbackmode, we iterate
+ * through all servo's and revert them to there original 
+ * position. At the end @fallbackmode is set to false, as
+ * we have reverted
+ */
 void ServoController::revert()
 {
     for (unsigned int x = 0; x < servos.size(); x++)
         servos[x]->revert();
 
-    fallbackStarted = false;
+    fallbackmode = false;
 }
 

@@ -18,6 +18,7 @@
 
 #include "Exception/ServoController.h"
 #include "Exception/ServoController/OutOfBound.h"
+#include "Log.h"
 #include "Servo.h"
 
 #ifndef SERVOCONTROLLER_H_
@@ -34,8 +35,11 @@ protected:
      * in the derived classes,
      */
     std::vector<Servo *> servos;
-
-    int fallbackStarted;
+    
+    /** 
+     * This determines whather the controller is in fallback mode
+     */
+    int fallbackmode;
         
     /**
      * This variable is set during the construct
@@ -56,9 +60,11 @@ public:
     
     // Given a channel number, set its given target
     virtual void setTarget(const unsigned short int, unsigned short int);
-
+    
+    // Call fallback on all servos
     virtual void fallback();
-
+    
+    // Revert all servo's back to original
     virtual void revert();
     
     // Get the error
