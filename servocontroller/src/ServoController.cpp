@@ -10,6 +10,8 @@
 ServoController::ServoController(const char * dev)
 {
     this->dev = dev;
+
+    fallbackStarted = false;
 }
 
 /** 
@@ -68,6 +70,9 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  */
 void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
 {
+    if (fallbackStarted)
+        revert();
+
     if (channel >= this->size())
         throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set.");
 
@@ -84,3 +89,22 @@ unsigned int ServoController::size()
 {
     return servos.size();
 }
+
+void ServoController::fallback()
+{
+    if (fallbackStarted) { return; }
+
+    for (unsigned int x = 0; x < servos.size(); x++)
+        servos[x]->fallback();
+
+    fallbackStarted = true;
+}
+
+void ServoController::revert()
+{
+    for (unsigned int x = 0; x < servos.size(); x++)
+        servos[x]->revert();
+
+    fallbackStarted = false;
+}
+

@@ -3,6 +3,14 @@
 Servo::Servo(const unsigned short int channel)
 {
     this->channel = channel;
+
+    defaults.target = 0;
+    defaults.speed = 0;
+    defaults.acceleration = 0;
+    
+    fallbacks.target = 0;
+    fallbacks.speed = 0;
+    fallbacks.acceleration = 0;
 }
 
 /**
@@ -39,4 +47,18 @@ void Servo::calculateTarget(unsigned short int & target)
     }
     else
         throw Exception_Servo("Invalid Target!\n");
+}
+
+void Servo::fallback()
+{
+    setTarget(fallbacks.target);
+    //setSpeed(fallbacks.speed);
+    //setAcelleration(fallbacks.acceleration);
+}
+
+void Servo::revert()
+{
+    setTarget(current.target);
+    //setSpeed(current.speed);
+    //setAcelleration(current.acceleration);
 }

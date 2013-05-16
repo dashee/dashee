@@ -16,7 +16,8 @@ DATADIR=data
 
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR)
 OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o Server/UDP.o ServoController.o ServoController/USB.o ServoController/Dummy.o Log.o Config.o)
-BINARIES := $(addprefix $(BINDIR)/, servocontroller)
+BINARIES := $(addprefix $(BINDIR)/, servod)
+
 
 ##
 # Create all required binaries, but in debug mode, for release create makerelease
@@ -47,7 +48,7 @@ $(OBJECTS): %.o: %.cpp
 
 ##
 # Our main program that uses the objects
-$(BINDIR)/servocontroller: src/servocontroller.cpp $(BINDIR) $(OBJECTS)
+$(BINDIR)/servod: src/servod.cpp $(BINDIR) $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@
 
 ###

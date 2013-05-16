@@ -204,6 +204,7 @@ int main(int argc, char **argv)
             }
             else
             {
+                s->fallback();
                 Log::info(3, "read() timeout");
             }
         }

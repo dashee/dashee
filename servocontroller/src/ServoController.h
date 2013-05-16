@@ -34,6 +34,8 @@ protected:
      * in the derived classes,
      */
     std::vector<Servo *> servos;
+
+    int fallbackStarted;
         
     /**
      * This variable is set during the construct
@@ -54,6 +56,10 @@ public:
     
     // Given a channel number, set its given target
     virtual void setTarget(const unsigned short int, unsigned short int);
+
+    virtual void fallback();
+
+    virtual void revert();
     
     // Get the error
     virtual short int getError() = 0;

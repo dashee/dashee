@@ -22,7 +22,14 @@ class Servo
 private:
     
 protected:
-    
+ 
+    struct
+    {
+        int target;
+        int speed;
+        int acceleration;
+    } fallbacks, defaults, current;
+
     /** 
      * The channel this Servo class represents
      */
@@ -38,6 +45,10 @@ public:
 
     //Set the target of a given channel
     virtual void setTarget(unsigned short int) = 0;
+
+    virtual void fallback();
+
+    virtual void revert();
 
     //Calculate the Target, turn 0-100 to be from 3968-8000
     void calculateTarget(unsigned short int &);
