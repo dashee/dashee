@@ -12,7 +12,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+
 #include "Exception/Servo.h"
+#include "Log.h"
 
 #ifndef SERVO_H_
 #define SERVO_H_
@@ -26,14 +28,26 @@ protected:
     /** 
      * This struct holds the values structures of the settings that
      * a servo can hold, we also, have to set all values to 0, see
-     * Constructor
+     * Constructor, 
+     *
+     * @instance fallbacks - The values of target, speed and acceleration
+     *                       which are set in fallback mode
+     * @instance defaults - The default value of the servo, given the target
+     *                      speed and acelleration
+     * @instance current - The current values of the servo, given the target
+     *                     speed and acelleration, set when fallback is called
+     *                     and used for revert to set values back to normal
+     * @instance fallbackEnabled - The fallbackEnabled instance of this struct
+     *                             represents boolean to represent wheather a specific modules
+     *                             fallback mode is enabled or not. 0 here represents disabled, > 0
+     *                             represents enabled. The 
      */
     struct
     {
-        int target;
-        int speed;
-        int acceleration;
-    } fallbacks, defaults, current;
+        unsigned short int target;
+        unsigned short int speed;
+        unsigned short int acceleration;
+    } fallbacks, defaults, current, fallbackEnabled;
 
     /** 
      * The channel this Servo class represents
@@ -58,7 +72,10 @@ public:
     virtual void revert();
 
     // Calculate the Target, turn 0-100 to be from 3968-8000
-    void calculateTarget(unsigned short int &);
+    void PercentageToTarget(unsigned short int &);
+
+    // Calculate the Target, turn 0-100 to be from 3968-8000
+    void TargetToPercentage(unsigned short int &);
     
     // Destroy all internals, before cleanup
     virtual ~Servo(){};

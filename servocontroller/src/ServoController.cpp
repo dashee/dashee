@@ -103,12 +103,12 @@ void ServoController::fallback()
 {
     if (fallbackmode) { return; }
 
-    Log::warning(1, "Sending all servos to fallback mode.");
-
     for (unsigned int x = 0; x < servos.size(); x++)
         servos[x]->fallback();
 
     fallbackmode = true;
+
+    Log::warning(2, "Fallback mode activated.");
 }
 
 /** 
@@ -120,8 +120,19 @@ void ServoController::fallback()
 void ServoController::revert()
 {
     for (unsigned int x = 0; x < servos.size(); x++)
-        servos[x]->revert();
-
+    {
+        try
+        {
+            servos[x]->revert();
+        }
+        catch (Exception_Servo e)
+        {
+            //Dont throw here, because Invalid channels 
+            //should not be prevent others from reverting
+            Log::warning(1, "servo[%d]->revert() threw an exception.", x);
+            Log::warning(1, e.what());
+        }
+    }
+    
     fallbackmode = false;
 }
-

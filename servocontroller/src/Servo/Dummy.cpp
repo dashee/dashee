@@ -53,7 +53,7 @@ unsigned short int Servo_Dummy::getTarget()
  */
 void Servo_Dummy::setTarget(unsigned short int target)
 {
-    calculateTarget(target);
+    PercentageToTarget(target);
         
     if (fseek(fd, headerByteSize + (((int)this->channel-1) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in setTarget");

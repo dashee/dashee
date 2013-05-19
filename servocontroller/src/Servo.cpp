@@ -14,6 +14,7 @@ Servo::Servo(const unsigned short int channel)
     memset(&defaults, 0, sizeof(defaults));
     memset(&fallbacks, 0, sizeof(fallbacks));
     memset(&current, 0, sizeof(current));
+    memset(&fallbackEnabled, 1, sizeof(fallbackEnabled));
 }
 
 /**
@@ -23,14 +24,13 @@ Servo::Servo(const unsigned short int channel)
  *
  * @param (short int &)target - The target represented in 0-100
  *
- * TODO: Create its own exception 
  * @throw Exception_Servo - If the target is out of range
  */
-void Servo::calculateTarget(unsigned short int & target)
+void Servo::PercentageToTarget(unsigned short int & target)
 {
-    int zero = 3968;
-    int hundred = 8000;
-    int difference = 4032; //zero-hundred
+    const int zero = 3968;
+    const int hundred = 8000;
+    const int difference = 4032; //zero-hundred
 
     if (target >= 0 && target <= 100)
     {
@@ -53,8 +53,32 @@ void Servo::calculateTarget(unsigned short int & target)
 }
 
 /** 
+ * This function takes a value between 3968-8000 and converts it into
+ * percentage such as 0-100. It is the oposite of the function above
+ *
+ * @param (short int &)target - The target represented in 0-100
+ *
+ * @throw Exception_Servo - If the target is out of range
+ */
+void Servo::TargetToPercentage(unsigned short int & target)
+{
+    const int zero = 3968;
+    const int difference = 4032;
+        
+    // If the target is lower than the zero value
+    // Quite Probebly an invalid channel
+    if (target < zero) 
+        throw Exception_Servo("Channel returned low voltage, meaning it is invalid!");
+        
+    // Zero the target
+    target = target - zero;
+    
+    target = (target / difference) * 100;
+}
+
+/** 
  * This function will set the Target, Speed and Acceleration
- * to fallback mode
+ * to fallback mode, only if fallbackEnabled allows it.
  */
 void Servo::fallback()
 {
@@ -62,18 +86,30 @@ void Servo::fallback()
     //current.speed = getSpeed();
     //current.acceleration = getAcceleration();
 
-    setTarget(fallbacks.target);
-    //setSpeed(fallbacks.speed);
-    //setAcelleration(fallbacks.acceleration);
+    if (fallbackEnabled.target) 
+        setTarget(fallbacks.target);
+    //if (fallbackEnabled.speed) 
+        //setSpeed(fallbacks.speed);
+    //if (fallbackEnabled.acceleration) 
+        //setAcelleration(fallbacks.acceleration);
 }
 
 /** 
  * This function will set the Target, Speed and Acceleration
- * back to its last known current position
+ * back to its last known current position, The reversion is only
+ * run if the fallbackEnabled.target value is enabled. If it was disabled
+ * then we didnt fallback, hense we dont need to revert
  */
 void Servo::revert()
 {
-    setTarget(current.target);
-    //setSpeed(current.speed);
-    //setAcelleration(current.acceleration);
+    // Convert the Target value to percentage
+    unsigned short int percentage_target = current.target;
+    TargetToPercentage(percentage_target);
+    
+    if (fallbackEnabled.target)
+        setTarget(percentage_target);
+    //if (fallbackEnabled.speed) 
+        //setSpeed(current.speed);
+    //if (fallbackEnabled.acceleration) 
+        //setAcelleration(current.acceleration);
 }

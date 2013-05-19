@@ -61,13 +61,15 @@ unsigned short int Servo_USB::getTarget()
  * represents the channel, and the 3rd and 4rth represent the value. Note that the 4th
  * and third byte have there Most significant byte set to 0.
  *
- * @paran (short int)target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param (short int)target - Our target to set represented in 2 byte, with a value of 0-100
  *
  * @throw Exception_Servo - If writing to the board fails
  */
 void Servo_USB::setTarget(unsigned short int target)
 {
-    calculateTarget(target);
+    // Convert the percentage target value
+    // to Servo controller target value
+    PercentageToTarget(target);
  
     unsigned char command[4];
     command[0] = 0x84;
