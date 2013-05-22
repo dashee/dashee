@@ -7,25 +7,13 @@ import android.view.Menu;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.SeekBar;
-import java.net.*;
 import java.util.Observable;
 import java.util.Observer;
-
 import com.confusedbrowser.androneee_remote.fragment.*;
 
 public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener, Observer{
-    
-	String ipAddress;
-    public static final String PREFS_NAME = "preferences";
-    SeekBar mSeekBar;
-    TextView mProgressText;
-    InetAddress serverAddr;
-    SendControlsThread sendControls;
-    LinearLayout Hud;
-    
+       
     HudFragment fragment_hud;
     LogFragment fragment_log;
     
@@ -46,21 +34,14 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
         fragment_hud = new HudFragment();
         fragment_log = new LogFragment();
         
-        //Set the initial view to our Hud
+        //Set the initial view to our HUD
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.fragment_content, fragment_hud);
         ft.commit();
         
-        
-        /*vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
-        vehicleStatus.start();*/
-        
-        // Set up slider control to pass to sendControls
-        //mProgressText = (TextView)findViewById(R.id.serverPos);
-        //mSeekBar = (SeekBar)findViewById(R.id.servoBar);
-        //mSeekBar.setOnSeekBarChangeListener(this);
-        
+        // This will initialise our PhonePosition Observer,
+        // So our this.update function can handle updates 
         phonePos = new PhonePosition(getBaseContext());
         phonePos.addObserver (this);
     }
@@ -72,10 +53,9 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        
+
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
     	android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
     	FragmentTransaction ft = fm.beginTransaction();
  	   
@@ -99,21 +79,6 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
         }
     }
     
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) 
-    {
-        //mProgressText.setText(progress+"");
-    }
- 
-    public void onStartTrackingTouch(SeekBar seekBar) 
-    {
-    	//mProgressText.setText(getString(R.string.seekbar_tracking_on));
-    }
- 
-    public void onStopTrackingTouch(SeekBar seekBar) 
-    {
-        //mTrackingText.setText(getString(R.string.seekbar_tracking_off));
-    }
-    
     @Override
     protected void onResume() 
     {
@@ -129,8 +94,6 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
     protected void onStop()
     {
         super.onStop();
-        //vehicleStatus.stop_listening();
-        //this.finish();
     }
 
     @Override
@@ -138,4 +101,23 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
     {
        fragment_hud.update(o, arg);
     }
+
+
+	@Override
+	public void onStartTrackingTouch(SeekBar arg0) 
+	{
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar arg0) 
+	{
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) 
+	{
+		// TODO Auto-generated method stub	
+	}
 }

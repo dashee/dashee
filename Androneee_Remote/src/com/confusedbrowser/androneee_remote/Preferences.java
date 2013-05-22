@@ -4,9 +4,17 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
  
+/**
+ * This will handle our Preference object
+ * 
+ * @author David Buttar
+ * @author Shahmir Javaid
+ */
 public class Preferences extends PreferenceActivity {
+	
         @Override
-        protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) 
+        {
                 super.onCreate(savedInstanceState);
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
         }

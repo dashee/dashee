@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Androneee Remote</string>
-    <string name="edit_message">Enter a message dumbass</string>
+    <string name="app_name">Androneee</string>
     <string name="settings">Settings</string>
-    <string name="button_send">Send</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_display_message">My Message</string>
-    <string name="hello_world">Slider Value</string>
     <string name="pref_ip">Vehicle IP Address</string>
     <string name="pref_ip_summ">Click to modify the IP Address of the server. Note may require restart</string>
     <string name="action_dot_settings">Settings</string>
     <string name="action_dot_about">About</string>
     <string name="action_menu_hud">HUD</string>
     <string name="action_menu_log">LOG</string>
+    <string name="fragment_log_textview">Server has not responded yet</string>
 </resources>

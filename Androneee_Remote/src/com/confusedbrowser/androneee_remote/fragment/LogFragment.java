@@ -7,12 +7,19 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.support.v4.app.Fragment;
 
-public class LogFragment extends Fragment {
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+/**
+ * This class will handle updating our LogFragment
+ * 
+ * @author David Buttar
+ * @author Shahmir Javaid
+ */
+public class LogFragment extends Fragment 
+{
+	/**
+	 * return our view, required by the parent
+	 */
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+	{
 		return inflater.inflate(R.layout.fragment_log, container, false);
-        /*TextView textview = new TextView(this);
-        textview.setText("This is the Artists tab");
-        setContentView(textview);*/
     }
 }
