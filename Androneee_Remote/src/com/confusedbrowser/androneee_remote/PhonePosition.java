@@ -2,8 +2,6 @@ package com.confusedbrowser.androneee_remote;
 
 import java.util.Observable;
 
-import android.os.Bundle;
-import android.util.Log;
 import android.content.Context;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,7 +16,6 @@ import android.hardware.Sensor;
 public class PhonePosition extends Observable implements SensorEventListener {
 	private SensorManager mSensorManager;
 	private Sensor rotationSensor;
-	private Boolean hasRotationSensor;
 	private float[] m_rotationMatrix = new float[16];
 	private float[] m_orientation = new float[4];
 
