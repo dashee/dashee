@@ -1,40 +1,34 @@
 package com.confusedbrowser.androneee_remote;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.View;
-import android.app.Activity;
 import android.view.Menu;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.widget.EditText;
-import android.util.Log;
-import android.widget.Button;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.SeekBar;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.hardware.Sensor;
-
-import java.io.*;
 import java.net.*;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener, Observer{
-    String ipAddress;
+import com.confusedbrowser.androneee_remote.fragment.*;
+
+public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener, Observer{
+    
+	String ipAddress;
     public static final String PREFS_NAME = "preferences";
     SeekBar mSeekBar;
     TextView mProgressText;
     InetAddress serverAddr;
     SendControlsThread sendControls;
     LinearLayout Hud;
+    
+    HudFragment fragment_hud;
+    LogFragment fragment_log;
+    
     //VehicleStatusThread vehicleStatus;
     public PhonePosition phonePos;
 	
@@ -42,22 +36,22 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        // Remove title and go full screen
-        /*requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+        
+        // Keep our screen constantly on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.d("androneee", "starting");
+        
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
         
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        ipAddress = prefs.getString("pref_ip", "192.168.0.11");
-        Log.d("androneee", "ip is: "+ipAddress);
+        fragment_hud = new HudFragment();
+        fragment_log = new LogFragment();
         
-        // Create threads for send and receiving data from the vehicle  
-        sendControls = new SendControlsThread(this, ipAddress, 2047, 50);
-        sendControls.start();
+        //Set the initial view to our Hud
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.fragment_content, fragment_hud);
+        ft.commit();
+        
         
         /*vehicleStatus = new VehicleStatusThread(ipAddress, 2047);
         vehicleStatus.start();*/
@@ -69,19 +63,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         
         phonePos = new PhonePosition(getBaseContext());
         phonePos.addObserver (this);
-        
-        Hud = (LinearLayout) findViewById(R.id.canvas);
-        DrawHud pcc = new DrawHud (this);
-        Hud.addView(pcc);
-        
-    }
-	
-    public void wheelPos(int pos)
-    {    
-        //mSeekBar.setProgress(pos);
-        sendControls.setPosition(pos);
-        //LinearLayout ll = (LinearLayout) findViewById(R.id.canvas);
-        Hud.setRotation(-1*(pos - 50));
     }
 
     @Override
@@ -94,13 +75,25 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        
+    	android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+    	FragmentTransaction ft = fm.beginTransaction();
+ 	   
+    	// Handle item selection
         switch (item.getItemId()) 
         {
             case R.id.action_dot_settings:
                 Intent settingsActivity = new Intent(getBaseContext(), Preferences.class);
                 startActivity(settingsActivity);
                 return true;
+            case R.id.action_menu_hud:
+	     	    ft.replace(R.id.fragment_content, fragment_hud);
+	     	    ft.commit();
+            	return true;
+            case R.id.action_menu_log:
+	     	    ft.replace(R.id.fragment_content, fragment_log);
+	     	    ft.commit();
+            	return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -125,13 +118,11 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     protected void onResume() 
     {
         super.onResume();
-        sendControls.onResume();
         phonePos.monitor();
     }
     
     protected void onPause() {
         super.onPause();
-        sendControls.onPause();
         phonePos.stopMonitor();
     }
 
@@ -145,21 +136,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     @Override
     public void update(Observable o, Object arg) 
     {
-        PhonePosition pp = (PhonePosition) o;
-        int progress = (int)mapping(-pp.roll_val,-0.523,0.523,0,100);
-        wheelPos(progress);
-    }
-	
-    public double mapping(float value, double leftMin, double leftMax, double rightMin, double rightMax){
-		
-        //Figure out how 'wide' each range is
-        double leftSpan = leftMax - leftMin;
-        double rightSpan = rightMax - rightMin;
-        //Convert the left range into a 0-1 range (float)
-        double valueScaled = (value - leftMin) / (leftSpan);
-        //Convert the 0-1 range into a value in the right range.
-        if(value<leftMin) return rightMin;
-        if(value>leftMax) return rightMax;
-        return rightMin + (valueScaled * rightSpan); 
+       fragment_hud.update(o, arg);
     }
 }

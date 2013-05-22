@@ -12,25 +12,29 @@
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="1.24"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        />
 
-        <!-- currently empty --> 
-
-
-    </LinearLayout>
-
-    <!--  SeekBar
-        android:id="@+id/servoBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:max="100"
-        android:progress="25" /-->
-
-        <!--  TextView
-            android:id="@+id/serverPos"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_margin="10dp" /-->
     
+    <FrameLayout
+        android:id="@+id/fragment_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+    	/>
+     
+     
+     <fragment
+        android:id="@+id/fragment_log"
+        android:name="com.confusedbrowser.androneee_remote.fragment.LogFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+     	/>
+     
+    <fragment
+         android:id="@+id/fragment_hud"
+         android:name="com.confusedbrowser.androneee_remote.fragment.HudFragment"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent" 
+         />
+
 </LinearLayout>
