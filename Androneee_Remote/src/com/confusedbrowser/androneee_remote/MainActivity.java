@@ -1,10 +1,14 @@
 package com.confusedbrowser.androneee_remote;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.Menu;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.SeekBar;
@@ -16,6 +20,7 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
        
     HudFragment fragment_hud;
     LogFragment fragment_log;
+    OnSharedPreferenceChangeListener settingChangeListener;
     
     //VehicleStatusThread vehicleStatus;
     public PhonePosition phonePos;
@@ -44,6 +49,25 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
         // So our this.update function can handle updates 
         phonePos = new PhonePosition(getBaseContext());
         phonePos.addObserver (this);
+        
+        addSettingListener();
+        
+    }
+    
+    // We not only want to store setting we want to enact them realtime
+    public void addSettingListener() 
+    {
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	// Instance field for listener
+        settingChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    	  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    		  Log.d("androneee", key);
+    		  fragment_hud.setIp(prefs.getString("pref_ip", "192.168.0.11"));
+    		  showUserSettings();
+    	  }
+    	};
+
+        prefs.registerOnSharedPreferenceChangeListener(settingChangeListener);
     }
 
     @Override
@@ -77,6 +101,12 @@ public class MainActivity extends FragmentActivity implements SeekBar.OnSeekBarC
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    
+    private void showUserSettings() {
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String ip_address = prefs.getString("pref_ip", "192.168.0.11");
+        Log.d("androneee", "New ip address setting: "+ip_address);
     }
     
     @Override

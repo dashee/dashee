@@ -59,9 +59,6 @@ public class SendControlsThread extends Thread {
 			if(this.position != this.prevPos || (curTime-timeValueSent > timeOut)){
 				 try {
                      byte sendData[] = new byte[]{ 17, (byte)(this.position << 1) };
-
-					 //String sentence = this.position+"\n";
-					 //byte[] sendData = sentence.getBytes("US-ASCII");
 					 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port_num);
 					 clientSocket.send(sendPacket);
 					 timeValueSent = System.currentTimeMillis();

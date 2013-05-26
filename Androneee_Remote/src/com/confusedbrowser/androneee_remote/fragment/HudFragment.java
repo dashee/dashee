@@ -133,4 +133,12 @@ public class HudFragment extends Fragment {
         layout_hud.setRotation(-1*(progress - 50));
 	}
 	
+	/**
+	 * Update the ip address if changed in settings
+	 */
+	public void setIp(String ip) 
+	{        
+        thread_servo.setIp(ip);
+	}
+	
 }
