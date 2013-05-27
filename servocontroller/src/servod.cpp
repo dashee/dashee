@@ -26,7 +26,7 @@
 #include "ServoController/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
-#include "Config.h"
+#include "Config/servod.h"
 
 #define SERVO_DEVICE "/dev/ttyACM0"
 #define SERVO_DUMMY_CHANNELS 6
@@ -68,21 +68,26 @@ void setconfig(int, char **, Config *);
  */
 int main(int argc, char **argv)
 {
-    // Create a dummy Servo to be initiated later
-    // Initialising to NULL is important otherwise you will seg fault
-    ServoController *s = NULL;
-    Config *conf = new Config();
-    
     // Set our sigaction
     struct sigaction act;
     act.sa_handler = sighandler;
     if (sigaction(SIGINT, &act, 0))
         throw new std::runtime_error("Sigaction failed");
+    
+    // Create a dummy Servo to be initiated later
+    // Initialising to NULL is important otherwise you will seg fault
+    ServoController *s = NULL;
+
+    // Create our Config_servod, as a new pointer, as we will
+    // delete it mid point to clear our heap.
+    Config_servod *conf = new Config_servod();
 
     // Call our setconfig which will look for command line arguments, and set it
-    // in our @conf variables. The command line arguments are read from @argv
+    // in our @conf variables. The command line arguments are read from @argv.
+    // Just add a helpfull print in the end so we can see what is happening
     setconfig(argc, argv, conf);
     conf->read("config.conf");
+    conf->print();
 
     //Store the required variables in our stack, for easy access.
     //const char * servo = SERVO_DEVICE;
@@ -93,8 +98,6 @@ int main(int argc, char **argv)
     const unsigned int port = conf->get_uint("port");
     const unsigned int readtimeout = conf->get_uint("readtimeout");
     const unsigned int readtimeoutN = conf->get_uint("readtimeoutM", 0) * 10000000;
-
-    conf->print();
 
     try
     {
@@ -116,6 +119,13 @@ int main(int argc, char **argv)
         // Fail as the options must fall within the above
         else
             Log::fatal("Servotype invalid, set to %u.", servotype);
+    
+        // Set the Servocontroller, from the config file
+        // and then delete the variable, as we dont use it any more
+        // so no point utilizing the heap, See Congfig_servod::setServoController for
+        // detailed explaination for this
+        conf->setServoController(s);
+        delete conf;
 
         // Print and clear any Servo specific errors.
         // This should not be fatal, as the servo only stores last errors.
@@ -227,7 +237,6 @@ int main(int argc, char **argv)
     }
     
     Log::info(4, "Performing cleanups.");
-    delete conf;
     delete s;
 
     Log::info(4, "Returning with %d.", RETVAL);

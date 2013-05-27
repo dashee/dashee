@@ -14,7 +14,7 @@ Servo::Servo(const unsigned short int channel)
     memset(&defaults, 0, sizeof(defaults));
     memset(&fallbacks, 0, sizeof(fallbacks));
     memset(&current, 0, sizeof(current));
-    memset(&fallbackEnabled, 1, sizeof(fallbackEnabled));
+    memset(&fallbackEnabled, 0, sizeof(fallbackEnabled));
 }
 
 /**

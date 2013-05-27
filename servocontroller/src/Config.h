@@ -44,6 +44,8 @@ public:
 class Config
 {
 private:
+
+protected:
  
     /** 
      * This will hold our, config values in key value pairs of characters.
@@ -102,9 +104,7 @@ public:
     void cleanup();
     
     // Cleanup
-    ~Config();
+    virtual ~Config();
 };
-
-//Config::configs = std::maps<const unsigned char *, const unsgined char *>;
 
 #endif
