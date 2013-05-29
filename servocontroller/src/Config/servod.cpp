@@ -46,7 +46,7 @@ void Config_servod::setServoController(ServoController * s)
     
             // copy the "XX" value into @channel from the string "channelXX"
             char temp[25];
-            memset(temp, 0, sizeof(temp)*25);
+            memset(temp, 0, sizeof(temp));
             memcpy(temp, configs_it->first+7, 2);
             int channel = atoi(temp);
             
