@@ -70,6 +70,7 @@ int main(int argc, char **argv)
 {
     // Set our sigaction
     struct sigaction act;
+    memset(&act, 0, sizeof(act));
     act.sa_handler = sighandler;
     if (sigaction(SIGINT, &act, 0))
         throw new std::runtime_error("Sigaction failed");
