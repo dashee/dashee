@@ -32,12 +32,13 @@ void Config_servod::setServoController(ServoController * s)
         // Only go through if the first 7 characters are "channel"
         if (strncmp(configs_it->first, "channel", 7) == 0)
         {
+
             int keyN = strlen(configs_it->first);
 
-            // Make sure the value is actually "channelXX-" long
+            // Make sure the value is atleast "channelXX-" long
             if (keyN <= 10) continue;
             
-            // Make sure the value "channel[0-9][0-9]" is in the range
+            // Make sure the value "channel[0-9][0-9]" is an integer
             if (configs_it->first[7] < 48 || configs_it->first[7] > 57) continue;
             if (configs_it->first[8] < 48 || configs_it->first[8] > 57) continue;
 
@@ -45,11 +46,11 @@ void Config_servod::setServoController(ServoController * s)
             if (configs_it->first[9] != '-') continue;
     
             // copy the "XX" value into @channel from the string "channelXX"
-            char temp[25];
+            char temp[40];
             memset(temp, 0, sizeof(temp));
             memcpy(temp, configs_it->first+7, 2);
             int channel = atoi(temp);
-            
+
             // if the value is "channelXX-default-" and is greater than 17 characters
             if (keyN > 17 && strncmp(configs_it->first+10, "default-", 8))
             {

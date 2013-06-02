@@ -249,7 +249,7 @@ void Config::read(const char * file)
             continue;
         
         // Create a dynamic key, see below for cleanup comments
-        char * key = new char[25];
+        char * key = new char[40];
         memset(key, 0, sizeof(char)*25); //Important, other wise the comparison goes wrong
         int keyN = 0;
         
