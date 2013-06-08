@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <termios.h>
 #include <math.h>
 
 /**
@@ -29,22 +30,33 @@
  */
 int maestroGetError(int fd)
 {
-    unsigned char command[] = { 0xA1 };
-    if (write(fd, command, sizeof(command)) == -1)
+    unsigned char command[] = { 0xAA, 0xC, 0x21 };
+    if (write(fd, command, sizeof(command)) != 3)
     {
-        perror("error getting Error");
+        perror("error writing");
         return -1;
     }
-    
+
+    int n = 0;
     unsigned char response[2];
-    if(read(fd,response,1) != 1)
+    do
     {
-        perror("error reading");
-        return -1;
-    }
+        int ec = read(fd, response+n, 1);
+        if(ec < 0)
+        {
+            perror("error reading");
+            return ec;
+        }
+        if (ec == 0)
+        {
+            continue;
+        }
+        n++;
+
+    } while (n < 2);
     
     //Helpfull for debugging
-    //printf("Error first: %d\n", response[0]);
+    //printf("Error n: %d\n", n);
     //printf("Error secon: %d\n", response[1]);
 
     return (int)sqrt(response[0] + 256*response[1]);
@@ -64,19 +76,30 @@ int maestroGetError(int fd)
  */
 int maestroGetPosition(int fd, unsigned char channel)
 {
-    unsigned char command[] = {0x90, channel};
+    unsigned char command[] = {0xAA, 0xC, 0x10, channel};
     if(write(fd, command, sizeof(command)) == -1)
     {
         perror("error writing");
         return -1;
     }
 
-    unsigned char response[2];
-    if(read(fd,response,2) != 2)
+    int n = 0;
+    char response[2];
+    do
     {
-        perror("error reading");
-        return -1;
-    }
+        int ec = read(fd, response+n, 1);
+        if(ec < 0)
+        {
+            perror("error reading");
+            return ec;
+        }
+        if (ec == 0)
+        {
+            continue;
+        }
+        n++;
+
+    } while (n < 2);
 
     return response[0] + 256*response[1];
 }
@@ -99,7 +122,7 @@ int maestroGetPosition(int fd, unsigned char channel)
  */
 int maestroSetTarget(int fd, unsigned char channel, unsigned short target)
 {
-    unsigned char command[] = {0x84, channel, target & 0x7F, target >> 7 & 0x7F};
+    unsigned char command[] = {0xAA, 0xC, 0x04, channel, target & 0x7F, target >> 7 & 0x7F};
     if (write(fd, command, sizeof(command)) == -1)
     {
         perror("error writing");
@@ -119,8 +142,38 @@ int maestroSetTarget(int fd, unsigned char channel, unsigned short target)
 int main()
 {
     // Open the Maestro's virtual COM port.
-    const char * device = "/dev/ttyACM0";  // Linux
+    const char * device = "/dev/ttyAMA0";  // Linux
     int fd = open(device, O_RDWR | O_NOCTTY);
+    
+    struct termios options;
+    tcgetattr(fd, &options);
+    cfsetispeed(&options, B9600);
+    cfsetospeed(&options, B9600);
+
+    options.c_cflag &= ~PARENB;
+    options.c_cflag &= ~CSTOPB;
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+
+    // no flow control
+    options.c_cflag &= ~CRTSCTS;
+
+    options.c_cflag |= CREAD | CLOCAL;  // turn on READ & ignore ctrl lines
+    options.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off s/w flow ctrl
+
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // make raw
+    options.c_oflag &= ~OPOST; // make raw
+
+    // see: http://unixwiz.net/techtips/termios-vmin-vtime.html
+    options.c_cc[VMIN]  = 0;
+    options.c_cc[VTIME] = 20;
+
+    if (tcsetattr(fd, TCSANOW, &options) < 0)
+    {
+        perror("init_serialport: Couldn't set term attributes");
+        return -1;
+    }
+
     if (fd == -1)
     {
         perror(device);
@@ -128,17 +181,28 @@ int main()
     }
 
     int error = maestroGetError(fd);
+    fprintf(stderr, "Error is %d.\n", error); 
     if (error > 0)
-    {
         fprintf(stderr, "Error is %d.\n", error); 
-    }
 
+    maestroSetTarget(fd, 1, 5000);
+    
     int position = maestroGetPosition(fd, 1);
     printf("Current position is %d.\n", position); 
 
     int target = (position < 6000) ? 7000 : 5000;
     printf("Setting target to %d (%d us).\n", target, target/4);
     maestroSetTarget(fd, 1, target);
+    
+    position = maestroGetPosition(fd, 1);
+    printf("Current position is %d.\n", position); 
+
+    target = (position < 6000) ? 7000 : 5000;
+    printf("Setting target to %d (%d us).\n", target, target/4);
+    maestroSetTarget(fd, 1, target);
+    
+    position = maestroGetPosition(fd, 1);
+    printf("Current position is %d.\n", position); 
 
     close(fd);
     return 0;
