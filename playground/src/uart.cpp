@@ -179,6 +179,7 @@ int main()
         perror(device);
         return -1;
     }
+    int channel = 3;
 
     int error = maestroGetError(fd);
     fprintf(stderr, "Error is %d.\n", error); 
@@ -187,21 +188,21 @@ int main()
 
     maestroSetTarget(fd, 1, 5000);
     
-    int position = maestroGetPosition(fd, 1);
+    int position = maestroGetPosition(fd, channel);
     printf("Current position is %d.\n", position); 
 
     int target = (position < 6000) ? 7000 : 5000;
     printf("Setting target to %d (%d us).\n", target, target/4);
-    maestroSetTarget(fd, 1, target);
+    maestroSetTarget(fd, channel, target);
     
-    position = maestroGetPosition(fd, 1);
+    position = maestroGetPosition(fd, channel);
     printf("Current position is %d.\n", position); 
 
     target = (position < 6000) ? 7000 : 5000;
     printf("Setting target to %d (%d us).\n", target, target/4);
-    maestroSetTarget(fd, 1, target);
+    maestroSetTarget(fd, channel, target);
     
-    position = maestroGetPosition(fd, 1);
+    position = maestroGetPosition(fd, channel);
     printf("Current position is %d.\n", position); 
 
     close(fd);
