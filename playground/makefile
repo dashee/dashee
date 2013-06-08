@@ -11,13 +11,13 @@ $(BINDIR):
 	@$(MKDIR) $@
 
 $(BINDIR)/helloworld: src/helloworld.cpp $(BINDIR)
-	$(CC) $< -o $@
+	$(CC) -g $< -o $@
 
 $(BINDIR)/uart: src/uart.cpp $(BINDIR)
 	$(CC) $< -o $@
 
 $(BINDIR)/udpserver: src/udpserver.cpp $(BINDIR)
-	$(CC) $< -o $@
+	$(CC) -g $< -o $@
 
 clean:
 	@$(RM) $(BINDIR)
