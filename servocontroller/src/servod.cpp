@@ -22,13 +22,14 @@
 #include <sstream>
 #include <getopt.h> /* for getopts_long() */
 
+#include "ServoController/UART.h"
 #include "ServoController/USB.h"
 #include "ServoController/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
 #include "Config/servod.h"
 
-#define SERVO_DEVICE "/dev/ttyACM0"
+#define SERVO_DEVICE "/dev/ttyAMA0"
 #define SERVO_DUMMY_CHANNELS 6
 #define SERVER_PORT 2047u
 #define SERVER_TIMEOUT 2u
@@ -107,11 +108,18 @@ int main(int argc, char **argv)
         {
             // Create a Servo
             Log::info(1, "Loading device '%s'.", servo);
+            s = new ServoController_UART(servo);
+        }
+        
+        // Set our servo to the Binary file
+        else if(servotype == 2)
+        {
+            Log::info(1, "Loading device '%s'.", servo);
             s = new ServoController_USB(servo);
         }
 
         // Set our servo to the Binary file
-        else if(servotype == 2)
+        else if(servotype == 3)
         {
             Log::info(1, "Loading device '%s'.", servo);
             s = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
@@ -180,7 +188,8 @@ int main(int argc, char **argv)
                                 Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
 
                                 // Set the target for channel 1 as requested
-                                s->setTarget(channel, target);
+                                s->setTarget(1, target);
+                                //s->setTarget(channel, target);
                                 
                                 // Good for testing
                                 // Set the target for channel 1 as requested

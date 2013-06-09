@@ -15,7 +15,10 @@ LIBDIR=lib64
 DATADIR=data
 
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR)
-OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o Server/UDP.o ServoController.o ServoController/USB.o ServoController/Dummy.o Log.o Config.o Config/servod.o)
+OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
+		Server/UDP.o ServoController.o ServoController/USB.o \
+		ServoController/Dummy.o Log.o Config.o Config/servod.o\
+		ServoController/UART.o Servo/UART.o)
 BINARIES := $(addprefix $(BINDIR)/, servod)
 
 
@@ -51,10 +54,20 @@ $(OBJECTS): %.o: %.cpp
 $(BINDIR)/servod: src/servod.cpp $(BINDIR) $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@
 
+##
+# Make the tests
+test: $(OBJECTS) $(BINDIR)
+	@mkdir -p $(BINDIR)/tests
+	$(CC) $(CFLAGS) -Isrc tests/ServoControllerUART.cpp src/Log.o src/Servo.o src/Servo/UART.o src/ServoController.o src/ServoController/UART.o -o $(BINDIR)/tests/ServoControllerUART
+	$(CC) $(CFLAGS) -Isrc tests/ServerUDP.cpp src/Server.o src/Server/UDP.o -o $(BINDIR)/tests/ServerUDP
+
+cleantest:
+	@$(RM) $(BINDIR)/tests
+
 ###
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
-test: $(DATADIR) $(DATADIR)/Servo.bin
+data: $(DATADIR) $(DATADIR)/Servo.bin
 
 ## 
 # This is a test bin directory, that is set as null of 38 bytes
@@ -64,7 +77,7 @@ $(DATADIR)/Servo.bin:
 
 ##
 # This will remove our data/Servo.bin file, to build it again 
-cleantest:
+cleandata:
 	@$(RM) $(DATADIR)/Servo.bin
 
 ##
@@ -76,7 +89,7 @@ tags:
 ##
 # Cleans all the .o files from our src directory
 # And finally cleans all directories.
-clean:
+clean: cleantest
 	@$(RM) $(shell find src -name "*.o")
 	@$(RM) $(DIRECTORIES)
 	@$(RM) tags
