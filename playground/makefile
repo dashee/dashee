@@ -2,7 +2,7 @@ include makefile.common
 
 BINDIR=bin
 
-BINARIES := $(addprefix $(BINDIR)/, helloworld udpserver uart)
+BINARIES := $(addprefix $(BINDIR)/, servoUSB servoUART udpserver)
 
 all: $(BINARIES)
 
@@ -10,10 +10,10 @@ $(BINDIR):
 	@echo "Directory '$@' created."
 	@$(MKDIR) $@
 
-$(BINDIR)/helloworld: src/helloworld.cpp $(BINDIR)
+$(BINDIR)/servoUSB: src/servoUSB.cpp $(BINDIR)
 	$(CC) -g $< -o $@
 
-$(BINDIR)/uart: src/uart.cpp $(BINDIR)
+$(BINDIR)/servoUART: src/servoUART.cpp $(BINDIR)
 	$(CC) $< -o $@
 
 $(BINDIR)/udpserver: src/udpserver.cpp $(BINDIR)
