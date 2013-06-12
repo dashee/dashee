@@ -107,21 +107,21 @@ int main(int argc, char **argv)
         if (servotype == 1)
         {
             // Create a Servo
-            Log::info(1, "Loading device '%s'.", servo);
+            Log::info(1, "Loading UART device '%s'.", servo);
             s = new ServoController_UART(servo);
         }
         
         // Set our servo to the Binary file
         else if(servotype == 2)
         {
-            Log::info(1, "Loading device '%s'.", servo);
+            Log::info(1, "Loading USB device '%s'.", servo);
             s = new ServoController_USB(servo);
         }
 
         // Set our servo to the Binary file
         else if(servotype == 3)
         {
-            Log::info(1, "Loading device '%s'.", servo);
+            Log::info(1, "Loading Dummy device '%s'.", servo);
             s = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
         }
 

@@ -82,7 +82,7 @@ bool Server_UDP::read(long seconds, long nanoseconds)
             throw Exception_Server_Signal();
 
         // Throw an exception so the main can set error
-        throw Exception_Server("Read failed with -1.");
+        throw Exception_Server("Server_UDP::read failed with -1.");
     }
 
     return false;
