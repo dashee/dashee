@@ -207,36 +207,29 @@ public class MainActivity
     public void update(Observable o, Object arg) 
     {
         PhonePosition position = (PhonePosition) o;
-        double progress = mapping(-position.getRoll(),-0.523,0.523,0,100);
+        double progress = remapValue(-position.getRoll(),-0.523,0.523,0,100);
         
         thread_servo.setPosition((int)progress);
         fragment_hud.rotateHud((float)progress);
     }
     
     /**
-     * Turn our phone values, to our server values.
-     * //TODO explain
-     * 
-     * @param (float)value
-     * @param (double)leftMin
-     * @param (double)leftMax
-     * @param (double)rightMin
-     * @param (double)rightMax
-     * @return - The double value of the position from 0-100
+     * Generic function. Takes a numeric value which is a value in the curMin to curMax range
+     * and converts it to a corresponding value in the targetMin to targetMax range.
      */
-    protected double mapping(float value, double leftMin, double leftMax, double rightMin, double rightMax)
+    protected double remapValue(float value, double curMin, double curMax, double targetMin, double targetMax)
     {
         //Figure out how 'wide' each range is
-        double leftSpan = leftMax - leftMin;
-        double rightSpan = rightMax - rightMin;
+        double leftSpan = curMax - curMin;
+        double rightSpan = targetMax - targetMin;
         
         //Convert the left range into a 0-1 range (float)
-        double valueScaled = (value - leftMin) / (leftSpan);
+        double valueScaled = (value - curMin) / (leftSpan);
         
         //Convert the 0-1 range into a value in the right range.
-        if(value<leftMin) return rightMin;
-        if(value>leftMax) return rightMax;
-        return rightMin + (valueScaled * rightSpan); 
+        if(value<curMin) return targetMin;
+        if(value>curMax) return targetMax;
+        return targetMin + (valueScaled * rightSpan); 
     }
 
     @Override
