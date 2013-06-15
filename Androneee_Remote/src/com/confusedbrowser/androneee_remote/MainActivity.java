@@ -216,8 +216,15 @@ public class MainActivity
     /**
      * Generic function. Takes a numeric value which is a value in the curMin to curMax range
      * and converts it to a corresponding value in the targetMin to targetMax range.
+     * @param value - The numeric value to be re-mapped
+     * @param curMin - Current range min
+     * @param curMax - Current range max
+     * @param targetMin - Current range min
+     * @param targetMax - Current range max
+     *
+     * @return double - Value mapped to the new target range
      */
-    protected double remapValue(float value, double curMin, double curMax, double targetMin, double targetMax)
+    public double remapValue(float value, double curMin, double curMax, double targetMin, double targetMax)
     {
         //Figure out how 'wide' each range is
         double leftSpan = curMax - curMin;
