@@ -12,11 +12,22 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.SeekBar;
+
 import java.util.Observable;
 import java.util.Observer;
+
 import com.confusedbrowser.androneee_remote.HudActivity;
 import com.confusedbrowser.androneee_remote.fragment.*;
 
+/**
+ * The main activity that the program will run.
+ * This will set our fragments, handel our preferences
+ * changing, start the threads which commnicate to our servers
+ * set and listen to the Observers so actions can be taken when things are changed
+ *
+ * @author David Buttar
+ * @author Shahmir Javaid
+ */
 public class MainActivity 
     extends FragmentActivity 
     implements SeekBar.OnSeekBarChangeListener, Observer
@@ -68,7 +79,7 @@ public class MainActivity
         // This will initialise our PhonePosition Observer,
         // So our this.update function can handle updates 
         phonePos = new PhonePosition(getBaseContext());
-        phonePos.addObserver (this);
+        phonePos.addObserver(this);
     	
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -160,7 +171,7 @@ public class MainActivity
     protected void onResume() 
     {
         super.onResume();
-        phonePos.monitor();
+        phonePos.onResume();
         thread_servo.onResume();
     }
     
@@ -171,7 +182,7 @@ public class MainActivity
     @Override
     protected void onPause() {
         super.onPause();
-        phonePos.stopMonitor();
+        phonePos.onPause();
         thread_servo.onPause();
     }
 
@@ -195,15 +206,15 @@ public class MainActivity
     @Override
     public void update(Observable o, Object arg) 
     {
-        PhonePosition pp = (PhonePosition) o;
-        double progress = mapping(-pp.roll_val,-0.523,0.523,0,100);
+        PhonePosition position = (PhonePosition) o;
+        double progress = mapping(-position.getRoll(),-0.523,0.523,0,100);
         
         thread_servo.setPosition((int)progress);
         fragment_hud.rotateHud((float)progress);
     }
     
     /**
-     * Given a value, returned our mapped version.
+     * Turn our phone values, to our server values.
      * //TODO explain
      * 
      * @param (float)value

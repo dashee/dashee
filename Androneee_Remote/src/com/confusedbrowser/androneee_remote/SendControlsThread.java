@@ -46,6 +46,7 @@ public class SendControlsThread extends Thread
      */
     private Object lockPause = new Object();
     private Object lockPosition = new Object();
+    private Object lockIp = new Object();
 
     /**
      *  Variable controlling the pause state of this thread.
@@ -86,7 +87,7 @@ public class SendControlsThread extends Thread
      * @param ip - The ip address to send the commands to
      * @param position - The default position which is to be set
      */
-    public SendControlsThread(Context context, final String ipString, int port, int position)
+    public SendControlsThread(Context context, String ip, int port, int position)
     {
         super();
 
@@ -97,23 +98,7 @@ public class SendControlsThread extends Thread
             this.position = position;
             this.lastPosition = position;
 
-            new Thread(new Runnable() 
-            {
-                public void run()
-                {
-                    try
-                    {
-                        Log.i("ipaddress", ipString);
-                        ip = InetAddress.getByName(ipString);
-                    }
-                    catch(Exception e)
-                    {
-                        //throw e;
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
+            this.ip = InetAddress.getByName(ip);
             this.port = port;
             this.sock_handler = new DatagramSocket();
         }
@@ -145,24 +130,20 @@ public class SendControlsThread extends Thread
      *
      * @param ip - The ipadress in a string
      */
-    public void setIp(final String ipString)
+    public void setIp(String ip)
     {
-        new Thread(new Runnable() 
+        synchronized (lockIp)
         {
-            public void run()
+            try
             {
-                try
-                {
-                    Log.i("ipaddress-option", ipString);
-                    ip = InetAddress.getByName(ipString);
-                }
-                catch(Exception e)
-                {
-                    //throw e;
-                    e.printStackTrace();
-                }
+                this.ip = InetAddress.getByName(ip);
             }
-        }).start();
+            catch(Exception e)
+            {
+                //throw e;
+                e.printStackTrace();
+            }
+        }
     }
     
     /**
@@ -193,26 +174,29 @@ public class SendControlsThread extends Thread
 
                     try 
                     {
-                        // first byte sets the protocol and the channel number
-                        // second byte will set the position
-                        byte command[] = new byte[]{ 17, (byte)(this.position << 1) };
+                        synchronized (lockIp)
+                        {
+                            // first byte sets the protocol and the channel number
+                            // second byte will set the position
+                            byte command[] = new byte[]{ 33, (byte)(this.position << 1) };
 
-                        // Create the packet
-                        DatagramPacket packet = new DatagramPacket(
-                                command, 
-                                command.length, 
-                                this.ip, 
-                                this.port
-                            );
+                            // Create the packet
+                            DatagramPacket packet = new DatagramPacket(
+                                    command, 
+                                    command.length, 
+                                    this.ip, 
+                                    this.port
+                                );
 
-                        // Send the packet
-                        this.sock_handler.send(packet);
+                            // Send the packet
+                            this.sock_handler.send(packet);
 
-                        // Reset our timeValueSent to now
-                        this.timeValueSent = System.currentTimeMillis();
+                            // Reset our timeValueSent to now
+                            this.timeValueSent = System.currentTimeMillis();
 
-                        // change our lastPosition to the most recent value
-                        this.lastPosition = this.position;
+                            // change our lastPosition to the most recent value
+                            this.lastPosition = this.position;
+                        }
                     } 
                     catch (Exception e) 
                     {
