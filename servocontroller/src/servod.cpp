@@ -188,8 +188,8 @@ int main(int argc, char **argv)
                                 Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
 
                                 // Set the target for channel 1 as requested
-                                s->setTarget(1, target);
-                                //s->setTarget(channel, target);
+                                //s->setTarget(1, target);
+                                s->setTarget(channel, target);
                                 
                                 // Good for testing
                                 // Set the target for channel 1 as requested
