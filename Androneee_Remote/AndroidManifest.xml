@@ -3,7 +3,6 @@
     package="com.confusedbrowser.androneee_remote"
     android:versionCode="1"
     android:versionName="1.0" >
-
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
@@ -20,14 +19,12 @@
             android:screenOrientation="landscape"  >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-        	android:name=".Preferences"
+        	android:name=".PreferencesActivity"
         	android:label="@string/settings">
 		</activity>
     </application>
-
 </manifest>
