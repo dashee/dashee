@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import java.net.*;
 
+import com.confusedbrowser.androneee_remote.fragment.HudFragment;
+
 /**
  * Thread to communicate to the server.
  * This will send position when the position is changed and 
@@ -25,7 +27,7 @@ public class SendControlsThread extends Thread
      *  position - Holds the current position
      *  lastPosition - Holds the last transmitted position 
      */
-    private int position;
+    private int position = 50;
     private int lastPosition;
     
     /**
@@ -75,9 +77,28 @@ public class SendControlsThread extends Thread
     /**
      * Hold the last time value of the command sent. This will help
      * us determine the last time the value was sent, we can use this
-     * for comparison before we can send another value
+     * for comparison before we can send another value.
      */
     private long timeValueSent = 0; // Time when last value was set
+
+    /**
+     * Holds the last time the Bps command was reset. This will help change
+     * our view to determine how many bytes have been sent over a second
+     * Every time the view is set, the values of this is reset to current time
+     */
+    private long timeLastBpsReset = 0; // Time when last bps was recorded
+
+    /**
+     * The handler to our View. Usefull for when you want the thread
+     * to update the view.
+     */
+    private HudFragment fragment_hud;
+
+    /**
+     * Hold the value of bytes sent. It will be reset to 0 after every
+     * second, the bps stands for Bytes per Second
+     */
+    private int bps = 0;
 
     /**
      * Initiate our thread. Set the variables from the params, and 
@@ -87,18 +108,16 @@ public class SendControlsThread extends Thread
      * @param ip - The ip address to send the commands to
      * @param position - The default position which is to be set
      */
-    public SendControlsThread(Context context, String ip, int port, int position)
+    public SendControlsThread(Context context, String ip, int port)
     {
         super();
 
         try
         {
             this.context = context;
-
-            this.position = position;
-            this.lastPosition = position;
-
-            this.ip = InetAddress.getByName(ip);
+            this.lastPosition = this.position;
+            this.timeLastBpsReset = System.currentTimeMillis();
+            this.setIp(ip);
             this.port = port;
             this.sock_handler = new DatagramSocket();
         }
@@ -107,7 +126,17 @@ public class SendControlsThread extends Thread
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Set our Fragment. 
+     *
+     * @param fragment_hud - The pointer to the HudFragment object
+     */
+    public void setHudFragment(HudFragment fragment_hud)
+    {
+        this.fragment_hud = fragment_hud;
+    }   
+        
     /**
      * Set the position variable.
      * Lock using lockPosition before setting the this.position
@@ -137,6 +166,7 @@ public class SendControlsThread extends Thread
             try
             {
                 this.ip = InetAddress.getByName(ip);
+                this.fragment_hud.setHudIp(ip);
             }
             catch(Exception e)
             {
@@ -144,6 +174,18 @@ public class SendControlsThread extends Thread
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setBps(int bps)
+    {
+        if (bps < 0) bps = 0;
+
+        this.bps = bps;
+    }
+
+    public int getBps()
+    {
+        return this.bps;
     }
     
     /**
@@ -196,6 +238,9 @@ public class SendControlsThread extends Thread
 
                             // change our lastPosition to the most recent value
                             this.lastPosition = this.position;
+                            
+                            // Increment our bytes sent
+                            this.bps++;
                         }
                     } 
                     catch (Exception e) 

@@ -53,8 +53,12 @@ public class MainActivity
      */
     public PhonePosition phonePos;
 
+    /**
+     * The listener, to when the settings have changed.
+     * See addSettingsListener() for more init details
+     */
     private OnSharedPreferenceChangeListener settingChangeListener;
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
@@ -83,8 +87,32 @@ public class MainActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialize our thread
-        thread_servo = new SendControlsThread(this, prefs.getString("pref_ip", "192.168.1.12"), 2047, 50);
+        thread_servo = new SendControlsThread(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
+        thread_servo.setHudFragment(fragment_hud);
         thread_servo.start();
+    
+        /*
+        runOnUiThread(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        while(true)
+                        {
+                            Thread.sleep(1000);
+                            fragment_hud.setHudBps(thread_servo.getBps());
+                            thread_servo.setBps(0);
+                        }
+                    }
+                    catch (Exception e) 
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        );
+        */
         
         // Add the settings listener events
         addSettingListener();
