@@ -16,7 +16,6 @@ import android.widget.SeekBar;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.confusedbrowser.androneee_remote.HudActivity;
 import com.confusedbrowser.androneee_remote.fragment.*;
 
 /**

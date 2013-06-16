@@ -43,7 +43,7 @@ public class HudFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_hud, container, false);
 
-        layout_hud = (LinearLayout)view.findViewById(R.id.canvas);
+        layout_hud = (LinearLayout)view.findViewById(R.id.hud_canvas);
         draw_hud = new DrawHud (this.getActivity());
         layout_hud.addView(draw_hud);
         
