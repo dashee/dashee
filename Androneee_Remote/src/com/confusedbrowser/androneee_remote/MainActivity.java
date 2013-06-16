@@ -37,15 +37,15 @@ public class MainActivity
      * So they dont have to be initialized every time, and hold
      * there previous state.
      */
-    HudFragment fragment_hud;
-    LogFragment fragment_log;
+    private HudFragment fragmentHud;
+    private LogFragment fragmentLog;
     
     /**
-     * This is our thread_servo, which allows us to communicate
+     * This is our threadSendControllerPositions, which allows us to communicate
      * with our server on the RC robot, this thread handles the
      * network communication
      */
-    public SendControlsThread thread_servo;
+    public SendControlsThread threadSendControllerPos;
     
     /**
      * Handel to our Phone schemetics. This will return
@@ -71,12 +71,12 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         
         // Create our fragment views
-        fragment_hud = new HudFragment();
-        fragment_log = new LogFragment();
+        fragmentHud = new HudFragment();
+        fragmentLog = new LogFragment();
         
         //Set the initial view to our HUD
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_content, fragment_hud);
+        ft.add(R.id.fragment_content, fragmentHud);
         ft.commit();
         
         // This will initialise our PhonePosition Observer,
@@ -87,9 +87,9 @@ public class MainActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialize our thread
-        thread_servo = new SendControlsThread(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
-        thread_servo.setHudFragment(fragment_hud);
-        thread_servo.start();
+        threadSendControllerPos = new SendControlsThread(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
+        threadSendControllerPos.setHudFragment(fragmentHud);
+        threadSendControllerPos.start();
     
         /*
         runOnUiThread(new Runnable()
@@ -132,15 +132,15 @@ public class MainActivity
         {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
             {
-                thread_servo.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+                threadSendControllerPos.setIp(prefs.getString("pref_ip", "192.168.1.11"));
             }
     	};
         prefs.registerOnSharedPreferenceChangeListener(settingChangeListener);
     }
 
     /**
-     * Set our menue on the top bar. This will add the HUD, LOG and the ... icon
-     * to the top of our menue bar
+     * Set our menu on the top bar. This will add the HUD, LOG and the ... icon
+     * to the top of our menu bar
      *
      * @param menu - The menu object to load
      * @return boolean - Always true
@@ -174,14 +174,14 @@ public class MainActivity
             case R.id.action_menu_hud:
             {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_content, fragment_hud);
+                ft.replace(R.id.fragment_content, fragmentHud);
                 ft.commit();
             	return true;
             }
             case R.id.action_menu_log:
             {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_content, fragment_log);
+                ft.replace(R.id.fragment_content, fragmentLog);
                 ft.commit();
             	return true;
             }
@@ -199,7 +199,7 @@ public class MainActivity
     {
         super.onResume();
         phonePos.onResume();
-        thread_servo.onResume();
+        threadSendControllerPos.onResume();
     }
     
     /**
@@ -210,7 +210,7 @@ public class MainActivity
     protected void onPause() {
         super.onPause();
         phonePos.onPause();
-        thread_servo.onPause();
+        threadSendControllerPos.onPause();
     }
 
     @Override
@@ -236,8 +236,8 @@ public class MainActivity
         PhonePosition position = (PhonePosition) o;
         double progress = remapValue(-position.getRoll(),-0.523,0.523,0,100);
         
-        thread_servo.setPosition((int)progress);
-        fragment_hud.rotateHud((float)progress);
+        threadSendControllerPos.setPosition((int)progress);
+        fragmentHud.rotateHud((float)progress);
     }
     
     /**

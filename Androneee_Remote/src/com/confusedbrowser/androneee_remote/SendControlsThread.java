@@ -38,12 +38,12 @@ public class SendControlsThread extends Thread
      */
     private InetAddress ip;
     private int port;
-    private DatagramSocket sock_handler;
+    private DatagramSocket sockHandler;
     
     /**
      * Locking objects.
      * lockPause is used to make the run thread wait and
-     *  a wrapper to change the pause variable
+     * a wrapper to change the pause variable
      * lockPosition is used to lock when getting/setting position
      */
     private Object lockPause = new Object();
@@ -69,7 +69,7 @@ public class SendControlsThread extends Thread
      * to ensure that the client communicates with the
      * server in a regular basis, so the server can know
      * the client is still alive. Change this value to determine
-     * the miliseconds the client should talk to the server if
+     * the milliseconds the client should talk to the server if
      * no new commands are being sent
      */
     private int timeOut = 500;
@@ -111,7 +111,7 @@ public class SendControlsThread extends Thread
     public SendControlsThread(Context context, String ip, int port)
     {
         super();
-
+        Log.d("Androneee", "Androneee ip is:"+ip);
         try
         {
             this.context = context;
@@ -119,7 +119,7 @@ public class SendControlsThread extends Thread
             this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
             this.port = port;
-            this.sock_handler = new DatagramSocket();
+            this.sockHandler = new DatagramSocket();
         }
         catch(Exception e)
         {
@@ -157,7 +157,7 @@ public class SendControlsThread extends Thread
      * try setting ipObject using an ipAddress. If all is well
      * then also change the ip variable
      *
-     * @param ip - The ipadress in a string
+     * @param ip - The ipaddress in a string
      */
     public void setIp(String ip)
     {
@@ -165,6 +165,7 @@ public class SendControlsThread extends Thread
         {
             try
             {
+            	Log.d("Androneee", "Androneee ip is:"+ip);
                 this.ip = InetAddress.getByName(ip);
                 this.fragment_hud.setHudIp(ip);
             }
@@ -192,7 +193,7 @@ public class SendControlsThread extends Thread
      * Set the position. If a position presented is different than
      * the previous position, notify our server over UDP. If we stop sending 
      * signals to our servers the server will revert to fallback mode, to prevent
-     * this we periodicly send the same signal back to the server to tell it we
+     * this we periodically send the same signal back to the server to tell it we
      * are still alive.
      *
      * Also if the Thread is paused, our lockPause object will wait. We know the 
@@ -231,7 +232,7 @@ public class SendControlsThread extends Thread
                                 );
 
                             // Send the packet
-                            this.sock_handler.send(packet);
+                            this.sockHandler.send(packet);
 
                             // Reset our timeValueSent to now
                             this.timeValueSent = System.currentTimeMillis();

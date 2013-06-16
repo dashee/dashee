@@ -10,14 +10,12 @@ import java.util.Observable;
 
 /**
  * This Class allows monitoring of various user phone movements.
- * yaw pitch and roll are calculated and updated to the observer
+ * yaw, pitch and roll are calculated and updated to the observer
  *
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class PhonePosition 
-    extends Observable 
-    implements SensorEventListener 
+public class PhonePosition extends Observable implements SensorEventListener 
 {
 	
     /**
@@ -51,15 +49,28 @@ public class PhonePosition
     
     /**
      * Return the roll value from the sensor.
-     * The first element of the orintation array, holds the roll
+     * The 2nd element of the orientation array, holds the roll
      * value
      * 
      * @return float - The orientation value
      */
     public float getRoll()
     {
-        return orientation[1];
+        return this.orientation[1];
     }
+    
+    /**
+     * Return the roll value from the sensor.
+     * The 3rd element of the orientation array, holds the roll
+     * value
+     * 
+     * @return float - The orientation value
+     */
+    public float getPitch()
+    {
+    	return this.orientation[2];
+    }
+    
     
     /**
      * When the accuracy is changed, Perform some actions
@@ -78,10 +89,10 @@ public class PhonePosition
     public void onResume()
     {
         sensorManager.registerListener(
-                this,
-                rotationSensor,
-                SensorManager.SENSOR_DELAY_FASTEST //Important, use the highest value possible
-            );
+	        this,
+	        rotationSensor,
+	        SensorManager.SENSOR_DELAY_FASTEST //Important, use the highest value possible
+        );
     }
     
     /**
@@ -103,12 +114,8 @@ public class PhonePosition
     @Override
     public void onSensorChanged(SensorEvent event) 
     {
-        SensorManager.getRotationMatrixFromVector (rotationMatrix, event.values);
-        SensorManager.getOrientation(rotationMatrix, orientation);
-
-        //float yaw_val = m_orientation[0] * 57.2957795f;
-        //float pitch_val = m_orientation[2] * 57.2957795f;
-
+        SensorManager.getRotationMatrixFromVector (this.rotationMatrix, event.values);
+        SensorManager.getOrientation(this.rotationMatrix, this.orientation);
         setChanged();
         notifyObservers();
     }
