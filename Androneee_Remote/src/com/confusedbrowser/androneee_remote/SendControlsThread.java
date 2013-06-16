@@ -27,8 +27,13 @@ public class SendControlsThread extends Thread
      *  position - Holds the current position
      *  lastPosition - Holds the last transmitted position 
      */
-    private int position = 50;
+    private int roll = 50;
     private int lastPosition;
+    
+    /**
+     * The magnitude of power required
+     */
+    private int power = 0;
     
     /**
      *  Networking variables.
@@ -100,22 +105,23 @@ public class SendControlsThread extends Thread
      */
     private int bps = 0;
 
+	
+
     /**
      * Initiate our thread. Set the variables from the params, and 
      * set our ipAdress object. Also create a new instance of socket 
      *
      * @param context - The context of this thread
      * @param ip - The ip address to send the commands to
-     * @param position - The default position which is to be set
+     * @param roll - The default position which is to be set
      */
     public SendControlsThread(Context context, String ip, int port)
     {
         super();
-        Log.d("Androneee", "Androneee ip is:"+ip);
         try
         {
             this.context = context;
-            this.lastPosition = this.position;
+            this.lastPosition = this.roll;
             this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
             this.port = port;
@@ -142,13 +148,15 @@ public class SendControlsThread extends Thread
      * Lock using lockPosition before setting the this.position
      * value with the parameter
      *
-     * @param position - The position to set
+     * @param roll - The position to set
+     * @param power - The pitch
      */
-    public void setPosition(int position)
+    public void setPosition(int roll, int power)
     {
         synchronized (lockPosition)
         {
-            this.position = position;
+            this.roll = roll;
+            this.power = power;
         }
     }
     
@@ -210,7 +218,7 @@ public class SendControlsThread extends Thread
                 
                 // If the previous position is different or we have reached a timeout
                 // send the values to our server
-                if(this.position != this.lastPosition || (currentTime-this.timeValueSent > this.timeOut))
+                if(this.roll != this.lastPosition || (currentTime-this.timeValueSent > this.timeOut))
                 {
                     // Good for debugging
                     //Log.i("position", "Position: " + this.position);
@@ -221,7 +229,7 @@ public class SendControlsThread extends Thread
                         {
                             // first byte sets the protocol and the channel number
                             // second byte will set the position
-                            byte command[] = new byte[]{ 33, (byte)(this.position << 1) };
+                            byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
 
                             // Create the packet
                             DatagramPacket packet = new DatagramPacket(
@@ -238,7 +246,7 @@ public class SendControlsThread extends Thread
                             this.timeValueSent = System.currentTimeMillis();
 
                             // change our lastPosition to the most recent value
-                            this.lastPosition = this.position;
+                            this.lastPosition = this.roll;
                             
                             // Increment our bytes sent
                             this.bps++;

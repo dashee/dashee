@@ -234,10 +234,13 @@ public class MainActivity
     public void update(Observable o, Object arg) 
     {
         PhonePosition position = (PhonePosition) o;
-        double progress = remapValue(-position.getRoll(),-0.523,0.523,0,100);
+        // TODO: fix magic number which are angles expressed in radians
+        double roll = remapValue(-position.getRoll(),-0.523,0.523,0,100);
+        double power = remapValue(position.getPitch(),-1.17,-0.9,0,100);
+        fragmentHud.setHudConnection(power+"");
         
-        threadSendControllerPos.setPosition((int)progress);
-        fragmentHud.rotateHud((float)progress);
+        threadSendControllerPos.setPosition((int) roll, (int)power);
+        fragmentHud.rotateHud((float) roll);
     }
     
     /**
