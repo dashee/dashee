@@ -16,7 +16,9 @@ import android.widget.SeekBar;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.confusedbrowser.androneee_remote.fragment.*;
+import com.confusedbrowser.androneee_remote.fragments.*;
+import com.confusedbrowser.androneee_remote.models.*;
+import com.confusedbrowser.androneee_remote.threads.*;
 
 /**
  * The main activity that the program will run.
@@ -37,21 +39,21 @@ public class MainActivity
      * So they dont have to be initialized every time, and hold
      * there previous state.
      */
-    private HudFragment fragmentHud;
-    private LogFragment fragmentLog;
+    private FragmentHud fragmentHud;
+    private FragmentLog fragmentLog;
     
     /**
      * This is our threadSendControllerPositions, which allows us to communicate
      * with our server on the RC robot, this thread handles the
      * network communication
      */
-    public SendControlsThread threadSendControllerPos;
+    public ThreadControls threadControls;
     
     /**
      * Handel to our Phone schemetics. This will return
-     * our Phoneposition, by adding an observer
+     * our phones roll, pitch state, by notifying the observer
      */
-    public PhonePosition phonePos;
+    public ModelPosition modelPosition;
 
     /**
      * The listener, to when the settings have changed.
@@ -70,49 +72,25 @@ public class MainActivity
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
         
+        // This will initialise our PhonePosition Observer,
+        // So our this.update function can handle updates 
+        modelPosition = new ModelPosition(getBaseContext());
+        modelPosition.addObserver(this);
+        
         // Create our fragment views
-        fragmentHud = new HudFragment();
-        fragmentLog = new LogFragment();
+        fragmentHud = new FragmentHud();
+        fragmentLog = new FragmentLog();
         
         //Set the initial view to our HUD
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_content, fragmentHud);
         ft.commit();
-        
-        // This will initialise our PhonePosition Observer,
-        // So our this.update function can handle updates 
-        phonePos = new PhonePosition(getBaseContext());
-        phonePos.addObserver(this);
     	
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialize our thread
-        threadSendControllerPos = new SendControlsThread(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
-        threadSendControllerPos.setHudFragment(fragmentHud);
-        threadSendControllerPos.start();
-    
-        /*
-        runOnUiThread(new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        while(true)
-                        {
-                            Thread.sleep(1000);
-                            fragment_hud.setHudBps(thread_servo.getBps());
-                            thread_servo.setBps(0);
-                        }
-                    }
-                    catch (Exception e) 
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        );
-        */
+        threadControls = new ThreadControls(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
+        threadControls.start();
         
         // Add the settings listener events
         addSettingListener();
@@ -132,7 +110,8 @@ public class MainActivity
         {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
             {
-                threadSendControllerPos.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+                threadControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+                fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
             }
     	};
         prefs.registerOnSharedPreferenceChangeListener(settingChangeListener);
@@ -189,38 +168,6 @@ public class MainActivity
                 return super.onOptionsItemSelected(item);
         }        
     }
-    
-    /**
-     * App is Resumed from a pause state.
-     * Resume the thread, and start the PhoneRoll monitoring
-     */
-    @Override
-    protected void onResume() 
-    {
-        super.onResume();
-        phonePos.onResume();
-        threadSendControllerPos.onResume();
-    }
-    
-    /**
-     * App is paused, handel pause systems.
-     * Pause the thread, and stop the PhoneRoll monitoring
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        phonePos.onPause();
-        threadSendControllerPos.onPause();
-    }
-
-    @Override
-    /**
-     * Stop everything. Time to go to bed
-     */
-    protected void onStop()
-    {
-        super.onStop();
-    }
 
     /**
      *  Update our view and model. Given the phone's roll
@@ -230,49 +177,51 @@ public class MainActivity
      *  @param o - The observer handler
      *  @param arg - The arguments to the Observer
      */
-    @Override
-    public void update(Observable o, Object arg) 
+    public void update(Observable o, Object arg)
     {
-        PhonePosition position = (PhonePosition) o;
-        // TODO: fix magic number which are angles expressed in radians
-        
-        // Steering
-        double roll = remapValue(-position.getRoll(),-0.523,0.523,0,100);
+        if (o instanceof ModelPosition)
+        {
+            ModelPosition position = (ModelPosition)o;
 
-        // Power
-        double pitch = remapValue(position.getPitch(),-1.17,-0.5,0,100);
-        
-        fragmentHud.setHudRoll(roll);
-        fragmentHud.setHudPitch(pitch);
-        
-        threadSendControllerPos.setPosition((int) roll, (int)pitch);
-        fragmentHud.rotateHud((float)roll);
+            float roll = position.getRoll();
+            float pitch = position.getPitch();
+
+            fragmentHud.setPosition(roll, pitch);
+            threadControls.setPosition((int)roll, (int)pitch);
+        }
+    }
+
+    /**
+     * App is Resumed from a pause state.
+     * Resume the thread, and start the PhoneRoll monitoring
+     */
+    @Override
+    protected void onResume() 
+    {
+        super.onResume();
+        modelPosition.onResume();
+        threadControls.onResume();
     }
     
     /**
-     * Generic function. Takes a numeric value which is a value in the curMin to curMax range
-     * and converts it to a corresponding value in the targetMin to targetMax range.
-     * @param value - The numeric value to be re-mapped
-     * @param curMin - Current range min
-     * @param curMax - Current range max
-     * @param targetMin - Current range min
-     * @param targetMax - Current range max
-     *
-     * @return double - Value mapped to the new target range
+     * App is paused, handel pause systems.
+     * Pause the thread, and stop the PhoneRoll monitoring
      */
-    public double remapValue(float value, double curMin, double curMax, double targetMin, double targetMax)
+    @Override
+    protected void onPause() 
     {
-        //Figure out how 'wide' each range is
-        double leftSpan = curMax - curMin;
-        double rightSpan = targetMax - targetMin;
-        
-        //Convert the left range into a 0-1 range (float)
-        double valueScaled = (value - curMin) / (leftSpan);
-        
-        //Convert the 0-1 range into a value in the right range.
-        if(value<curMin) return targetMin;
-        if(value>curMax) return targetMax;
-        return targetMin + (valueScaled * rightSpan); 
+        super.onPause();
+        modelPosition.onPause();
+        threadControls.onPause();
+    }
+
+    /**
+     * Stop everything. Time to go to bed
+     */
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
     }
 
     @Override

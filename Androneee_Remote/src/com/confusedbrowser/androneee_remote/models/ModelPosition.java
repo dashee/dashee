@@ -1,4 +1,4 @@
-package com.confusedbrowser.androneee_remote;
+package com.confusedbrowser.androneee_remote.models;
 
 import android.content.Context;
 import android.hardware.SensorEvent;
@@ -15,9 +15,8 @@ import java.util.Observable;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class PhonePosition extends Observable implements SensorEventListener 
+public class ModelPosition extends Observable implements SensorEventListener 
 {
-	
     /**
      * required Sensors.
      */
@@ -41,7 +40,7 @@ public class PhonePosition extends Observable implements SensorEventListener
      *
      * @param cont - The context in which to set the sensor in
      */
-    public PhonePosition(Context cont)
+    public ModelPosition(Context cont)
     {
         this.sensorManager = (SensorManager)cont.getSystemService(Context.SENSOR_SERVICE);
         this.rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -56,7 +55,7 @@ public class PhonePosition extends Observable implements SensorEventListener
      */
     public float getRoll()
     {
-        return this.orientation[1];
+        return (100.0f - remapValue(this.orientation[1],-0.523f,0.523f,0.0f,100.0f));
     }
     
     /**
@@ -68,8 +67,35 @@ public class PhonePosition extends Observable implements SensorEventListener
      */
     public float getPitch()
     {
-    	return this.orientation[2];
+        return remapValue(this.orientation[2],-1.17f,-0.5f,0.0f,100.0f);
     }
+
+    /**
+     * Generic function. Takes a numeric value which is a value in the curMin to curMax range
+     * and converts it to a corresponding value in the targetMin to targetMax range.
+     * @param value - The numeric value to be re-mapped
+     * @param curMin - Current range min
+     * @param curMax - Current range max
+     * @param targetMin - Current range min
+     * @param targetMax - Current range max
+     *
+     * @return float - Value mapped to the new target range
+     */
+     private float remapValue(float value, float curMin, float curMax, float targetMin, float targetMax)
+    {
+        //Figure out how 'wide' each range is
+        float leftSpan = curMax - curMin;
+        float rightSpan = targetMax - targetMin;
+        
+        //Convert the left range into a 0-1 range (float)
+        float valueScaled = (value - curMin) / (leftSpan);
+        
+        //Convert the 0-1 range into a value in the right range.
+        if(value<curMin) return targetMin;
+        if(value>curMax) return targetMax;
+        return targetMin + (valueScaled * rightSpan); 
+    }
+    
     
     
     /**
@@ -89,9 +115,9 @@ public class PhonePosition extends Observable implements SensorEventListener
     public void onResume()
     {
         sensorManager.registerListener(
-	        this,
-	        rotationSensor,
-	        SensorManager.SENSOR_DELAY_FASTEST //Important, use the highest value possible
+            this,
+            rotationSensor,
+            SensorManager.SENSOR_DELAY_FASTEST //Important, use the highest value possible
         );
     }
     

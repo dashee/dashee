@@ -1,4 +1,4 @@
-package com.confusedbrowser.androneee_remote.fragment;
+package com.confusedbrowser.androneee_remote.fragments;
 
 import java.util.Observable;
 import java.text.DecimalFormat;
@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.LinearLayout;
 import com.confusedbrowser.androneee_remote.DrawHud;
-import com.confusedbrowser.androneee_remote.PhonePosition;
 import com.confusedbrowser.androneee_remote.R;
 import android.widget.TextView;
 
@@ -23,7 +22,7 @@ import android.widget.TextView;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class HudFragment extends Fragment
+public class FragmentHud extends Fragment
 {
     /**
      * This is the variable where our HUD is drawn
@@ -42,7 +41,7 @@ public class HudFragment extends Fragment
     private TextView textViewHudPitchValue; //Pitch Value
     private TextView textViewHudRollValue; //Pitch Value
 	
-    public HudFragment()
+    public FragmentHud()
     {
     }
     
@@ -71,8 +70,8 @@ public class HudFragment extends Fragment
         this.setHudIp(prefs.getString("pref_ip", "WTF"));
         this.setHudConnection("NoConnection");
         this.setHudBps(0);
-        this.setHudPitch(0.0);
-        this.setHudPitch(0.0);
+        this.setHudPitch(0.0f);
+        this.setHudPitch(0.0f);
         
         return view;
     }
@@ -115,7 +114,7 @@ public class HudFragment extends Fragment
      *
      * @param pitch - the pitch value
      */
-    public void setHudPitch(double pitch)
+    public void setHudPitch(float pitch)
     {
         if (pitch < 0.0)
             textViewHudPitchValue.setText("Negative?");
@@ -129,7 +128,7 @@ public class HudFragment extends Fragment
      *
      * @param roll - the pitch value
      */
-    public void setHudRoll(double roll)
+    public void setHudRoll(float roll)
     {
         if (roll < 0.0)
             textViewHudRollValue.setText("Negative?");
@@ -137,6 +136,30 @@ public class HudFragment extends Fragment
         DecimalFormat twoDecimal = new DecimalFormat("000.00");
         textViewHudRollValue.setText(twoDecimal.format(roll));
     }
+    
+    /**
+     * Rotate our HUD. Given a value, rotate our hud accordingly
+     *
+     * @param roll - The rotation value.
+     */
+    public void rotateHud(float roll)
+    {
+        layout_hud.setRotation(-1.0f*(roll - 50.0f));
+    }
+    
+    /**
+     * Set the roll and pitch position. A wrapper around
+     * our functions, it will also deal with rotating the hud
+     *
+     * @param roll - The roll value
+     * @param pitch - The pitch value
+     */
+    public void setPosition(float roll, float pitch)
+    {
+        this.setHudRoll(roll);
+        this.setHudPitch(pitch);
+        this.rotateHud(roll);
+    }   
 
     /**
      * Pause our thread
@@ -152,10 +175,5 @@ public class HudFragment extends Fragment
     public void onResume()
     {
         super.onResume();
-    }
-
-    public void rotateHud(float progress)
-    {
-        layout_hud.setRotation(-1.0f*(progress - 50.0f));
     }
 }

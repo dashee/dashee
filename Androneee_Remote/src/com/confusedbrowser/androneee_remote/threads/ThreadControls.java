@@ -1,10 +1,8 @@
-package com.confusedbrowser.androneee_remote;
+package com.confusedbrowser.androneee_remote.threads;
 
 import android.content.Context;
 import android.util.Log;
 import java.net.*;
-
-import com.confusedbrowser.androneee_remote.fragment.HudFragment;
 
 /**
  * Thread to communicate to the server.
@@ -15,7 +13,7 @@ import com.confusedbrowser.androneee_remote.fragment.HudFragment;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class SendControlsThread extends Thread 
+public class ThreadControls extends Thread 
 {
     /**
      * Context of this object. 
@@ -94,17 +92,10 @@ public class SendControlsThread extends Thread
     private long timeLastBpsReset = 0; // Time when last bps was recorded
 
     /**
-     * The handler to our View. Usefull for when you want the thread
-     * to update the view.
-     */
-    private HudFragment fragment_hud;
-
-    /**
      * Hold the value of bytes sent. It will be reset to 0 after every
      * second, the bps stands for Bytes per Second
      */
     private int bps = 0;
-
 	
 
     /**
@@ -115,7 +106,7 @@ public class SendControlsThread extends Thread
      * @param ip - The ip address to send the commands to
      * @param roll - The default position which is to be set
      */
-    public SendControlsThread(Context context, String ip, int port)
+    public ThreadControls(Context context, String ip, int port)
     {
         super();
         try
@@ -132,16 +123,6 @@ public class SendControlsThread extends Thread
             e.printStackTrace();
         }
     }
-
-    /**
-     * Set our Fragment. 
-     *
-     * @param fragment_hud - The pointer to the HudFragment object
-     */
-    public void setHudFragment(HudFragment fragment_hud)
-    {
-        this.fragment_hud = fragment_hud;
-    }   
         
     /**
      * Set the position variable.
@@ -175,7 +156,6 @@ public class SendControlsThread extends Thread
             {
             	Log.d("Androneee", "Androneee ip is:"+ip);
                 this.ip = InetAddress.getByName(ip);
-                this.fragment_hud.setHudIp(ip);
             }
             catch(Exception e)
             {

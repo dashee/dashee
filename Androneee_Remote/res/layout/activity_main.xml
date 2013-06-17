@@ -25,14 +25,14 @@
      
      <fragment
         android:id="@+id/fragment_log"
-        android:name="com.confusedbrowser.androneee_remote.fragment.LogFragment"
+        android:name="com.confusedbrowser.androneee_remote.fragments.FragmentLog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
      	/>
      
     <fragment
          android:id="@+id/fragment_hud"
-         android:name="com.confusedbrowser.androneee_remote.fragment.HudFragment"
+         android:name="com.confusedbrowser.androneee_remote.fragments.FragmentHud"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent" 
          />
