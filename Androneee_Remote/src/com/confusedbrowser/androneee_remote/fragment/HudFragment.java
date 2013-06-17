@@ -1,6 +1,7 @@
 package com.confusedbrowser.androneee_remote.fragment;
 
 import java.util.Observable;
+import java.text.DecimalFormat;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -38,6 +39,8 @@ public class HudFragment extends Fragment
     private TextView textViewHudIpValue;
     private TextView textViewHudConnectionValue;
     private TextView textViewHudBpsValue; //Bytes Per Second
+    private TextView textViewHudPitchValue; //Pitch Value
+    private TextView textViewHudRollValue; //Pitch Value
 	
     public HudFragment()
     {
@@ -61,10 +64,15 @@ public class HudFragment extends Fragment
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
+        textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
+        textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
+
 
         this.setHudIp(prefs.getString("pref_ip", "WTF"));
         this.setHudConnection("NoConnection");
         this.setHudBps(0);
+        this.setHudPitch(0.0);
+        this.setHudPitch(0.0);
         
         return view;
     }
@@ -80,7 +88,7 @@ public class HudFragment extends Fragment
     }
     
     /**
-     * Set our textvod connection value
+     * Set our textbox connection value
      *
      * @param value - the ip address
      */
@@ -90,9 +98,9 @@ public class HudFragment extends Fragment
     }
     
     /**
-     * Set our textbod BeatsPerSecond value
+     * Set our textbox BytesPerSecond value
      *
-     * @param value - the bps value
+     * @param bps - the bps value
      */
     public void setHudBps(int bps)
     {
@@ -100,6 +108,34 @@ public class HudFragment extends Fragment
             textViewHudBpsValue.setText("Negative?");
 
         textViewHudBpsValue.setText(Integer.toString(bps));
+    }
+    
+    /**
+     * Set our textbox Pitch value
+     *
+     * @param pitch - the pitch value
+     */
+    public void setHudPitch(double pitch)
+    {
+        if (pitch < 0.0)
+            textViewHudPitchValue.setText("Negative?");
+        
+        DecimalFormat twoDecimal = new DecimalFormat("000.00");
+        textViewHudPitchValue.setText(twoDecimal.format(pitch));
+    }
+    
+    /**
+     * Set our textbox Roll value
+     *
+     * @param roll - the pitch value
+     */
+    public void setHudRoll(double roll)
+    {
+        if (roll < 0.0)
+            textViewHudRollValue.setText("Negative?");
+    
+        DecimalFormat twoDecimal = new DecimalFormat("000.00");
+        textViewHudRollValue.setText(twoDecimal.format(roll));
     }
 
     /**

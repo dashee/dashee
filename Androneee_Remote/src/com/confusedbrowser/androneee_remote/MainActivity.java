@@ -235,12 +235,18 @@ public class MainActivity
     {
         PhonePosition position = (PhonePosition) o;
         // TODO: fix magic number which are angles expressed in radians
-        double roll = remapValue(-position.getRoll(),-0.523,0.523,0,100);
-        double power = remapValue(position.getPitch(),-1.17,-0.9,0,100);
-        fragmentHud.setHudConnection(power+"");
         
-        threadSendControllerPos.setPosition((int) roll, (int)power);
-        fragmentHud.rotateHud((float) roll);
+        // Steering
+        double roll = remapValue(-position.getRoll(),-0.523,0.523,0,100);
+
+        // Power
+        double pitch = remapValue(position.getPitch(),-1.17,-0.5,0,100);
+        
+        fragmentHud.setHudRoll(roll);
+        fragmentHud.setHudPitch(pitch);
+        
+        threadSendControllerPos.setPosition((int) roll, (int)pitch);
+        fragmentHud.rotateHud((float)roll);
     }
     
     /**
