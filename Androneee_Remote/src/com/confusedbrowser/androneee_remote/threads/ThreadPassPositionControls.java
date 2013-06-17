@@ -13,7 +13,7 @@ import java.net.*;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class ThreadControls extends Thread 
+public class ThreadPassPositionControls extends Thread 
 {
     /**
      * Context of this object. 
@@ -106,7 +106,7 @@ public class ThreadControls extends Thread
      * @param ip - The ip address to send the commands to
      * @param roll - The default position which is to be set
      */
-    public ThreadControls(Context context, String ip, int port)
+    public ThreadPassPositionControls(Context context, String ip, int port)
     {
         super();
         try

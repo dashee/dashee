@@ -47,7 +47,7 @@ public class MainActivity
      * with our server on the RC robot, this thread handles the
      * network communication
      */
-    public ThreadControls threadControls;
+    public ThreadPassPositionControls threadPassPositionControls;
     
     /**
      * Handel to our Phone schemetics. This will return
@@ -89,8 +89,8 @@ public class MainActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialize our thread
-        threadControls = new ThreadControls(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
-        threadControls.start();
+        threadPassPositionControls = new ThreadPassPositionControls(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
+        threadPassPositionControls.start();
         
         // Add the settings listener events
         addSettingListener();
@@ -110,7 +110,7 @@ public class MainActivity
         {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
             {
-                threadControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+                threadPassPositionControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
                 fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
             }
     	};
@@ -187,7 +187,7 @@ public class MainActivity
             float pitch = position.getPitch();
 
             fragmentHud.setPosition(roll, pitch);
-            threadControls.setPosition((int)roll, (int)pitch);
+            threadPassPositionControls.setPosition((int)roll, (int)pitch);
         }
     }
 
@@ -200,7 +200,7 @@ public class MainActivity
     {
         super.onResume();
         modelPosition.onResume();
-        threadControls.onResume();
+        threadPassPositionControls.onResume();
     }
     
     /**
@@ -212,7 +212,7 @@ public class MainActivity
     {
         super.onPause();
         modelPosition.onPause();
-        threadControls.onPause();
+        threadPassPositionControls.onPause();
     }
 
     /**
