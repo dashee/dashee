@@ -227,11 +227,11 @@ public class ThreadPassPositionControls extends Thread
     }
 	
     /**
-     * Calculates roll command in binary to pass to the server
+     * Converts current roll value to androneee server protocol and sends it.
      */
     private void sendRollCommand(){
     	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 33 converts to 00100001, see androneee server protocol
+		// of command the second is the value, 33 converts to 00100001.
 		byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
 		this.sendCommandBytes(command);
         this.prevRoll = this.roll;
@@ -241,11 +241,11 @@ public class ThreadPassPositionControls extends Thread
     
 
     /**
-     * Calculates power command in binary to pass to the server
+     * Converts current power value to androneee server protocol and sends it.
      */
     private void sendPowerCommand(){
     	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 19 converts to 00010011, see androneee server protocol
+		// of command the second is the value, 19 converts to 00010011.
 		byte command[] = new byte[]{ 19, (byte)(this.power << 1) };
 		this.sendCommandBytes(command);
         this.prevPower = this.power;
@@ -254,12 +254,11 @@ public class ThreadPassPositionControls extends Thread
     }
     
     /**
-     * Passes byte arrays to the server
+     * Passes androneee server protocol commands to the server.
      */
     private void sendCommandBytes(byte[] command){
     	try
     	{
-	    	// Create the packet
 	        DatagramPacket packet = new DatagramPacket(
 	                command, 
 	                command.length,
@@ -267,7 +266,6 @@ public class ThreadPassPositionControls extends Thread
 	                this.port
 	        );
 	        this.sockHandler.send(packet);
-    	
     	} 
 	    catch (Exception e) 
 	    {
