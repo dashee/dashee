@@ -15,7 +15,7 @@
     <string name="fragment_log_textview">Server has not responded yet</string>
     
     <string name="hud_text_ip_label">IP</string>
-    <string name="hud_text_connection_label">Connection</string>
+    <string name="hud_text_connection_label">Status</string>
     <string name="hud_text_bps_label">B/s</string>
     <string name="hud_text_pitch_label">Pitch</string>
     <string name="hud_text_roll_label">Roll</string>

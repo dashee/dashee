@@ -68,7 +68,7 @@ public class FragmentHud extends Fragment
 
 
         this.setHudIp(prefs.getString("pref_ip", "WTF"));
-        this.setHudConnection("NoConnection");
+        this.setHudConnection("unknown");
         this.setHudBps(0);
         this.setHudPitch(0.0f);
         this.setHudPitch(0.0f);

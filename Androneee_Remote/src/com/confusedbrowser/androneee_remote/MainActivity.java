@@ -50,10 +50,24 @@ public class MainActivity
     public ThreadPassPositionControls threadPassPositionControls;
     
     /**
+     * This will poll our server to check wheather it is still
+     * alive or not. If not then an observer will be notified
+     * It is this observer that will handel other threads, which require
+     * this server
+     */
+    public ThreadCheckServerStatus threadCheckServerStatus;
+    
+    /**
      * Handel to our Phone schemetics. This will return
      * our phones roll, pitch state, by notifying the observer
      */
     public ModelPosition modelPosition;
+    
+    /**
+     * Hold the state of our Server. This will notify our
+     * Observer, any time server values are changed
+     */
+    public ModelServerState modelServerState;
 
     /**
      * The listener, to when the settings have changed.
@@ -77,6 +91,10 @@ public class MainActivity
         modelPosition = new ModelPosition(getBaseContext());
         modelPosition.addObserver(this);
         
+        //Create our ServerState model
+        modelServerState = new ModelServerState();
+        modelServerState.addObserver(this);
+        
         // Create our fragment views
         fragmentHud = new FragmentHud();
         fragmentLog = new FragmentLog();
@@ -91,6 +109,10 @@ public class MainActivity
         // Initialize our thread
         threadPassPositionControls = new ThreadPassPositionControls(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
         threadPassPositionControls.start();
+
+        // Initialize our thread
+        threadCheckServerStatus = new ThreadCheckServerStatus(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
+        threadCheckServerStatus.start();
         
         // Add the settings listener events
         addSettingListener();
@@ -111,6 +133,7 @@ public class MainActivity
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
             {
                 threadPassPositionControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+                threadCheckServerStatus.setIp(prefs.getString("pref_ip", "192.168.1.11"));
                 fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
             }
     	};
@@ -169,6 +192,8 @@ public class MainActivity
         }        
     }
 
+    private Thread threadUpdate;
+
     /**
      *  Update our view and model. Given the phone's roll
      *  we update our server/model using our thread and we also
@@ -189,6 +214,37 @@ public class MainActivity
             fragmentHud.setPosition(roll, pitch);
             threadPassPositionControls.setPosition((int)roll, (int)pitch);
         }
+
+        try
+        {
+            if (o instanceof ModelServerState)
+            {
+                ModelServerState serverState = (ModelServerState)o;
+
+                if (serverState.isAlive())
+                {
+                    runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            fragmentHud.setHudConnection("Connected"); 
+                        }
+                    });
+                }
+                else
+                {
+                    runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            fragmentHud.setHudConnection("Failed"); 
+                        }
+                    });
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -201,6 +257,7 @@ public class MainActivity
         super.onResume();
         modelPosition.onResume();
         threadPassPositionControls.onResume();
+        threadCheckServerStatus.onResume();
     }
     
     /**
@@ -213,6 +270,7 @@ public class MainActivity
         super.onPause();
         modelPosition.onPause();
         threadPassPositionControls.onPause();
+        threadCheckServerStatus.onPause();
     }
 
     /**
