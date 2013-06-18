@@ -212,7 +212,7 @@ public class MainActivity
             float pitch = position.getPitch();
 
             fragmentHud.setPosition(roll, pitch);
-            threadPassPositionControls.setPosition((int)roll, (int)pitch);
+            threadPassPositionControls.update((int)roll, (int)pitch);
         }
 
         try

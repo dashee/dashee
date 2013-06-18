@@ -26,18 +26,19 @@ public class ThreadPassPositionControls extends Thread
      *  lastPosition - Holds the last transmitted position 
      */
     private int roll = 50;
-    private int lastPosition;
+    private int lastRoll;
     
     /**
      * The magnitude of power required
      */
     private int power = 0;
+    private int lastPower;
     
     /**
      *  Networking variables.
-     *   ip - The ip address to connect to
-     *   port - The port to connect to
-     *   socket - The socket handling wrapper
+     *  ip - The ip address to connect to
+     *  port - The port to connect to
+     *  socket - The socket handling wrapper
      */
     private InetAddress ip;
     private int port;
@@ -95,7 +96,7 @@ public class ThreadPassPositionControls extends Thread
      * Hold the value of bytes sent. It will be reset to 0 after every
      * second, the bps stands for Bytes per Second
      */
-    private int bps = 0;
+    private int bytesPerSec = 0;
 	
 
     /**
@@ -112,7 +113,7 @@ public class ThreadPassPositionControls extends Thread
         try
         {
             this.context = context;
-            this.lastPosition = this.roll;
+            this.lastRoll = this.roll;
             this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
             this.port = port;
@@ -132,7 +133,7 @@ public class ThreadPassPositionControls extends Thread
      * @param roll - The position to set
      * @param power - The pitch
      */
-    public void setPosition(int roll, int power)
+    public void update(int roll, int power)
     {
         synchronized (lockPosition)
         {
@@ -169,12 +170,12 @@ public class ThreadPassPositionControls extends Thread
     {
         if (bps < 0) bps = 0;
 
-        this.bps = bps;
+        this.bytesPerSec = bps;
     }
 
     public int getBps()
     {
-        return this.bps;
+        return this.bytesPerSec;
     }
     
     /**
@@ -193,49 +194,17 @@ public class ThreadPassPositionControls extends Thread
         {
             synchronized (lockPosition)
             {
-                // Get the current time
                 long currentTime = System.currentTimeMillis();
-                
-                // If the previous position is different or we have reached a timeout
-                // send the values to our server
-                if(this.roll != this.lastPosition || (currentTime-this.timeValueSent > this.timeOut))
+                // Good for debugging Log.i("position", "Position: " + this.position);    
+                synchronized (lockIp)
                 {
-                    // Good for debugging
-                    //Log.i("position", "Position: " + this.position);
-
-                    try 
-                    {
-                        synchronized (lockIp)
-                        {
-                            // first byte sets the protocol and the channel number
-                            // second byte will set the position
-                            byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
-
-                            // Create the packet
-                            DatagramPacket packet = new DatagramPacket(
-                                    command, 
-                                    command.length, 
-                                    this.ip, 
-                                    this.port
-                                );
-
-                            // Send the packet
-                            this.sockHandler.send(packet);
-
-                            // Reset our timeValueSent to now
-                            this.timeValueSent = System.currentTimeMillis();
-
-                            // change our lastPosition to the most recent value
-                            this.lastPosition = this.roll;
-                            
-                            // Increment our bytes sent
-                            this.bps++;
-                        }
-                    } 
-                    catch (Exception e) 
-                    {
-                        e.printStackTrace();
-                    }
+                	// If the previous position is different or we have reached a timeout
+                    // send the values to our server, only one command needs to be send on timeout
+                	// so I choose the first one
+                	if(this.roll != this.lastRoll || (currentTime-this.timeValueSent > this.timeOut))
+                		this.sendRollCommand();
+                	if(this.power != this.lastPower) 
+                		this.sendPowerCommand();
                 }
             }
             
@@ -257,6 +226,55 @@ public class ThreadPassPositionControls extends Thread
         }
     }
 	
+    /**
+     * Calculates roll command in binary to pass to the server
+     */
+    private void sendRollCommand(){
+    	// Commands are sent as 2 byte packets, the first byte, is the type
+		// of command the second is the value, 33 converts to 00100001, see androneee server protocol
+		byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
+		this.sendCommandBytes(command);
+        this.lastRoll = this.roll;
+        this.bytesPerSec++;
+        this.timeValueSent = System.currentTimeMillis();
+    }
+    
+
+    /**
+     * Calculates power command in binary to pass to the server
+     */
+    private void sendPowerCommand(){
+    	// Commands are sent as 2 byte packets, the first byte, is the type
+		// of command the second is the value, 19 converts to 00010011, see androneee server protocol
+		byte command[] = new byte[]{ 19, (byte)(this.power << 1) };
+		this.sendCommandBytes(command);
+        this.lastPower = this.power;
+        this.bytesPerSec++;
+        this.timeValueSent = System.currentTimeMillis();
+    }
+    
+    /**
+     * Passes byte arrays to the server
+     */
+    private void sendCommandBytes(byte[] command){
+    	try
+    	{
+	    	// Create the packet
+	        DatagramPacket packet = new DatagramPacket(
+	                command, 
+	                command.length,
+	                this.ip, 
+	                this.port
+	        );
+	        this.sockHandler.send(packet);
+    	
+    	} 
+	    catch (Exception e) 
+	    {
+	        e.printStackTrace();
+	    }
+    }
+    
     /**
      * Change the pause flag. When we pause
      * the flag will prevent call lockPause.wait();
