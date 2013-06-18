@@ -26,13 +26,13 @@ public class ThreadPassPositionControls extends Thread
      *  lastPosition - Holds the last transmitted position 
      */
     private int roll = 50;
-    private int lastRoll;
+    private int prevRoll;
     
     /**
      * The magnitude of power required
      */
     private int power = 0;
-    private int lastPower;
+    private int prevPower;
     
     /**
      *  Networking variables.
@@ -83,18 +83,18 @@ public class ThreadPassPositionControls extends Thread
      * us determine the last time the value was sent, we can use this
      * for comparison before we can send another value.
      */
-    private long timeValueSent = 0; // Time when last value was set
+    private long timeValueSent = 0;
 
     /**
      * Holds the last time the Bps command was reset. This will help change
      * our view to determine how many bytes have been sent over a second
      * Every time the view is set, the values of this is reset to current time
      */
-    private long timeLastBpsReset = 0; // Time when last bps was recorded
+    private long timeLastBpsReset = 0;
 
     /**
      * Hold the value of bytes sent. It will be reset to 0 after every
-     * second, the bps stands for Bytes per Second
+     * second.
      */
     private int bytesPerSec = 0;
 	
@@ -113,7 +113,7 @@ public class ThreadPassPositionControls extends Thread
         try
         {
             this.context = context;
-            this.lastRoll = this.roll;
+            this.prevRoll = this.roll;
             this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
             this.port = port;
@@ -200,10 +200,10 @@ public class ThreadPassPositionControls extends Thread
                 {
                 	// If the previous position is different or we have reached a timeout
                     // send the values to our server, only one command needs to be send on timeout
-                	// so I choose the first one
-                	if(this.roll != this.lastRoll || (currentTime-this.timeValueSent > this.timeOut))
+                	// so I choose the first one.
+                	if(this.roll != this.prevRoll || (currentTime-this.timeValueSent > this.timeOut))
                 		this.sendRollCommand();
-                	if(this.power != this.lastPower) 
+                	if(this.power != this.prevPower) 
                 		this.sendPowerCommand();
                 }
             }
@@ -234,7 +234,7 @@ public class ThreadPassPositionControls extends Thread
 		// of command the second is the value, 33 converts to 00100001, see androneee server protocol
 		byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
 		this.sendCommandBytes(command);
-        this.lastRoll = this.roll;
+        this.prevRoll = this.roll;
         this.bytesPerSec++;
         this.timeValueSent = System.currentTimeMillis();
     }
@@ -248,7 +248,7 @@ public class ThreadPassPositionControls extends Thread
 		// of command the second is the value, 19 converts to 00010011, see androneee server protocol
 		byte command[] = new byte[]{ 19, (byte)(this.power << 1) };
 		this.sendCommandBytes(command);
-        this.lastPower = this.power;
+        this.prevPower = this.power;
         this.bytesPerSec++;
         this.timeValueSent = System.currentTimeMillis();
     }
