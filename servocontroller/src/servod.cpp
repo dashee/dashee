@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     
     // Create a dummy Servo to be initiated later
     // Initialising to NULL is important otherwise you will seg fault
-    ServoController *s = NULL;
+    ServoController *servoController = NULL;
 
     // Create our Config_servod, as a new pointer, as we will
     // delete it mid point to clear our heap.
@@ -108,21 +108,21 @@ int main(int argc, char **argv)
         {
             // Create a Servo
             Log::info(1, "Loading UART device '%s'.", servo);
-            s = new ServoController_UART(servo);
+            servoController = new ServoController_UART(servo);
         }
         
         // Set our servo to the Binary file
         else if(servotype == 2)
         {
             Log::info(1, "Loading USB device '%s'.", servo);
-            s = new ServoController_USB(servo);
+            servoController = new ServoController_USB(servo);
         }
 
         // Set our servo to the Binary file
         else if(servotype == 3)
         {
             Log::info(1, "Loading Dummy device '%s'.", servo);
-            s = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
+            servoController = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
         }
 
         // Fail as the options must fall within the above
@@ -133,32 +133,32 @@ int main(int argc, char **argv)
         // and then delete the variable, as we dont use it any more
         // so no point utilizing the heap, See Congfig_servod::setServoController for
         // detailed explaination for this
-        conf->setServoController(s);
+        conf->setServoController(servoController);
         delete conf;
 
         // Print and clear any Servo specific errors.
         // This should not be fatal, as the servo only stores last errors.
         // Which should be printed
-        int error = s->getError();
+        int error = servoController->getError();
         if (error > 0)
             Log::error("Servo failed with eccode %d", error);
         
         // Create a UDP server
-        Server_UDP x(port);
+        Server_UDP udp(port);
         Log::info(1, "Port initialized on %d.", port);
 
         // Loop through read and write our server
         while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
-            if (x.read(readtimeout, readtimeoutN))
+            if (udp.read(readtimeout, readtimeoutN))
             {
                 //if (EXIT) { break; }
                 
                 // ---------
                 // 000000001 &
                 // 00000000-
-                if ((x.getBuffer()[0] & 1) == 1)
+                if ((udp.getBuffer()[0] & 1) == 1)
                 {   
                     // @throw Exception_Servo
                     try
@@ -167,13 +167,13 @@ int main(int argc, char **argv)
                         // 00001110 & 14
                         // 0000---0 >> 1
                         // 00000---
-                        unsigned char command = (x.getBuffer()[0] & 14) >> 1;
+                        unsigned char command = (udp.getBuffer()[0] & 14) >> 1;
 
                         // --------
                         // 11110000 & 240
                         // ----0000 >> 4
                         // 0000----
-                        unsigned char channel = (x.getBuffer()[0] & 240) >> 4;
+                        unsigned char channel = (udp.getBuffer()[0] & 240) >> 4;
                         Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
 
                         switch (command)
@@ -182,18 +182,18 @@ int main(int argc, char **argv)
                             {
                                 // -------- >> 1
                                 // 0-------
-                                unsigned char target = (x.getBuffer()[1] >> 1);
+                                unsigned char target = (udp.getBuffer()[1] >> 1);
                                 
                                 // Print out to the server,
                                 Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
 
                                 // Set the target for channel 1 as requested
-                                //s->setTarget(1, target);
-                                s->setTarget(channel, target);
+                                //servoController->setTarget(1, target);
+                                servoController->setTarget(channel, target);
                                 
                                 // Good for testing
                                 // Set the target for channel 1 as requested
-                                //Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, s->getTarget(channel));
+                                //Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, servoController->getTarget(channel));
 
                                 break;
                             }
@@ -204,13 +204,10 @@ int main(int argc, char **argv)
                                 Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
                                 break;
                             case 3:
-                                {
                                     Log::info(3, "pong");
-                                    const char * pong = "\x80";
-                                    if (!x.write(pong))
+                                    if (!udp.write("\x80"))
                                         throw Exception_ServoController("Pong write failed");
                                     break;
-                                }
                             default:
                                 throw Exception_Servo("Invalid Command!");
                                 break;
@@ -225,7 +222,7 @@ int main(int argc, char **argv)
                     catch (Exception_ServoController e)
                     {   
                         Log::warning(1, e.what());
-                        if (!x.write(e.what())) 
+                        if (!udp.write(e.what())) 
                             throw Exception_Server("Write failed");
                     }
                 }
@@ -234,7 +231,7 @@ int main(int argc, char **argv)
             // Timeout and set the servo's in fallback mode
             else
             {
-                s->fallback();
+                servoController->fallback();
                 Log::info(3, "read() timeout");
             }
         }
@@ -255,7 +252,7 @@ int main(int argc, char **argv)
     }
     
     Log::info(4, "Performing cleanups.");
-    delete s;
+    delete servoController;
 
     Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
