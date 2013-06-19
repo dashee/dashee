@@ -174,7 +174,7 @@ int main(int argc, char **argv)
                         // ----0000 >> 4
                         // 0000----
                         unsigned char channel = (x.getBuffer()[0] & 240) >> 4;
-                        Log::info(3, "Command: %02d:%02d", (unsigned short int)channel, (unsigned short int)command);
+                        Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
 
                         switch (command)
                         {
@@ -203,6 +203,14 @@ int main(int argc, char **argv)
                             case 2:
                                 Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
                                 break;
+                            case 3:
+                                {
+                                    Log::info(3, "pong");
+                                    const char * pong = "\x80";
+                                    if (!x.write(pong))
+                                        throw Exception_ServoController("Pong write failed");
+                                    break;
+                                }
                             default:
                                 throw Exception_Servo("Invalid Command!");
                                 break;

@@ -67,7 +67,7 @@ cleantest:
 ###
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
-data: $(DATADIR) $(DATADIR)/Servo.bin
+binfile: $(DATADIR) $(DATADIR)/Servo.bin
 
 ## 
 # This is a test bin directory, that is set as null of 38 bytes

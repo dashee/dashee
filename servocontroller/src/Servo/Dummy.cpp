@@ -32,7 +32,7 @@ Servo_Dummy::~Servo_Dummy()
  */
 unsigned short int Servo_Dummy::getTarget()
 {
-    if (fseek(fd, headerByteSize + (((int)this->channel-1) * channelByteSize), SEEK_SET) != 0)
+    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in getTarget");
 
     //Flush the stream, as we write one byte at a time
@@ -55,7 +55,7 @@ void Servo_Dummy::setTarget(unsigned short int target)
 {
     PercentageToTarget(target);
         
-    if (fseek(fd, headerByteSize + (((int)this->channel-1) * channelByteSize), SEEK_SET) != 0)
+    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in setTarget");
     
     //Create our buffer
