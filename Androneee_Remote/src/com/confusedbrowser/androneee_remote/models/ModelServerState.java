@@ -1,11 +1,5 @@
 package com.confusedbrowser.androneee_remote.models;
 
-import android.content.Context;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.hardware.Sensor;
-
 import java.util.Observable;
 
 /**

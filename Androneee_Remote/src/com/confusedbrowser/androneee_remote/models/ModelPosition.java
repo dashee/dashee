@@ -63,11 +63,45 @@ public class ModelPosition extends Observable implements SensorEventListener
      * The 3rd element of the orientation array, holds the roll
      * value
      * 
+     * 
      * @return float - The orientation value
      */
     public float getPitch()
+    {   
+    	if(this.orientation[2] >= -0.1f)
+    	{
+    		return 50.0f;
+    	}
+    	else if(this.orientation[2] >= -1.17f)
+    	{
+    		return remapValue(this.orientation[2],-1.17f,-0.5f,50.0f,43.0f); // TODO: invert option
+    	}
+    	else if(this.orientation[2] <=-1.70f) 
+    	{
+    		//return 20.0f;
+    		return remapValue(this.orientation[2], -2.1f, -1.70f, 60.0f, 50.0f);
+    	}
+    	return 50.0f;
+    }
+    
+    /**
+     * Return current Pitch value
+     * 
+     * @return float - The pitch value in Radians
+     */
+    public float getPitchRadians()
     {
-        return remapValue(this.orientation[2],-1.17f,-0.5f,0.0f,100.0f);
+        return this.orientation[2];
+    }
+    
+    /**
+     * Return current Roll value
+     * 
+     * @return float - The roll value in Radians
+     */
+    public float getRollRadians()
+    {
+        return this.orientation[1];
     }
 
     /**

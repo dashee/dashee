@@ -2,7 +2,6 @@ package com.confusedbrowser.androneee_remote;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.Menu;
@@ -106,11 +105,11 @@ public class MainActivity
     	
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Initialize our thread
-        threadPassPositionControls = new ThreadPassPositionControls(this, prefs.getString("pref_ip", "192.168.1.12"), 2047);
+        // Initialise our thread
+        threadPassPositionControls = new ThreadPassPositionControls(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
         threadPassPositionControls.start();
 
-        // Initialize our thread
+        // Initialise our thread
         threadCheckServerStatus = new ThreadCheckServerStatus(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
         threadCheckServerStatus.start();
         
@@ -192,8 +191,6 @@ public class MainActivity
         }        
     }
 
-    private Thread threadUpdate;
-
     /**
      *  Update our view and model. Given the phone's roll
      *  we update our server/model using our thread and we also
@@ -212,6 +209,7 @@ public class MainActivity
             float pitch = position.getPitch();
 
             fragmentHud.setPosition(roll, pitch);
+            fragmentHud.setHudConnection(position.getPitchRadians()+"");
             threadPassPositionControls.update((int)roll, (int)pitch);
         }
 

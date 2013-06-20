@@ -1,6 +1,5 @@
 package com.confusedbrowser.androneee_remote.threads;
 
-import android.content.Context;
 import android.util.Log;
 import java.net.*;
 
@@ -59,17 +58,10 @@ public class ThreadCheckServerStatus extends Thread
      * the milliseconds the client should talk to the server if
      * no new commands are being sent
      */
-    private int timeOut = 5000;
+    private int timeOut = 500;
     
     /**
-     * Hold the last time value of the command sent. This will help
-     * us determine the last time the value was sent, we can use this
-     * for comparison before we can send another value.
-     */
-    private long timeValueSent = 0; // Time when last value was set
-
-    /**
-     * Handel to our ModelServerState, to get port and other values.
+     * Handle to our ModelServerState, to get port and other values.
      */
     private ModelServerState modelServerState;
 
@@ -86,7 +78,6 @@ public class ThreadCheckServerStatus extends Thread
         super();
         try
         {
-            //this.context = context;
             this.modelServerState = modelServerState;
             this.setIp(ip);
             this.sockHandler = new DatagramSocket();
@@ -163,7 +154,7 @@ public class ThreadCheckServerStatus extends Thread
                     else
                         modelServerState.setStatusControls(false);
                     
-                    Thread.currentThread().sleep(this.timeOut);
+                    Thread.sleep(this.timeOut);
                 }
             }
             catch (SocketTimeoutException e)

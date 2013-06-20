@@ -1,8 +1,9 @@
 package com.confusedbrowser.androneee_remote.threads;
 
-import android.content.Context;
 import android.util.Log;
 import java.net.*;
+
+import com.confusedbrowser.androneee_remote.models.ModelServerState;
 
 /**
  * Thread to communicate to the server.
@@ -15,10 +16,6 @@ import java.net.*;
  */
 public class ThreadPassPositionControls extends Thread 
 {
-    /**
-     * Context of this object. 
-     */
-    private Context context;
 
     /**
      *  Position of the servo.
@@ -37,11 +34,9 @@ public class ThreadPassPositionControls extends Thread
     /**
      *  Networking variables.
      *  ip - The ip address to connect to
-     *  port - The port to connect to
      *  socket - The socket handling wrapper
      */
     private InetAddress ip;
-    private int port;
     private DatagramSocket sockHandler;
     
     /**
@@ -64,59 +59,44 @@ public class ThreadPassPositionControls extends Thread
     /**
      * Variable controlling the execution of a thread.
      * The run() function runs constantly, so exit variable
-     * controls the infinate loop
+     * controls the infinite loop
      */
     private boolean exit = false;
-
-    /**
-     * Define the gap when the values are resent. We want
-     * to ensure that the client communicates with the
-     * server in a regular basis, so the server can know
-     * the client is still alive. Change this value to determine
-     * the milliseconds the client should talk to the server if
-     * no new commands are being sent
-     */
-    private int timeOut = 500;
-    
-    /**
-     * Hold the last time value of the command sent. This will help
-     * us determine the last time the value was sent, we can use this
-     * for comparison before we can send another value.
-     */
-    private long timeValueSent = 0;
 
     /**
      * Holds the last time the Bps command was reset. This will help change
      * our view to determine how many bytes have been sent over a second
      * Every time the view is set, the values of this is reset to current time
      */
-    private long timeLastBpsReset = 0;
+    //private long timeLastBpsReset = 0;
 
     /**
      * Hold the value of bytes sent. It will be reset to 0 after every
      * second.
      */
     private int bytesPerSec = 0;
+    
+    /**
+     * Handle to our ModelServerState, to get port and other values.
+     */
+    private ModelServerState modelServerState;
 	
 
     /**
      * Initiate our thread. Set the variables from the params, and 
      * set our ipAdress object. Also create a new instance of socket 
-     *
-     * @param context - The context of this thread
      * @param ip - The ip address to send the commands to
      * @param roll - The default position which is to be set
      */
-    public ThreadPassPositionControls(Context context, String ip, int port)
+    public ThreadPassPositionControls(ModelServerState modelServerState, String ip)
     {
         super();
         try
         {
-            this.context = context;
+        	this.modelServerState = modelServerState;
             this.prevRoll = this.roll;
-            this.timeLastBpsReset = System.currentTimeMillis();
+            //this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
-            this.port = port;
             this.sockHandler = new DatagramSocket();
         }
         catch(Exception e)
@@ -194,14 +174,12 @@ public class ThreadPassPositionControls extends Thread
         {
             synchronized (lockPosition)
             {
-                long currentTime = System.currentTimeMillis();
+                //long currentTime = System.currentTimeMillis();
                 // Good for debugging Log.i("position", "Position: " + this.position);    
                 synchronized (lockIp)
                 {
-                	// If the previous position is different or we have reached a timeout
-                    // send the values to our server, only one command needs to be send on timeout
-                	// so I choose the first one.
-                	if(this.roll != this.prevRoll || (currentTime-this.timeValueSent > this.timeOut))
+                	// If the previous position is different send the values to our server.
+                	if(this.roll != this.prevRoll)
                 		this.sendRollCommand();
                 	if(this.power != this.prevPower) 
                 		this.sendPowerCommand();
@@ -231,12 +209,11 @@ public class ThreadPassPositionControls extends Thread
      */
     private void sendRollCommand(){
     	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 33 converts to 00100001.
-		byte command[] = new byte[]{ 33, (byte)(this.roll << 1) };
+		// of command the second is the value, 17 converts to 00010001.
+		byte command[] = new byte[]{ 17, (byte)(this.roll << 1) };
 		this.sendCommandBytes(command);
         this.prevRoll = this.roll;
         this.bytesPerSec++;
-        this.timeValueSent = System.currentTimeMillis();
     }
     
 
@@ -245,12 +222,11 @@ public class ThreadPassPositionControls extends Thread
      */
     private void sendPowerCommand(){
     	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 19 converts to 00010011.
-		byte command[] = new byte[]{ 19, (byte)(this.power << 1) };
+		// of command the second is the value, 33 converts to 00100001.
+		byte command[] = new byte[]{ 33, (byte)(this.power << 1) };
 		this.sendCommandBytes(command);
         this.prevPower = this.power;
         this.bytesPerSec++;
-        this.timeValueSent = System.currentTimeMillis();
     }
     
     /**
@@ -263,7 +239,7 @@ public class ThreadPassPositionControls extends Thread
 	                command, 
 	                command.length,
 	                this.ip, 
-	                this.port
+	                this.modelServerState.getControlPort()
 	        );
 	        this.sockHandler.send(packet);
     	} 
