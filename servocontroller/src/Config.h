@@ -21,8 +21,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "Log.h"
 #include <memory>
+
+#include "Log.h"
+#include "Common.h"
 
 #ifndef CONFIG_H_
 #define CONFIG_H_

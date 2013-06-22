@@ -174,7 +174,7 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
     buf << defaultvalue;
 
     //Converts a buffer to an int
-    return strtol((char *)Config::get(key, buf.str().c_str()), (char **)NULL, 10);
+    return Common::strtol((char *)Config::get(key, buf.str().c_str()));
 }
 
 /** 
