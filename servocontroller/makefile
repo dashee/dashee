@@ -18,7 +18,7 @@ DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR)
 OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
 		Server/UDP.o ServoController.o ServoController/USB.o \
 		ServoController/Dummy.o Log.o Config.o Config/servod.o\
-		ServoController/UART.o Servo/UART.o)
+		ServoController/UART.o Servo/UART.o Common.o)
 BINARIES := $(addprefix $(BINDIR)/, servod)
 
 

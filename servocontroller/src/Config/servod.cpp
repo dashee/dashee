@@ -23,7 +23,7 @@ Config_servod::Config_servod() : Config()
  * In some cases, the value channelXX-fallbackEnabled-target=1 will call:
  *   ServoController::setFallbackenabled::target(<channel>, <value>)
  *
- * @param (ServoController *)s - is the handel to the servo
+ * @param s - is the handel to the ServoController
  */
 void Config_servod::setServoController(ServoController * s)
 {
@@ -32,7 +32,6 @@ void Config_servod::setServoController(ServoController * s)
         // Only go through if the first 7 characters are "channel"
         if (strncmp(configs_it->first, "channel", 7) == 0)
         {
-
             int keyN = strlen(configs_it->first);
 
             // Make sure the value is atleast "channelXX-" long
@@ -46,22 +45,142 @@ void Config_servod::setServoController(ServoController * s)
             if (configs_it->first[9] != '-') continue;
     
             // copy the "XX" value into @channel from the string "channelXX"
-            char temp[40];
-            memset(temp, 0, sizeof(temp));
-            memcpy(temp, configs_it->first+7, 2);
-            int channel = atoi(temp);
+            char channel[40];
+            memset(channel, 0, sizeof(channel));
+            memcpy(channel, configs_it->first+7, 2);
 
-            // if the value is "channelXX-default-" and is greater than 17 characters
-            if (keyN > 17 && strncmp(configs_it->first+10, "default-", 8))
+            try
             {
-                //Get this to work
+                long int channel_num = Common::strtol(channel);
+
+                // if the value is "channelXX-default-" and is greater than 17 characters
+                if (keyN > 17 && strncmp(configs_it->first+10, "default-", 8) == 0)
+                    setDefault(s, configs_it->first+18, configs_it->second, channel_num);
+                
+                // if the value is "channelXX-fallbackEnabled-" and is greater than 24 characters
+                else if (keyN > 24 && strncmp(configs_it->first+10, "fallbackEnabled-", 16) == 0)
+                    setFallbackEnabled(s, configs_it->first+25, configs_it->second, channel_num);
+
+                // if the value is "channelXX-fallback-" and is greater than 18 characters
+                else if (keyN > 18 && strncmp(configs_it->first+10, "fallback-", 9) == 0)
+                    setFallback(s, configs_it->first+19, configs_it->second, channel_num);
+
+                else
+                    Log::warning(6, "Config_servod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
             }
 
-            Log::info(1, "-------Found channel %d", channel);
+            catch (Exception_InvalidNumber e)
+            {
+                Log::warning(7, "Config_servod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
+            }
         }
     }
+}
 
-    //foreach
+/**
+ * This function will take the key value of the Config
+ * and depending on that set default values for either `target`, `speed` or `acceleration`.
+ *
+ * @param s - Pointer to the ServoController so setting values can be accessed
+ * @param what - What to set, `target`, `speed` or `acceleration`
+ * @param value - the value
+ * @param channel - The channel Number
+ *
+ * @returns bool - If the set was successfull, false any other way
+ *
+ */
+bool Config_servod::setDefault(ServoController * s, const char * what, const char * value, const unsigned short int & channel)
+{
+    try
+    {
+        if (strcmp(what, "target") == 0)
+        {
+            s->setTargetDefault(channel, Common::strtol((const char *)value));
+            Log::info(3, "Default target set for channel%02d to %s.", channel, value);
+            return true;
+        }
+        else if (strcmp(what, "speed") == 0)
+        {
+            //s->setSpeedDefault(channel, Common::strtol((const char *)value));
+            Log::info(3, "Default speed set for channel%02d to %s.", channel, value);
+            return true;
+        }
+        else if (strcmp(what, "acceleration") == 0)
+        {
+            //s->setAccelerationDefault(channel, Common::strtol((const char *)value));
+            Log::info(3, "Default acceleration set for channel%02d to %s.", channel, value);
+            return true;
+        }
+            
+        Log::warning(1, "Config_servod::setDefault: Invalid value '%s'.", what);
+    }
+    catch (Exception_InvalidNumber e)
+    {
+        Log::warning(1, "Config_servod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+    }
+
+    return false;
+}
+
+/**
+ * this Function will will set fallback values. So when the system fallbacks these 
+ * are the values it will be set to
+ *
+ * @param s - Pointer to the ServoController so setting values can be accessed
+ * @param what - What to set, `target`, `speed` or `acceleration`
+ * @param value - the value
+ * @param channel - The channel Number
+ *
+ * @returns bool - If the set was successfull, false any other way
+ *
+ */
+bool Config_servod::setFallback(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+{
+    try
+    {
+        if (strcmp(what, "target") == 0)
+        {
+            s->setTargetFallback(channel, Common::strtol((const char *)value));
+            Log::info(3, "Fallback target set for channel%02d to %s.", channel, value);
+            return true;
+        }
+        else if (strcmp(what, "speed") == 0)
+        {
+            //s->setSpeedFallback(channel, Common::strtol((const char *)value));
+            Log::info(3, "Fallback speed set for channel%02d to %s.", channel, value);
+            return true;
+        }
+        else if (strcmp(what, "acceleration") == 0)
+        {
+            //s->setAccelerationFallback(channel, Common::strtol((const char *)value));
+            Log::info(3, "Fallback acceleration set for channel%02d to %s.", channel, value);
+            return true;
+        }
+            
+        Log::warning(1, "Config_servod::setFallback invalid value '%s'.", what);
+    }
+    catch (Exception_InvalidNumber e)
+    {
+        Log::warning(1, "Config_servod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+    }
+
+    return false;
+}
+
+/**
+ * This function will enable/disable fallback for a given channel
+ *
+ * @param s - Pointer to the ServoController so setting values can be accessed
+ * @param what - What to set, `target`, `speed` or `acceleration`
+ * @param value - the value
+ * @param channel - The channel Number
+ *
+ * @returns bool - If the set was successfull, false any other way
+ *
+ */
+bool Config_servod::setFallbackEnabled(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+{
+    return false;
 }
 
 /**

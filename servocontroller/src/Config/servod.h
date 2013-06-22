@@ -8,6 +8,8 @@
 
 #include "../Config.h"
 #include "../ServoController.h"
+#include "../Exception/Config.h"
+#include "../Common.h"
 
 #ifndef CONFIG_SERVOD_H_
 #define CONFIG_SERVOD_H_
@@ -15,6 +17,13 @@
 class Config_servod : public Config
 {
 protected:
+    
+    // Check to see what type the value is, target, speed or acceleration;
+    // and set the value for its specific command type, example default, fallback or 
+    // fallbackEnabled
+    bool setDefault(ServoController *, const char *, const char *, const unsigned short int &);
+    bool setFallback(ServoController *, const char *, const char *, const unsigned short int &);
+    bool setFallbackEnabled(ServoController *, const char *, const char *, const unsigned short int &);
 
 public:
     
@@ -22,7 +31,7 @@ public:
     Config_servod();
     
     // Using our config, set the ServoControllers
-    void setServoController(ServoController * s);
+    void setServoController(ServoController *);
         
     // Virtually destruct
     ~Config_servod();

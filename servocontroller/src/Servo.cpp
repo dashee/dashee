@@ -4,7 +4,7 @@
  * Initiate the Servo's defaults, fallback and current
  * structs to be set to 0, and also set the channel
  *
- * @param (const unsigned short int)channel - The channel that this servo belongs to
+ * @param channel - The channel that this servo belongs to
  */
 Servo::Servo(const unsigned short int channel)
 {
@@ -18,11 +18,56 @@ Servo::Servo(const unsigned short int channel)
 }
 
 /**
+ * This function will set the defaults struct target value
+ * and call setTarget() to actually move the servo
+ *
+ * @param target - The value of the target
+ *
+ * @throws Exception_Servo - If the value is greated than 100
+ */
+void Servo::setTargetDefault(unsigned short int target)
+{
+    if (target > 100)
+        throw Exception_Servo("setTargetDefault: Invalid defaults.target, must be 0-100!\n");
+
+    this->defaults.target = target;
+    this->setTarget(target);
+}
+
+/**
+ * Set the fallbacks.target struct value, and enables
+ * the fallbackEnabled flag as an implicit rule
+ *
+ * @param target - The target to set to
+ *
+ * @throws Exception_Servo - If the value is greated than 100
+ */
+void Servo::setTargetFallback(unsigned short int target)
+{
+    if (target > 100)
+        throw Exception_Servo("setTargetFallback: Invalid fallback.target, must be 0-100!\n");
+
+    this->fallbacks.target = target;
+
+    this->setTargetFallbackEnabled(true);
+}
+
+/**
+ * Set our fallbackEnabled.target value
+ *
+ * @param enabled - The value
+ */
+void Servo::setTargetFallbackEnabled(bool enabled)
+{
+    this->fallbackEnabled.target = enabled;
+}
+
+/**
  * This function takes the number 0-100, and converts it into servo
  * frequency value, represented from 3968-8000, It does a check weather or not
  * the value falls between the range of 0-100, if not it throws an exception
  *
- * @param (short int &)target - The target represented in 0-100
+ * @param target - The target represented in 0-100
  *
  * @throw Exception_Servo - If the target is out of range
  */
@@ -56,7 +101,7 @@ void Servo::PercentageToTarget(unsigned short int & target)
  * This function takes a value between 3968-8000 and converts it into
  * percentage such as 0-100. It is the oposite of the function above
  *
- * @param (short int &)target - The target represented in 0-100
+ * @param target - The target represented in 0-100
  *
  * @throw Exception_Servo - If the target is out of range
  */
@@ -68,7 +113,10 @@ void Servo::TargetToPercentage(unsigned short int & target)
     // If the target is lower than the zero value
     // Quite Probebly an invalid channel
     if (target < zero) 
+    {
+        Log::warning(4, "target:%d, zero:%d", target, zero);
         throw Exception_Servo("Channel returned low voltage, meaning it is invalid!");
+    }
         
     // Zero the target
     target = target - zero;

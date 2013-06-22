@@ -61,6 +61,15 @@ public:
     // Given a channel number, set its given target
     virtual void setTarget(const unsigned short int, unsigned short int);
     
+    // Set the struct defaults.target and call setTarget
+    virtual void setTargetDefault(const unsigned short int, unsigned short int);
+    
+    // Set the struct fallbacks.target
+    virtual void setTargetFallback(const unsigned short int, unsigned short int);
+    
+    // Set the struct fallbacks.target
+    virtual void setTargetFallbackEnabled(const unsigned short int, bool);
+    
     // Call fallback on all servos
     virtual void fallback();
     

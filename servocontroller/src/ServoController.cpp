@@ -6,7 +6,7 @@
  * This constructer is initialized by derved clases, 
  * Also set the fallbackmode to false, in the begining
  *
- * @param (const char *)dev - The device name
+ * @param dev - The device name
  */
 ServoController::ServoController(const char * dev)
 {
@@ -40,7 +40,7 @@ ServoController::~ServoController()
  * tells is we are using getTarget from the board, and the second tells it which channel
  * The byte to get is 0x90 as set by Pololu
  *
- * @param (const unsigned char)channel - The Channel to get
+ * @param channel - The Channel to get
  * 
  * @throw Exception_Servo() - If a read write error occurs
  *
@@ -64,8 +64,8 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  * represents the channel, and the 3rd and 4rth represent the value. Note that the 4th
  * and third byte have there Most significant byte set to 0.
  *
- * @param (const unsigned char)channel - The channel number represented in one byte
- * @paran (short int)target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param channel - The channel number represented in one byte
+ * @paran target - Our target to set represented in 2 byte, with a value of 0-100
  *
  * @throw Exception_Servo - If writing to the board fails
  */
@@ -78,6 +78,54 @@ void ServoController::setTarget(const unsigned short int channel, unsigned short
         throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set.");
 
     return servos[channel]->setTarget(target);
+}
+
+/**
+ * Set the default Target values of a given Channel
+ *
+ * @param channel - Servo channel number
+ * @param target - The value of the target
+ *
+ * @throws Exception_ServoController_OutOfBound
+ */
+void ServoController::setTargetDefault(const unsigned short int channel, unsigned short int target)
+{
+    if (channel >= this->size())
+        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+
+    servos[channel]->setTargetDefault(target);
+}
+
+/**
+ * Set the fallbacks.target for the given Channel
+ *
+ * @param channel - Servo channel number
+ * @param target - The target to set to
+ *
+ * @throws Exception_ServoController_OutOfBound
+ */
+void ServoController::setTargetFallback(const unsigned short int channel, unsigned short int target)
+{
+    if (channel >= this->size())
+        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+
+    servos[channel]->setTargetFallback(target);
+}
+
+/**
+ * Set the fallbacksEnabled.target for a given channel
+ *
+ * @param channel - Servo channel number
+ * @param enabled - The value
+ *
+ * @throws Exception_ServoController_OutOfBound
+ */
+void ServoController::setTargetFallbackEnabled(const unsigned short int channel, bool enabled)
+{
+    if (channel >= this->size())
+        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+
+    servos[channel]->setTargetFallbackEnabled(enabled);
 }
 
 /** 
