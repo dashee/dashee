@@ -55,6 +55,9 @@ unsigned char * Server::getBuffer()
  */
 void Server::setTimeout(const unsigned int seconds, const unsigned int miliseconds)
 {
+    if (miliseconds > 999)
+        throw Exception_Server("SetTimeout set to value that is not between 0-999");
+        
     pselect_timeout.tv_sec = seconds;
     pselect_timeout.tv_nsec = miliseconds * 1000000l;
 }
