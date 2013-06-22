@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     const unsigned int servotype = conf->get_uint("servotype");
     const unsigned int port = conf->get_uint("port");
     const unsigned int readtimeout = conf->get_uint("readtimeout");
-    const unsigned int readtimeoutN = conf->get_uint("readtimeoutM", 0) * 10000000;
+    const unsigned long int readtimeoutM = conf->get_uint("readtimeoutM", 0);
 
     try
     {
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
         while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
-            if (udp.read(readtimeout, readtimeoutN))
+            if (udp.read(readtimeout, readtimeoutM))
             {
                 //if (EXIT) { break; }
                 

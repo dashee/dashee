@@ -5,9 +5,9 @@
  * it will also set the @client_in_length value to be the sizeof @client_in 
  * and set the server_in to have all 0's as its value.
  *
- * @param (int)port - The value of the port
+ * @param port - The value of the port
  */
-Server::Server(int port)
+Server::Server(unsigned int port)
 {
     this->port = port;
     
@@ -50,13 +50,13 @@ unsigned char * Server::getBuffer()
  * This function will set our timeout value
  * Note if it is set to 0, then our select will never return.
  *
- * @param (long)seconds - Number of seconds to timeout
- * @param (long)nanoseconds - Number of nanoseconds to timeout
+ * @param seconds - Number of seconds to timeout
+ * @param miliseconds - Number of nanoseconds to timeout
  */
-void Server::setTimeout(long seconds, long nanoseconds)
+void Server::setTimeout(const unsigned int seconds, const unsigned int miliseconds)
 {
     pselect_timeout.tv_sec = seconds;
-    pselect_timeout.tv_nsec = nanoseconds;
+    pselect_timeout.tv_nsec = miliseconds * 1000000l;
 }
 
 /**

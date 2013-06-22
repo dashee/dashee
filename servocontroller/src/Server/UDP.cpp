@@ -13,7 +13,7 @@
  *
  * @throw - Exception_Server - when socket call or bind call fails
  */
-Server_UDP::Server_UDP(int port) : Server(port)
+Server_UDP::Server_UDP(unsigned int port) : Server(port)
 {
     socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0)
@@ -56,16 +56,16 @@ bool Server_UDP::read()
  *
  * 0 value will set the timeout to nothing, so select will be instantanious
  *
- * @param (long)seconds - Number of seconds to timeout
- * @param (long)nanoseconds - Number of nanoseconds to timeout
+ * @param seconds - Number of seconds to timeout
+ * @param miliseconds - Number of miliseconds to timeout
  *
  * @throws - Exception_Server - If write fails
  *
  * @returns bool - true, if there was something read. false on timeout
  */ 
-bool Server_UDP::read(long seconds, long nanoseconds)
+bool Server_UDP::read(const unsigned int seconds, const unsigned int miliseconds)
 {
-    setTimeout(seconds, nanoseconds);
+    setTimeout(seconds, miliseconds);
 
     int select_return = wait();
     

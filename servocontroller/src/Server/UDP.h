@@ -20,13 +20,13 @@ protected:
 
 public:
     //call socket given a port
-    Server_UDP(int);
+    Server_UDP(unsigned int);
 
     //Read bytes
     bool read();
     
     //Read bytes, given a timeout
-    bool read(long, long = 0);
+    bool read(const unsigned int, const unsigned int = 0);
 
     //Write bytes from the reciever
     bool write(const char *);

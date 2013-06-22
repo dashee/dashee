@@ -14,6 +14,7 @@
 #include <string.h>
 #include <signal.h>
 
+#include "Log.h"
 #include "Exception/Server.h"
 
 #ifndef SERVER_H_
@@ -35,7 +36,7 @@ protected:
      * set by our constructor this is the port
      * the server will listen on
      */ 
-    int port;
+    unsigned int port;
     
     /** 
      * This holds the information required
@@ -81,7 +82,7 @@ protected:
     sigset_t origmask;
 
     // Set the port and initialize our server and client variables
-    Server(int port);
+    Server(unsigned int port);
     
     //Creates a read select
     int wait();
@@ -95,7 +96,7 @@ public:
     unsigned char * getBuffer();
     
     // Set our timeout value
-    void setTimeout(long, long = 0);
+    void setTimeout(const unsigned int, const unsigned int = 0);
     
     // Read from the client
     virtual bool read() = 0;
