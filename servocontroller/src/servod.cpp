@@ -183,18 +183,11 @@ int main(int argc, char **argv)
                                 // -------- >> 1
                                 // 0-------
                                 unsigned char target = (udp.getBuffer()[1] >> 1);
-                                
-                                // Print out to the server,
-                                Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
 
                                 // Set the target for channel 1 as requested
                                 //servoController->setTarget(1, target);
+                                Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
                                 servoController->setTarget(channel, target);
-                                
-                                // Good for testing
-                                // Set the target for channel 1 as requested
-                                //Log::info(3, "getTarget(%d): %d", (unsigned short int)channel, servoController->getTarget(channel));
-
                                 break;
                             }
                             case 1:
@@ -319,6 +312,7 @@ void setconfig(int argc, char ** argv, Config *conf)
                             conf->set("servotype", optarg);
                             Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
                         }
+                        // Servotype must be an integer
                         catch (Exception_InvalidNumber e)
                         {
                             Log::fatal("Arg --servotype must be a number");
@@ -332,10 +326,11 @@ void setconfig(int argc, char ** argv, Config *conf)
                     case 2:
                         try
                         {
-                            Common::strtol(optarg); //Check to see if this throws an exception
+                            Common::strtol(optarg); //Do nothing, throw an exception if its not an integer
                             conf->set("port", optarg);
                             Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
                         }
+                        // Port must be an integer
                         catch (Exception_InvalidNumber e)
                         {
                             Log::fatal("Arg --port must be a number, given '%s'!", optarg);
@@ -361,6 +356,7 @@ void setconfig(int argc, char ** argv, Config *conf)
                         Log::verbosity++;
                     Log::info(1, "Option 'verbosity' set to '%d'.", Log::verbosity);
                 }
+                // Verbosity value must be an integer
                 catch(Exception_InvalidNumber e)
                 {
                     Log::fatal("Arg --verbosity must be a number, given '%s'!", optarg);
