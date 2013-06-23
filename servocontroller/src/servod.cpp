@@ -88,7 +88,7 @@ int main(int argc, char **argv)
     // in our @conf variables. The command line arguments are read from @argv.
     // Just add a helpfull print in the end so we can see what is happening
     setconfig(argc, argv, conf);
-    conf->read("config.conf");
+    conf->read(conf->get("config", "etc/servod.conf"));
     conf->print();
 
     //Store the required variables in our stack, for easy access.
@@ -239,16 +239,22 @@ int main(int argc, char **argv)
     catch (Exception_Server_Signal e)
     {
         Log::info(4, "caught(Exception_Server_Signal): %s", e.what());
+        RETVAL = -4;
+    }
+    catch (Exception_Config e)
+    {
+        Log::info(4, "caught(Exception_Config): %s", e.what());
+        RETVAL = -3;
     }
     catch (Exception e)
     {
         Log::warning(1, "caught(Exception): %s.", e.what());
-        RETVAL = -1;
+        RETVAL = -2;
     }
     catch (std::runtime_error e)
     {
         Log::warning(3, "caught(runtime_error): %s.", e.what());
-        RETVAL = -2;
+        RETVAL = -1;
     }
     
     Log::info(4, "Performing cleanups.");
@@ -287,6 +293,7 @@ void setconfig(int argc, char ** argv, Config *conf)
         { "servotype", 1, 0, 0 },
         { "servo", 1, 0, 0 },
         { "port", 1, 0, 0 },
+        { "config", 1, 0, 0 },
         { "verbosity", 1, 0, 'v' }
     };
     int long_index = 0;
@@ -305,10 +312,17 @@ void setconfig(int argc, char ** argv, Config *conf)
                 {
                     case 0:
                     {
-                        unsigned int servotype = (unsigned int)atoi(optarg);
-                        if (servotype <= 0 && servotype > 2) { Log::fatal("Invalid sevotype"); }
-                        conf->set("servotype", optarg);
-                        Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
+                        try
+                        {
+                            long int servotype = Common::strtol(optarg);
+                            if (servotype < 1 && servotype > 3) { Log::fatal("Invalid sevotype '%d' is not valid.", servotype); }
+                            conf->set("servotype", optarg);
+                            Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
+                        }
+                        catch (Exception_InvalidNumber e)
+                        {
+                            Log::fatal("Arg --servotype must be a number");
+                        }
                         break;
                     }
                     case 1:
@@ -316,8 +330,21 @@ void setconfig(int argc, char ** argv, Config *conf)
                         Log::info(3, "Option 'servo' set to '%s'.", conf->get("servo"));
                         break;
                     case 2:
-                        conf->set("port", optarg);
-                        Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
+                        try
+                        {
+                            Common::strtol(optarg); //Check to see if this throws an exception
+                            conf->set("port", optarg);
+                            Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
+                        }
+                        catch (Exception_InvalidNumber e)
+                        {
+                            Log::fatal("Arg --port must be a number, given '%s'!", optarg);
+                        }
+
+                        break;
+                    case 3:
+                        conf->set("config", optarg);
+                        Log::info(3, "Option 'config' set to '%s'.", conf->get("config"));
                         break;
                 }
                 break;
@@ -326,11 +353,18 @@ void setconfig(int argc, char ** argv, Config *conf)
             // If so we use its value, otherwise we increase verbosity
             // from its previous state
             case 'v':
-                if (optarg)
-                    Log::verbosity = (unsigned int)atoi(optarg) == 0 ? 1 : (unsigned int)atoi(optarg);
-                else
-                    Log::verbosity++;
-                Log::info(1, "Option 'verbosity' set to '%d'.", Log::verbosity);
+                try
+                {
+                    if (optarg)
+                        Log::verbosity = Common::strtol(optarg) == 0 ? 1 : Common::strtol(optarg);
+                    else
+                        Log::verbosity++;
+                    Log::info(1, "Option 'verbosity' set to '%d'.", Log::verbosity);
+                }
+                catch(Exception_InvalidNumber e)
+                {
+                    Log::fatal("Arg --verbosity must be a number, given '%s'!", optarg);
+                }   
                 break;
 
             // When something goes wrong, a '?' is returned

@@ -25,6 +25,7 @@
 
 #include "Log.h"
 #include "Common.h"
+#include "Exception/Config.h"
 
 #ifndef CONFIG_H_
 #define CONFIG_H_

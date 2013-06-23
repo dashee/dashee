@@ -18,7 +18,7 @@
  *
  * returns long int - The converted value
  */
-long int Common::strtol(const char * string, int base) 
+long int Common::strtol(const char * string, const int base) 
 {
     char * end;
     long int number = ::strtol(string, &end, base);
@@ -31,4 +31,17 @@ long int Common::strtol(const char * string, int base)
     }
 
     return number;
+}
+
+/**
+ * This function will return true, if file eixists
+ *
+ * @param filename - The name of the file
+ *
+ * @return bool - True if exists, false otherwise
+ */
+bool Common::fexists(const char * filename) 
+{
+    struct stat buffer;   
+    return (stat (filename, &buffer) == 0); 
 }
