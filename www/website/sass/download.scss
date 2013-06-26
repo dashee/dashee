@@ -1,0 +1,11 @@
+@import "default";
+
+.download
+{
+    margin-bottom:37px;
+
+    &:last-child
+    {
+        margin-bottom:0px;
+    }
+}

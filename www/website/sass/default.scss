@@ -1,0 +1,218 @@
+/*  Resets
+    ------  */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, 
+p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em, 
+img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr, 
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, 
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figure, figcaption, hgroup, 
+menu, footer, header, nav, section, summary, time, mark, audio, video 
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+article, aside, canvas, figure, figure img, figcaption, hgroup,
+footer, header, nav, section, audio, video 
+{
+    display: block;
+}
+
+a { text-decoration:none; }
+
+a img {border: 0;}
+
+/*  Typography presets
+ ------------------  */
+.gigantic 
+{
+    font-size: 116px;
+    line-height: 120px;
+    letter-spacing: -2px;
+}
+
+h1, h2, h3, h4
+{
+    font-family:Georgia;
+    font-weight:normal;
+}
+
+.huge, h1 
+{
+    font-size: 30px;
+    line-height: 34px;
+}
+
+.large, h2 
+{
+    font-size: 24px;
+    line-height: 25px;
+}
+
+.bigger, h3 
+{
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.big, h4 
+{
+    font-size: 16px;
+    line-height: 16px;
+}
+
+body 
+{
+
+    font: 14px/20px Arial;
+}
+
+.small, small 
+{
+    font-size: 13px;
+    line-height: 18px;
+}
+
+/* Selection colours (easy to forget) */
+::selection         {background: rgb(255,255,158);}
+::-moz-selection    {background: rgb(255,255,158);}
+img::selection      {background: transparent;}
+img::-moz-selection {background: transparent;}
+body {-webkit-tap-highlight-color: rgb(255,255,158);}
+
+
+
+/*      Default Layout: 992px. 
+Gutters: 24px.
+Outer margins: 48px.
+Leftover space for scrollbars @1024px: 32px.
+-------------------------------------------------------------------------------
+cols    1     2      3      4      5      6      7      8      9      10
+px      68    160    252    344    436    528    620    712    804    896    */
+body 
+{
+    width: 896px;
+    padding: 75px 48px 84px;
+    background: rgb(232,232,232);
+    color: rgb(60,60,60);
+    -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
+}
+
+nav
+{
+
+    font-family:Georgia;
+    font-size:20px;
+    margin-bottom:30px;
+
+    color:#FFF;
+    
+    background:#CCC;
+
+    width:100%;
+    top:0px;
+    left:0px;
+    position:absolute;
+
+    padding-top:15px;
+    padding-bottom:15px;
+
+    box-shadow:1px 0px 2px rgba(0,0,0,0.5);
+
+    > .links
+    {
+        width: 896px;
+        margin-left:35px;
+        text-align:right;
+        a
+        {
+            margin-left:15px;
+            color:#333;
+            text-shadow:1px 1px 1px rgba(255,255,255,0.5);
+
+            &:hover
+            {
+                color:#FFF;
+                text-shadow:1px 1px 1px rgba(0,0,0,0.5);
+            }
+        }
+    }
+}
+
+#credits
+{
+    margin-top:100px;
+    margin-bottom:20px;
+
+    font-size:14px;
+}
+
+
+
+/*      Tablet Layout: 768px.
+Gutters: 24px.
+Outer margins: 28px.
+Inherits styles from: Default Layout.
+-----------------------------------------------------------------
+cols    1     2      3      4      5      6      7      8
+px      68    160    252    344    436    528    620    712    */
+@media only screen and (min-width: 768px) and (max-width: 991px) 
+{
+            
+    body 
+    {
+        width: 712px;
+        padding: 48px 28px 60px;
+    }
+}
+
+
+
+/*      Mobile Layout: 320px.
+Gutters: 24px.
+Outer margins: 34px.
+Inherits styles from: Default Layout.
+---------------------------------------------
+cols    1     2      3
+px      68    160    252    */
+@media only screen and (max-width: 767px) 
+{
+    body 
+    {
+        width: 252px;
+        padding: 48px 34px 60px;
+    }
+}
+
+
+
+/*      Wide Mobile Layout: 480px.
+Gutters: 24px.
+Outer margins: 22px.
+Inherits styles from: Default Layout, Mobile Layout.
+------------------------------------------------------------
+cols    1     2      3      4      5
+px      68    160    252    344    436    */
+@media only screen and (min-width: 480px) and (max-width: 767px) 
+{
+    body 
+    {
+        width: 436px;
+        padding: 36px 22px 48px;
+    }
+}
+
+
+/*  Retina media query.
+Overrides styles for devices with a 
+device-pixel-ratio of 2+, such as iPhone 4.
+-----------------------------------------------    */
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+        only screen and (min-device-pixel-ratio: 2) 
+{
+    body 
+    {
+        
+    }
+}

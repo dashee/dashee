@@ -1,0 +1,38 @@
+@import "default";
+@import "formatted";
+
+.toc
+{
+    font-size:11px;
+
+    float:right;
+    width:170px;
+
+    > ul
+    {
+
+        li
+        {
+            margin-left:15px;
+            font-size:13px;
+            line-height:14px;
+            list-style:none;
+        }
+        
+        > li
+        {
+            margin-bottom:4px;
+            margin-left:0px;
+        }
+    }
+
+    ul
+    {
+        margin-bottom:5px;
+    }
+}
+
+.page
+{
+
+}
