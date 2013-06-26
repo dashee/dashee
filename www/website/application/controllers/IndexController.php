@@ -16,6 +16,8 @@ class IndexController extends Zend_Controller_Action
     
     public function indexAction()
     {
+        $this->getResponse()->setRedirect("/wiki/");
+        return;
         $this->view->headLink()->appendStylesheet("/css/index.css");
     }
 
