@@ -1,6 +1,5 @@
 package com.confusedbrowser.androneee_remote.fragments;
 
-import java.util.Observable;
 import java.text.DecimalFormat;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.widget.LinearLayout;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
@@ -33,7 +31,7 @@ public class FragmentHud extends Fragment
     DrawHud draw_hud;
             
     /**
-     * Handel to our TextViews
+     * Handle to our TextViews
      */    
     private TextView textViewHudIpValue;
     private TextView textViewHudConnectionValue;

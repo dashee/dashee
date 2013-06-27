@@ -2,8 +2,10 @@ package com.confusedbrowser.androneee_remote.threads;
 
 import android.util.Log;
 import java.net.*;
+import java.util.ArrayList;
 
 import com.confusedbrowser.androneee_remote.models.ModelServerState;
+import com.confusedbrowser.androneee_remote.models.ModelVehicle;
 
 /**
  * Thread to communicate to the server.
@@ -16,20 +18,6 @@ import com.confusedbrowser.androneee_remote.models.ModelServerState;
  */
 public class ThreadPassPositionControls extends Thread 
 {
-
-    /**
-     *  Position of the servo.
-     *  position - Holds the current position
-     *  lastPosition - Holds the last transmitted position 
-     */
-    private int roll = 50;
-    private int prevRoll;
-    
-    /**
-     * The magnitude of power required
-     */
-    private int power = 0;
-    private int prevPower;
     
     /**
      *  Networking variables.
@@ -46,7 +34,6 @@ public class ThreadPassPositionControls extends Thread
      * lockPosition is used to lock when getting/setting position
      */
     private Object lockPause = new Object();
-    private Object lockPosition = new Object();
     private Object lockIp = new Object();
 
     /**
@@ -80,21 +67,27 @@ public class ThreadPassPositionControls extends Thread
      * Handle to our ModelServerState, to get port and other values.
      */
     private ModelServerState modelServerState;
+    
+    /**
+     * Current vehicle in use.
+     */
+    private ModelVehicle modelVehicle;
 	
 
     /**
      * Initiate our thread. Set the variables from the params, and 
      * set our ipAdress object. Also create a new instance of socket 
      * @param ip - The ip address to send the commands to
+     * @param modelVehicle 
      * @param roll - The default position which is to be set
      */
-    public ThreadPassPositionControls(ModelServerState modelServerState, String ip)
+    public ThreadPassPositionControls(ModelServerState modelServerState, String ip, ModelVehicle modelVehicle)
     {
         super();
         try
         {
+        	this.modelVehicle = modelVehicle;
         	this.modelServerState = modelServerState;
-            this.prevRoll = this.roll;
             //this.timeLastBpsReset = System.currentTimeMillis();
             this.setIp(ip);
             this.sockHandler = new DatagramSocket();
@@ -102,23 +95,6 @@ public class ThreadPassPositionControls extends Thread
         catch(Exception e)
         {
             e.printStackTrace();
-        }
-    }
-        
-    /**
-     * Set the position variable.
-     * Lock using lockPosition before setting the this.position
-     * value with the parameter
-     *
-     * @param roll - The position to set
-     * @param power - The pitch
-     */
-    public void update(int roll, int power)
-    {
-        synchronized (lockPosition)
-        {
-            this.roll = roll;
-            this.power = power;
         }
     }
     
@@ -172,18 +148,12 @@ public class ThreadPassPositionControls extends Thread
     {   
         while(!exit)
         {
-            synchronized (lockPosition)
+
+            //long currentTime = System.currentTimeMillis();
+            // Good for debugging Log.i("position", "Position: " + this.position);    
+            synchronized (lockIp)
             {
-                //long currentTime = System.currentTimeMillis();
-                // Good for debugging Log.i("position", "Position: " + this.position);    
-                synchronized (lockIp)
-                {
-                	// If the previous position is different send the values to our server.
-                	if(this.roll != this.prevRoll)
-                		this.sendRollCommand();
-                	if(this.power != this.prevPower) 
-                		this.sendPowerCommand();
-                }
+            	this.sendCommands();
             }
             
             // We are in lock state, so sent the thread to wait
@@ -203,34 +173,21 @@ public class ThreadPassPositionControls extends Thread
             }
         }
     }
-	
-    /**
-     * Converts current roll value to androneee server protocol and sends it.
-     */
-    private void sendRollCommand(){
-    	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 17 converts to 00010001.
-		byte command[] = new byte[]{ 17, (byte)(this.roll << 1) };
-		this.sendCommandBytes(command);
-        this.prevRoll = this.roll;
-        this.bytesPerSec++;
-    }
     
-
     /**
-     * Converts current power value to androneee server protocol and sends it.
+     * Send any available control updates.
      */
-    private void sendPowerCommand(){
-    	// Commands are sent as 2 byte packets, the first byte, is the type
-		// of command the second is the value, 33 converts to 00100001.
-		byte command[] = new byte[]{ 33, (byte)(this.power << 1) };
-		this.sendCommandBytes(command);
-        this.prevPower = this.power;
-        this.bytesPerSec++;
+    private void sendCommands()
+    {
+    	ArrayList<byte[]> commands =  this.modelVehicle.getCommands();
+    	for(byte[] command : commands)
+    	{
+    		this.sendCommandBytes(command);
+    	}
     }
     
     /**
-     * Passes androneee server protocol commands to the server.
+     * Passes dashee server protocol commands to the server.
      */
     private void sendCommandBytes(byte[] command){
     	try

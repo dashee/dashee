@@ -60,13 +60,18 @@ public class MainActivity
      * Handel to our Phone schemetics. This will return
      * our phones roll, pitch state, by notifying the observer
      */
-    public ModelPosition modelPosition;
+    public ModelPhonePosition modelPosition;
     
     /**
      * Hold the state of our Server. This will notify our
      * Observer, any time server values are changed
      */
     public ModelServerState modelServerState;
+    
+    /**
+     * Current vehicle to control
+     */
+    public ModelVehicle modelVehicle;
 
     /**
      * The listener, to when the settings have changed.
@@ -87,12 +92,15 @@ public class MainActivity
         
         // This will initialise our PhonePosition Observer,
         // So our this.update function can handle updates 
-        modelPosition = new ModelPosition(getBaseContext());
+        modelPosition = new ModelPhonePosition(getBaseContext());
         modelPosition.addObserver(this);
         
         //Create our ServerState model
         modelServerState = new ModelServerState();
         modelServerState.addObserver(this);
+        
+        // Create our vehicle model
+        modelVehicle = new ModelVehicleCar();
         
         // Create our fragment views
         fragmentHud = new FragmentHud();
@@ -106,7 +114,8 @@ public class MainActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialise our thread
-        threadPassPositionControls = new ThreadPassPositionControls(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
+        threadPassPositionControls = new ThreadPassPositionControls(this.modelServerState, 
+        		prefs.getString("pref_ip", "192.168.1.12"), this.modelVehicle);
         threadPassPositionControls.start();
 
         // Initialise our thread
@@ -201,16 +210,15 @@ public class MainActivity
      */
     public void update(Observable o, Object arg)
     {
-        if (o instanceof ModelPosition)
+        if (o instanceof ModelPhonePosition)
         {
-            ModelPosition position = (ModelPosition)o;
-
+            ModelPhonePosition position = (ModelPhonePosition)o;
+            this.modelVehicle.setFromPhonePosition(position);
+            
             float roll = position.getRoll();
             float pitch = position.getPitch();
-
             fragmentHud.setPosition(roll, pitch);
-            fragmentHud.setHudConnection(position.getPitchRadians()+"");
-            threadPassPositionControls.update((int)roll, (int)pitch);
+            fragmentHud.setHudConnection(position.getPitch()+"");
         }
 
         try
