@@ -214,11 +214,8 @@ public class MainActivity
         {
             ModelPhonePosition position = (ModelPhonePosition)o;
             this.modelVehicle.setFromPhonePosition(position);
-            
-            float roll = position.getRoll();
-            float pitch = position.getPitch();
-            fragmentHud.setPosition(roll, pitch);
-            fragmentHud.setHudConnection(position.getPitch()+"");
+            fragmentHud.setPosition((ModelVehicleCar) this.modelVehicle);
+            //fragmentHud.setHudConnection(position.getPitch()+"");
         }
 
         try

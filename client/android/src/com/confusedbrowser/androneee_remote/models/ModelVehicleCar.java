@@ -18,6 +18,23 @@ public class ModelVehicleCar implements ModelVehicle {
     private int power = 0;
     private int prevPower;
 	
+    /*
+     * Getter for steer
+     * 
+     * @returns steer
+     */
+    public int getSteer(){
+    	return steer;
+    }
+    
+    /*
+     * Getter for power
+     * 
+     * @returns power
+     */
+    public int getPower(){
+    	return power;
+    }
 	
 	/**
 	 * Set up the car vehicle type

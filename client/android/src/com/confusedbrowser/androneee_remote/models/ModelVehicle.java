@@ -18,4 +18,5 @@ public interface ModelVehicle {
 	 * @param position - Current position of the phone.
 	 */
 	void setFromPhonePosition(ModelPhonePosition position);
+	
 }

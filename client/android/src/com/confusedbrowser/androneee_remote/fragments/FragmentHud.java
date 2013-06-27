@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.widget.LinearLayout;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
+import com.confusedbrowser.androneee_remote.models.ModelVehicleCar;
+
 import android.widget.TextView;
 
 /**
@@ -148,15 +150,15 @@ public class FragmentHud extends Fragment
     /**
      * Set the roll and pitch position. A wrapper around
      * our functions, it will also deal with rotating the hud
+     * TODO: Should not be getting car specific positions
      *
-     * @param roll - The roll value
-     * @param pitch - The pitch value
+     * @param car - The vehicle
      */
-    public void setPosition(float roll, float pitch)
+    public void setPosition(ModelVehicleCar car)
     {
-        this.setHudRoll(roll);
-        this.setHudPitch(pitch);
-        this.rotateHud(roll);
+        this.setHudRoll(car.getSteer());
+        this.setHudPitch(car.getPower());
+        this.rotateHud(car.getSteer());
     }   
 
     /**
