@@ -11,6 +11,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function norouteAction()
     {
+        //throw new Zend_Exception('Testing a normal exception!');
         throw new Local_Exception_Http_NotFound('You hit the black hole');
     }
     

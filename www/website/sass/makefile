@@ -6,7 +6,7 @@ MKDIR=mkdir -p
 
 CSSDIR=css
 
-CSS := $(addprefix $(CSSDIR)/, index.css download.css wiki.css licence.css about.css)
+CSS := $(addprefix $(CSSDIR)/, index.css error.css download.css wiki.css licence.css about.css)
 
 all: $(CSSDIR) $(CSS)
 
@@ -17,6 +17,10 @@ $(CSSDIR):
 
 $(CSSDIR)/index.css: index.scss
 	$(SASS) $(STYLE) $^ $@
+
+$(CSSDIR)/error.css: error.scss
+	$(SASS) $(STYLE) $^ $@
+
 
 $(CSSDIR)/download.css: download.scss
 	$(SASS) $(STYLE) $^ $@
