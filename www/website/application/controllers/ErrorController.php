@@ -5,18 +5,22 @@ class ErrorController extends Zend_Controller_Action
 
     public function errorAction()
     {
-        $this->view->headLink()->appendStylesheet("/css/error.css");
-        $this->view->errorcode = 500;
-        $this->view->message = "Internal Server Error";
-        
+        // Create a variable and default them
         $errors = $this->_getParam('error_handler');
+        $priority = Zend_Log::CRIT;
 
+        // Set some defaults, like the layout and the css files
+        $this->_helper->layout()->setLayout('error');
+        $this->view->headLink()->appendStylesheet("/css/error.css");
+
+        // Default the view variables
+        $this->view->message = "Serious Internal Server Error!";
+    
+        // Make sure that the errors variable is correct, other wise fail out
         if (!$errors || !$errors instanceof ArrayObject) 
             return;
-
-        $this->getResponse()->setHttpResponseCode(500);
-        $priority = Zend_Log::CRIT;
     
+        // Deal with Local_Exception_Http class types in a specific way
         if ($errors->exception instanceof Local_Exception_Http)
         {
             $this->getResponse()->setHttpResponseCode($errors->exception->getStatus());
@@ -24,6 +28,8 @@ class ErrorController extends Zend_Controller_Action
             $this->view->message = $errors->exception->getTitle();
             $priority = Zend_Log::NOTICE;
         }
+
+        // Deal with all others in a default way
         else
         {
             switch ($errors->type) 
@@ -31,15 +37,15 @@ class ErrorController extends Zend_Controller_Action
                 case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
                 case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
                 case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
-                    // application error
                     $priority = Zend_Log::NOTICE;
                     $this->getResponse()->setHttpResponseCode(404);
                     $this->view->errorcode = 404;
                     $this->view->message = 'Page not found';
                     break;
                 default:
-                    // application error
+                    $this->view->errorcode = 500;
                     $this->view->message = 'Application error';
+                    $this->getResponse()->setHttpResponseCode(500);
                     break;
             }
         }

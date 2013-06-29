@@ -39,10 +39,10 @@ class IndexController extends Zend_Controller_Action
     /** 
      * Page that links to our SVN repo, and our Compiled code
      */
-    public function downloadAction()
+    public function downloadsAction()
     {
-    	$this->view->headTitle()->append("Download");
-        $this->view->headLink()->appendStylesheet("/css/download.css");
+    	$this->view->headTitle()->append("Downloads");
+        $this->view->headLink()->appendStylesheet("/css/downloads.css");
     }
 
     /**
@@ -52,6 +52,15 @@ class IndexController extends Zend_Controller_Action
     {
     	$this->view->headTitle()->append("Licence, the common deed.");
     	$this->view->headLink()->appendStylesheet("/css/licence.css");
+    }
+    
+    /**
+     * A little bit about does not hurt
+     */
+    public function videosAction()
+    {
+    	$this->view->headTitle()->append("Videos");
+    	$this->view->headLink()->appendStylesheet("/css/videos.css");
     }
 
     /**

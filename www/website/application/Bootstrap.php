@@ -97,11 +97,19 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 )
             ),
 
-            'download' => new Zend_Controller_Router_Route_Regex(
-                '^(code|svn|download)$',
+            'downloads' => new Zend_Controller_Router_Route_Regex(
+                '^(code|svn|download|downloads)$',
                 array(
                     'controller' => 'index',
-                    'action' => 'download'
+                    'action' => 'downloads'
+                )
+            ),
+
+            'videos' => new Zend_Controller_Router_Route_Regex(
+                '^(videos|media)$',
+                array(
+                    'controller' => 'index',
+                    'action' => 'videos'
                 )
             ),
             
