@@ -3,6 +3,7 @@
     <EditTextPreference
         android:key="pref_ip"
         android:title="@string/pref_ip"
-        android:summary="@string/pref_ip_summ"
-        android:defaultValue="86.26.9.105" />
+        android:summary="@string/pref_ip_default"
+        android:defaultValue="@string/pref_ip_default"
+    />
 </PreferenceScreen>

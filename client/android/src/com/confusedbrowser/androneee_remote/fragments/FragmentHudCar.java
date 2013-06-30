@@ -7,11 +7,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
 import android.widget.LinearLayout;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
-import com.confusedbrowser.androneee_remote.models.ModelVehicleCar;
+import com.confusedbrowser.androneee_remote.models.*;
 
 import android.widget.TextView;
 
@@ -22,7 +21,7 @@ import android.widget.TextView;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class FragmentHud extends Fragment
+public class FragmentHudCar extends FragmentHud
 {
     /**
      * This is the variable where our HUD is drawn
@@ -30,6 +29,9 @@ public class FragmentHud extends Fragment
      */
     LinearLayout layout_hud;
     
+    /**
+     * Draw our Hud object
+     */
     DrawHud draw_hud;
             
     /**
@@ -40,8 +42,12 @@ public class FragmentHud extends Fragment
     private TextView textViewHudBpsValue; //Bytes Per Second
     private TextView textViewHudPitchValue; //Pitch Value
     private TextView textViewHudRollValue; //Pitch Value
-	
-    public FragmentHud()
+    
+    /**
+     * Constructor. Required by Fragment type Objects,
+     * and they have to be public
+     */
+    public FragmentHudCar()
     {
     }
     
@@ -66,12 +72,11 @@ public class FragmentHud extends Fragment
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
 
-
         this.setHudIp(prefs.getString("pref_ip", "WTF"));
         this.setHudConnection("unknown");
         this.setHudBps(0);
         this.setHudPitch(0.0f);
-        this.setHudPitch(0.0f);
+        this.setHudRoll(0.0f);
         
         return view;
     }
@@ -148,32 +153,25 @@ public class FragmentHud extends Fragment
     }
     
     /**
-     * Set the roll and pitch position. A wrapper around
-     * our functions, it will also deal with rotating the hud
-     * TODO: Should not be getting car specific positions
+     * Change our Hud, according to the vehicle.
+     * The vehicle must be a ModelVehicleCar, other
+     * wise an exception will be thrown.
      *
      * @param car - The vehicle
+     * @throws Exception - If vehicle is not ModelVehicleCar
      */
-    public void setPosition(ModelVehicleCar car)
+    public void setPosition(ModelVehicle vehicle)
     {
-        this.setHudRoll(car.getSteer());
-        this.setHudPitch(car.getPower());
-        this.rotateHud(car.getSteer());
-    }   
-
-    /**
-     * Pause our thread
-     */
-    public void onPause()
-    {
-        super.onPause();
-    }
-    
-    /**
-     * Resume our thread
-     */
-    public void onResume()
-    {
-        super.onResume();
+        if (vehicle instanceof ModelVehicleCar)
+        {
+            ModelVehicleCar car = (ModelVehicleCar)vehicle;
+            this.setHudRoll(car.getSteer());
+            this.setHudPitch(car.getPower());
+            this.rotateHud(car.getSteer());
+        }
+        else
+        {
+            //throw new Exception("vehicle must be a ModelVehicleCar");
+        }
     }
 }

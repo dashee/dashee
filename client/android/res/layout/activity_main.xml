@@ -30,7 +30,7 @@
      
     <fragment
          android:id="@+id/fragment_hud"
-         android:name="com.confusedbrowser.androneee_remote.fragments.FragmentHud"
+         android:name="com.confusedbrowser.androneee_remote.fragments.FragmentHudCar"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent" 
          />

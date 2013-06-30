@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Dashee</string>
+    <string name="app_name">Dashee(Beta)</string>
 
-    <string name="title_activity_main">DASHEE</string>
+    <string name="title_activity_main">Dashee</string>
 
     <string name="title_activity_preferences">Settings</string>
     <string name="subtitle_activity_preferences">Configure your remote</string>
 
     <string name="pref_ip">Vehicle IP Address</string>
-    <string name="pref_ip_summ">Click to modify the IP Address of the server. Note may require restart</string>
+    <string name="pref_ip_default">192.168.1.12</string>
 
     <string name="action_dot_settings">Settings</string>
     <string name="action_dot_about">About</string>

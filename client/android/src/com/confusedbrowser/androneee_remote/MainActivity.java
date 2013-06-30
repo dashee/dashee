@@ -30,7 +30,7 @@ import com.confusedbrowser.androneee_remote.threads.*;
  */
 public class MainActivity 
     extends FragmentActivity 
-    implements SeekBar.OnSeekBarChangeListener, Observer
+    implements SeekBar.OnSeekBarChangeListener, Observer, OnSharedPreferenceChangeListener
 {
 
     /**
@@ -73,12 +73,6 @@ public class MainActivity
      */
     public ModelVehicle modelVehicle;
 
-    /**
-     * The listener, to when the settings have changed.
-     * See addSettingsListener() for more init details
-     */
-    private OnSharedPreferenceChangeListener settingChangeListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
@@ -103,16 +97,17 @@ public class MainActivity
         modelVehicle = new ModelVehicleCar();
         
         // Create our fragment views
-        fragmentHud = new FragmentHud();
+        fragmentHud = new FragmentHudCar();
         fragmentLog = new FragmentLog();
         
         //Set the initial view to our HUD
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_content, fragmentHud);
         ft.commit();
+        
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
     	
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         // Initialise our thread
         threadPassPositionControls = new ThreadPassPositionControls(this.modelServerState, 
         		prefs.getString("pref_ip", "192.168.1.12"), this.modelVehicle);
@@ -121,31 +116,19 @@ public class MainActivity
         // Initialise our thread
         threadCheckServerStatus = new ThreadCheckServerStatus(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
         threadCheckServerStatus.start();
-        
-        // Add the settings listener events
-        addSettingListener();
     }
-    
-    /**
-     *  Add and register setting listeners. Create our 
-     *  listeners for when the property is changed, do a provided action. For example
-     *  when the IP is changed. Make sure you tell the servo this has been done
-     */
-    public void addSettingListener() 
-    {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-    	// Instance field for listener
-        settingChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() 
-        {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
-            {
-                threadPassPositionControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
-                threadCheckServerStatus.setIp(prefs.getString("pref_ip", "192.168.1.11"));
-                fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
-            }
-    	};
-        prefs.registerOnSharedPreferenceChangeListener(settingChangeListener);
+    /**
+     * Create a listener to when the settings have changed
+     *
+     * @param pref - The SharedPreferences
+     * @param key - The key value changed
+     */
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
+    {
+        threadPassPositionControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+        threadCheckServerStatus.setIp(prefs.getString("pref_ip", "192.168.1.11"));
+        fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
     }
 
     /**
@@ -210,17 +193,16 @@ public class MainActivity
      */
     public void update(Observable o, Object arg)
     {
-        if (o instanceof ModelPhonePosition)
-        {
-            ModelPhonePosition position = (ModelPhonePosition)o;
-            this.modelVehicle.setFromPhonePosition(position);
-            fragmentHud.setPosition((ModelVehicleCar) this.modelVehicle);
-            //fragmentHud.setHudConnection(position.getPitch()+"");
-        }
-
         try
         {
-            if (o instanceof ModelServerState)
+            if (o instanceof ModelPhonePosition)
+            {
+                ModelPhonePosition position = (ModelPhonePosition)o;
+                this.modelVehicle.setFromPhonePosition(position);
+                fragmentHud.setPosition((ModelVehicleCar) this.modelVehicle);
+                //fragmentHud.setHudConnection(position.getPitch()+"");
+            }
+            else if (o instanceof ModelServerState)
             {
                 ModelServerState serverState = (ModelServerState)o;
 

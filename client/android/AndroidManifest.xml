@@ -22,8 +22,9 @@
             </intent-filter>
         </activity>
         <activity
-        	android:name=".PreferencesActivity"
-        	android:label="@string/title_activity_preferences">
-		</activity>
+            android:name=".PreferencesActivity"
+            android:label="@string/title_activity_preferences"
+            android:parentActivityName="com.confusedbrowser.androneee_remote.MainActivity">
+        </activity>
     </application>
 </manifest>

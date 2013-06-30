@@ -21,12 +21,12 @@
     <style name="ActionBar.Title" parent="android:Theme">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
     
     <style name="ActionBar.SubTitle">
         <item name="android:textColor">#CCCCCC</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <!-- Application theme. -->
