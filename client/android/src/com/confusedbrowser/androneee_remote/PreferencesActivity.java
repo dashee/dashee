@@ -1,5 +1,6 @@
 package com.confusedbrowser.androneee_remote;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -16,6 +17,10 @@ public class PreferencesActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+        
+        ActionBar ab = getActionBar();
+        ab.setSubtitle(R.string.subtitle_activity_preferences);
+
         getFragmentManager()
             .beginTransaction()
             .replace(android.R.id.content, new PreferencesFragment())

@@ -1,15 +1,15 @@
 package com.confusedbrowser.androneee_remote;
 
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.view.Menu;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.SeekBar;
 
 import java.util.Observable;
@@ -89,7 +89,7 @@ public class MainActivity
         
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
-        
+
         // This will initialise our PhonePosition Observer,
         // So our this.update function can handle updates 
         modelPosition = new ModelPhonePosition(getBaseContext());
