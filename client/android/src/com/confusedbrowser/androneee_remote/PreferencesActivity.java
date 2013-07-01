@@ -8,78 +8,31 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
-import android.util.Log;
-
+ 
 /**
  * This will handle our Preference object
  * 
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class PreferencesActivity 
-    extends PreferenceActivity 
-    implements OnSharedPreferenceChangeListener
-{
-
-    /**
-     * Run the creation of our PreferenceActivity.
-     *
-     * @param savedInstanceState - The state of the running activity
-     */
+public class PreferencesActivity extends PreferenceActivity {
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-    	
-        addPreferencesFromResource(R.xml.preferences);
         
         ActionBar ab = getActionBar();
         ab.setSubtitle(R.string.subtitle_activity_preferences);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this); 
-        
-        // This will ensure that previous settings are loaded, rather
-        // than the default one's.
-        this.setSharedPreferenceState(sharedPreferences);
+        getFragmentManager()
+            .beginTransaction()
+            .replace(android.R.id.content, new PreferencesFragment())
+            .commit();
     }
-
-    /**
-     * Set default values. from previous state
-     *
-     * @param sharedPreferences - The shared pref object
-     */
-    public void setSharedPreferenceState(SharedPreferences pref)
-    {
-        EditTextPreference Ip = (EditTextPreference)findPreference("pref_server_ip");
-        Ip.setSummary(pref.getString("pref_server_ip", "192.168.1.11"));
-        
-        EditTextPreference Port = (EditTextPreference)findPreference("pref_server_port");
-        Port.setSummary(pref.getString("pref_server_port", "2047"));
-    }
-
-    /**
-     * Listener for when an option is changed.
-     *
-     * @param sharedPreference - The preference object
-     * @param key - The preference changed
-     */
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) 
-    {
-        Preference pref = findPreference(key);
-
-        if (pref instanceof EditTextPreference) 
-        {
-            EditTextPreference etp = (EditTextPreference) pref;
-            pref.setSummary(etp.getText());
-        }
-
-        Log.e("Dashee", "PreferenceActivity: Hello");
-    }
-
+    
     /**
      * Handler of the Action bar selected Option
      *
@@ -100,27 +53,42 @@ public class PreferencesActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * Resume operations
-     */
-    public void onResume()
+    
+    public static class PreferencesFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
     {
-        super.onResume();
+        @Override
+        public void onCreate(final Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+            
+            SharedPreferences sharedPref = getPreferenceScreen().getSharedPreferences();
+            sharedPref.registerOnSharedPreferenceChangeListener(this);
+            // This will ensure that previous settings are loaded, rather
+            // than the default one's.
+            this.setSharedPreferenceState(sharedPref);
+        }
 
-        getPreferenceScreen()
-            .getSharedPreferences()
-            .registerOnSharedPreferenceChangeListener(this);
-    }   
+		private void setSharedPreferenceState(SharedPreferences sharedPref) {
+			// TODO Auto-generated method stub
+			EditTextPreference Ip = (EditTextPreference)findPreference("pref_server_ip");
+	        Ip.setSummary(sharedPref.getString("pref_server_ip", "192.168.1.11"));
+	        
+	        EditTextPreference Port = (EditTextPreference)findPreference("pref_server_port");
+	        Port.setSummary(sharedPref.getString("pref_server_port", "2047"));
+		}
 
-    /**
-     * Pause operations
-     */
-    public void onPause()
-    {
-        super.onPause();
-        getPreferenceScreen()
-            .getSharedPreferences()
-            .unregisterOnSharedPreferenceChangeListener(this);
+		@Override
+		public void onSharedPreferenceChanged(
+				SharedPreferences sharedPreferences, String key) {
+			Preference pref = findPreference(key);
+
+	        if (pref instanceof EditTextPreference) 
+	        {
+	            EditTextPreference etp = (EditTextPreference) pref;
+	            pref.setSummary(etp.getText());
+	        }
+			
+		}
     }
 }
