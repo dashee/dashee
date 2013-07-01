@@ -43,6 +43,8 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudPitchValue; //Pitch Value
     private TextView textViewHudRollValue; //Pitch Value
     
+
+
     /**
      * Constructor. Required by Fragment type Objects,
      * and they have to be public
@@ -72,11 +74,14 @@ public class FragmentHudCar extends FragmentHud
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
 
-        this.setHudIp("None");
         this.setHudConnection("unknown");
         this.setHudBps(0);
         this.setHudPitch(0.0f);
         this.setHudRoll(0.0f);
+        
+        // Get the sharedPreferences so the values can be set
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        this.setHudIp(sharedPreferences.getString("pref_server_ip", "Failed Loading"));
         
         return view;
     }

@@ -79,6 +79,11 @@ public class MainActivity
      * Current vehicle to control
      */
     public ModelVehicle modelVehicle;
+    
+    /**
+     * SharedPrefrences object for registering
+     */
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -120,29 +125,12 @@ public class MainActivity
         this.threadCheckServerStatus = new ThreadCheckServerStatus(this.modelServerState);
         this.threadCheckServerStatus.start();
 
-        setOnSharedPreferenceChangeListener();
+    	sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
     
-    public void setOnSharedPreferenceChangeListener()
-    {
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        return;
-
-        /*
-        settingChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() 
-        {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
-            {
-                fragmentHud.setHudIp("asdfsadf");
-            }
-        };
-        sharedPreferences.registerOnSharedPreferenceChangeListener(settingChangeListener);
-        */
-    }
-
     /**
-     * Create a listener to when the settings have changed
+     * Create a listener to activate when SharedPreferences are changed.
      *
      * @param pref - The SharedPreferences
      * @param key - The key value changed
@@ -151,8 +139,6 @@ public class MainActivity
     {
         this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
         this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
-        //this.threadPassPositionControls.setIp(this.modelServerState.getIp());
-        //this.threadCheckServerStatus.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
     }
 
     /**
@@ -180,7 +166,7 @@ public class MainActivity
     public boolean onOptionsItemSelected(MenuItem item) 
     {
     	// Handle item selection
-        switch (item.getItemId()) 
+        switch (item.getItemId())
         {
             case R.id.action_dot_settings:
             {
@@ -257,7 +243,7 @@ public class MainActivity
                         runOnUiThread(new Runnable() {
                             public void run()
                             {
-                                fragmentHud.setHudIp(modelServerState.getIp().toString()); 
+                                fragmentHud.setHudIp(modelServerState.getIp().getHostAddress()); 
                             }
                         });
                         break;
