@@ -1,5 +1,8 @@
 package com.confusedbrowser.androneee_remote.models;
 
+import android.util.Log;
+
+import java.net.*;
 import java.util.Observable;
 
 /**
@@ -29,6 +32,7 @@ public class ModelServerState extends Observable
         PORT_CONTROLS,
         PORT_TELEMETERY,
         PORT_FPV,
+        IP,
         NOTHING
     }
 
@@ -51,15 +55,9 @@ public class ModelServerState extends Observable
     private int portFpv = 2049;
     
     /**
-     * This will hold what was changed when notify was run.
-     */
-    private Notifier whatChanged = Notifier.NOTHING;
-    
-    /**
      * This is the server's ipAddress.
-     * TODO implement this here
      */
-    //protected InetAddress ip
+    protected InetAddress ip;
 
     /**
      * This variable is responsible for controlling
@@ -76,6 +74,7 @@ public class ModelServerState extends Observable
      */
     public ModelServerState()
     {
+        this.setIp("192.168.1.12");
     }
     
     /**
@@ -91,9 +90,8 @@ public class ModelServerState extends Observable
         if (this.statusControls != status)
         {
             this.statusControls = status;
-            this.whatChanged = Notifier.STATUS_CONTROLS;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.STATUS_CONTROLS);
         }
     }
     
@@ -110,9 +108,8 @@ public class ModelServerState extends Observable
         if (this.statusTelemetery != status)
         {
             this.statusTelemetery = status;
-            this.whatChanged = Notifier.STATUS_TELEMETERY;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.STATUS_TELEMETERY);
         }
     }
     
@@ -129,9 +126,8 @@ public class ModelServerState extends Observable
         if (this.statusFpv != status)
         {
             this.statusFpv = status;
-            this.whatChanged = Notifier.STATUS_FPV;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.STATUS_FPV);
         }
     }
     
@@ -145,9 +141,8 @@ public class ModelServerState extends Observable
         if (port > 1000 && (port != this.portTelemetery || port != this.portFpv))
         {
             this.portControls = port;
-            this.whatChanged = Notifier.PORT_CONTROLS;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.PORT_CONTROLS);
         }
     }
     
@@ -161,9 +156,8 @@ public class ModelServerState extends Observable
         if (port > 1000 && (port != this.portControls || port != this.portFpv))
         {
             this.portTelemetery = port;
-            this.whatChanged = Notifier.PORT_TELEMETERY;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.PORT_TELEMETERY);
         }
     }
     
@@ -177,25 +171,49 @@ public class ModelServerState extends Observable
         if (port > 1000 && (port != this.portControls || port != this.portTelemetery))
         {
             this.portFpv = port;
-            this.whatChanged = Notifier.PORT_FPV;
             setChanged();
-            notifyObservers();
+            notifyObservers(Notifier.PORT_FPV);
         }
     }
     
+    /**
+     * Change the IP address
+     *
+     * @param ip - The ip address value in string
+     */
+    public void setIp(String ip)
+    {
+        try
+        {
+            this.ip = InetAddress.getByName(ip);
+            setChanged();
+            notifyObservers(Notifier.IP);
+        }
+        catch(Exception ex)
+        {
+            Log.e("Dashee", "setIp failed");
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Get the Ip string
+     *
+     * @returns InetAddress - The Ip address
+     */
+    public InetAddress getIp()
+    {
+        return this.ip;
+    }
+    
+    /**
+     * Get the control port.
+     *
+     * @return int - The port number
+     */ 
     public int getControlPort()
     {
-        return portControls;
-    }
-
-    /**
-     * Return the whatChanged set enum object.
-     *
-     * @return Notifier
-     */
-    public Notifier getWhatChanged()
-    {
-        return this.whatChanged;
+        return this.portControls;
     }
     
     /**

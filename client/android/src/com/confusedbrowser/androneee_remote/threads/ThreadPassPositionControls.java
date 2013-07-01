@@ -18,13 +18,9 @@ import com.confusedbrowser.androneee_remote.models.ModelVehicle;
  */
 public class ThreadPassPositionControls extends Thread 
 {
-    
     /**
-     *  Networking variables.
-     *  ip - The ip address to connect to
-     *  socket - The socket handling wrapper
+     * DataGram object to send commnds over UDP
      */
-    private InetAddress ip;
     private DatagramSocket sockHandler;
     
     /**
@@ -34,7 +30,6 @@ public class ThreadPassPositionControls extends Thread
      * lockPosition is used to lock when getting/setting position
      */
     private Object lockPause = new Object();
-    private Object lockIp = new Object();
 
     /**
      *  Variable controlling the pause state of this thread.
@@ -81,44 +76,19 @@ public class ThreadPassPositionControls extends Thread
      * @param modelVehicle 
      * @param roll - The default position which is to be set
      */
-    public ThreadPassPositionControls(ModelServerState modelServerState, String ip, ModelVehicle modelVehicle)
+    public ThreadPassPositionControls(ModelServerState modelServerState, ModelVehicle modelVehicle)
     {
         super();
         try
         {
-        	this.modelVehicle = modelVehicle;
-        	this.modelServerState = modelServerState;
+            this.modelVehicle = modelVehicle;
+            this.modelServerState = modelServerState;
             //this.timeLastBpsReset = System.currentTimeMillis();
-            this.setIp(ip);
             this.sockHandler = new DatagramSocket();
         }
         catch(Exception e)
         {
             e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Set the ip and ipObject.
-     * try setting ipObject using an ipAddress. If all is well
-     * then also change the ip variable
-     *
-     * @param ip - The ipaddress in a string
-     */
-    public void setIp(String ip)
-    {
-        synchronized (lockIp)
-        {
-            try
-            {
-            	Log.d("Androneee", "Androneee ip is:"+ip);
-                this.ip = InetAddress.getByName(ip);
-            }
-            catch(Exception e)
-            {
-                //throw e;
-                e.printStackTrace();
-            }
         }
     }
 
@@ -149,12 +119,7 @@ public class ThreadPassPositionControls extends Thread
         while(!exit)
         {
 
-            //long currentTime = System.currentTimeMillis();
-            // Good for debugging Log.i("position", "Position: " + this.position);    
-            synchronized (lockIp)
-            {
-            	this.sendCommands();
-            }
+            this.sendCommands();
             
             // We are in lock state, so sent the thread to wait
             // which can be then woken up by a notify
@@ -182,28 +147,29 @@ public class ThreadPassPositionControls extends Thread
     	ArrayList<byte[]> commands =  this.modelVehicle.getCommands();
     	for(byte[] command : commands)
     	{
-    		this.sendCommandBytes(command);
+            this.sendCommandBytes(command);
     	}
     }
     
     /**
      * Passes dashee server protocol commands to the server.
      */
-    private void sendCommandBytes(byte[] command){
-    	try
-    	{
-	        DatagramPacket packet = new DatagramPacket(
-	                command, 
-	                command.length,
-	                this.ip, 
-	                this.modelServerState.getControlPort()
-	        );
-	        this.sockHandler.send(packet);
-    	} 
-	    catch (Exception e) 
-	    {
-	        e.printStackTrace();
-	    }
+    private void sendCommandBytes(byte[] command)
+    {
+        try
+        {
+            DatagramPacket packet = new DatagramPacket(
+                command, 
+                command.length,
+                this.modelServerState.getIp(), 
+                this.modelServerState.getControlPort()
+            );
+            this.sockHandler.send(packet);
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
     }
     
     /**

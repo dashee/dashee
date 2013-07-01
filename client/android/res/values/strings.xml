@@ -7,8 +7,11 @@
     <string name="title_activity_preferences">Settings</string>
     <string name="subtitle_activity_preferences">Configure your remote</string>
 
-    <string name="pref_ip">Vehicle IP Address</string>
-    <string name="pref_ip_default">192.168.1.12</string>
+    <string name="pref_server">Server Settings</string>
+    <string name="pref_server_ip">Vehicle IP Address</string>
+    <string name="pref_server_ip_default">192.168.1.200</string>
+    <string name="pref_server_port">Port</string>
+    <string name="pref_server_port_default">2047</string>
 
     <string name="action_dot_settings">Settings</string>
     <string name="action_dot_about">About</string>

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.SeekBar;
+import android.util.Log;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -67,7 +68,13 @@ public class MainActivity
      * Observer, any time server values are changed
      */
     public ModelServerState modelServerState;
-    
+
+    /**
+     * The listener, to when the settings have changed.
+     * See addSettingsListener() for more init details
+     */
+    private OnSharedPreferenceChangeListener settingChangeListener;
+
     /**
      * Current vehicle to control
      */
@@ -97,25 +104,41 @@ public class MainActivity
         modelVehicle = new ModelVehicleCar();
         
         // Create our fragment views
-        fragmentHud = new FragmentHudCar();
-        fragmentLog = new FragmentLog();
+        this.fragmentHud = new FragmentHudCar();
+        this.fragmentLog = new FragmentLog();
         
         //Set the initial view to our HUD
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_content, fragmentHud);
+        ft.add(R.id.fragment_content, this.fragmentHud);
         ft.commit();
-        
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
     	
         // Initialise our thread
-        threadPassPositionControls = new ThreadPassPositionControls(this.modelServerState, 
-        		prefs.getString("pref_ip", "192.168.1.12"), this.modelVehicle);
-        threadPassPositionControls.start();
+        this.threadPassPositionControls = new ThreadPassPositionControls(this.modelServerState, this.modelVehicle);
+        this.threadPassPositionControls.start();
 
         // Initialise our thread
-        threadCheckServerStatus = new ThreadCheckServerStatus(modelServerState, prefs.getString("pref_ip", "192.168.1.12"));
-        threadCheckServerStatus.start();
+        this.threadCheckServerStatus = new ThreadCheckServerStatus(this.modelServerState);
+        this.threadCheckServerStatus.start();
+
+        setOnSharedPreferenceChangeListener();
+    }
+    
+    public void setOnSharedPreferenceChangeListener()
+    {
+    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        return;
+
+        /*
+        settingChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() 
+        {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
+            {
+                fragmentHud.setHudIp("asdfsadf");
+            }
+        };
+        sharedPreferences.registerOnSharedPreferenceChangeListener(settingChangeListener);
+        */
     }
 
     /**
@@ -126,9 +149,10 @@ public class MainActivity
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
-        threadPassPositionControls.setIp(prefs.getString("pref_ip", "192.168.1.11"));
-        threadCheckServerStatus.setIp(prefs.getString("pref_ip", "192.168.1.11"));
-        fragmentHud.setHudIp(prefs.getString("pref_ip", "192.168.1.11"));
+        this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
+        this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
+        //this.threadPassPositionControls.setIp(this.modelServerState.getIp());
+        //this.threadCheckServerStatus.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
     }
 
     /**
@@ -160,8 +184,8 @@ public class MainActivity
         {
             case R.id.action_dot_settings:
             {
-                Intent settingsActivity = new Intent(getBaseContext(), PreferencesActivity.class);
-                startActivity(settingsActivity);
+                Intent preferencesActivity = new Intent(getBaseContext(), PreferencesActivity.class);
+                startActivity(preferencesActivity);
                 return true;
             }
             case R.id.action_menu_hud:
@@ -204,25 +228,39 @@ public class MainActivity
             }
             else if (o instanceof ModelServerState)
             {
-                ModelServerState serverState = (ModelServerState)o;
-
-                if (serverState.isAlive())
+                switch ((ModelServerState.Notifier)arg)
                 {
-                    runOnUiThread(new Runnable() {
-                        public void run()
+                    case STATUS_CONTROLS:
+                    case STATUS_TELEMETERY:
+                    case STATUS_FPV:
+                        if (this.modelServerState.isAlive())
                         {
-                            fragmentHud.setHudConnection("Connected"); 
+                            runOnUiThread(new Runnable() {
+                                public void run()
+                                {
+                                    fragmentHud.setHudConnection("Connected"); 
+                                }
+                            });
                         }
-                    });
-                }
-                else
-                {
-                    runOnUiThread(new Runnable() {
-                        public void run()
+                        else
                         {
-                            fragmentHud.setHudConnection("Failed"); 
+                            runOnUiThread(new Runnable() {
+                                public void run()
+                                {
+                                    fragmentHud.setHudConnection("Failed"); 
+                                }
+                            });
                         }
-                    });
+                        break;
+                    
+                    case IP:
+                        runOnUiThread(new Runnable() {
+                            public void run()
+                            {
+                                fragmentHud.setHudIp(modelServerState.getIp().toString()); 
+                            }
+                        });
+                        break;
                 }
             }
         }

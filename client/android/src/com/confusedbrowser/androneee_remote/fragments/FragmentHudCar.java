@@ -63,7 +63,7 @@ public class FragmentHudCar extends FragmentHud
         draw_hud = new DrawHud (this.getActivity());
         layout_hud.addView(draw_hud);
         
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
@@ -72,7 +72,7 @@ public class FragmentHudCar extends FragmentHud
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
 
-        this.setHudIp(prefs.getString("pref_ip", "WTF"));
+        this.setHudIp("None");
         this.setHudConnection("unknown");
         this.setHudBps(0);
         this.setHudPitch(0.0f);
