@@ -19,7 +19,8 @@ import com.confusedbrowser.androneee_remote.R;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class PreferencesActivity extends PreferenceActivity 
+public class PreferencesActivity 
+    extends PreferenceActivity 
 {
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -27,12 +28,34 @@ public class PreferencesActivity extends PreferenceActivity
         super.onCreate(savedInstanceState);
         
         ActionBar ab = getActionBar();
-        ab.setSubtitle(R.string.subtitle_activity_preferences);
-        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setSubtitle(R.string.pref_subtitle);
+        //ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeButtonEnabled(true);
 
         getFragmentManager()
             .beginTransaction()
             .replace(android.R.id.content, new MainFragment())
             .commit();
+    }
+
+    /**
+     * Handler of the Action bar selected Option
+     *
+     * @param item - The item clicked
+     *
+     * @return boolean - true if selected other wise see parent
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
+        switch (item.getItemId()) 
+        {
+            //Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

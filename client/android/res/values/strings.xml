@@ -4,8 +4,8 @@
 
     <string name="title_activity_main">Dashee</string>
 
-    <string name="title_activity_preferences">Settings</string>
-    <string name="subtitle_activity_preferences">Configure your remote</string>
+    <string name="pref_title">Settings</string>
+    <string name="pref_subtitle">Configure your remote</string>
 
     <string name="pref_server">Server Settings</string>
     <string name="pref_server_ip">Vehicle IP Address</string>
@@ -13,11 +13,20 @@
     <string name="pref_server_port">Port</string>
     <string name="pref_server_port_default">2047</string>
 
+    <string name="pref_channel_title">Settings</string>
+    <string name="pref_channel_summary">Configure your remote</string>
+
     <string name="pref_channel">Channel Settings</string>
-    <string name="pref_channel_channel01">Channel 01</string>
-    <string name="pref_channel_channel02">Channel 02</string>
-    <string name="pref_channel_channel03">Channel 03</string>
     <string name="pref_channel_default">Trim, Invert, Min and Max values</string>
+
+    <string name="pref_channel_channel01">Channel 01</string>
+    <string name="pref_channel_channel01_summary">Change phone Roll settings</string>
+
+    <string name="pref_channel_channel02">Channel 02</string>
+    <string name="pref_channel_channel02_summary">Change phone Pitch settings</string>
+
+    <string name="pref_channel_channel03">Channel 03</string>
+    <string name="pref_channel_channel03_summary">Change phone Yaw settings</string>
 
     <string name="action_dot_settings">Settings</string>
     <string name="action_dot_about">About</string>

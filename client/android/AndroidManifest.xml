@@ -23,7 +23,7 @@
         </activity>
         <activity
             android:name="com.confusedbrowser.androneee_remote.preferences.PreferencesActivity"
-            android:label="@string/title_activity_preferences"
+            android:label="@string/pref_title"
             android:parentActivityName="com.confusedbrowser.androneee_remote.MainActivity">
         </activity>
     </application>

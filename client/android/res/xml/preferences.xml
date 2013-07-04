@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/pref_title"
+    android:summary="@string/pref_subtitle"
+    >
     <PreferenceCategory
         android:title="@string/pref_server">
         <EditTextPreference
@@ -15,11 +19,42 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_channel">
-        <PreferenceScreen android:title="@string/pref_channel_channel01"
-            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
-        <PreferenceScreen android:title="@string/pref_channel_channel02"
-            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
-        <PreferenceScreen android:title="@string/pref_channel_channel03"
-            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
+        <PreferenceScreen 
+            android:key="pref_channel01"
+            android:title="@string/pref_channel_channel01"
+            android:summary="@string/pref_channel_channel01_summary">
+            <EditTextPreference
+                android:key="pref_channel01_trim"
+                android:title="Trim"
+                android:summary="0"
+                android:defaultValue="0"/>
+            <SwitchPreference
+                android:key="pref_channel01_invert"
+                android:title="Invert"
+                android:summary="Reverse the controls"
+                android:defaultValue="0"/>
+        </PreferenceScreen>
+        <PreferenceScreen 
+            android:key="pref_channel02"
+            android:title="@string/pref_channel_channel02"
+            android:summary="@string/pref_channel_channel02_summary"
+            android:fragment="com.confusedbrowser.androneee_remote.preferences.MainFragment">
+            <EditTextPreference
+                android:key="pref_channel02_trim"
+                android:title="Trim"
+                android:summary="0"
+                android:defaultValue="0"/>
+            <SwitchPreference
+                android:key="pref_channel02_invert"
+                android:title="Invert"
+                android:summary="Reverse the controls"
+                android:defaultValue="0"/>
+        </PreferenceScreen>
+        <PreferenceScreen 
+            android:key="pref_channel03"
+            android:title="@string/pref_channel_channel03"
+            android:summary="@string/pref_channel_channel03_summary"
+            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment">
+        </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>
