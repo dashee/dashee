@@ -16,6 +16,7 @@ import android.util.Log;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.confusedbrowser.androneee_remote.preferences.*;
 import com.confusedbrowser.androneee_remote.fragments.*;
 import com.confusedbrowser.androneee_remote.models.*;
 import com.confusedbrowser.androneee_remote.threads.*;
@@ -170,7 +171,7 @@ public class MainActivity
         {
             case R.id.action_dot_settings:
             {
-                Intent preferencesActivity = new Intent(getBaseContext(), PreferencesActivity.class);
+                Intent preferencesActivity = new Intent(getBaseContext(), com.confusedbrowser.androneee_remote.preferences.PreferencesActivity.class);
                 startActivity(preferencesActivity);
                 return true;
             }

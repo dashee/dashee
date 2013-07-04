@@ -4,6 +4,7 @@
 package com.confusedbrowser.androneee_remote.models;
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 /**
  * @author shahmirj is a cock
@@ -11,11 +12,14 @@ import java.util.ArrayList;
  */
 public class ModelVehicleCar implements ModelVehicle 
 {
-    private float steer = 50;
+    private float steer = 50.0f;
     private int prevSteer;
     
-    private float power = 0;
+    private float power = 0.0f;
     private int prevPower;
+
+    private int steerTrim = 19;
+    private int powerTrim = 0;
     
     /*
      * Getter for steer
@@ -36,6 +40,8 @@ public class ModelVehicleCar implements ModelVehicle
     {
     	return power;
     }
+
+    //public int get
 	
     /**
      * Set up the car vehicle type
@@ -55,19 +61,28 @@ public class ModelVehicleCar implements ModelVehicle
         // Commands are sent as 2 byte packets, the first byte, is the type
         // of command the second is the value.
         ArrayList<byte[]> commands = new ArrayList<byte[]>();
+
+        int steerInt = (int)Math.round(this.steer);
+        int powerInt = (int)Math.round(this.power);
         
-        if((int)this.steer != this.prevSteer)
+        if(steerInt != this.prevSteer)
         {
+            int sendSteer = steerInt+this.steerTrim;
+            if (sendSteer > 100) { sendSteer = 100; }
+            if (sendSteer < 0) { sendSteer = 0; }
+
             // Steering 17 converts to 00010001.
-            commands.add(new byte[]{ 17, (byte)((int)this.steer << 1) });
-            this.prevSteer = (int)this.steer;
+            commands.add(new byte[]{ 17, (byte)(sendSteer << 1) });
+            this.prevSteer = steerInt;
         }
         
-        if((int)this.power != this.prevPower)
+        if(powerInt != this.prevPower)
         {
+            int sendPower = powerInt+this.powerTrim;
+
             // Steering 33 converts to 00100001.
-            commands.add( new byte[]{ 33, (byte)((int)this.power << 1) });
-            this.prevPower = (int)this.power;
+            commands.add( new byte[]{ 33, (byte)(sendPower << 1) });
+            this.prevPower = powerInt;
         }
         
         return commands;

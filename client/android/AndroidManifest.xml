@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PreferencesActivity"
+            android:name="com.confusedbrowser.androneee_remote.preferences.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName="com.confusedbrowser.androneee_remote.MainActivity">
         </activity>

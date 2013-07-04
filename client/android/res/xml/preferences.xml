@@ -13,4 +13,13 @@
             android:summary="@string/pref_server_port_default"
             android:defaultValue="@string/pref_server_port_default"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_channel">
+        <PreferenceScreen android:title="@string/pref_channel_channel01"
+            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
+        <PreferenceScreen android:title="@string/pref_channel_channel02"
+            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
+        <PreferenceScreen android:title="@string/pref_channel_channel03"
+            android:fragment="com.confusedbrowser.androneee_remote.preferences.ChannelFragment"/>
+    </PreferenceCategory>
 </PreferenceScreen>

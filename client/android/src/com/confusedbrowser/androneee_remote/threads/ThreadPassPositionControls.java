@@ -90,6 +90,8 @@ public class ThreadPassPositionControls extends Thread
         {
             e.printStackTrace();
         }
+
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
     }
 
     public void setBps(int bps)
