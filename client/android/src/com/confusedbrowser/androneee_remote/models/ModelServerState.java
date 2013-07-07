@@ -1,22 +1,20 @@
 package com.confusedbrowser.androneee_remote.models;
 
 import android.util.Log;
-
 import java.net.*;
 import java.util.Observable;
 
 /**
  * The Server State Model
+ * 
+ * This Class allows monitoring of various user phone movements.
+ * yaw, pitch and roll are calculated and updated to the observer
  *
  * @author David Buttar
  * @author Shahmir Javaid
  */
-
-/**
- * This Class allows monitoring of various user phone movements.
- * yaw, pitch and roll are calculated and updated to the observer
- */
-public class ModelServerState extends Observable
+public class ModelServerState 
+	extends Observable
 {
     /**
      * ENUM which represents change types.
@@ -27,10 +25,10 @@ public class ModelServerState extends Observable
     public enum Notifier
     {
         STATUS_CONTROLS,
-        STATUS_TELEMETERY,
+        STATUS_TELEMETRY,
         STATUS_FPV,
         PORT_CONTROLS,
-        PORT_TELEMETERY,
+        PORT_TELEMETRY,
         PORT_FPV,
         IP,
         NOTHING
@@ -41,7 +39,7 @@ public class ModelServerState extends Observable
      * there respective servers.
      */
     protected boolean statusControls = false;
-    protected boolean statusTelemetery = false;
+    protected boolean statusTelemetry = false;
     protected boolean statusFpv = false;
     
     /**
@@ -51,7 +49,7 @@ public class ModelServerState extends Observable
      * object.
      */
     private int portControls = 2047;
-    private int portTelemetery = 2048;
+    private int portTelemetry = 2048;
     private int portFpv = 2049;
     
     /**
@@ -61,7 +59,7 @@ public class ModelServerState extends Observable
 
     /**
      * This variable is responsible for controlling
-     * what is considered a full systems failiure.
+     * what is considered a full systems failure.
      * true - represents that one or more or all servers failed are considered as 
      *        a loss of connection
      * false - represents that all servers must fail before a connection 
@@ -70,7 +68,7 @@ public class ModelServerState extends Observable
     protected boolean strict = false;
 
     /**
-     * Initialize our variables
+     * Initialise our variables
      */
     public ModelServerState()
     {
@@ -80,7 +78,7 @@ public class ModelServerState extends Observable
     /**
      * This will set statusControl value, and inform.
      * the observer if the previous value was not the same
-     * helpfull when you want to detect a connection success or failiure
+     * Helpful when you want to detect a connection success or failure
      *
      * @param controls - The value to be set
      */
@@ -98,25 +96,25 @@ public class ModelServerState extends Observable
     /**
      * This will set statusControl value, and inform.
      * the observer if the previous value was not the same
-     * helpfull when you want to detect a connection success or failiure
+     * Helpful when you want to detect a connection success or failure
      *
      * @param controls - The value to be set
      */
     public void setStatusTelemetery(boolean status)
     {
         // The state has changed so notify
-        if (this.statusTelemetery != status)
+        if (this.statusTelemetry != status)
         {
-            this.statusTelemetery = status;
+            this.statusTelemetry = status;
             setChanged();
-            notifyObservers(Notifier.STATUS_TELEMETERY);
+            notifyObservers(Notifier.STATUS_TELEMETRY);
         }
     }
     
     /**
      * This will set statusFpv value, and inform.
      * the observer if the previous value was not the same
-     * helpfull when you want to detect a connection success or failiure
+     * Helpful when you want to detect a connection success or failure
      *
      * @param controls - The value to be set
      */
@@ -134,11 +132,11 @@ public class ModelServerState extends Observable
     /**
      * Set the Controls port value.
      *
-     * @param int - A port greater than 1000, and not the same as Telemetery or Fpv
+     * @param int - A port greater than 1000, and not the same as telemetry or FPV
      */
     public void setControlsPort(int port)
     {
-        if (port > 1000 && (port != this.portTelemetery || port != this.portFpv))
+        if (port > 1000 && (port != this.portTelemetry || port != this.portFpv))
         {
             this.portControls = port;
             setChanged();
@@ -147,28 +145,28 @@ public class ModelServerState extends Observable
     }
     
     /**
-     * Set the Telemetery port value.
+     * Set the Telemetry port value.
      *
      * @param int - A port greater than 1000, and not the same as Controls or Fpv
      */
-    public void setTelemeteryPort(int port)
+    public void setTelemetryPort(int port)
     {
         if (port > 1000 && (port != this.portControls || port != this.portFpv))
         {
-            this.portTelemetery = port;
+            this.portTelemetry = port;
             setChanged();
-            notifyObservers(Notifier.PORT_TELEMETERY);
+            notifyObservers(Notifier.PORT_TELEMETRY);
         }
     }
     
     /**
-     * Set the Fpv port value.
+     * Set the FPV port value.
      *
-     * @param int - A port greater than 1000, and not the same as Controls or Telemetery
+     * @param int - A port greater than 1000, and not the same as Controls or Telemetry
      */
     public void setFpvPort(int port)
     {
-        if (port > 1000 && (port != this.portControls || port != this.portTelemetery))
+        if (port > 1000 && (port != this.portControls || port != this.portTelemetry))
         {
             this.portFpv = port;
             setChanged();
@@ -179,7 +177,7 @@ public class ModelServerState extends Observable
     /**
      * Change the IP address
      *
-     * @param ip - The ip address value in string
+     * @param ip - The IP address value in string
      */
     public void setIp(String ip)
     {
@@ -197,9 +195,9 @@ public class ModelServerState extends Observable
     }
     
     /**
-     * Get the Ip string
+     * Get the IP string
      *
-     * @returns InetAddress - The Ip address
+     * @returns InetAddress - The IP address
      */
     public InetAddress getIp()
     {
@@ -228,13 +226,13 @@ public class ModelServerState extends Observable
     public boolean isAlive(boolean strict)
     {
         if (strict)
-            return (statusControls && statusTelemetery && statusFpv);
+            return (statusControls && statusTelemetry && statusFpv);
         else
-            return (statusControls || statusTelemetery || statusFpv);
+            return (statusControls || statusTelemetry || statusFpv);
     }
 
     /**
-     * Unstrict mode of isAlive(boolean) function
+     * non-strict mode of isAlive(boolean) function
      *
      * @returns boolean - the server state
      */

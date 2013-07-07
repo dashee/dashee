@@ -1,7 +1,6 @@
 package com.confusedbrowser.androneee_remote;
 
 import android.util.Log;
-
 import java.net.*;
 
 public class VehicleStatusThread extends Thread {

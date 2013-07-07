@@ -63,7 +63,7 @@ public class MainFragment
     }
 
     /**
-     * Change the value of the Textboxes
+     * Change the value of the Textbox
      *
      * @param sharedPreference - The SharedPreference object
      * @param key - The preference changed

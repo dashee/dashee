@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.confusedbrowser.androneee_remote.models;
 
 import java.util.ArrayList;
@@ -52,7 +49,7 @@ public class ModelVehicleCar implements ModelVehicle
         this.prevPower = (int)this.power;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see com.confusedbrowser.androneee_remote.models.ModelVehicle#getCommand()
      */
     @Override
@@ -123,7 +120,7 @@ public class ModelVehicleCar implements ModelVehicle
 
     /**
      * Return the steer value, given the roll of the phone.
-     * Steer being 50 is center, 0 is full left and 100 is full right
+     * Steer being 50 is centre, 0 is full left and 100 is full right
      *
      * @param roll - the roll value in radians
      *
@@ -155,8 +152,11 @@ public class ModelVehicleCar implements ModelVehicle
         float valueScaled = (value - curMin) / (leftSpan);
         
         //Convert the 0-1 range into a value in the right range.
-        if(value<curMin) return targetMin;
-        if(value>curMax) return targetMax;
+        if(value < curMin)
+        	return targetMin;
+        if(value > curMax) 
+        	return targetMax;
+        
         return targetMin + (valueScaled * rightSpan); 
     }
 }

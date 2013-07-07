@@ -5,7 +5,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.Sensor;
-
 import java.util.Observable;
 
 /**
@@ -49,7 +48,7 @@ public class ModelPhonePosition extends Observable implements SensorEventListene
     /**
      * Return current Pitch value
      * 
-     * @return float - The pitch value in Radians
+     * @return float - The pitch value in radians
      */
     public float getPitch()
     {
@@ -59,7 +58,7 @@ public class ModelPhonePosition extends Observable implements SensorEventListene
     /**
      * Return current Roll value
      * 
-     * @return float - The roll value in Radians
+     * @return float - The roll value in radians
      */
     public float getRoll()
     {

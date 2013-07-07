@@ -11,7 +11,8 @@ import com.confusedbrowser.androneee_remote.R;
  * @author David Buttar
  * @author Shahmir Javaid
  */
-public class ChannelFragment extends PreferenceFragment
+public class ChannelFragment 
+	extends PreferenceFragment
 {
     @Override
     public void onCreate(Bundle savedInstanceState) 

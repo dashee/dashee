@@ -20,8 +20,8 @@ import com.confusedbrowser.androneee_remote.threads.*;
 
 /**
  * The main activity that the program will run.
- * This will set our fragments, handel our preferences
- * changing, start the threads which commnicate to our servers
+ * This will set our fragments, handle our preferences
+ * changing, start the threads which communicate to our servers
  * set and listen to the Observers so actions can be taken when things are changed
  *
  * @author David Buttar
@@ -33,8 +33,8 @@ public class MainActivity
 {
 
     /**
-     * Create instances of our fragments in memeory.
-     * So they dont have to be initialized every time, and hold
+     * Create instances of our fragments in memory.
+     * So they don't have to be initialised every time, and hold
      * there previous state.
      */
     private FragmentHud fragmentHud;
@@ -48,9 +48,9 @@ public class MainActivity
     public ThreadPassPositionControls threadPassPositionControls;
     
     /**
-     * This will poll our server to check wheather it is still
+     * This will poll our server to check weather it is still
      * alive or not. If not then an observer will be notified
-     * It is this observer that will handel other threads, which require
+     * It is this observer that will handle other threads, which require
      * this server
      */
     public ThreadCheckServerStatus threadCheckServerStatus;
@@ -209,7 +209,7 @@ public class MainActivity
                 switch ((ModelServerState.Notifier)arg)
                 {
                     case STATUS_CONTROLS:
-                    case STATUS_TELEMETERY:
+                    case STATUS_TELEMETRY:
                     case STATUS_FPV:
                         if (this.modelServerState.isAlive())
                         {
@@ -264,7 +264,7 @@ public class MainActivity
     }
     
     /**
-     * App is paused, handel pause systems.
+     * App is paused, handle pause systems.
      * Pause the thread, and stop the PhoneRoll monitoring
      */
     @Override

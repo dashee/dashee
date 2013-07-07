@@ -22,7 +22,6 @@ public class PreferencesActivity
         
         ActionBar ab = getActionBar();
         ab.setSubtitle(R.string.pref_subtitle);
-        //ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeButtonEnabled(true);
 
         getFragmentManager()
