@@ -90,15 +90,15 @@ public class MainActivity
 
         // This will initialise our PhonePosition Observer,
         // So our this.update function can handle updates 
-        modelPosition = new ModelPhonePosition(getBaseContext());
-        modelPosition.addObserver(this);
+        this.modelPosition = new ModelPhonePosition(getBaseContext());
+        this.modelPosition.addObserver(this);
         
         //Create our ServerState model
-        modelServerState = new ModelServerState();
-        modelServerState.addObserver(this);
+        this.modelServerState = new ModelServerState();
+        this.modelServerState.addObserver(this);
         
         // Create our vehicle model
-        modelVehicle = new ModelVehicleCar();
+        this.modelVehicle = new ModelVehicleCar();
         
         // Create our fragment views
         this.fragmentHud = new FragmentHudCar();
@@ -117,8 +117,8 @@ public class MainActivity
         this.threadCheckServerStatus = new ThreadCheckServerStatus(this.modelServerState);
         this.threadCheckServerStatus.start();
 
-    	sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    	this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
     
     /**
@@ -258,9 +258,9 @@ public class MainActivity
     protected void onResume() 
     {
         super.onResume();
-        modelPosition.onResume();
-        threadPassPositionControls.onResume();
-        threadCheckServerStatus.onResume();
+        this.modelPosition.onResume();
+        this.threadPassPositionControls.onResume();
+        this.threadCheckServerStatus.onResume();
     }
     
     /**
@@ -271,9 +271,9 @@ public class MainActivity
     protected void onPause() 
     {
         super.onPause();
-        modelPosition.onPause();
-        threadPassPositionControls.onPause();
-        threadCheckServerStatus.onPause();
+        this.modelPosition.onPause();
+        this.threadPassPositionControls.onPause();
+        this.threadCheckServerStatus.onPause();
     }
 
     /**
