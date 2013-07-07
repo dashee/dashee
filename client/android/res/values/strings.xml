@@ -40,4 +40,5 @@
     <string name="hud_text_bps_label">B/s</string>
     <string name="hud_text_pitch_label">Pitch</string>
     <string name="hud_text_roll_label">Roll</string>
+    <string name="pref_channel_subtitle">Configure channel specific settings</string>
 </resources>

@@ -11,12 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.SeekBar;
-import android.util.Log;
-
 import java.util.Observable;
 import java.util.Observer;
 
-import com.confusedbrowser.androneee_remote.preferences.*;
 import com.confusedbrowser.androneee_remote.fragments.*;
 import com.confusedbrowser.androneee_remote.models.*;
 import com.confusedbrowser.androneee_remote.threads.*;
@@ -59,7 +56,7 @@ public class MainActivity
     public ThreadCheckServerStatus threadCheckServerStatus;
     
     /**
-     * Handel to our Phone schemetics. This will return
+     * Handle to our Phone schematics. This will return
      * our phones roll, pitch state, by notifying the observer
      */
     public ModelPhonePosition modelPosition;
@@ -69,12 +66,6 @@ public class MainActivity
      * Observer, any time server values are changed
      */
     public ModelServerState modelServerState;
-
-    /**
-     * The listener, to when the settings have changed.
-     * See addSettingsListener() for more init details
-     */
-    private OnSharedPreferenceChangeListener settingChangeListener;
 
     /**
      * Current vehicle to control
@@ -248,6 +239,8 @@ public class MainActivity
                             }
                         });
                         break;
+				default:
+					break;
                 }
             }
         }

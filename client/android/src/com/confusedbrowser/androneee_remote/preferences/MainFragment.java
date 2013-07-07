@@ -1,15 +1,12 @@
 package com.confusedbrowser.androneee_remote.preferences;
 
-import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.view.MenuItem;
 import com.confusedbrowser.androneee_remote.R;
  
 /**

@@ -1,6 +1,5 @@
 package com.confusedbrowser.androneee_remote.threads;
 
-import android.util.Log;
 import java.net.*;
 import java.util.ArrayList;
 

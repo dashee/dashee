@@ -1,6 +1,5 @@
 package com.confusedbrowser.androneee_remote.threads;
 
-import android.util.Log;
 import java.net.*;
 
 import com.confusedbrowser.androneee_remote.models.*;
@@ -33,7 +32,7 @@ public class ThreadCheckServerStatus extends Thread
     /**
      * Variable controlling the execution of a thread.
      * The run() function runs constantly, so exit variable
-     * controls the infinate loop
+     * controls the infinite loop
      */
     private boolean exit = false;
 
@@ -53,11 +52,11 @@ public class ThreadCheckServerStatus extends Thread
     private ModelServerState modelServerState;
 
     /**
-     * Initiate our thread. Set the variables from the params, and 
+     * Initiate our thread. Set the variables from the parameter, and 
      * set our ipAdress object. Also create a new instance of socket 
      *
      * @param context - The context of this thread
-     * @param ip - The ip address to send the commands to
+     * @param ip - The IP address to send the commands to
      * @param roll - The default position which is to be set
      */
     public ThreadCheckServerStatus(ModelServerState modelServerState)
@@ -83,7 +82,7 @@ public class ThreadCheckServerStatus extends Thread
      * are still alive.
      *
      * Also if the Thread is paused, our lockPause object will wait. We know the 
-     * thread is paused if the @pause variable is true
+     * thread is paused if the pause variable is true
      */
     public void run() 
     {   
