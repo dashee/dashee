@@ -19,7 +19,7 @@
 #include "../ServoController.h"
 #include "../Servo/Dummy.h"
 
-class ServoController_Dummy : public ServoController
+class ServoControllerDummy : public ServoController
 {
 private:
 
@@ -33,13 +33,13 @@ protected:
     
 public:
     // Open our Servo Device
-    explicit ServoController_Dummy(const char *, const unsigned short int channel);
+    explicit ServoControllerDummy(const char *, const unsigned short int channel);
     
     // Get the error from file
     virtual short int getError();
 
     // Close the device
-    virtual ~ServoController_Dummy();
+    virtual ~ServoControllerDummy();
 };
 
 #endif

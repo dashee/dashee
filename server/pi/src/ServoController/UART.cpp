@@ -7,7 +7,7 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-ServoController_UART::ServoController_UART(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
     // Reset the board
     this->reset();
@@ -24,7 +24,7 @@ ServoController_UART::ServoController_UART(const char * dev, const unsigned shor
     
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
-        servos.push_back(new Servo_UART(&this->fd, x));
+        servos.push_back(new ServoUART(&this->fd, x));
 }
 
 /**
@@ -32,7 +32,7 @@ ServoController_UART::ServoController_UART(const char * dev, const unsigned shor
  * 
  * @throw Exception_ServoController - If tcsetattr fails
  */
-void ServoController_UART::init()
+void ServoControllerUART::init()
 {
     struct termios options;
     tcgetattr(this->fd, &options);
@@ -69,7 +69,7 @@ void ServoController_UART::init()
  * the reset pin must be driven low. Once the pin is driven low, the board is
  * back to its original state
  */
-void ServoController_UART::reset()
+void ServoControllerUART::reset()
 {
 
 }
@@ -89,23 +89,23 @@ void ServoController_UART::reset()
  * 
  * @reuturn short int - The integer response
  */
-short int ServoController_UART::getError()
+short int ServoControllerUART::getError()
 {
     unsigned char command[] = { 0xAA, 0xC, 0x21 };
     unsigned char response[2];
 
     if (write(this->fd, command, sizeof(command)) == -1)
-        throw Exception_ServoController("ServoController_UART::getError write failed");
+        throw Exception_ServoController("ServoControllerUART::getError write failed");
         
     // Go through and read each byte by byte
     for (int n = 0, total = 0; n < 2; total++)
     {
         if (total > 10)
-            throw Exception_ServoController("Reading ServoController_UART::getError, ran more than 10 times");
+            throw Exception_ServoController("Reading ServoControllerUART::getError, ran more than 10 times");
 
         int ec = read(this->fd, response+n, 1);
         if(ec < 0)
-            throw Exception_ServoController("read failed in ServoController_UART::getError");
+            throw Exception_ServoController("read failed in ServoControllerUART::getError");
 
         if (ec == 0)
             continue;
@@ -120,7 +120,7 @@ short int ServoController_UART::getError()
 /**
  * Handler to close our @fd opened device, and delete all servo's
  */
-ServoController_UART::~ServoController_UART()
+ServoControllerUART::~ServoControllerUART()
 {
     close(this->fd);
 }

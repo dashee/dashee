@@ -7,7 +7,7 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-ServoController_USB::ServoController_USB(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
     this->fd = open(this->dev, O_RDWR | O_NOCTTY);
 
@@ -16,13 +16,13 @@ ServoController_USB::ServoController_USB(const char * dev, const unsigned short 
     
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
-        servos.push_back(new Servo_USB(&this->fd, x));
+        servos.push_back(new ServoUSB(&this->fd, x));
 }
 
 /**
  * Handler to close our @fd opened device, and delete all servo's
  */
-ServoController_USB::~ServoController_USB()
+ServoControllerUSB::~ServoControllerUSB()
 {
     close(this->fd);
 }
@@ -42,7 +42,7 @@ ServoController_USB::~ServoController_USB()
  * 
  * @reuturn short int - The integer response
  */
-short int ServoController_USB::getError()
+short int ServoControllerUSB::getError()
 {
     unsigned char command[] = { 0xA1 };
     unsigned char response[2];

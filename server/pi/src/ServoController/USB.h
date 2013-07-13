@@ -17,7 +17,7 @@
 #include "../ServoController.h"
 #include "../Servo/USB.h"
 
-class ServoController_USB : public ServoController
+class ServoControllerUSB : public ServoController
 {
 private:
 
@@ -31,13 +31,13 @@ protected:
     
 public:
     // Open our device, and set our @servos array
-    explicit ServoController_USB(const char *, const unsigned short int = 8);
+    explicit ServoControllerUSB(const char *, const unsigned short int = 8);
     
     // Get the error from the board
     virtual short int getError();
     
     // Close the device
-    virtual ~ServoController_USB();
+    virtual ~ServoControllerUSB();
 };
 
 #endif

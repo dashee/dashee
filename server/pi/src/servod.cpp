@@ -27,7 +27,7 @@
 #include "ServoController/Dummy.h"
 #include "Server/UDP.h"
 #include "Log.h"
-#include "Config/servod.h"
+#include "Config/Servod.h"
 
 #define SERVO_DEVICE "/dev/ttyAMA0"
 #define SERVO_DUMMY_CHANNELS 6
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
     // Create our Config_servod, as a new pointer, as we will
     // delete it mid point to clear our heap.
-    Config_servod *conf = new Config_servod();
+    ConfigServod *conf = new ConfigServod();
 
     // Call our setconfig which will look for command line arguments, and set it
     // in our @conf variables. The command line arguments are read from @argv.
@@ -108,21 +108,21 @@ int main(int argc, char **argv)
         {
             // Create a Servo
             Log::info(1, "Loading UART device '%s'.", servo);
-            servoController = new ServoController_UART(servo);
+            servoController = new ServoControllerUART(servo);
         }
         
         // Set our servo to the Binary file
         else if(servotype == 2)
         {
             Log::info(1, "Loading USB device '%s'.", servo);
-            servoController = new ServoController_USB(servo);
+            servoController = new ServoControllerUSB(servo);
         }
 
         // Set our servo to the Binary file
         else if(servotype == 3)
         {
             Log::info(1, "Loading Dummy device '%s'.", servo);
-            servoController = new ServoController_Dummy(servo, SERVO_DUMMY_CHANNELS);
+            servoController = new ServoControllerDummy(servo, SERVO_DUMMY_CHANNELS);
         }
 
         // Fail as the options must fall within the above

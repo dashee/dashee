@@ -12,7 +12,7 @@
  * 
  *
  * This class represents one servo/channel at a time, The handel is held externally
- * usually in the ServoController class, or its ServoController_<CounterPart> version
+ * usually in the ServoController class, or its ServoController<CounterPart> version
  *
  * @author Shahmir Javaid
  */
@@ -22,7 +22,7 @@
 
 #include "../Servo.h"
 
-class Servo_Dummy : public Servo
+class ServoDummy : public Servo
 {
 private:
 
@@ -53,11 +53,11 @@ protected:
      * The controller needs to be able to access channelByteSize and headerByteSize
      * for initialization checks, so we nee to create a friendship. 
      */
-    friend class ServoController_Dummy;
+    friend class ServoControllerDummy;
     
 public:
     //Open our Servo Device
-    explicit Servo_Dummy(FILE *, const unsigned short int);
+    explicit ServoDummy(FILE *, const unsigned short int);
 
     //Get the target of a given channel
     unsigned short int getTarget();
@@ -66,7 +66,7 @@ public:
     void setTarget(unsigned short int);
     
     //Close the device
-    ~Servo_Dummy();
+    ~ServoDummy();
 };
 
 #endif

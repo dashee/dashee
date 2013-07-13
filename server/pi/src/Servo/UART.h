@@ -3,7 +3,7 @@
  * it is a wrapper over the read and write commands sent to usually /dev/ttyAMA0
  *
  * This class represents one servo/channel at a time, The handel is held externally
- * usually in the ServoController class, or its ServoController_<CounterPart> version
+ * usually in the ServoController class, or its ServoController<CounterPart> version
  *
  * @author Shahmir Javaid
  */
@@ -13,7 +13,7 @@
 
 #include "../Servo.h"
 
-class Servo_UART : public Servo
+class ServoUART : public Servo
 {
 private:
     
@@ -28,7 +28,7 @@ protected:
     
 public:
     //Open our Servo Device
-    explicit Servo_UART(int *, const unsigned short int);
+    explicit ServoUART(int *, const unsigned short int);
 
     //Get the target of a given channel
     unsigned short int getTarget();
@@ -37,7 +37,7 @@ public:
     void setTarget(unsigned short int);
     
     //Close the device
-    ~Servo_UART();
+    ~ServoUART();
 };
 
 #endif

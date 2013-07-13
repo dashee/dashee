@@ -1,9 +1,9 @@
-#include "servod.h"
+#include "Servod.h"
 
 /** 
  * Initialize our maps, and internal variables
  */
-Config_servod::Config_servod() : Config()
+ConfigServod::ConfigServod() : Config()
 {
 }
 
@@ -25,7 +25,7 @@ Config_servod::Config_servod() : Config()
  *
  * @param s - is the handel to the ServoController
  */
-void Config_servod::setServoController(ServoController * s)
+void ConfigServod::setServoController(ServoController * s)
 {
     for(configs_it = configs.begin(); configs_it != configs.end(); ++configs_it)
     {
@@ -66,12 +66,12 @@ void Config_servod::setServoController(ServoController * s)
                     setFallback(s, configs_it->first+19, configs_it->second, channel_num);
 
                 else
-                    Log::warning(6, "Config_servod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
+                    Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
             }
 
             catch (Exception_InvalidNumber e)
             {
-                Log::warning(7, "Config_servod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
+                Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
             }
         }
     }
@@ -89,7 +89,7 @@ void Config_servod::setServoController(ServoController * s)
  * @returns bool - If the set was successfull, false any other way
  *
  */
-bool Config_servod::setDefault(ServoController * s, const char * what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setDefault(ServoController * s, const char * what, const char * value, const unsigned short int & channel)
 {
     try
     {
@@ -112,11 +112,11 @@ bool Config_servod::setDefault(ServoController * s, const char * what, const cha
             return true;
         }
             
-        Log::warning(1, "Config_servod::setDefault: Invalid value '%s'.", what);
+        Log::warning(1, "ConfigServod::setDefault: Invalid value '%s'.", what);
     }
     catch (Exception_InvalidNumber e)
     {
-        Log::warning(1, "Config_servod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        Log::warning(1, "ConfigServod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
     }
 
     return false;
@@ -134,7 +134,7 @@ bool Config_servod::setDefault(ServoController * s, const char * what, const cha
  * @returns bool - If the set was successfull, false any other way
  *
  */
-bool Config_servod::setFallback(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setFallback(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
     try
     {
@@ -157,11 +157,11 @@ bool Config_servod::setFallback(ServoController * s, const char *what, const cha
             return true;
         }
             
-        Log::warning(1, "Config_servod::setFallback invalid value '%s'.", what);
+        Log::warning(1, "ConfigServod::setFallback invalid value '%s'.", what);
     }
     catch (Exception_InvalidNumber e)
     {
-        Log::warning(1, "Config_servod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        Log::warning(1, "ConfigServod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
     }
 
     return false;
@@ -178,7 +178,7 @@ bool Config_servod::setFallback(ServoController * s, const char *what, const cha
  * @returns bool - If the set was successfull, false any other way
  *
  */
-bool Config_servod::setFallbackEnabled(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setFallbackEnabled(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
     return false;
 }
@@ -186,6 +186,6 @@ bool Config_servod::setFallbackEnabled(ServoController * s, const char *what, co
 /**
  * Destruct if required
  */ 
-Config_servod::~Config_servod()
+ConfigServod::~ConfigServod()
 {
 }

@@ -19,7 +19,7 @@
 #include "../ServoController.h"
 #include "../Servo/UART.h"
 
-class ServoController_UART : public ServoController
+class ServoControllerUART : public ServoController
 {
 private:
 
@@ -39,13 +39,13 @@ protected:
     
 public:
     // Open our device, and set our @servos array
-    explicit ServoController_UART(const char *, const unsigned short int = 8);
+    explicit ServoControllerUART(const char *, const unsigned short int = 8);
     
     // Get the error from the board
     virtual short int getError();
     
     // Close the device
-    virtual ~ServoController_UART();
+    virtual ~ServoControllerUART();
 };
 
 #endif

@@ -7,7 +7,7 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_USB::Servo_USB(int * fd, const unsigned short int channel) : Servo(channel)
+ServoUSB::ServoUSB(int * fd, const unsigned short int channel) : Servo(channel)
 {
     this->fd = fd;
 }
@@ -15,7 +15,7 @@ Servo_USB::Servo_USB(int * fd, const unsigned short int channel) : Servo(channel
 /**
  * Handler to close our @fd opened device
  */
-Servo_USB::~Servo_USB()
+ServoUSB::~ServoUSB()
 {
 }
 
@@ -35,7 +35,7 @@ Servo_USB::~Servo_USB()
  *
  * @return int - The Target value of a channel 
  */
-unsigned short int Servo_USB::getTarget()
+unsigned short int ServoUSB::getTarget()
 {
     unsigned char command[2];
     command[0] = 0x90;
@@ -65,7 +65,7 @@ unsigned short int Servo_USB::getTarget()
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_USB::setTarget(unsigned short int target)
+void ServoUSB::setTarget(unsigned short int target)
 {
     // Convert the percentage target value
     // to Servo controller target value

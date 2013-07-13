@@ -9,7 +9,7 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-ServoController_Dummy::ServoController_Dummy(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
     fd = fopen(this->dev, "r+b");
 
@@ -18,18 +18,18 @@ ServoController_Dummy::ServoController_Dummy(const char * dev, const unsigned sh
 
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
-        servos.push_back(new Servo_Dummy(fd, x));
+        servos.push_back(new ServoDummy(fd, x));
     
     //Make sure the binary file is of correct size
     fseek(fd, 0, SEEK_END);
-    if (ftell(fd) != (Servo_Dummy::headerByteSize + (Servo_Dummy::channelByteSize * channels)))
+    if (ftell(fd) != (ServoDummy::headerByteSize + (ServoDummy::channelByteSize * channels)))
         throw Exception_Servo("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
 }
 
 /**
  * Handler to close our @fd opened device
  */
-ServoController_Dummy::~ServoController_Dummy()
+ServoControllerDummy::~ServoControllerDummy()
 {
     fclose(this->fd);    
 }
@@ -44,7 +44,7 @@ ServoController_Dummy::~ServoController_Dummy()
  * 
  * @reuturn short int - The integer response
  */
-short int ServoController_Dummy::getError()
+short int ServoControllerDummy::getError()
 {
     fseek(fd, 0, SEEK_SET);
     return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));

@@ -9,7 +9,7 @@
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_Dummy::Servo_Dummy(FILE * fd, const unsigned short int channel) : Servo(channel)
+ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(channel)
 {
     this->fd = fd;
 }
@@ -17,7 +17,7 @@ Servo_Dummy::Servo_Dummy(FILE * fd, const unsigned short int channel) : Servo(ch
 /**
  * Handler to close our @fd opened device
  */
-Servo_Dummy::~Servo_Dummy()
+ServoDummy::~ServoDummy()
 {
 }
 
@@ -30,7 +30,7 @@ Servo_Dummy::~Servo_Dummy()
  *
  * @return int - The value of the channel 
  */
-unsigned short int Servo_Dummy::getTarget()
+unsigned short int ServoDummy::getTarget()
 {
     if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in getTarget");
@@ -51,7 +51,7 @@ unsigned short int Servo_Dummy::getTarget()
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_Dummy::setTarget(unsigned short int target)
+void ServoDummy::setTarget(unsigned short int target)
 {
     PercentageToTarget(target);
         

@@ -14,7 +14,7 @@
 #ifndef CONFIG_SERVOD_H_
 #define CONFIG_SERVOD_H_
 
-class Config_servod : public Config
+class ConfigServod : public Config
 {
 protected:
     
@@ -28,13 +28,13 @@ protected:
 public:
     
     // Initialize using the 
-    Config_servod();
+    ConfigServod();
     
     // Using our config, set the ServoControllers
     void setServoController(ServoController *);
         
     // Virtually destruct
-    ~Config_servod();
+    ~ConfigServod();
 };
 
 #endif

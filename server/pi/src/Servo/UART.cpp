@@ -2,13 +2,13 @@
 
 /**
  * This constructor will get the fd of the servo device that is open by 
- * its parrent ServoController_UART class. The fd is used to talk to the 
+ * its parrent ServoControllerUART class. The fd is used to talk to the 
  * servo
  *
  * @param (const char *)dev - The name of the device which will be open
  * @throw Exception_Servo - If device opening fails, an exception will be thrown
  */
-Servo_UART::Servo_UART(int * fd, const unsigned short int channel) : Servo(channel)
+ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel)
 {
     this->fd = fd;
 }
@@ -16,7 +16,7 @@ Servo_UART::Servo_UART(int * fd, const unsigned short int channel) : Servo(chann
 /**
  * destruct
  */
-Servo_UART::~Servo_UART()
+ServoUART::~ServoUART()
 {
 }
 
@@ -38,7 +38,7 @@ Servo_UART::~Servo_UART()
  *
  * @return int - The Target value of a channel 
  */
-unsigned short int Servo_UART::getTarget()
+unsigned short int ServoUART::getTarget()
 {
     unsigned char command[4];
     command[0] = 0xAA;
@@ -47,7 +47,7 @@ unsigned short int Servo_UART::getTarget()
     command[3] = (char)this->channel;
 
     if(write(*this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("Servo_UART::getTarget write failed");
+        throw Exception_Servo("ServoUART::getTarget write failed");
 
     unsigned char response[2];
     
@@ -61,7 +61,7 @@ unsigned short int Servo_UART::getTarget()
 
         // the ec came back with read error, lets not continue
         if(ec < 0)
-            throw Exception_Servo("read failed in Servo_UART::getTarget");
+            throw Exception_Servo("read failed in ServoUART::getTarget");
 
         // the ec came back with 0, which means sleep and try again
         if (ec == 0)
@@ -89,7 +89,7 @@ unsigned short int Servo_UART::getTarget()
  *
  * @throw Exception_Servo - If writing to the board fails
  */
-void Servo_UART::setTarget(unsigned short int target)
+void ServoUART::setTarget(unsigned short int target)
 {
     // Convert the percentage target value
     // to Servo controller target value
@@ -112,5 +112,5 @@ void Servo_UART::setTarget(unsigned short int target)
     command[5] = (target >> 7) & 127;
 
     if (write(*this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("Servo_UART::setTarget write failed");
+        throw Exception_Servo("ServoUART::setTarget write failed");
 }
