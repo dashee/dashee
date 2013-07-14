@@ -1,4 +1,4 @@
-include makefile.common
+include ../makefile.common
 
 BINDIR=bin
 
