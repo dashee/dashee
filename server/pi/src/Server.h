@@ -4,6 +4,9 @@
  * it does not implement the major functionality
  */
 
+#ifndef SERVER_H_
+#define SERVER_H_
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -13,12 +16,9 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <signal.h>
+#include <dashee/Log.h>
 
-#include "Log.h"
 #include "Exception/Server.h"
-
-#ifndef SERVER_H_
-#define SERVER_H_
 
 #define SERVER_BUFFER_SIZE 32
 

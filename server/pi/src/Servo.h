@@ -6,18 +6,18 @@
  * @author Shahmir Javaid
  */
 
+#ifndef SERVO_H_
+#define SERVO_H_
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <dashee/Log.h>
 
 #include "Exception/Servo.h"
-#include "Log.h"
-
-#ifndef SERVO_H_
-#define SERVO_H_
 
 class Servo
 {

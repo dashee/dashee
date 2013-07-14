@@ -6,15 +6,15 @@
  * @author Shahmir Javaid
  */
 
-#include "../Config.h"
-#include "../ServoController.h"
-#include "../Exception/Config.h"
-#include "../Common.h"
-
 #ifndef CONFIG_SERVOD_H_
 #define CONFIG_SERVOD_H_
 
-class ConfigServod : public Config
+#include <dashee/Config.h>
+#include <dashee/Common.h>
+
+#include "../ServoController.h"
+
+class ConfigServod : public dashee::Config
 {
 protected:
     

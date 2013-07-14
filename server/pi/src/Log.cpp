@@ -4,7 +4,8 @@
  * @author Shahmir Javaid
  */
 
-#include "Log.h"
+#include <dashee/Log.h>
+using namespace dashee;
 
 /**
  * This function takes a short int which represents the value

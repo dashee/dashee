@@ -1,7 +1,7 @@
-#include "../ServoController.h"
-
 #ifndef EXCEPTION_SERVERCONTROLLER_OUTOFBOUND_H_
 #define EXCEPTION_SERVERCONTROLLER_OUTOFBOUND_H_
+
+#include "../ServoController.h"
 
 class Exception_ServoController_OutOfBound: public Exception_ServoController
 {

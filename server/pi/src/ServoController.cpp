@@ -156,7 +156,7 @@ void ServoController::fallback()
 
     fallbackmode = true;
 
-    Log::warning(2, "Fallback mode activated.");
+    dashee::Log::warning(2, "Fallback mode activated.");
 }
 
 /** 
@@ -177,8 +177,8 @@ void ServoController::revert()
         {
             //Dont throw here, because Invalid channels 
             //should not be prevent others from reverting
-            Log::warning(1, "servo[%d]->revert() threw an exception.", x);
-            Log::warning(1, e.what());
+            dashee::Log::warning(1, "servo[%d]->revert() threw an exception.", x);
+            dashee::Log::warning(1, e.what());
         }
     }
     

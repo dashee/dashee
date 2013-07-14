@@ -5,7 +5,9 @@
  * @author Shahmir Javaid
  */
 
-#include "Config.h"
+#include <dashee/Config.h>
+
+using namespace dashee;
 
 /** 
  * This will ensure when comparing our char * string in maps, that it compares
@@ -54,7 +56,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     // is not on the end, os it must be pointing at a found element
     if (override == 0 && configs_it != configs.end())
     {
-        Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key);
+        dashee::Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key);
         return;
     }
     
@@ -71,7 +73,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         delete [] pointedkey;
 
         // Set our value
-        Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
+        dashee::Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
     }
     
     // No previous key was found, so Create a new one
@@ -82,7 +84,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         memcpy(pkey, key, strlen(key)+1);
         configs[pkey] = pvalue;
 
-        Log::info(loglevel+1, "Config::set* %s, %s", pkey, pvalue);
+        dashee::Log::info(loglevel+1, "Config::set* %s, %s", pkey, pvalue);
     }
 }
 
@@ -102,7 +104,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
  */
 void Config::set_uint(const char * key, const unsigned int value, const unsigned short int override)
 {
-    Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
+    dashee::Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
     
     // Create a new buf, and send to Config::set
     // Also create and add new key value
@@ -122,7 +124,7 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
  */
 void Config::set_float(const char * key, const float value, const unsigned short int override)
 {
-    Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
+    dashee::Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
     
     // Create a new buf, and send to Config::set
     // Also create and add new key value
@@ -147,11 +149,11 @@ const char * Config::get(const char * key, const char * defaultvalue)
     configs_it = configs.find((char *)key);
     if (configs_it != configs.end())
     {
-        Log::info(loglevel+1, "Config::get %s: %s", key, configs_it->second);
+        dashee::Log::info(loglevel+1, "Config::get %s: %s", key, configs_it->second);
         return configs_it->second;
     }
     
-    Log::info(loglevel+1, "Config::get %s: default(%s)", key, defaultvalue);
+    dashee::Log::info(loglevel+1, "Config::get %s: default(%s)", key, defaultvalue);
     return defaultvalue;
 }
 
@@ -165,7 +167,7 @@ const char * Config::get(const char * key, const char * defaultvalue)
  */
 const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
 {
-    Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
+    dashee::Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
     
     //returns the value, in a buffer
     std::stringstream buf;
@@ -185,7 +187,7 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
  */
 const float Config::get_float(const char * key, const float defaultvalue)
 {
-    Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
+    dashee::Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
     
     //returns the value, in a buffer
     std::stringstream buf;
@@ -210,7 +212,7 @@ void Config::read(const char * file)
 {
     if (!Common::fexists(file))
     {
-        Log::warning(1, "Config file '%s' does not exist. Skipping read!", file);
+        dashee::Log::warning(1, "Config file '%s' does not exist. Skipping read!", file);
         return;
     }
 
@@ -344,7 +346,7 @@ void Config::print()
         ++configs_it
     )
     {
-        Log::info(loglevel, "Config[%s] %s", configs_it->first, configs_it->second);
+        dashee::Log::info(loglevel, "Config[%s] %s", configs_it->first, configs_it->second);
     }
 }
 
@@ -372,6 +374,6 @@ void Config::cleanup()
  */
 Config::~Config()
 {
-    Log::info(loglevel+5, "Deleting ~Config()");
+    dashee::Log::info(loglevel+5, "Deleting ~Config()");
     cleanup();
 }

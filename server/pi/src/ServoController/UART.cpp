@@ -17,7 +17,7 @@ ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short 
     if (this->fd == -1)
         throw Exception_ServoController();
 
-    Log::info(5, "Device open with handler: %d", this->fd);
+    dashee::Log::info(5, "Device open with handler: %d", this->fd);
     
     // Initilize our UART
     this->init();
@@ -60,7 +60,7 @@ void ServoControllerUART::init()
     if (tcsetattr(this->fd, TCSANOW, &options) < 0)
         throw Exception_ServoController("Initilizing UART failed");
     
-    Log::info(5, "Initlized UART with BAUD 9600");
+    dashee::Log::info(5, "Initlized UART with BAUD 9600");
 }
 
 /** 

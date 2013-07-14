@@ -4,7 +4,8 @@
  * @author Shahmir Javaid
  */
 
-#include "Common.h"
+#include <dashee/Common.h>
+using namespace dashee;
 
 /**
  * This function will Convert a string to a long int,

@@ -51,7 +51,7 @@ void ConfigServod::setServoController(ServoController * s)
 
             try
             {
-                long int channel_num = Common::strtol(channel);
+                long int channel_num = dashee::Common::strtol(channel);
 
                 // if the value is "channelXX-default-" and is greater than 17 characters
                 if (keyN > 17 && strncmp(configs_it->first+10, "default-", 8) == 0)
@@ -66,12 +66,12 @@ void ConfigServod::setServoController(ServoController * s)
                     setFallback(s, configs_it->first+19, configs_it->second, channel_num);
 
                 else
-                    Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
+                    dashee::Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
             }
 
-            catch (Exception_InvalidNumber e)
+            catch (dashee::Exception_InvalidNumber e)
             {
-                Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
+                dashee::Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
             }
         }
     }
@@ -95,28 +95,28 @@ bool ConfigServod::setDefault(ServoController * s, const char * what, const char
     {
         if (strcmp(what, "target") == 0)
         {
-            s->setTargetDefault(channel, Common::strtol((const char *)value));
-            Log::info(3, "Default target set for channel%02d to %s.", channel, value);
+            s->setTargetDefault(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Default target set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "speed") == 0)
         {
-            //s->setSpeedDefault(channel, Common::strtol((const char *)value));
-            Log::info(3, "Default speed set for channel%02d to %s.", channel, value);
+            //s->setSpeedDefault(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Default speed set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "acceleration") == 0)
         {
-            //s->setAccelerationDefault(channel, Common::strtol((const char *)value));
-            Log::info(3, "Default acceleration set for channel%02d to %s.", channel, value);
+            //s->setAccelerationDefault(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Default acceleration set for channel%02d to %s.", channel, value);
             return true;
         }
             
-        Log::warning(1, "ConfigServod::setDefault: Invalid value '%s'.", what);
+        dashee::Log::warning(1, "ConfigServod::setDefault: Invalid value '%s'.", what);
     }
-    catch (Exception_InvalidNumber e)
+    catch (dashee::Exception_InvalidNumber e)
     {
-        Log::warning(1, "ConfigServod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        dashee::Log::warning(1, "ConfigServod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
     }
 
     return false;
@@ -140,28 +140,28 @@ bool ConfigServod::setFallback(ServoController * s, const char *what, const char
     {
         if (strcmp(what, "target") == 0)
         {
-            s->setTargetFallback(channel, Common::strtol((const char *)value));
-            Log::info(3, "Fallback target set for channel%02d to %s.", channel, value);
+            s->setTargetFallback(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Fallback target set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "speed") == 0)
         {
-            //s->setSpeedFallback(channel, Common::strtol((const char *)value));
-            Log::info(3, "Fallback speed set for channel%02d to %s.", channel, value);
+            //s->setSpeedFallback(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Fallback speed set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "acceleration") == 0)
         {
-            //s->setAccelerationFallback(channel, Common::strtol((const char *)value));
-            Log::info(3, "Fallback acceleration set for channel%02d to %s.", channel, value);
+            //s->setAccelerationFallback(channel, dashee::Common::strtol((const char *)value));
+            dashee::Log::info(3, "Fallback acceleration set for channel%02d to %s.", channel, value);
             return true;
         }
             
-        Log::warning(1, "ConfigServod::setFallback invalid value '%s'.", what);
+        dashee::Log::warning(1, "ConfigServod::setFallback invalid value '%s'.", what);
     }
-    catch (Exception_InvalidNumber e)
+    catch (dashee::Exception_InvalidNumber e)
     {
-        Log::warning(1, "ConfigServod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        dashee::Log::warning(1, "ConfigServod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
     }
 
     return false;

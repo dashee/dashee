@@ -1,9 +1,9 @@
-#include "../Exception.h"
-
 #ifndef EXCEPTION_SERVO_H_
 #define EXCEPTION_SERVO_H_
 
-class Exception_Servo: public Exception
+#include <dashee/Exception.h>
+
+class Exception_Servo: public dashee::Exception
 {
 public:
     explicit Exception_Servo() : Exception()

@@ -114,7 +114,7 @@ void Servo::TargetToPercentage(unsigned short int & target)
     // Quite Probebly an invalid channel
     if (target < zero) 
     {
-        Log::warning(4, "target:%d, zero:%d", target, zero);
+        dashee::Log::warning(4, "target:%d, zero:%d", target, zero);
         throw Exception_Servo("Channel returned low voltage, meaning it is invalid!");
     }
         

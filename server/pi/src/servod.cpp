@@ -21,12 +21,13 @@
 #include <stdlib.h>
 #include <sstream>
 #include <getopt.h> /* for getopts_long() */
+#include <dashee/Log.h>
+#include <dashee/Common.h>
 
 #include "ServoController/UART.h"
 #include "ServoController/USB.h"
 #include "ServoController/Dummy.h"
 #include "Server/UDP.h"
-#include "Log.h"
 #include "Config/Servod.h"
 
 #define SERVO_DEVICE "/dev/ttyAMA0"
@@ -55,7 +56,7 @@ void sighandler(int);
 /**
  * This function will set our given options from command line, See intilization for full details
  */ 
-void setconfig(int, char **, Config *);
+void setconfig(int, char **, dashee::Config *);
 
 /**
  * Our main function is designed to take in arguments from the command line
@@ -107,27 +108,27 @@ int main(int argc, char **argv)
         if (servotype == 1)
         {
             // Create a Servo
-            Log::info(1, "Loading UART device '%s'.", servo);
+            dashee::Log::info(1, "Loading UART device '%s'.", servo);
             servoController = new ServoControllerUART(servo);
         }
         
         // Set our servo to the Binary file
         else if(servotype == 2)
         {
-            Log::info(1, "Loading USB device '%s'.", servo);
+            dashee::Log::info(1, "Loading USB device '%s'.", servo);
             servoController = new ServoControllerUSB(servo);
         }
 
         // Set our servo to the Binary file
         else if(servotype == 3)
         {
-            Log::info(1, "Loading Dummy device '%s'.", servo);
+            dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
             servoController = new ServoControllerDummy(servo, SERVO_DUMMY_CHANNELS);
         }
 
         // Fail as the options must fall within the above
         else
-            Log::fatal("Servotype invalid, set to %u.", servotype);
+            dashee::Log::fatal("Servotype invalid, set to %u.", servotype);
     
         // Set the Servocontroller, from the config file
         // and then delete the variable, as we dont use it any more
@@ -141,24 +142,24 @@ int main(int argc, char **argv)
         // Which should be printed
         int error = servoController->getError();
         if (error > 0)
-            Log::error("Servo failed with eccode %d", error);
+            dashee::Log::error("Servo failed with eccode %d", error);
         
         // Create a UDP server
-        Server_UDP udp(port);
-        Log::info(1, "Port initialized on %d.", port);
+        ServerUDP serverUDP(port);
+        dashee::Log::info(1, "Port initialized on %d.", port);
 
         // Loop through read and write our server
         while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
-            if (udp.read(readtimeout, readtimeoutM))
+            if (serverUDP.read(readtimeout, readtimeoutM))
             {
                 //if (EXIT) { break; }
                 
                 // ---------
                 // 000000001 &
                 // 00000000-
-                if ((udp.getBuffer()[0] & 1) == 1)
+                if ((serverUDP.getBuffer()[0] & 1) == 1)
                 {   
                     // @throw Exception_Servo
                     try
@@ -167,14 +168,14 @@ int main(int argc, char **argv)
                         // 00001110 & 14
                         // 0000---0 >> 1
                         // 00000---
-                        unsigned char command = (udp.getBuffer()[0] & 14) >> 1;
+                        unsigned char command = (serverUDP.getBuffer()[0] & 14) >> 1;
 
                         // --------
                         // 11110000 & 240
                         // ----0000 >> 4
                         // 0000----
-                        unsigned char channel = (udp.getBuffer()[0] & 240) >> 4;
-                        Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
+                        unsigned char channel = (serverUDP.getBuffer()[0] & 240) >> 4;
+                        dashee::Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
 
                         switch (command)
                         {
@@ -182,23 +183,23 @@ int main(int argc, char **argv)
                             {
                                 // -------- >> 1
                                 // 0-------
-                                unsigned char target = (udp.getBuffer()[1] >> 1);
+                                unsigned char target = (serverUDP.getBuffer()[1] >> 1);
 
                                 // Set the target for channel 1 as requested
                                 //servoController->setTarget(1, target);
-                                Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
+                                dashee::Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
                                 servoController->setTarget(channel, target);
                                 break;
                             }
                             case 1:
-                                Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
+                                dashee::Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
                                 break;
                             case 2:
-                                Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
+                                dashee::Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
                                 break;
                             case 3:
-                                    Log::info(3, "pong");
-                                    if (!udp.write("\x80"))
+                                    dashee::Log::info(3, "pong");
+                                    if (!serverUDP.write("\x80"))
                                         throw Exception_ServoController("Pong write failed");
                                     break;
                             default:
@@ -214,8 +215,8 @@ int main(int argc, char **argv)
                     // so we dont catch fatal errors
                     catch (Exception_ServoController e)
                     {   
-                        Log::warning(1, e.what());
-                        if (!udp.write(e.what())) 
+                        dashee::Log::warning(1, e.what());
+                        if (!serverUDP.write(e.what())) 
                             throw Exception_Server("Write failed");
                     }
                 }
@@ -225,35 +226,35 @@ int main(int argc, char **argv)
             else
             {
                 servoController->fallback();
-                Log::info(3, "read() timeout");
+                dashee::Log::info(3, "read() timeout");
             }
         }
     }
     catch (Exception_Server_Signal e)
     {
-        Log::info(4, "caught(Exception_Server_Signal): %s", e.what());
+        dashee::Log::info(4, "caught(Exception_Server_Signal): %s", e.what());
         RETVAL = -4;
     }
-    catch (Exception_Config e)
+    catch (dashee::Exception_Config e)
     {
-        Log::info(4, "caught(Exception_Config): %s", e.what());
+        dashee::Log::info(4, "caught(Exception_Config): %s", e.what());
         RETVAL = -3;
     }
-    catch (Exception e)
+    catch (dashee::Exception e)
     {
-        Log::warning(1, "caught(Exception): %s.", e.what());
+        dashee::Log::warning(1, "caught(Exception): %s.", e.what());
         RETVAL = -2;
     }
     catch (std::runtime_error e)
     {
-        Log::warning(3, "caught(runtime_error): %s.", e.what());
+        dashee::Log::warning(3, "caught(runtime_error): %s.", e.what());
         RETVAL = -1;
     }
     
-    Log::info(4, "Performing cleanups.");
+    dashee::Log::info(4, "Performing cleanups.");
     delete servoController;
 
-    Log::info(4, "Returning with %d.", RETVAL);
+    dashee::Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
 }
 
@@ -265,7 +266,7 @@ int main(int argc, char **argv)
 void sighandler(int sig)
 {
     EXIT = 1;
-    Log::info(3, "Signal %d called.", sig);
+    dashee::Log::info(3, "Signal %d called.", sig);
 }
 
 /**
@@ -279,7 +280,7 @@ void sighandler(int sig)
  * @param (char **)servo - The file name for the servo
  * @param (unsigned int *)port - The port the server will run on
  */
-void setconfig(int argc, char ** argv, Config *conf)
+void setconfig(int argc, char ** argv, dashee::Config *conf)
 {
     int c;
     static struct option long_options[] = {
@@ -307,39 +308,39 @@ void setconfig(int argc, char ** argv, Config *conf)
                     {
                         try
                         {
-                            long int servotype = Common::strtol(optarg);
-                            if (servotype < 1 && servotype > 3) { Log::fatal("Invalid sevotype '%d' is not valid.", servotype); }
+                            long int servotype = dashee::Common::strtol(optarg);
+                            if (servotype < 1 && servotype > 3) { dashee::Log::fatal("Invalid sevotype '%d' is not valid.", servotype); }
                             conf->set("servotype", optarg);
-                            Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
+                            dashee::Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
                         }
                         // Servotype must be an integer
-                        catch (Exception_InvalidNumber e)
+                        catch (dashee::Exception_InvalidNumber e)
                         {
-                            Log::fatal("Arg --servotype must be a number");
+                            dashee::Log::fatal("Arg --servotype must be a number");
                         }
                         break;
                     }
                     case 1:
                         conf->set("servo", optarg);
-                        Log::info(3, "Option 'servo' set to '%s'.", conf->get("servo"));
+                        dashee::Log::info(3, "Option 'servo' set to '%s'.", conf->get("servo"));
                         break;
                     case 2:
                         try
                         {
-                            Common::strtol(optarg); //Do nothing, throw an exception if its not an integer
+                            dashee::Common::strtol(optarg); //Do nothing, throw an exception if its not an integer
                             conf->set("port", optarg);
-                            Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
+                            dashee::Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
                         }
                         // Port must be an integer
-                        catch (Exception_InvalidNumber e)
+                        catch (dashee::Exception_InvalidNumber e)
                         {
-                            Log::fatal("Arg --port must be a number, given '%s'!", optarg);
+                            dashee::Log::fatal("Arg --port must be a number, given '%s'!", optarg);
                         }
 
                         break;
                     case 3:
                         conf->set("config", optarg);
-                        Log::info(3, "Option 'config' set to '%s'.", conf->get("config"));
+                        dashee::Log::info(3, "Option 'config' set to '%s'.", conf->get("config"));
                         break;
                 }
                 break;
@@ -351,21 +352,21 @@ void setconfig(int argc, char ** argv, Config *conf)
                 try
                 {
                     if (optarg)
-                        Log::verbosity = Common::strtol(optarg) == 0 ? 1 : Common::strtol(optarg);
+                        dashee::Log::verbosity = dashee::Common::strtol(optarg) == 0 ? 1 : dashee::Common::strtol(optarg);
                     else
-                        Log::verbosity++;
-                    Log::info(1, "Option 'verbosity' set to '%d'.", Log::verbosity);
+                        dashee::Log::verbosity++;
+                    dashee::Log::info(1, "Option 'verbosity' set to '%d'.", dashee::Log::verbosity);
                 }
                 // Verbosity value must be an integer
-                catch(Exception_InvalidNumber e)
+                catch(dashee::Exception_InvalidNumber e)
                 {
-                    Log::fatal("Arg --verbosity must be a number, given '%s'!", optarg);
+                    dashee::Log::fatal("Arg --verbosity must be a number, given '%s'!", optarg);
                 }   
                 break;
 
             // When something goes wrong, a '?' is returned
             case '?':
-                Log::error("Option '%s' came back with '?'.", optopt);
+                dashee::Log::error("Option '%s' came back with '?'.", optopt);
                 break;
         }
     }

@@ -5,8 +5,8 @@
  * @author Shahmir Javaid
  */
 
-#ifndef COMMON_H_
-#define COMMON_H_
+#ifndef DASHEE_COMMON_H_
+#define DASHEE_COMMON_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,9 +14,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "Exception/InvalidNumber.h"
+#include <dashee/Exception/InvalidNumber.h>
 
-class Common
+namespace dashee
+{
+    class Common;
+}
+
+class dashee::Common
 {
 
 private:

@@ -1,11 +1,17 @@
+
+#ifndef DASHEE_EXCEPTION_H_
+#define DASHEE_EXCEPTION_H_
+
 #include <string.h>
 #include <errno.h>
 #include <stdexcept>
 
-#ifndef EXCEPTION_H_
-#define EXCEPTION_H_
+namespace dashee
+{
+    class Exception;
+}
 
-class Exception: public std::runtime_error
+class dashee::Exception: public std::runtime_error
 {
 
 protected:

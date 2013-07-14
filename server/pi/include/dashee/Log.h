@@ -5,6 +5,9 @@
  * @author Shahmir Javaid
  */
 
+#ifndef DASHEE_LOG_H_
+#define DASHEE_LOG_H_
+
 #include <iostream>
 #include <ctime>
 #include <stdio.h>
@@ -12,8 +15,10 @@
 #include <stdarg.h>
 #include <time.h>
 
-#ifndef LOG_H_
-#define LOG_H_
+namespace dashee
+{
+    class Log;
+}
 
 // Define some index's which 
 // represent the log level
@@ -22,7 +27,7 @@
 #define LOG_ERROR   2
 #define LOG_FATAL   3
 
-class Log
+class dashee::Log
 {
 
 private:

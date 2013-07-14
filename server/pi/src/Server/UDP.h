@@ -5,22 +5,22 @@
  * @author Shahmir Javaid
  */
 
+#ifndef SERVER_UDP_H_
+#define SERVER_UDP_H_
+
 #include <stdio.h>
 
 #include "../Server.h"
 #include "../Exception/Server/Signal.h"
 
-#ifndef SERVER_UDP_H_
-#define SERVER_UDP_H_
-
-class Server_UDP: public Server
+class ServerUDP: public Server
 {
 
 protected:
 
 public:
     //call socket given a port
-    Server_UDP(unsigned int);
+    ServerUDP(unsigned int);
 
     //Read bytes
     bool read();

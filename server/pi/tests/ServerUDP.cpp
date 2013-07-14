@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    Server_UDP s(2047);
+    ServerUDP s(2047);
 
     s.read(10);
 

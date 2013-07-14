@@ -1,9 +1,14 @@
-#include "../Exception.h"
+#ifndef DASHEE_EXCEPTION_INVALIDNUMBER_H_
+#define DASHEE_EXCEPTION_INVALIDNUMBER_H_
 
-#ifndef EXCEPTION_INVALIDNUMBER_H_
-#define EXCEPTION_INVALIDNUMBER_H_
+#include <dashee/Exception.h>
 
-class Exception_InvalidNumber: public Exception
+namespace dashee
+{
+    class Exception_InvalidNumber;
+}
+
+class dashee::Exception_InvalidNumber : public dashee::Exception
 {
 public:
     explicit Exception_InvalidNumber() : Exception()

@@ -14,6 +14,9 @@
  * @author Shahmir Javaid
  */
 
+#ifndef DASHEE_CONFIG_H_
+#define DASHEE_CONFIG_H_
+
 #include <iostream>
 #include <sstream>
 #include <map>
@@ -23,20 +26,22 @@
 #include <stdlib.h>
 #include <memory>
 
-#include "Log.h"
-#include "Common.h"
-#include "Exception/Config.h"
+#include <dashee/Log.h>
+#include <dashee/Common.h>
+#include <dashee/Exception/Config.h>
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
-
+namespace dashee
+{
+    class Config_Comparitor;
+    class Config;
+}
 
 /* This is our comparitor class override, that is used by the multimap
  * to actually compare the values of char *, rather than just pointers
  * 
  * See the definition of @configs and @configs_it in the class @Config below
  */
-class Config_Comparitor
+class dashee::Config_Comparitor
 {
 public:
 
@@ -44,7 +49,7 @@ public:
     bool operator()(const char *, const char *) const;
 };
 
-class Config
+class dashee::Config
 {
 private:
 

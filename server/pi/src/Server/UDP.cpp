@@ -13,7 +13,7 @@
  *
  * @throw - Exception_Server - when socket call or bind call fails
  */
-Server_UDP::Server_UDP(unsigned int port) : Server(port)
+ServerUDP::ServerUDP(unsigned int port) : Server(port)
 {
     socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0)
@@ -37,7 +37,7 @@ Server_UDP::Server_UDP(unsigned int port) : Server(port)
  *
  * @return bool - true always
  */
-bool Server_UDP::read()
+bool ServerUDP::read()
 {
     memset(buffer, 0, sizeof(buffer));
     
@@ -63,7 +63,7 @@ bool Server_UDP::read()
  *
  * @returns bool - true, if there was something read. false on timeout
  */ 
-bool Server_UDP::read(const unsigned int seconds, const unsigned int miliseconds)
+bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
 {
     setTimeout(seconds, miliseconds);
 
@@ -82,7 +82,7 @@ bool Server_UDP::read(const unsigned int seconds, const unsigned int miliseconds
             throw Exception_Server_Signal();
 
         // Throw an exception so the main can set error
-        throw Exception_Server("Server_UDP::read failed with -1.");
+        throw Exception_Server("ServerUDP::read failed with -1.");
     }
 
     return false;
@@ -96,7 +96,7 @@ bool Server_UDP::read(const unsigned int seconds, const unsigned int miliseconds
  *
  * @throws - Exception_Server - If write fails
  */
-bool Server_UDP::write(const char * message)
+bool ServerUDP::write(const char * message)
 {
     //const char message[] = "Error: Invalid Range, number must be between 1-100\n";
     if (sendto(socketfd, message, strlen(message), 0, (struct sockaddr *) &client_in, client_in_length) == -1)

@@ -14,15 +14,15 @@
  * @author Shahmir Javaid
  */
 
+#ifndef SERVOCONTROLLER_H_
+#define SERVOCONTROLLER_H_
+
 #include <vector>
+#include <dashee/Log.h>
 
 #include "Exception/ServoController.h"
 #include "Exception/ServoController/OutOfBound.h"
-#include "Log.h"
 #include "Servo.h"
-
-#ifndef SERVOCONTROLLER_H_
-#define SERVOCONTROLLER_H_
 
 class ServoController
 {   

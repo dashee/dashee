@@ -1,9 +1,14 @@
-#include "../Exception.h"
+#ifndef DASHEE_EXCEPTION_CONFIG_H_
+#define DASHEE_EXCEPTION_CONFIG_H_
 
-#ifndef EXCEPTION_CONFIG_H_
-#define EXCEPTION_CONFIG_H_
+#include <dashee/Exception.h>
 
-class Exception_Config: public Exception
+namespace dashee
+{
+    class Exception_Config;
+}
+
+class dashee::Exception_Config: public dashee::Exception
 {
 public:
     explicit Exception_Config() : Exception()
