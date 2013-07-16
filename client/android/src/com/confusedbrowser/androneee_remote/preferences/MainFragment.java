@@ -34,8 +34,8 @@ public class MainFragment
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen prefScreen, Preference pref) 
     {
-        super.onPreferenceTreeClick(prefScreen, pref);
-        if (pref.getKey() == "pref_channel03") 
+        
+        if (pref.getKey().equals("pref_channel03")) 
         {
              //Display the fragment as the main content.
              getFragmentManager().beginTransaction()
@@ -44,7 +44,7 @@ public class MainFragment
                  .commit();
              return true;
         }
-       
+        super.onPreferenceTreeClick(prefScreen, pref);
         return false;
     }
     
