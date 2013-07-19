@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -129,8 +130,18 @@ public class MainActivity
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
-        this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
-        this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
+    	if(key.equals("pref_server_ip")){
+    		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
+    	}else if(key.equals("pref_server_port")){
+    		this.modelServerState.setControlsPort(prefs.getInt("pref_server_port", 2047));
+    	}else if(key.contains("pref_channel")){
+    		//e.g. pref_channel01
+    		Log.d("Dashee", "Channel Requested: "+key);
+    		Log.d("Dashee", "Channel Requested: "+key.substring(13, 14));
+    		int channel =  Integer.parseInt(key.substring(13, 14));
+    		
+    		this.modelVehicle.setTrim(channel, prefs.getInt(key, 1));
+    	}
     }
 
     /**

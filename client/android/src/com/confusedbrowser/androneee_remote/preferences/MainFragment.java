@@ -1,5 +1,6 @@
 package com.confusedbrowser.androneee_remote.preferences;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -31,21 +32,19 @@ public class MainFragment
         this.setSharedPreferenceState(sharedPref);
     }
 
-    @Override
+   // @Override
     public boolean onPreferenceTreeClick(PreferenceScreen prefScreen, Preference pref) 
     {
-        
-        if (pref.getKey().equals("pref_channel03")) 
+
+        if (pref.getKey().contains("pref_channel")) 
         {
-             //Display the fragment as the main content.
-             getFragmentManager().beginTransaction()
-                 .replace(android.R.id.content, new ChannelFragment())
-                 .addToBackStack(null)
-                 .commit();
-             return true;
+            //Display the fragment as the main content.
+        	Intent channelSettingsActivity = new Intent(getActivity(), ChannelActivity.class);
+        	startActivity(channelSettingsActivity);
+        	return true;
         }
-        super.onPreferenceTreeClick(prefScreen, pref);
-        return false;
+        
+        return super.onPreferenceTreeClick(prefScreen, pref);
     }
     
     /**

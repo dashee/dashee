@@ -18,4 +18,12 @@ public interface ModelVehicle {
      * @param position - Current position of the phone.
      */
     void setFromPhonePosition(ModelPhonePosition position);
+    
+    /**
+     * Set the trim value for channel.
+     * 
+     * @param channel - Desired channel number.
+     * @param value - Desired trim value.
+     */
+	void setTrim(int channel, int value);
 }

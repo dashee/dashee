@@ -26,5 +26,10 @@
             android:label="@string/pref_title"
             android:parentActivityName="com.confusedbrowser.androneee_remote.MainActivity">
         </activity>
+        <activity
+            android:name="com.confusedbrowser.androneee_remote.preferences.ChannelActivity"
+            android:label="@string/pref_title"
+            android:parentActivityName="com.confusedbrowser.androneee_remote.preferences.PreferenceActivity">
+        </activity>
     </application>
 </manifest>

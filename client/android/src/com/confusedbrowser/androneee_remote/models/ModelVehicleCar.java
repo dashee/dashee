@@ -76,6 +76,8 @@ public class ModelVehicleCar implements ModelVehicle
         if(powerInt != this.prevPower)
         {
             int sendPower = powerInt+this.powerTrim;
+            if (sendPower > 100) { sendPower = 100; }
+            if (sendPower < 0) { sendPower = 0; }
 
             // Steering 33 converts to 00100001.
             commands.add( new byte[]{ 33, (byte)(sendPower << 1) });
@@ -159,4 +161,21 @@ public class ModelVehicleCar implements ModelVehicle
         
         return targetMin + (valueScaled * rightSpan); 
     }
+
+	@Override
+	public void setTrim(int channel, int value)
+	{
+		switch(channel){
+			case 1:
+				this.steerTrim = value;
+				break;
+			case 2:
+				this.powerTrim = value;
+				break;
+			default:
+				break;
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }
