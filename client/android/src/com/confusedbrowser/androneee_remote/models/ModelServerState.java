@@ -70,9 +70,9 @@ public class ModelServerState
     /**
      * Initialise our variables
      */
-    public ModelServerState()
+    public ModelServerState(String ipAddress)
     {
-        this.setIp("192.168.1.12");
+        this.setIp(ipAddress);
     }
     
     /**

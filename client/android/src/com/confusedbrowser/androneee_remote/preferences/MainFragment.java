@@ -8,6 +8,8 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.preference.PreferenceFragment;
+import android.util.Log;
+
 import com.confusedbrowser.androneee_remote.R;
  
 /**
@@ -28,7 +30,8 @@ public class MainFragment
             
         SharedPreferences sharedPref = getPreferenceScreen().getSharedPreferences();
         sharedPref.registerOnSharedPreferenceChangeListener(this);
-
+        
+        Log.d("Dashee", "Init main setting fragment");
         this.setSharedPreferenceState(sharedPref);
     }
 
@@ -36,13 +39,13 @@ public class MainFragment
     public boolean onPreferenceTreeClick(PreferenceScreen prefScreen, Preference pref) 
     {
 
-        if (pref.getKey().contains("pref_channel")) 
+        /*if (pref.getKey().contains("pref_channel")) 
         {
             //Display the fragment as the main content.
         	Intent channelSettingsActivity = new Intent(getActivity(), ChannelActivity.class);
         	startActivity(channelSettingsActivity);
         	return true;
-        }
+        }*/
         
         return super.onPreferenceTreeClick(prefScreen, pref);
     }
@@ -54,11 +57,12 @@ public class MainFragment
      */
     private void setSharedPreferenceState(SharedPreferences sharedPref) 
     {
-        EditTextPreference Ip = (EditTextPreference)findPreference("pref_server_ip");
-        Ip.setSummary(sharedPref.getString("pref_server_ip", "192.168.1.11"));
-        
-        EditTextPreference Port = (EditTextPreference)findPreference("pref_server_port");
-        Port.setSummary(sharedPref.getString("pref_server_port", "2047"));
+    	Log.d("Dashee", "Setting the prefernces summeries onload");
+        findPreference("pref_server_ip").setSummary(sharedPref.getString("pref_server_ip", "192.168.1.11"));
+        findPreference("pref_server_port").setSummary(sharedPref.getString("pref_server_port", "2047"));
+        findPreference("pref_channel01_trim").setSummary(sharedPref.getString("pref_channel01_trim", "0"));
+        findPreference("pref_channel02_trim").setSummary(sharedPref.getString("pref_channel02_trim", "0"));
+        findPreference("pref_channel03_trim").setSummary(sharedPref.getString("pref_channel03_trim", "0"));
     }
 
     /**

@@ -3,6 +3,8 @@ package com.confusedbrowser.androneee_remote.threads;
 import java.net.*;
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.confusedbrowser.androneee_remote.models.ModelServerState;
 import com.confusedbrowser.androneee_remote.models.ModelVehicle;
 
@@ -159,6 +161,7 @@ public class ThreadPassPositionControls extends Thread
     {
         try
         {
+        	Log.d("Dashee", "Server using ip: "+this.modelServerState.getIp());
             DatagramPacket packet = new DatagramPacket(
                 command, 
                 command.length,

@@ -88,6 +88,9 @@ public class MainActivity
         
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
+        
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         // This will initialise our PhonePosition Observer,
         // So our this.update function can handle updates 
@@ -95,7 +98,7 @@ public class MainActivity
         this.modelPosition.addObserver(this);
         
         //Create our ServerState model
-        this.modelServerState = new ModelServerState();
+        this.modelServerState = new ModelServerState(this.sharedPreferences.getString("pref_server_ip", "192.168.1.11"));
         this.modelServerState.addObserver(this);
         
         // Create our vehicle model
@@ -118,8 +121,6 @@ public class MainActivity
         this.threadCheckServerStatus = new ThreadCheckServerStatus(this.modelServerState);
         this.threadCheckServerStatus.start();
 
-    	this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
     
     /**
@@ -131,16 +132,16 @@ public class MainActivity
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
     	if(key.equals("pref_server_ip")){
+    		Log.d("Dashee", "Setting new ip addess: "+prefs.getString("pref_server_ip", "192.168.1.100"));
     		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
     	}else if(key.equals("pref_server_port")){
-    		this.modelServerState.setControlsPort(prefs.getInt("pref_server_port", 2047));
-    	}else if(key.contains("pref_channel")){
+    		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
+    	}else if(key.contains("pref_channel") && !key.contains("invert")){
     		//e.g. pref_channel01
     		Log.d("Dashee", "Channel Requested: "+key);
     		Log.d("Dashee", "Channel Requested: "+key.substring(13, 14));
     		int channel =  Integer.parseInt(key.substring(13, 14));
-    		
-    		this.modelVehicle.setTrim(channel, prefs.getInt(key, 1));
+    		this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "1")));
     	}
     }
 

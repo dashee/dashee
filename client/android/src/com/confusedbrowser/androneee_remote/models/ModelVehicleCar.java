@@ -3,6 +3,8 @@ package com.confusedbrowser.androneee_remote.models;
 import java.util.ArrayList;
 import java.lang.Math;
 
+import android.util.Log;
+
 /**
  * @author shahmirj is a cock
  *
@@ -67,7 +69,7 @@ public class ModelVehicleCar implements ModelVehicle
             int sendSteer = steerInt+this.steerTrim;
             if (sendSteer > 100) { sendSteer = 100; }
             if (sendSteer < 0) { sendSteer = 0; }
-
+            //Log.d("Dashee", "Steer Value: "+sendSteer);
             // Steering 17 converts to 00010001.
             commands.add(new byte[]{ 17, (byte)(sendSteer << 1) });
             this.prevSteer = steerInt;
