@@ -3,10 +3,13 @@ package com.confusedbrowser.androneee_remote.models;
 import java.util.ArrayList;
 import java.lang.Math;
 
-import android.util.Log;
 
 /**
  * @author shahmirj is a cock
+ *
+ */
+/**
+ * @author shahmirj
  *
  */
 public class ModelVehicleCar implements ModelVehicle 
@@ -19,6 +22,15 @@ public class ModelVehicleCar implements ModelVehicle
 
     private int steerTrim = 19;
     private int powerTrim = 0;
+    
+    private float steerMax = 100.0f;
+    private float steerMin = 0.0f;
+    
+    private float powerMax = 60.0f;
+    private float powerMin = 40.0f;
+    
+    private boolean steerInverted = false;
+    private boolean powerInverted = true;
     
     /*
      * Getter for steer
@@ -112,14 +124,20 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getPower(float pitch) 
     {
-        if(pitch >= -0.1f)
-            return 50.0f;
+    	// 50 in case of power is stop
+    	float powerValue = 50.0f; 
+    	
+    	if(pitch >= -0.1f)
+    		powerValue = 50.0f;
         else if(pitch >= -1.17f)
-            return remapValue(pitch,-1.17f,-0.5f,50.0f,43.0f); // TODO: invert option
+        	powerValue = remapValue(pitch,-1.17f,-0.5f,50.0f,this.powerMax); // TODO: invert option
         else if(pitch <=-1.70f) 
-            return remapValue(pitch, -2.1f, -1.70f, 60.0f, 50.0f);
-
-        return 50.0f;
+        	powerValue = remapValue(pitch, -2.1f, -1.70f, this.powerMin, 50.0f);
+    	
+    	if(this.powerInverted)
+    		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
+    	
+    	return powerValue;
     }
 
     /**
@@ -132,7 +150,10 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getSteer(float roll) 
     {
-        return (100.0f - remapValue(roll,-0.523f,0.523f,0.0f,100.0f));
+    	float steerValue = remapValue(roll,-0.523f,0.523f,this.steerMax,this.steerMin);
+    	if(this.steerInverted) 
+    		steerValue =  this.steerMax - steerValue;
+    	return steerValue;
     }
 	
     /**
@@ -177,7 +198,53 @@ public class ModelVehicleCar implements ModelVehicle
 			default:
 				break;
 		}
-		// TODO Auto-generated method stub
-		
 	}
+	
+	@Override
+	public void setMax(int channel, float value)
+	{
+		switch(channel){
+			case 1:
+				this.steerMax = value;
+				break;
+			case 2:
+				this.powerMax = value;
+				break;
+			default:
+				break;
+		}
+	}
+	
+	
+	@Override
+	public void setMin(int channel, float value)
+	{
+		switch(channel){
+			case 1:
+				this.steerMin = value;
+				break;
+			case 2:
+				this.powerMin = value;
+				break;
+			default:
+				break;
+		}
+	}
+	
+	
+	@Override
+	public void setInvert(int channel, boolean value)
+	{
+		switch(channel){
+			case 1:
+				this.steerInverted = value;
+				break;
+			case 2:
+				this.powerInverted = value;
+				break;
+			default:
+				break;
+		}
+	}
+	
 }

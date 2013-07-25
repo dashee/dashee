@@ -1,6 +1,5 @@
 package com.confusedbrowser.androneee_remote.preferences;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;

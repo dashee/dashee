@@ -30,6 +30,16 @@
                 android:key="pref_channel01_invert"
                 android:summary="Reverse the controls"
                 android:title="Invert" />
+            <EditTextPreference
+                android:defaultValue="100"
+                android:key="pref_channel01_max"
+                android:summary="0"
+                android:title="Max" />
+            <EditTextPreference
+                android:defaultValue="0"
+                android:key="pref_channel01_min"
+                android:summary="0"
+                android:title="Min" />
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_channel02"
@@ -45,6 +55,16 @@
                 android:key="pref_channel02_invert"
                 android:summary="Reverse the controls"
                 android:title="Invert" />
+            <EditTextPreference
+                android:defaultValue="100"
+                android:key="pref_channel02_max"
+                android:summary="0"
+                android:title="Max" />
+            <EditTextPreference
+                android:defaultValue="0"
+                android:key="pref_channel02_min"
+                android:summary="0"
+                android:title="Min" />
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_channel03"
@@ -60,7 +80,16 @@
                 android:key="pref_channel03_invert"
                 android:summary="Reverse the controls"
                 android:title="Invert" />
+            <EditTextPreference
+                android:defaultValue="100"
+                android:key="pref_channel03_max"
+                android:summary="0"
+                android:title="Max" />
+            <EditTextPreference
+                android:defaultValue="0"
+                android:key="pref_channel03_min"
+                android:summary="0"
+                android:title="Min" />
         </PreferenceScreen>
     </PreferenceCategory>
-
 </PreferenceScreen>

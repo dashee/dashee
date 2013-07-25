@@ -136,12 +136,21 @@ public class MainActivity
     		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.1.100"));
     	}else if(key.equals("pref_server_port")){
     		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
-    	}else if(key.contains("pref_channel") && !key.contains("invert")){
+    	}else if(key.contains("pref_channel")){
     		//e.g. pref_channel01
     		Log.d("Dashee", "Channel Requested: "+key);
     		Log.d("Dashee", "Channel Requested: "+key.substring(13, 14));
     		int channel =  Integer.parseInt(key.substring(13, 14));
-    		this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "1")));
+    		
+    		if(key.contains("invert")){
+    			this.modelVehicle.setInvert(channel, prefs.getBoolean(key, false));
+    		}else if(key.contains("max")){
+    			this.modelVehicle.setMax(channel, Integer.parseInt(prefs.getString(key, "100")));
+    		}else if(key.contains("min")){
+    			this.modelVehicle.setMin(channel, Float.parseFloat(prefs.getString(key, "0")));
+    		}else{
+    			this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "0")));
+    		}
     	}
     }
 
@@ -214,7 +223,7 @@ public class MainActivity
                 ModelPhonePosition position = (ModelPhonePosition)o;
                 this.modelVehicle.setFromPhonePosition(position);
                 fragmentHud.setPosition((ModelVehicleCar) this.modelVehicle);
-                //fragmentHud.setHudConnection(position.getPitch()+"");
+                fragmentHud.setHudConnection(position.getRoll()+"");
             }
             else if (o instanceof ModelServerState)
             {
