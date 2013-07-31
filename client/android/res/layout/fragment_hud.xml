@@ -12,8 +12,25 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center"
         android:layout_weight="1.24"
-        android:orientation="vertical" 
-        />
+        android:orientation="vertical" />
+    
+    <RelativeLayout
+        android:id="@+id/hud_power_slider"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
+		
+		<ImageView 
+		android:id="@+id/power_stick" 
+		android:layout_height="fill_parent" 
+		android:layout_width="fill_parent"
+		android:layout_centerVertical="true"
+		android:layout_centerHorizontal="true"
+		android:contentDescription="@string/power_joystick_desc">
+		</ImageView>
+		
+    </RelativeLayout>
     
     <LinearLayout
         android:id="@+id/hud_text_right_bottom"
@@ -23,7 +40,7 @@
         android:layout_gravity="right|bottom"
         android:orientation="vertical"
         >
-        
+
         <LinearLayout
             android:id="@+id/hud_text_roll"
             android:layout_width="wrap_content"
@@ -36,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
             <TextView
@@ -47,7 +64,7 @@
                 android:paddingLeft="10dp"
                 android:text="@string/hud_text_roll_label"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>
@@ -63,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
             <TextView
@@ -73,7 +90,7 @@
                 android:paddingLeft="10dp"
                 android:text="@string/hud_text_pitch_label"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>
@@ -92,7 +109,7 @@
         <LinearLayout
             android:id="@+id/hud_text_ip"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dip"
             android:layout_weight="1"
             >
 
@@ -103,7 +120,7 @@
                 android:paddingRight="10dp"
                 android:text="@string/hud_text_ip_label"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
             <TextView
@@ -111,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
 
@@ -130,7 +147,7 @@
                 android:paddingRight="10dp"
                 android:text="@string/hud_text_connection_label"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
             <TextView
@@ -138,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>
@@ -156,7 +173,7 @@
                 android:paddingRight="10dp"
                 android:text="@string/hud_text_bps_label"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
             <TextView
@@ -164,7 +181,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#000000"
+                android:textColor="#BDF5EC"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>

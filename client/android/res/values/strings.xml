@@ -12,6 +12,7 @@
     <string name="pref_server_ip_default">192.168.1.200</string>
     <string name="pref_server_port">Port</string>
     <string name="pref_server_port_default">2047</string>
+    <string name="power_joystick_desc">Car power joystick</string>
 
     <string name="pref_channel_title">Settings</string>
     <string name="pref_channel_summary">Configure your remote</string>

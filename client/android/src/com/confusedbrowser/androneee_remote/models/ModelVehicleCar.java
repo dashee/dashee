@@ -3,6 +3,8 @@ package com.confusedbrowser.androneee_remote.models;
 import java.util.ArrayList;
 import java.lang.Math;
 
+import com.confusedbrowser.androneee_remote.RangeMapping;
+
 
 /**
  * @author shahmirj is a cock
@@ -20,7 +22,7 @@ public class ModelVehicleCar implements ModelVehicle
     private float power = 0.0f;
     private int prevPower;
 
-    private int steerTrim = 19;
+    private int steerTrim = 0;
     private int powerTrim = 0;
     
     private float steerMax = 100.0f;
@@ -31,6 +33,21 @@ public class ModelVehicleCar implements ModelVehicle
     
     private boolean steerInverted = false;
     private boolean powerInverted = true;
+    
+    // Set up mappings
+    private RangeMapping steerMapping;
+    
+    
+    /*
+     *  We can either use the phone pitch or an on screen slider
+     *  to set the cars power. So setting that option as an enum.
+     */
+    private enum powerControls {
+        PHONEPITCH, SLIDER 
+    };
+    
+    private powerControls powerControl = powerControls.SLIDER;
+    
     
     /*
      * Getter for steer
@@ -61,6 +78,7 @@ public class ModelVehicleCar implements ModelVehicle
     {
         this.prevSteer = (int)this.steer;
         this.prevPower = (int)this.power;
+        steerMapping = new RangeMapping(-0.523f,0.523f,this.steerMax,this.steerMin);
     }
 
     /**
@@ -110,7 +128,21 @@ public class ModelVehicleCar implements ModelVehicle
     public void setFromPhonePosition(ModelPhonePosition position) 
     {
         this.steer = this.getSteer(position.getRoll());
-        this.power = this.getPower(position.getPitch());
+        if(powerControl == powerControls.PHONEPITCH)
+        	this.power = this.getPower(position.getPitch());
+    }
+    
+    
+    /**
+     * Set steer and power, given the phone's coordinates
+     *
+     * @param position - The phone position object
+     */
+    @Override
+    public void setFromSlider(int sliderPos) 
+    {
+        if(powerControl == powerControls.SLIDER)
+        	this.power = sliderPos;
     }
     
     /**
@@ -130,9 +162,9 @@ public class ModelVehicleCar implements ModelVehicle
     	if(pitch >= -0.1f)
     		powerValue = 50.0f;
         else if(pitch >= -1.17f)
-        	powerValue = remapValue(pitch,-1.17f,-0.5f,50.0f,this.powerMax); // TODO: invert option
+        	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f,this.powerMax); // TODO: invert option
         else if(pitch <=-1.70f) 
-        	powerValue = remapValue(pitch, -2.1f, -1.70f, this.powerMin, 50.0f);
+        	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, this.powerMin, 50.0f);
     	
     	if(this.powerInverted)
     		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
@@ -150,39 +182,10 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getSteer(float roll) 
     {
-    	float steerValue = remapValue(roll,-0.523f,0.523f,this.steerMax,this.steerMin);
+    	float steerValue = steerMapping.remapValue(roll);
     	if(this.steerInverted) 
     		steerValue =  this.steerMax - steerValue;
     	return steerValue;
-    }
-	
-    /**
-     * Generic function. Takes a numeric value which is a value in the curMin to curMax range
-     * and converts it to a corresponding value in the targetMin to targetMax range.
-     * @param value - The numeric value to be re-mapped
-     * @param curMin - Current range min
-     * @param curMax - Current range max
-     * @param targetMin - Current range min
-     * @param targetMax - Current range max
-     *
-     * @return float - Value mapped to the new target range
-     */
-    private float remapValue(float value, float curMin, float curMax, float targetMin, float targetMax)
-    {
-        //Figure out how 'wide' each range is
-        float leftSpan = curMax - curMin;
-        float rightSpan = targetMax - targetMin;
-        
-        //Convert the left range into a 0-1 range (float)
-        float valueScaled = (value - curMin) / (leftSpan);
-        
-        //Convert the 0-1 range into a value in the right range.
-        if(value < curMin)
-        	return targetMin;
-        if(value > curMax) 
-        	return targetMax;
-        
-        return targetMin + (valueScaled * rightSpan); 
     }
 
 	@Override
@@ -206,6 +209,7 @@ public class ModelVehicleCar implements ModelVehicle
 		switch(channel){
 			case 1:
 				this.steerMax = value;
+				steerMapping.updateTargets(this.steerMin, this.steerMax);
 				break;
 			case 2:
 				this.powerMax = value;
@@ -222,6 +226,7 @@ public class ModelVehicleCar implements ModelVehicle
 		switch(channel){
 			case 1:
 				this.steerMin = value;
+				steerMapping.updateTargets(this.steerMin, this.steerMax);
 				break;
 			case 2:
 				this.powerMin = value;

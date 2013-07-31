@@ -3,13 +3,19 @@ package com.confusedbrowser.androneee_remote.fragments;
 import java.text.DecimalFormat;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View;
 import android.content.SharedPreferences;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
+import com.confusedbrowser.androneee_remote.RangeMapping;
 import com.confusedbrowser.androneee_remote.models.*;
 
 import android.widget.TextView;
@@ -33,6 +39,13 @@ public class FragmentHudCar extends FragmentHud
      * Draw our Hud object
      */
     DrawHud draw_hud;
+    
+    /*
+     * Hud Slider to control power
+     */
+    SeekBar mSeekBar;
+    
+    View view;
             
     /**
      * Handle to our TextViews
@@ -43,14 +56,27 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudPitchValue; //Pitch Value
     private TextView textViewHudRollValue; //Pitch Value
     
+    private ModelVehicleCar car; //Pitch Value
+    
 
 
     /**
      * Constructor. Required by Fragment type Objects,
      * and they have to be public
+     * @param modelVehicle 
      */
     public FragmentHudCar()
     {
+    }
+    
+    public void setVehicle(ModelVehicle modelVehicle)
+    {
+    	this.car = (ModelVehicleCar) modelVehicle;
+    }
+    
+    private void setVehiclePower(int power)
+    {
+    	this.car.setFromSlider(power);
     }
     
     /**
@@ -59,11 +85,33 @@ public class FragmentHudCar extends FragmentHud
      */
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
     {
-        View view = inflater.inflate(R.layout.fragment_hud, container, false);
+        view = inflater.inflate(R.layout.fragment_hud, container, false);
 
         layout_hud = (LinearLayout)view.findViewById(R.id.hud_canvas);
         draw_hud = new DrawHud (this.getActivity());
         layout_hud.addView(draw_hud);
+        
+        /*LinearLayout slider_layout = (LinearLayout)view.findViewById(R.id.hud_power_slider);
+        slider_layout.setRotation(-90.0f);*/
+        
+        // Use the hieght and width of the image and the position of the stick to
+        // map to car power value
+        final ImageView iv = (ImageView)view.findViewById(R.id.power_stick);
+        iv.setOnTouchListener(new OnTouchListener(){
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				float mapVal = RangeMapping.mapValue(event.getY(), 0, iv.getHeight(), 100, 50);
+				setVehiclePower((int) mapVal);
+				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					//moveGrip(150,150);
+					setVehiclePower(50);
+				}
+				return true;
+			}
+		});
+        
         
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 
@@ -154,7 +202,7 @@ public class FragmentHudCar extends FragmentHud
      */
     public void rotateHud(float roll)
     {
-        layout_hud.setRotation(-1.0f*(roll - 50.0f));
+        //layout_hud.setRotation(-1.0f*(roll - 50.0f));
     }
     
     /**

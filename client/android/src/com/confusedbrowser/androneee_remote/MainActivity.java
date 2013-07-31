@@ -106,6 +106,7 @@ public class MainActivity
         
         // Create our fragment views
         this.fragmentHud = new FragmentHudCar();
+        this.fragmentHud.setVehicle(this.modelVehicle);
         this.fragmentLog = new FragmentLog();
         
         //Set the initial view to our HUD
@@ -223,7 +224,7 @@ public class MainActivity
                 ModelPhonePosition position = (ModelPhonePosition)o;
                 this.modelVehicle.setFromPhonePosition(position);
                 fragmentHud.setPosition((ModelVehicleCar) this.modelVehicle);
-                fragmentHud.setHudConnection(position.getRoll()+"");
+                //fragmentHud.setHudConnection(position.getRoll()+"");
             }
             else if (o instanceof ModelServerState)
             {

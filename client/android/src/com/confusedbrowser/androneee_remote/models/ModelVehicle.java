@@ -51,4 +51,11 @@ public interface ModelVehicle {
      * @param value - Set desired man.
      */
 	void setMax(int channel, float value);
+
+	/**
+     * Use on screen sliders to set power value.
+     * 
+     * @param sliderPos - Current position of the slider.
+     */
+	void setFromSlider(int sliderPos);
 }

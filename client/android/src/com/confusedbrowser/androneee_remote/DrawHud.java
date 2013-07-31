@@ -24,19 +24,12 @@ public class DrawHud extends View
         
         // Upper Colour: #00CC99
         upper = new Paint();
-        upper.setColor(0x00CC99);
+        upper.setColor(0x0A0A0A);
         upper.setAlpha(255);
         upper.setStrokeWidth(3.0f);
         upper.setStyle(Paint.Style.FILL);
         upper.setAntiAlias(true);
         
-        // Lower Colour: #CC6633
-        lower = new Paint();
-        lower.setColor(0xCC6633);
-        lower.setAlpha(255);
-        lower.setStrokeWidth(3.0f);
-        lower.setStyle(Paint.Style.FILL);
-        lower.setAntiAlias(true);
     }
     
     /**
@@ -59,10 +52,10 @@ public class DrawHud extends View
         canvas.translate( (canvas.getWidth()/2-(sqWidth)), (canvas.getHeight()/2-(sqWidth)));
         
         // Draw our sky
-        canvas.drawRect(0, 0, sqWidth*2, sqWidth, upper);
+        //canvas.drawRect(0, 0, sqWidth*2, sqWidth, upper);
 
         // Draw our ground
-        canvas.drawRect(0, sqWidth, 2*sqWidth, 2*sqWidth, lower);
+        //canvas.drawRect(0, sqWidth, 2*sqWidth, 2*sqWidth, lower);
 
         invalidate();
     }
