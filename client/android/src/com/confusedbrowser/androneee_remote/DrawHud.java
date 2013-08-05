@@ -54,14 +54,14 @@ public class DrawHud extends View
         steerLine.setAntiAlias(true);
         steerLine.setColor(lineColor);
         steerLine.setAlpha(255);
-        steerLine.setStrokeWidth(4.0f);
+        steerLine.setStrokeWidth(2.0f);
         steerLine.setStyle(Paint.Style.STROKE);
         
         steerLineLock = new Paint();
         steerLineLock.setAntiAlias(true);
         steerLineLock.setColor(lockColor);
         steerLineLock.setAlpha(255);
-        steerLineLock.setStrokeWidth(4.0f);
+        steerLineLock.setStrokeWidth(5.0f);
         steerLineLock.setStyle(Paint.Style.STROKE);
         
         activePowerBar = new Paint();
