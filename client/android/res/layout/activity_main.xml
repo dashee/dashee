@@ -4,22 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:clipChildren="false">
-    
-    <LinearLayout
-        android:id="@+id/canvas"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1.24"
-        android:orientation="vertical" 
-        />
+    android:clipChildren="false"
+    android:background="#111111">
     
     <FrameLayout
         android:id="@+id/fragment_content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-    	/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
      
      <fragment
         android:id="@+id/fragment_log"

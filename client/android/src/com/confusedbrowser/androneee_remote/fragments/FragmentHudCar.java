@@ -46,6 +46,11 @@ public class FragmentHudCar extends FragmentHud
     SeekBar mSeekBar;
     
     View view;
+    
+    /*
+     * Assign area for current steer value
+     */
+    float steer;
             
     /**
      * Handle to our TextViews
@@ -101,7 +106,7 @@ public class FragmentHudCar extends FragmentHud
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				
-				float mapVal = RangeMapping.mapValue(event.getY(), 0, iv.getHeight(), 100, 50);
+				float mapVal = RangeMapping.mapValue(event.getY(), 72, iv.getHeight()-72, 100, 50);
 				setVehiclePower((int) mapVal);
 				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
 				if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -203,6 +208,7 @@ public class FragmentHudCar extends FragmentHud
     public void rotateHud(float roll)
     {
         //layout_hud.setRotation(-1.0f*(roll - 50.0f));
+    	draw_hud.setTilt(roll);
     }
     
     /**
@@ -218,9 +224,11 @@ public class FragmentHudCar extends FragmentHud
         if (vehicle instanceof ModelVehicleCar)
         {
             ModelVehicleCar car = (ModelVehicleCar)vehicle;
-            this.setHudRoll(car.getSteer());
+            this.steer = car.getSteer();
+            this.setHudRoll(this.steer);
             this.setHudPitch(car.getPower());
-            this.rotateHud(car.getSteer());
+            this.rotateHud(this.steer);
+            draw_hud.setPowerPerc((car.getPower()-50)/50);
         }
         else
         {
