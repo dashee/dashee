@@ -126,9 +126,14 @@ public class DrawHud extends View
         final RectF outerOval = new RectF();
     	float innerRadius = steerArcRadius + steerArcRadius*0.16f;
     	float outerRadius = steerArcRadius + steerArcRadius*0.38f;
+    	
     	//Log.d("dashee", "percHieght: "+h*0.1);
     	double curY = h-Math.round(h*0.1);
-    	double rectHeight = 38.0;
+    	//Log.d("dashee", "rectSize: "+h*0.053);//38.0
+    	double rectHeight = Math.round(h*0.053);
+    	//Log.d("dashee", "gap: "+ Math.round(h*0.015));//11
+    	double gap =   Math.round(h*0.015);
+    	
     	float p1x = (w/2) - innerRadius;
         float p1y = (h/2) - innerRadius;
         float p2x = (w/2) + innerRadius;
@@ -155,7 +160,7 @@ public class DrawHud extends View
 	        paths[count].arcTo(outerOval, outerArcParams[0], -outerArcParams[1], true);
 	        paths[count].lineTo(innerArcParams[2], (float) (curY));
 	        
-	        curY = curY-rectHeight-11;
+	        curY = curY-rectHeight-gap;
 	        count++;
         }
     }
