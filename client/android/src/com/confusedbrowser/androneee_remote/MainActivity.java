@@ -89,6 +89,13 @@ public class MainActivity
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
         
+        // However, if we're being restored from a previous state,
+        // then we don't need to do anything and should return or else
+        // we could end up with overlapping fragments.
+        /*if (savedInstanceState != null) {
+            return;
+        }*/
+        
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
@@ -104,16 +111,19 @@ public class MainActivity
         // Create our vehicle model
         this.modelVehicle = new ModelVehicleCar();
         
-        // Create our fragment views
+    	// Create our fragment views
         this.fragmentHud = new FragmentHudCar();
         this.fragmentHud.setVehicle(this.modelVehicle);
         this.fragmentLog = new FragmentLog();
-        
+    	
         //Set the initial view to our HUD
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_content, this.fragmentHud);
+        ft.replace(R.id.fragment_content, this.fragmentHud);
         ft.commit();
+
     	
+        
+        
         // Initialise our thread
         this.threadPassPositionControls = new ThreadPassPositionControls(this.modelServerState, this.modelVehicle);
         this.threadPassPositionControls.start();
@@ -306,6 +316,7 @@ public class MainActivity
     {
         super.onStop();
     }
+    
 
     @Override
     public void onStartTrackingTouch(SeekBar arg0) 
