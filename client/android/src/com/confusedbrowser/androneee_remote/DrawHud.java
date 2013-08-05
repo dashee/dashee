@@ -126,7 +126,8 @@ public class DrawHud extends View
         final RectF outerOval = new RectF();
     	float innerRadius = steerArcRadius + steerArcRadius*0.16f;
     	float outerRadius = steerArcRadius + steerArcRadius*0.38f;
-    	double curY = h-72;
+    	//Log.d("dashee", "percHieght: "+h*0.1);
+    	double curY = h-Math.round(h*0.1);
     	double rectHeight = 38.0;
     	float p1x = (w/2) - innerRadius;
         float p1y = (h/2) - innerRadius;
@@ -210,7 +211,7 @@ public class DrawHud extends View
      */
     protected void onDraw(Canvas canvas)
     {
-        super.onDraw(canvas);
+        //super.onDraw(canvas);
         
         //Always clear the canvas, seems needed if you switch off the display
         
