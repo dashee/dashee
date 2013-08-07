@@ -24,12 +24,18 @@ public class DrawHud extends View
     Path steerPath = new Path();
     Path[] powerPaths = new Path[12];
     Path[] batteryPaths = new Path[12];
+    Path[] powerPathsInner = new Path[12];
+    Path[] batteryPathsInner = new Path[12];
     Path powerOuterArc = new Path();
     Path batteryOuterArc = new Path();
     
-    // Steer arc and oval are at the center of the design
+    // Steer arc is  at the center of the design
     // other aspects are offset from it.
     float steerArcRadius;
+    float innerGaugeRadius;
+	float innerGaugeRadius2;
+	float outerGaugeRadius;
+	
     final RectF steerOval = new RectF();
     
     /*
@@ -42,6 +48,7 @@ public class DrawHud extends View
     double gaugeBottomY;
     double gaugeBarHieght;
     double gaugeBarGap;
+    float lockLineWidth;
     
     /*
      * Values to be updated to reflect app state
@@ -55,6 +62,9 @@ public class DrawHud extends View
     Paint steerLine;
     Paint steerLineLock;
     Paint activePowerBar;
+    Paint inactiveBarInset;
+    Paint activeBarPowerInset;
+    Paint activeBatteryInset;
     Paint inactivePowerBar;
     Paint activeBatteryBar;
     Paint powerArc;
@@ -64,6 +74,9 @@ public class DrawHud extends View
     int activeBarColor = 0xD96D00;
     int inactiveBarColor = 0x20202F;
     int activeBattery = 0xEEEEEE;
+    int inactiveBarInsetColor = 0x444450;
+    int activePowerInsetColor = 0xDF8429;
+    int activeBatterInsetColor = 0xC8C8C8;
 
     /**
      * Set our paint colours, for use with the Draw functions
@@ -107,6 +120,24 @@ public class DrawHud extends View
         activeBatteryBar.setAlpha(255);
         activeBatteryBar.setStyle(Paint.Style.FILL);
         
+        inactiveBarInset = new Paint();
+        inactiveBarInset.setAntiAlias(true);
+        inactiveBarInset.setColor(inactiveBarInsetColor);
+        inactiveBarInset.setAlpha(255);
+        inactiveBarInset.setStyle(Paint.Style.FILL);
+        
+        activeBarPowerInset = new Paint();
+        activeBarPowerInset.setAntiAlias(true);
+        activeBarPowerInset.setColor(activePowerInsetColor);
+        activeBarPowerInset.setAlpha(255);
+        activeBarPowerInset.setStyle(Paint.Style.FILL);
+        
+        activeBatteryInset = new Paint();
+        activeBatteryInset.setAntiAlias(true);
+        activeBatteryInset.setColor(activeBatterInsetColor);
+        activeBatteryInset.setAlpha(255);
+        activeBatteryInset.setStyle(Paint.Style.FILL);
+        
         powerArc = new Paint();
         powerArc.setAntiAlias(true);
         powerArc.setColor(0xD96D00);
@@ -128,47 +159,57 @@ public class DrawHud extends View
      * those calculation can be done as required (usually just once), instead of doing them
      * constantly in the draw.
      */
-    protected void onSizeChanged (int w, int h, int oldw, int oldh){
+    protected void onSizeChanged (int canvasWidth, int canvasHeight, int oldw, int oldh){
     	// Noticed it sometimes runs with 0 values, not sure why.
-    	if(w ==0 || h==0) return;
-    	this.centerX = w/2;
-    	this.centerY = h/2;
-    	this.steerArcRadius = (h - h*0.08f) / 2.0f;
-    	this.gaugeBottomY = h-Math.round(h*0.1);
-    	this.gaugeBarHieght = Math.round(h*0.053);
-    	this.gaugeBarGap = Math.round(h*0.015);
+    	if(canvasWidth ==0 || canvasHeight==0) return;
+    	
+    	this.centerX = canvasWidth/2;
+    	this.centerY = canvasHeight/2;
+    	
+    	this.steerArcRadius = (canvasHeight - canvasHeight*0.08f) / 2.0f;
+    	//Now three other arc Points on the diagram are percentage increases on the steerArc
+    	this.innerGaugeRadius = this.steerArcRadius*1.16f; // 16% bigger
+    	this.innerGaugeRadius2 = this.steerArcRadius*1.31f; // 31% bigger
+    	this.outerGaugeRadius = this.steerArcRadius*1.39f; // 39% bigger
+    	
+    	this.lockLineWidth = Math.round(canvasWidth*0.08);
+    	this.gaugeBottomY = canvasHeight-Math.round(canvasHeight*0.1);
+    	this.gaugeBarHieght = Math.round(canvasHeight*0.053);
+    	this.gaugeBarGap = Math.round(canvasHeight*0.015);
     	this.gaugeTopY = gaugeBottomY - (12*this.gaugeBarHieght) -(11*this.gaugeBarGap);
-    	this.buildSteerPath(w, h);
-    	this.addGaugePath(w, h, this.powerPaths, true);
-    	this.addGaugePath(w, h, this.batteryPaths, false);
-    	this.addLeftArc();
-    	this.addRightArc();
+    	
+    	// Start Building Our HUD paths.
+    	this.buildSteerPath();
+    	this.addGaugePath(this.powerPaths, true, this.innerGaugeRadius, this.outerGaugeRadius);
+    	this.addGaugePath(this.powerPathsInner, true, this.innerGaugeRadius2, this.outerGaugeRadius);
+    	this.addGaugePath(this.batteryPaths, false, this.innerGaugeRadius, this.outerGaugeRadius);
+    	this.addGaugePath(this.batteryPathsInner, false, this.innerGaugeRadius2, this.outerGaugeRadius);
+    	this.addArc(this.powerOuterArc, true);
+    	this.addArc(this.batteryOuterArc, false);
     }
     
     /*
      * Put together the arc that is to rotate on steer.
      */
-    private void buildSteerPath(int w, int h){
-    	if (w == 0 || h==0) return;
-
+    private void buildSteerPath(){
     	float steerArcSweepAngle = 280.0f;
         float steerArcStartAngle = -180.0f;
-
-        float p1x = (w/2) - this.steerArcRadius;
-        float p1y = (h/2) - this.steerArcRadius;
-        float p2x = (w/2) + this.steerArcRadius;
-        float p2y = (h/2) + this.steerArcRadius;
+        
+        float p1x = this.centerX - this.steerArcRadius;
+        float p1y = this.centerY - this.steerArcRadius;
+        float p2x = this.centerX + this.steerArcRadius;
+        float p2y = this.centerY + this.steerArcRadius;
         
         this.steerOval.set(p1x, p1y, p2x, p2y);
         this.steerPath.arcTo(this.steerOval, steerArcStartAngle, -steerArcSweepAngle, true);
     }
     
     /*
-     * Power arc
+     * Build the outer long arcs on either side of the hud.
      */
-    private void addLeftArc(){
+    private void addArc(Path inPath, boolean leftHandSide){
     	final RectF outerOval = new RectF();
-    	float radius = this.steerArcRadius*1.393f;
+    	float radius = this.steerArcRadius*1.39f;
 
         float p1x = this.centerX - radius;
         float p1y = this.centerY - radius;
@@ -176,39 +217,16 @@ public class DrawHud extends View
         float p2y = this.centerY + radius;
         
         outerOval.set(p1x, p1y, p2x, p2y);
-        float[] outerArcParams = this.getArcParams(this.gaugeBottomY, this.gaugeTopY, radius, false, true);
-        Log.d("dashee", outerArcParams[0]+" , "+-outerArcParams[1]);
-        this.powerOuterArc.arcTo(outerOval, outerArcParams[0], -outerArcParams[1], true);
-    }
-    
-    
-    /*
-     * Battery arc
-     */
-    private void addRightArc(){
-    	final RectF outerOval = new RectF();
-    	float radius = this.steerArcRadius*1.393f;
-
-        float p1x = this.centerX - radius;
-        float p1y = this.centerY - radius;
-        float p2x = this.centerX + radius;
-        float p2y = this.centerY + radius;
-        
-        outerOval.set(p1x, p1y, p2x, p2y);
-        float[] outerArcParams = this.getArcParams(this.gaugeBottomY, this.gaugeTopY, radius, false, false);
-        Log.d("dashee", outerArcParams[0]+" , "+outerArcParams[1]);
-        this.batteryOuterArc.arcTo(outerOval, outerArcParams[0],-outerArcParams[1], true);
+        float[] outerArcParams = this.getArcParams(this.gaugeBottomY, this.gaugeTopY, radius, false, leftHandSide);
+        inPath.arcTo(outerOval, outerArcParams[0], -outerArcParams[1], true);
     }
     
     /*
-     * Put together the arc that is to rotate on steer.
+     * Put togther a collection of arc-ed bar paths, with an innerArc and outerArc
      */
-    private void addGaugePath(int w, int h, Path[] paths, boolean leftHandSide){
-    	if (w == 0 || h==0) return;
+    private void addGaugePath(Path[] paths, boolean leftHandSide, float innerRadius, float outerRadius){
     	final RectF innerOval = new RectF();
         final RectF outerOval = new RectF();
-    	float innerRadius = steerArcRadius + steerArcRadius*0.16f;
-    	float outerRadius = steerArcRadius + steerArcRadius*0.39f;
     	
     	//Log.d("dashee", "percHieght: "+h*0.1);
     	double curY = this.gaugeBottomY;
@@ -217,15 +235,15 @@ public class DrawHud extends View
     	//Log.d("dashee", "gap: "+ Math.round(h*0.015));//11
     	double gap = this.gaugeBarGap;
     	
-    	float p1x = (w/2) - innerRadius;
-        float p1y = (h/2) - innerRadius;
-        float p2x = (w/2) + innerRadius;
-        float p2y = (h/2) + innerRadius;
+    	float p1x = this.centerX - innerRadius;
+        float p1y = this.centerY - innerRadius;
+        float p2x = this.centerX + innerRadius;
+        float p2y = this.centerY + innerRadius;
         
-        float outerP1x = (w/2) - outerRadius;
-        float outerP1y = (h/2) - outerRadius;
-        float outerP2x = (w/2) + outerRadius;
-        float outerP2y = (h/2) + outerRadius;
+        float outerP1x = this.centerX - outerRadius;
+        float outerP1y = this.centerY - outerRadius;
+        float outerP2x = this.centerX + outerRadius;
+        float outerP2y = this.centerY + outerRadius;
         
         innerOval.set(p1x, p1y, p2x, p2y);
         outerOval.set(outerP1x, outerP1y, outerP2x, outerP2y);
@@ -294,11 +312,11 @@ public class DrawHud extends View
      * Always return a negative angle, e.g -90 at 12, -180 at 9, -270 at 6.
      */
     private double getAngle(float x, float y)
-   {
-       double angle1 = Math.atan2(this.centerY - this.centerY, this.centerX - (this.centerX + 10));
-       double angle2 = Math.atan2(this.centerY - y, this.centerX - x);
-       return -Math.toDegrees(angle1-angle2);
-   }
+	{
+    	double angle1 = Math.atan2(this.centerY - this.centerY, this.centerX - (this.centerX + 10));
+    	double angle2 = Math.atan2(this.centerY - y, this.centerX - x);
+    	return -Math.toDegrees(angle1-angle2);
+	}
     
     /**
      * Draw our hud paths and apply appropriate paints
@@ -307,16 +325,28 @@ public class DrawHud extends View
      */
     protected void onDraw(Canvas canvas)
     {
+    	boolean leftLock = Math.floor(this.tilt) == 0;
+    	boolean rightLock = Math.ceil(this.tilt) == 100;
         
-        //Mid line right
-        canvas.drawLine(this.centerX+this.steerArcRadius-80, this.centerY, this.centerX+this.steerArcRadius, this.centerY, steerLine);
+    	//Mid line right
+    	if(rightLock)
+    		canvas.drawLine(this.centerX+this.steerArcRadius-this.lockLineWidth,
+    				this.centerY, this.centerX+this.steerArcRadius, this.centerY, steerLineLock);
+    	else
+    		canvas.drawLine(this.centerX+this.steerArcRadius-this.lockLineWidth, this.centerY,
+    				this.centerX+this.steerArcRadius, this.centerY, steerLine);
         
         //Mid line left
-        canvas.drawLine(this.centerX-this.steerArcRadius+80, this.centerY, this.centerX-this.steerArcRadius, this.centerY, steerLine);
-
+    	if(leftLock)
+    		canvas.drawLine(this.centerX-this.steerArcRadius+this.lockLineWidth, this.centerY,
+    				this.centerX-this.steerArcRadius, this.centerY, steerLineLock);
+    	else
+    		canvas.drawLine(this.centerX-this.steerArcRadius+this.lockLineWidth, this.centerY,
+    				this.centerX-this.steerArcRadius, this.centerY, steerLine);
+    	
         canvas.save();
         canvas.rotate(this.tilt, this.centerX, this.centerY);
-        if(Math.ceil(this.tilt) == 100 || Math.floor(this.tilt) == 0){
+        if(rightLock || leftLock){
         	canvas.drawPath(this.steerPath, steerLineLock);
         }else{
         	canvas.drawPath(this.steerPath, steerLine);
@@ -329,20 +359,17 @@ public class DrawHud extends View
     	while(count <=11){
     		if(this.powerPaths[count] != null && count<cutOff){
     			canvas.drawPath(this.powerPaths[count], activePowerBar);
+    			canvas.drawPath(this.powerPathsInner[count], activeBarPowerInset);
     		}else{
     			canvas.drawPath(this.powerPaths[count], inactivePowerBar);
+    			canvas.drawPath(this.powerPathsInner[count], inactiveBarInset);
     		}
+    		canvas.drawPath(this.batteryPaths[count], activeBatteryBar);
+    		canvas.drawPath(this.batteryPathsInner[count], activeBatteryInset);
     		count++;
     	}
     	
     	canvas.drawPath(this.powerOuterArc, powerArc);
-    	
-    	count = 0;
-    	while(count <=11){
-    		canvas.drawPath(this.batteryPaths[count], activeBatteryBar);    		
-    		count++;
-    	}
-    	
     	canvas.drawPath(this.batteryOuterArc, batteryArc);
     	
         invalidate();
