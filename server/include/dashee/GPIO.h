@@ -23,8 +23,19 @@ class dashee::GPIO
 
 private:
 
+    /** 
+     * Constant values used for 
+     * High and Low definitions
+     */
     const int HIGH = 1;
     const int LOW = 0;
+
+    /**
+     * Constant to represent the In or Out
+     * direction of the GPIO Pin
+     */
+    const char IN = 'i';
+    const char OUT = 'o';
     
     /**
      * This holds the pin value used by this
@@ -37,28 +48,28 @@ protected:
 public:
 
     // Set up the GPIO by exporting
-    GPIO(int pinNumber);
+    GPIO(int pinNumber, char direction);
 
     // Get the current direction set
-    int getDirection();
+    char getDirection();
 
     // Set the direction
-    void setDirection();
+    void setDirection(char direction);
 
-    // Toggle the direction setting
-    void toggleDirection();
+    // Set the value of the Pin
+    void setPin(int pinNumber);
+
+    // Get the value of the Pin
+    int getPin();
 
     // write to the GPIO Pin
-    int write();
+    void write(int value);
 
-    // write GPIO_HIGH to GPIO
+    // write high to the GPIO Pin
     void high();
 
-    // write GPIO_LOW to GPIO
+    // write low to the GPIO Pin
     void low();
-
-    // toggle high and low
-    void toggle();
 
     // Read from the GPIO
     int read();
@@ -66,3 +77,5 @@ public:
     // Kill and unexport from 
     ~GPIO();
 }
+
+#endif
