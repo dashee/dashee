@@ -105,7 +105,7 @@ public class MainActivity
         this.modelPosition.addObserver(this);
         
         //Create our ServerState model
-        this.modelServerState = new ModelServerState(this.sharedPreferences.getString("pref_server_ip", "192.168.114"));
+        this.modelServerState = new ModelServerState(this.sharedPreferences.getString("pref_server_ip", "192.168.115"));
         this.modelServerState.addObserver(this);
         
         // Create our vehicle model
@@ -143,7 +143,7 @@ public class MainActivity
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
     	if(key.equals("pref_server_ip")){
-    		Log.d("Dashee", "Setting new ip addess: "+prefs.getString("pref_server_ip", "192.168.114"));
+    		Log.d("Dashee", "Setting new ip addess: "+prefs.getString("pref_server_ip", "192.168.115"));
     		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.114"));
     	}else if(key.equals("pref_server_port")){
     		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
