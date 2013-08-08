@@ -133,7 +133,7 @@ public class FragmentHudCar extends FragmentHud
         
         // Get the sharedPreferences so the values can be set
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        this.setHudIp(sharedPreferences.getString("pref_server_ip", "Failed Loading"));
+        this.setHudIp(sharedPreferences.getString("pref_server_ip", "192.168.1.115"));
         
         return view;
     }

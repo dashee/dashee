@@ -57,7 +57,7 @@ public class MainFragment
     private void setSharedPreferenceState(SharedPreferences sharedPref) 
     {
     	Log.d("Dashee", "Setting the prefernces summeries onload");
-        findPreference("pref_server_ip").setSummary(sharedPref.getString("pref_server_ip", "192.168.1.11"));
+        findPreference("pref_server_ip").setSummary(sharedPref.getString("pref_server_ip", "192.168.1.115"));
         findPreference("pref_server_port").setSummary(sharedPref.getString("pref_server_port", "2047"));
         findPreference("pref_channel01_trim").setSummary(sharedPref.getString("pref_channel01_trim", "0"));
         findPreference("pref_channel02_trim").setSummary(sharedPref.getString("pref_channel02_trim", "0"));
