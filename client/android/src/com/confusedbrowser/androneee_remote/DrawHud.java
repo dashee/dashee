@@ -60,6 +60,7 @@ public class DrawHud extends View
      * Style elements go here
      */
     Paint steerLine;
+    Paint horizonLine;
     Paint steerLineLock;
     Paint activePowerBar;
     Paint inactiveBarInset;
@@ -69,7 +70,8 @@ public class DrawHud extends View
     Paint activeBatteryBar;
     Paint powerArc;
     Paint batteryArc;
-    int lineColor = 0x333333;
+    int lineColor = 0x666666;
+    int horizonLineColor = 0x333333;
     int lockColor = 0xD93600;
     int activeBarColor = 0xD96D00;
     int inactiveBarColor = 0x20202F;
@@ -94,6 +96,14 @@ public class DrawHud extends View
         steerLine.setAlpha(255);
         steerLine.setStrokeWidth(2.0f);
         steerLine.setStyle(Paint.Style.STROKE);
+        
+        
+        horizonLine = new Paint();
+        horizonLine.setAntiAlias(true);
+        horizonLine.setColor(horizonLineColor);
+        horizonLine.setAlpha(255);
+        horizonLine.setStrokeWidth(2.0f);
+        horizonLine.setStyle(Paint.Style.STROKE);
         
         steerLineLock = new Paint();
         steerLineLock.setAntiAlias(true);
@@ -334,7 +344,7 @@ public class DrawHud extends View
     				this.centerY, this.centerX+this.steerArcRadius, this.centerY, steerLineLock);
     	else
     		canvas.drawLine(this.centerX+this.steerArcRadius-this.lockLineWidth, this.centerY,
-    				this.centerX+this.steerArcRadius, this.centerY, steerLine);
+    				this.centerX+this.steerArcRadius, this.centerY, horizonLine);
         
         //Mid line left
     	if(leftLock)
@@ -342,7 +352,7 @@ public class DrawHud extends View
     				this.centerX-this.steerArcRadius, this.centerY, steerLineLock);
     	else
     		canvas.drawLine(this.centerX-this.steerArcRadius+this.lockLineWidth, this.centerY,
-    				this.centerX-this.steerArcRadius, this.centerY, steerLine);
+    				this.centerX-this.steerArcRadius, this.centerY, horizonLine);
     	
         canvas.save();
         canvas.rotate(this.tilt, this.centerX, this.centerY);
