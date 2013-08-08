@@ -20,9 +20,8 @@
 #define HIGH 1
 
 #define PIN  18 /* P1-18 */
-#define POUT 4  /* P1-07 */
 
-static int GPIOExport(int pin)
+int GPIOExport(int pin)
 {
     int BUFFER_MAX = 3;
     char buffer[BUFFER_MAX];
@@ -33,7 +32,7 @@ static int GPIOExport(int pin)
     if (-1 == fd) 
     {
         fprintf(stderr, "Failed to open export for writing!\n");
-        return -1
+        return -1;
     }
 
     bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
@@ -42,8 +41,7 @@ static int GPIOExport(int pin)
     return 0;
 }
 
-static int
-GPIOUnexport(int pin)
+int GPIOUnexport(int pin)
 {
     int BUFFER_MAX = 3;
     char buffer[BUFFER_MAX];
@@ -63,7 +61,7 @@ GPIOUnexport(int pin)
     return 0;
 }
 
-static int GPIODirection(int pin, int dir)
+int GPIODirection(int pin, int dir)
 {
     static const char s_directions_str[]  = "in\0out";
 
@@ -89,7 +87,7 @@ static int GPIODirection(int pin, int dir)
     return(0);
 }
 
-static int GPIORead(int pin)
+int GPIORead(int pin)
 {
     #define VALUE_MAX 30
     char path[VALUE_MAX];
@@ -115,7 +113,7 @@ static int GPIORead(int pin)
     return(atoi(value_str));
 }
 
-static int GPIOWrite(int pin, int value)
+int GPIOWrite(int pin, int value)
 {
     static const char s_values_str[] = "01";
 
@@ -147,13 +145,13 @@ int main(int argc, char *argv[])
     /*
     * Enable GPIO pins
     */
-    if (-1 == GPIOExport(POUT))
+    if (-1 == GPIOExport(PIN))
     return 1;
 
     /*
     * Set GPIO directions
     */
-    if (-1 == GPIODirection(POUT, OUT))
+    if (-1 == GPIODirection(PIN, OUT))
     return 2;
 
     do 
@@ -161,15 +159,15 @@ int main(int argc, char *argv[])
         /*
         * Write GPIO value
         */
-        if (-1 == GPIOWrite(POUT, HIGH))
+        if (-1 == GPIOWrite(PIN, LOW))
             return 3;
 
-        usleep(500 * 1000);
+        //usleep(1);
         
         /*
         * Write GPIO value
         */
-        if (-1 == GPIOWrite(POUT, LOW))
+        if (-1 == GPIOWrite(PIN, HIGH))
             return 3;
     }
     while (repeat--);
@@ -177,7 +175,7 @@ int main(int argc, char *argv[])
     /*
     * Disable GPIO pins
     */
-    if (-1 == GPIOUnexport(POUT) || -1 == GPIOUnexport(PIN))
+    if (-1 == GPIOUnexport(PIN))
         return 4;
 
     return 0;
