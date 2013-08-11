@@ -16,6 +16,9 @@
 #define SERVOCONTROLLER_UART_H_
 
 #include <termios.h>
+
+#include <dashee/GPIO.h>
+
 #include "../ServoController.h"
 #include "../Servo/UART.h"
 
@@ -39,7 +42,7 @@ protected:
     
 public:
     // Open our device, and set our @servos array
-    explicit ServoControllerUART(const char *, const unsigned short int = 8);
+    explicit ServoControllerUART(const char *, const unsigned short int = 6);
     
     // Get the error from the board
     virtual short int getError();

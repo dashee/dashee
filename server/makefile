@@ -17,7 +17,7 @@ OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
 		Server/UDP.o ServoController.o ServoController/USB.o \
 		ServoController/Dummy.o Config/Servod.o\
 		ServoController/UART.o Servo/UART.o)
-OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o)
+OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
@@ -76,16 +76,12 @@ $(BINDIR)/servod: src/servod.cpp $(BINDIR) $(SO64) $(OBJECTS)
 # Make the tests
 test: $(OBJECTS) $(BINDIR) $(SO64)
 	@mkdir -p $(BINDIR)/tests
-	@echo "Building test:binary 'ServoControllerUART'"
-	@$(CC) $(CFLAGS) -Isrc tests/ServoControllerUART.cpp \
-	    src/Servo.o src/Servo/UART.o src/ServoController.o src/ServoController/UART.o \
-	    -ldashee \
-	    -o $(BINDIR)/tests/ServoControllerUART
-	@echo "Building test:binary 'ServerUDP'"
-	@$(CC) $(CFLAGS) -Isrc -ldashee tests/ServerUDP.cpp \
-	    src/Server.o src/Server/UDP.o \
-	    -ldashee \
-	    -o $(BINDIR)/tests/ServerUDP
+	@echo "Building test:binary 'testServoControllerDummy'"
+	@$(CC) $(CFLAGS) -Isrc tests/testServoControllerDummy.cpp \
+	    -Isrc/ \
+	    src/ServoController/Dummy.o src/ServoController.o src/Servo.o src/Servo/Dummy.o \
+	    -ldashee -lcppunit\
+	    -o $(BINDIR)/tests/testServoControllerDummy
 
 # Remove only the tests
 cleantest:

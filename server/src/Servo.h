@@ -81,10 +81,16 @@ public:
     virtual void revert();
 
     // Calculate the Target, turn 0-100 to be from 3968-8000
-    void PercentageToTarget(unsigned short int &);
+    void PercentageToTarget(unsigned short int *);
+
+    // Calculate the Target, turn 0-100 to be from 3968-8000, and return the value
+    unsigned short int PercentageToTarget(unsigned short int);
 
     // Calculate the Target, turn 0-100 to be from 3968-8000
-    void TargetToPercentage(unsigned short int &);
+    void TargetToPercentage(unsigned short int *);
+
+    // Calculate the Target, turn 0-100 to be from 3968-8000, and return the value
+    unsigned short int TargetToPercentage(unsigned short int target);
     
     // Destroy all internals, before cleanup
     virtual ~Servo(){};

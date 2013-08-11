@@ -45,7 +45,7 @@ private:
     /**
      * 2 Byte buffere used to read and write to our binary file
      */
-    char buffer[2];
+    unsigned char buffer[2];
 
 protected:
     

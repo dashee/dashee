@@ -40,7 +40,7 @@ unsigned short int ServoDummy::getTarget()
     if (fread(buffer, 2, sizeof(buffer), fd) != 2)
         throw Exception_Servo("Reading 2 bytes failed in getTarget");
     
-    return buffer[0] + 256 * buffer[1];
+    return TargetToPercentage((buffer[0] + 256 * buffer[1]));
 }
 
 /**
@@ -53,7 +53,7 @@ unsigned short int ServoDummy::getTarget()
  */
 void ServoDummy::setTarget(unsigned short int target)
 {
-    PercentageToTarget(target);
+    PercentageToTarget(&target);
         
     if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
         throw Exception_Servo("Seek failed in setTarget");

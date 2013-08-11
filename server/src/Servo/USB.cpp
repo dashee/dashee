@@ -48,7 +48,7 @@ unsigned short int ServoUSB::getTarget()
     if(read(*fd,response,2) != 2)
         throw Exception_Servo("Invalid Target");
 
-    return response[0] + 256*response[1];
+    return TargetToPercentage(response[0] + 256*response[1]);
 }
 
 /**
@@ -69,7 +69,7 @@ void ServoUSB::setTarget(unsigned short int target)
 {
     // Convert the percentage target value
     // to Servo controller target value
-    PercentageToTarget(target);
+    PercentageToTarget(&target);
  
     unsigned char command[4];
     command[0] = 0x84;

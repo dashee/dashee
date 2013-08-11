@@ -149,6 +149,8 @@ unsigned int ServoController::size()
  */
 void ServoController::fallback()
 {
+    // Already in fallbackmode, dont bother with 
+    // anything.
     if (fallbackmode) { return; }
 
     for (unsigned int x = 0; x < servos.size(); x++)
@@ -167,6 +169,10 @@ void ServoController::fallback()
  */
 void ServoController::revert()
 {
+    // If we are not in fallback mode, don't revert
+    // because you will revert back to the last known fallback value
+    if (!fallbackmode) return;
+    
     for (unsigned int x = 0; x < servos.size(); x++)
     {
         try

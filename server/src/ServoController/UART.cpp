@@ -71,7 +71,9 @@ void ServoControllerUART::init()
  */
 void ServoControllerUART::reset()
 {
-
+    dashee::GPIO gpio(18, dashee::GPIO::OUT);
+    gpio.low();
+    gpio.high();
 }
 
 /**

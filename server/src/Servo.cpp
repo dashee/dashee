@@ -71,30 +71,47 @@ void Servo::setTargetFallbackEnabled(bool enabled)
  *
  * @throw Exception_Servo - If the target is out of range
  */
-void Servo::PercentageToTarget(unsigned short int & target)
+void Servo::PercentageToTarget(unsigned short int * target)
 {
-    const int zero = 3968;
-    const int hundred = 8000;
-    const int difference = 4032; //zero-hundred
+    const unsigned short int zero = 3968;
+    const unsigned short int hundred = 8000;
+    const unsigned short int difference = 4032; //zero-hundred
 
-    if (target >= 0 && target <= 100)
+    if (*target >= 0 && *target <= 100)
     {
         // If it is 0, set to 0% value
-        if (target == 0) 
-            target = zero;
+        if (*target == 0) 
+            *target = zero;
 
         // Other wise set to 100% value
-        else if (target == 100)
-            target = hundred;
+        else if (*target == 100)
+            *target = hundred;
 
         // Other wise get a percentage number between the range
         // 3968-8000, Note that for calculations sake we calculate from 0-4032
         // then add 3968, to get the correct value
+        //
+        // The rounding and float conversions is important to ensure that
+        // the converted values match up when setting to and from a percentage
         else
-            target = ((difference/100) * target) + zero;
+            *target = (unsigned short int)roundf( (((float)difference/100.0f) * (*target)) + zero );
     }
     else
         throw Exception_Servo("Invalid Target!\n");
+}
+
+/**
+ * This is a wrapper around the pointer function to make
+ * life easier
+ *
+ * @param target - The target represented in 0-100
+ *
+ * @returns unsigned short int - The target value in percentage
+ */
+unsigned short int Servo::PercentageToTarget(unsigned short int target)
+{
+    PercentageToTarget(&target);
+    return target;
 }
 
 /** 
@@ -105,23 +122,42 @@ void Servo::PercentageToTarget(unsigned short int & target)
  *
  * @throw Exception_Servo - If the target is out of range
  */
-void Servo::TargetToPercentage(unsigned short int & target)
+void Servo::TargetToPercentage(unsigned short int * target)
 {
-    const int zero = 3968;
-    const int difference = 4032;
-        
+    if (*target == 0)
+        return;
+
+    const unsigned short int zero = 3968;
+    const unsigned short int difference = 4032;
+
     // If the target is lower than the zero value
     // Quite Probebly an invalid channel
-    if (target < zero) 
+    if (*target < zero) 
     {
-        dashee::Log::warning(4, "target:%d, zero:%d", target, zero);
+        dashee::Log::warning(4, "target:%d, channel:%d, zero:%d", *target, this->channel, zero);
         throw Exception_Servo("Channel returned low voltage, meaning it is invalid!");
     }
-        
-    // Zero the target
-    target = target - zero;
     
-    target = (target / difference) * 100;
+    // Zero the target
+    //
+    // Float conversions and rounding ordering is important
+    // to ensure that Precentage to/from is accurate
+    *target = *target - zero;
+    *target = (unsigned short int)roundf(((float)*target / difference) * 100.0f);
+}
+
+/** 
+ * Wrapper around TargetToPercentage that returns the new value
+ * rather than changing it.
+ *
+ * @param target - The target represented in 0-100
+ *
+ * @returns unsigned short int - The target value in percentage
+ */
+unsigned short int Servo::TargetToPercentage(unsigned short int target)
+{
+    TargetToPercentage(&target);
+    return target;
 }
 
 /** 
@@ -150,12 +186,8 @@ void Servo::fallback()
  */
 void Servo::revert()
 {
-    // Convert the Target value to percentage
-    unsigned short int percentage_target = current.target;
-    TargetToPercentage(percentage_target);
-    
     if (fallbackEnabled.target)
-        setTarget(percentage_target);
+        setTarget(current.target);
     //if (fallbackEnabled.speed) 
         //setSpeed(current.speed);
     //if (fallbackEnabled.acceleration) 

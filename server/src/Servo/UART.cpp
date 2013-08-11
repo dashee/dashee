@@ -71,7 +71,7 @@ unsigned short int ServoUART::getTarget()
         n++;
     }
 
-    return response[0] + 256*response[1];
+    return TargetToPercentage(response[0] + 256*response[1]);
 }
 
 /**
@@ -93,7 +93,7 @@ void ServoUART::setTarget(unsigned short int target)
 {
     // Convert the percentage target value
     // to Servo controller target value
-    PercentageToTarget(target);
+    PercentageToTarget(&target);
  
     unsigned char command[6];
     command[0] = 0xAA;

@@ -5,13 +5,28 @@
  * An instance will export a GPIO ping and on close unexport the value
  * You can change directions of the given pin and read/write to the pin
  *
+ * This class implements most of its main functions using statics, the intiated version
+ * of this class calls these static functions passing its pin through
+ *
+ * It is better to use this class as a initiated version. As it will handle
+ * exporting and unexporting. But if you wish to controll the handling of the 
+ * export/unexport and then read or write you can do so using the static functions directly
+ *
  * @author Shahmir Javaid
  */
 
 #ifndef DASHEE_GPIO_H
 #define DASHEE_GPIO_H
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <dashee/Exception/GPIO.h>
+#include <dashee/Common.h>
 
 namespace dashee
 {
@@ -22,60 +37,62 @@ class dashee::GPIO
 {
 
 private:
-
-    /** 
-     * Constant values used for 
-     * High and Low definitions
-     */
-    const int HIGH = 1;
-    const int LOW = 0;
-
-    /**
-     * Constant to represent the In or Out
-     * direction of the GPIO Pin
-     */
-    const char IN = 'i';
-    const char OUT = 'o';
     
     /**
      * This holds the pin value used by this
      * instance of the class
      */
-    int pinNumber;
+    unsigned short pin;
 
 protected:
 
+    // Function to export/unexport the pin
+    void exportPin();
+    void unexportPin();
+
 public:
 
-    // Set up the GPIO by exporting
-    GPIO(int pinNumber, char direction);
+    /** 
+     * Constant values used for 
+     * High and Low definitions
+     */
+    static const unsigned short HIGH = 1;
+    static const unsigned short LOW = 0;
 
-    // Get the current direction set
-    char getDirection();
+    /**
+     * Constant to represent the In or Out
+     * direction of the GPIO Pin
+     */
+    static const char IN = 'i';
+    static const char OUT = 'o';
 
-    // Set the direction
-    void setDirection(char direction);
-
-    // Set the value of the Pin
-    void setPin(int pinNumber);
-
-    // Get the value of the Pin
-    int getPin();
-
-    // write to the GPIO Pin
-    void write(int value);
-
-    // write high to the GPIO Pin
-    void high();
-
-    // write low to the GPIO Pin
-    void low();
-
-    // Read from the GPIO
-    int read();
-
-    // Kill and unexport from 
+    // Build and destroy
+    GPIO(unsigned short int pin, char direction);
     ~GPIO();
-}
+    
+    // Un/Export Pin as statics
+    static void exportPin(int pin);
+    static void unexportPin(int pin);
+
+    // Pin setter
+    void setPin(unsigned short int pinNumber);
+    unsigned short int getPin();
+
+    // Direction setter
+    void setDirection(char direction);
+    char getDirection();
+    static void setDirection(int pin, char direction);
+    static char getDirection(int pin);
+
+    // read/write the GPIO Pin
+    void write(unsigned short int value);
+    int read();
+    static void write(int pin, unsigned short int value);
+    static int read(int pin);
+
+    // write high/low to the GPIO Pin
+    void high();
+    void low();
+};
 
 #endif
