@@ -1,16 +1,13 @@
 include makefile.common
 
-WOPTIONS=-Wall -fPIC
-INCLUDES=-Iinclude -Llib64
-CFLAGS=$(WOPTIONS) $(INCLUDES)
-LFLAGS=-shared
-
 # Set directories as variables
 BINDIR=bin
 LIBDIR=lib
-LIB64DIR=lib64
+ifeq ($(shell getconf LONG_BIT), 64)
+        LIBDIR=lib64
+endif   
 DATADIR=data
-DIRECTORIES:= $(BINDIR) $(LIBDIR) $(LIB64DIR) $(DATADIR) 
+DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) 
 
 # All the objects that are built
 OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
@@ -21,16 +18,22 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
-SO64 := $(addprefix lib64/, libdashee.so)
+LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servod)
 
+# Compiler options
+WOPTIONS=-Wall -fPIC
+INCLUDES=-Iinclude -L$(LIBDIR)
+CFLAGS=$(WOPTIONS) $(INCLUDES)
+LFLAGS=-shared
+
+# Release ID
 RELEASEID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
 
 # Create all required binaries, but in debug mode
 # Use `make release`
 all: debug
-libraries: $(SO)
-libraries64: $(SO64)
+libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
 release: $(BINARIES)
@@ -42,13 +45,13 @@ debug: $(BINARIES)
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
-tar: 
+tar:
 	@if [ -f dashee-$(RELEASEID).tar.gz ]; then \
-	    echo "Tar file 'dashee-$(RELEASEID).tar.gz' already exist!";\
+	    echo "Tar file 'dashee-src-$(RELEASEID).tar.gz' already exist!";\
 	    exit 1;\
 	fi
-	@tar -zcf dashee-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
-	@echo "Tar archive 'dashee-$(RELEASEID).tar.gz' created."
+	@tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
+	@echo "Tar archive 'dashee-src-$(RELEASEID).tar.gz' created."
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -64,12 +67,12 @@ $(OBJECTS) $(OBJECTSLIB): %.o: %.cpp
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Log shared object
-$(LIB64DIR)/libdashee.so: $(LIB64DIR) $(OBJECTSLIB)
+$(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB)
 	@echo "Building lib 'libdashee.so'"
 	@$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # Our main program that uses the objects
-$(BINDIR)/servod: src/servod.cpp $(BINDIR) $(SO64) $(OBJECTS)
+$(BINDIR)/servod: src/servod.cpp $(BINDIR) $(LIBRARIES) $(OBJECTS)
 	@echo "Building binary 'servod'"
 	@$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
@@ -109,7 +112,13 @@ tags:
 clean: cleantest
 	@echo "Deleting 'src/*.o' files recursively"
 	@$(RM) $(shell find src -name "*.o")
-	@echo "Deleting directories"
-	@$(RM) $(DIRECTORIES)
+	@echo "Deleting binary and library directories"
+	@$(RM) $(BINDIR) $(LIBDIR)
 	@echo "Deleting 'tags'"
 	@$(RM) tags
+
+cleanall: clean
+	@echo "Deleting all directories"
+	@$(RM) $(DIRECTORIES)
+	@echo "Deleting 'etc'"
+	@$(RM) etc
