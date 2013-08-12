@@ -233,7 +233,6 @@ int main(int argc, char **argv)
     catch (Exception_Server_Signal e)
     {
         dashee::Log::info(4, "caught(Exception_Server_Signal): %s", e.what());
-        RETVAL = -4;
     }
     catch (dashee::Exception_Config e)
     {
