@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Go through each test and run it
-for t in $1; 
+for t in "$@"; 
 do
     BASE=$(basename $t);
 

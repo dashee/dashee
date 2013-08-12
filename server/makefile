@@ -2,12 +2,13 @@ include makefile.common
 
 # Set directories as variables
 BINDIR=bin
+TESTBINDIR=bin/tests
 LIBDIR=lib
 ifeq ($(shell getconf LONG_BIT), 64)
         LIBDIR=lib64
 endif   
 DATADIR=data
-DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) 
+DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTBINDIR)
 
 # All the objects that are built
 OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
@@ -20,6 +21,7 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o)
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servod)
+TESTS := $(addprefix $(TESTBINDIR)/, testServoControllerDummy testServoControllerUART)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
@@ -76,15 +78,18 @@ $(BINDIR)/servod: src/servod.cpp $(BINDIR) $(LIBRARIES) $(OBJECTS)
 	@echo "Building binary 'servod'"
 	@$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
-# Make the tests
-test: $(OBJECTS) $(BINDIR) $(SO64)
-	@mkdir -p $(BINDIR)/tests
-	@echo "Building test:binary 'testServoControllerDummy'"
-	@$(CC) $(CFLAGS) -Isrc tests/testServoControllerDummy.cpp \
-	    -Isrc/ \
+# Tests
+tests: $(TESTS)
+
+$(TESTBINDIR)/testServoControllerDummy: tests/testServoControllerDummy.cpp $(LIBRARIES) $(OBJECTS)
+	@$(CC) $(CFLAGS) -Isrc $< \
 	    src/ServoController/Dummy.o src/ServoController.o src/Servo.o src/Servo/Dummy.o \
-	    -ldashee -lcppunit\
-	    -o $(BINDIR)/tests/testServoControllerDummy
+	    -ldashee -lcppunit -o $@
+$(TESTBINDIR)/testServoControllerUART: tests/testServoControllerUART.cpp $(LIBRARIES) $(OBJECTS)
+	@$(CC) $(CFLAGS) -Isrc $< \
+	    src/ServoController/UART.o src/ServoController.o src/Servo.o src/Servo/UART.o \
+	    -ldashee -lcppunit -o $@
+
 
 # Remove only the tests
 cleantest:
