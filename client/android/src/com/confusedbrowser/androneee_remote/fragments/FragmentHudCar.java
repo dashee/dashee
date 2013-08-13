@@ -9,7 +9,9 @@ import android.view.MotionEvent;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -104,7 +106,7 @@ public class FragmentHudCar extends FragmentHud
         iv.setOnTouchListener(new OnTouchListener(){
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
+				//Log.d("dashee", "Got click");
 				float mapVal = RangeMapping.mapValue(event.getY(), 72, iv.getHeight()-72, 100, 50);
 				setVehiclePower((int) mapVal);
 				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
@@ -115,6 +117,18 @@ public class FragmentHudCar extends FragmentHud
 				return true;
 			}
 		});
+        
+        Button bu = (Button)view.findViewById(R.id.dot_settings);
+        bu.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+            	
+                Intent intent = new Intent(getActivity(), com.confusedbrowser.androneee_remote.preferences.PreferencesActivity.class);
+                startActivity(intent);
+            }
+        });
+        
         
         
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());

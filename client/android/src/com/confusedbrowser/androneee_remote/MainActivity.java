@@ -86,6 +86,7 @@ public class MainActivity
         // Keep our screen constantly on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
+        
         // Set the XML view for this activity
         setContentView(R.layout.activity_main);
         
@@ -120,8 +121,6 @@ public class MainActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_content, this.fragmentHud);
         ft.commit();
-
-    	
         
         
         // Initialise our thread

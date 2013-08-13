@@ -33,5 +33,6 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>
