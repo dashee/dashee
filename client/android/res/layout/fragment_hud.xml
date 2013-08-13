@@ -14,7 +14,7 @@
         android:layout_weight="1.24"
         android:orientation="vertical" />
     
-    <RelativeLayout
+   <RelativeLayout
         android:id="@+id/hud_power_slider"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -30,17 +30,25 @@
 		android:contentDescription="@string/power_joystick_desc">
 		</ImageView>
 
-		<Button
-		    android:id="@+id/dot_settings"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_alignParentRight="true"
-		    android:layout_alignParentTop="true"
-		    android:layout_marginRight="12dp"
-		    android:layout_marginTop="11dp"
-		    android:text="opts" />
 		
     </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/hud_text_right_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_gravity="right|top"
+		android:padding="15dp"
+        android:orientation="vertical"
+
+        >
+    <Button
+		    android:id="@+id/dot_settings"
+		    android:layout_width="9dp"
+		    android:layout_height="29dp"
+		    android:layout_gravity="center"
+		    android:background="@drawable/options_icon" />
+    </LinearLayout>
     
     <LinearLayout
         android:id="@+id/hud_text_right_bottom"

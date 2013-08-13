@@ -118,8 +118,8 @@ public class FragmentHudCar extends FragmentHud
 			}
 		});
         
-        Button bu = (Button)view.findViewById(R.id.dot_settings);
-        bu.setOnClickListener(new View.OnClickListener() {
+        LinearLayout optsButton = (LinearLayout)view.findViewById(R.id.hud_text_right_top);
+        optsButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
