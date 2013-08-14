@@ -11,8 +11,45 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:layout_weight="1.24"
         android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/hud_text"
+        android:layout_width="600dp"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+    <View 
+        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="11" />
+        <TextView
+            android:id="@+id/hud_text_pitch_value"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="40dp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_weight="44"
+             />
+        
+        <TextView
+            android:id="@+id/hud_text_roll_value"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_weight="44" />
+            <View 
+        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="11" />
+    </LinearLayout>
     
    <RelativeLayout
         android:id="@+id/hud_power_slider"
@@ -20,16 +57,14 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center"
         android:orientation="horizontal" >
-		
-		<ImageView
-		android:id="@+id/power_stick" 
-		android:layout_height="fill_parent" 
-		android:layout_width="fill_parent"
-		android:layout_centerVertical="true"
-		android:layout_centerHorizontal="true"
-		android:contentDescription="@string/power_joystick_desc">
-		</ImageView>
 
+		<ImageView
+		    android:id="@+id/power_stick"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true"
+		    android:contentDescription="@string/power_joystick_desc" />
 		
     </RelativeLayout>
     
@@ -59,58 +94,24 @@
         android:orientation="vertical"
         >
 
-        <LinearLayout
+       <LinearLayout
             android:id="@+id/hud_text_roll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
             >
-            
-            <TextView
-                android:id="@+id/hud_text_roll_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="0dp"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
-            <TextView
-                android:id="@+id/hud_text_roll_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:paddingLeft="10dp"
-                android:text="@string/hud_text_roll_label"
-                android:textStyle="bold"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
+
+
         </LinearLayout>
         
-        <LinearLayout
+     <LinearLayout
             android:id="@+id/hud_text_pitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
             
-            <TextView
-                android:id="@+id/hud_text_pitch_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="0dp"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
-            <TextView
-                android:id="@+id/hud_text_pitch_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="@string/hud_text_pitch_label"
-                android:textStyle="bold"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
+
+
         </LinearLayout>
 
     </LinearLayout>
@@ -131,22 +132,13 @@
             android:layout_weight="1"
             >
 
-            <TextView
-                android:id="@+id/hud_text_ip_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:text="@string/hud_text_ip_label"
-                android:textStyle="bold"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
+
             <TextView
                 android:id="@+id/hud_text_ip_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#BDF5EC"
+                android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:typeface="monospace" />
 
@@ -159,47 +151,28 @@
             >
             
             <TextView
-                android:id="@+id/hud_text_connection_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:text="@string/hud_text_connection_label"
-                android:textStyle="bold"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
-            <TextView
                 android:id="@+id/hud_text_connection_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#BDF5EC"
+                android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>
 
-        <LinearLayout
+      <LinearLayout
             android:id="@+id/hud_text_bps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
             
-            <TextView
-                android:id="@+id/hud_text_bps_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:text="@string/hud_text_bps_label"
-                android:textStyle="bold"
-                android:textColor="#BDF5EC"
-                android:textSize="11sp"
-                android:typeface="monospace" />
+
             <TextView
                 android:id="@+id/hud_text_bps_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:textColor="#BDF5EC"
+                android:textColor="#FFFFFF"
                 android:textSize="11sp"
                 android:typeface="monospace" />
         </LinearLayout>

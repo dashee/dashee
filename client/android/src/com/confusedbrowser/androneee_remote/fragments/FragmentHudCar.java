@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -132,14 +133,19 @@ public class FragmentHudCar extends FragmentHud
         
         
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        Typeface visitorFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/visitor1.ttf");
 
+        
+        
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
+        textViewHudPitchValue.setTypeface(visitorFont);
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
-
+        textViewHudRollValue.setTypeface(visitorFont);
+        
         this.setHudConnection("unknown");
         this.setHudBps(0);
         this.setHudPitch(0.0f);
@@ -195,8 +201,7 @@ public class FragmentHudCar extends FragmentHud
         if (pitch < 0.0)
             textViewHudPitchValue.setText("Negative?");
         
-        DecimalFormat twoDecimal = new DecimalFormat("000.00");
-        textViewHudPitchValue.setText(twoDecimal.format(pitch));
+        textViewHudPitchValue.setText(Math.round(pitch)+"");
     }
     
     /**
@@ -208,9 +213,8 @@ public class FragmentHudCar extends FragmentHud
     {
         if (roll < 0.0)
             textViewHudRollValue.setText("Negative?");
-    
-        DecimalFormat twoDecimal = new DecimalFormat("000.00");
-        textViewHudRollValue.setText(twoDecimal.format(roll));
+
+        textViewHudRollValue.setText(Math.round(roll)+"");
     }
     
     /**

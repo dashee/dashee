@@ -240,9 +240,9 @@ public class DrawHud extends View
     	
     	//Log.d("dashee", "percHieght: "+h*0.1);
     	double curY = this.gaugeBottomY;
-    	//Log.d("dashee", "rectSize: "+h*0.053);//38.0
+    	//Log.d("dashee", "rectSize: "+0.053);//38.0
     	double rectHeight = this.gaugeBarHieght;
-    	//Log.d("dashee", "gap: "+ Math.round(h*0.015));//11
+    	//Log.d("dashee", "gap: "+ Math.round(0.015));//11
     	double gap = this.gaugeBarGap;
     	
     	float p1x = this.centerX - innerRadius;
