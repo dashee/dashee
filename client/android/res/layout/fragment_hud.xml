@@ -15,40 +15,95 @@
 
     <LinearLayout
         android:id="@+id/hud_text"
-        android:layout_width="600dp"
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
         android:orientation="vertical">
-    <View 
-        android:layout_height="0dp"
-        android:layout_width="fill_parent"
-        android:layout_weight="11" />
+        <LinearLayout
+            android:id="@+id/hud_power_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_weight="33"
+                >
         <TextView
             android:id="@+id/hud_text_pitch_value"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:textSize="40dp"
+            android:textSize="90dp"
             android:textStyle="bold"
             android:typeface="monospace"
-            android:layout_weight="44"
+            android:text="25"
+            android:orientation="horizontal"
+            android:paddingTop="50dp"
              />
-        
-        <TextView
-            android:id="@+id/hud_text_roll_value"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:typeface="monospace"
-            android:layout_weight="44" />
-            <View 
-        android:layout_height="0dp"
-        android:layout_width="fill_parent"
-        android:layout_weight="11" />
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/hud_logo_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:layout_weight="33">
+            <TextView
+                    android:id="@+id/hud_temp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="#"
+                    />
+        </LinearLayout>
+        <LinearLayout
+                android:id="@+id/hud_logo_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="33">
+            <TextView
+                    android:id="@+id/hud_text_roll_min_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:textColor="#333333"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="000"
+                    android:paddingBottom="30dp"
+                    android:paddingRight="3dp"/>
+            <TextView
+                android:id="@+id/hud_text_roll_value"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="50dp"
+                android:textStyle="bold"
+                android:typeface="monospace"
+                android:text="33"
+                android:paddingBottom="50dp"
+                android:minEms="2"/>
+            <TextView
+                    android:id="@+id/hud_text_roll_max_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:textColor="#333333"
+                    android:textSize="10dp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="000"
+                    android:paddingBottom="30dp"
+                    android:paddingLeft="1dp"/>
+        </LinearLayout>
     </LinearLayout>
     
    <RelativeLayout
@@ -109,10 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-            
-
-
-        </LinearLayout>
+     </LinearLayout>
 
     </LinearLayout>
     

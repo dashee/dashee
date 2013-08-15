@@ -20,6 +20,7 @@ import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
 import com.confusedbrowser.androneee_remote.RangeMapping;
 import com.confusedbrowser.androneee_remote.models.*;
+import android.text.Html;
 
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ public class FragmentHudCar extends FragmentHud
 {
     /**
      * This is the variable where our HUD is drawn
-     * We use DrawHud 
+     * We use DrawHud
      */
     LinearLayout layout_hud;
     
@@ -63,6 +64,8 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudBpsValue; //Bytes Per Second
     private TextView textViewHudPitchValue; //Pitch Value
     private TextView textViewHudRollValue; //Pitch Value
+    private TextView textViewHudRollMinValue; //Pitch Min Value
+    private TextView textViewHudRollMaxValue; //Pitch Max Value
     
     private ModelVehicleCar car; //Pitch Value
     
@@ -101,7 +104,7 @@ public class FragmentHudCar extends FragmentHud
         /*LinearLayout slider_layout = (LinearLayout)view.findViewById(R.id.hud_power_slider);
         slider_layout.setRotation(-90.0f);*/
         
-        // Use the hieght and width of the image and the position of the stick to
+        // Use the height and width of the image and the position of the stick to
         // map to car power value
         final ImageView iv = (ImageView)view.findViewById(R.id.power_stick);
         iv.setOnTouchListener(new OnTouchListener(){
@@ -129,22 +132,30 @@ public class FragmentHudCar extends FragmentHud
                 startActivity(intent);
             }
         });
-        
-        
-        
+
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         Typeface visitorFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/visitor1.ttf");
 
-        
-        
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
+
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
         textViewHudPitchValue.setTypeface(visitorFont);
+        textViewHudPitchValue.getPaint().setAntiAlias(false);
+
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
         textViewHudRollValue.setTypeface(visitorFont);
+        textViewHudRollValue.getPaint().setAntiAlias(false);
+
+        textViewHudRollMinValue = (TextView)view.findViewById(R.id.hud_text_roll_min_value);
+        textViewHudRollMinValue.setTypeface(visitorFont);
+        textViewHudRollMinValue.getPaint().setAntiAlias(false);
+
+        textViewHudRollMaxValue = (TextView)view.findViewById(R.id.hud_text_roll_max_value);
+        textViewHudRollMaxValue.setTypeface(visitorFont);
+        textViewHudRollMaxValue.getPaint().setAntiAlias(false);
         
         this.setHudConnection("unknown");
         this.setHudBps(0);
@@ -198,10 +209,24 @@ public class FragmentHudCar extends FragmentHud
      */
     public void setHudPitch(float pitch)
     {
-        if (pitch < 0.0)
-            textViewHudPitchValue.setText("Negative?");
-        
-        textViewHudPitchValue.setText(Math.round(pitch)+"");
+        //Display invalid values when things are out of range
+        if (pitch < 0.0f || pitch > 100.0f)
+            textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>---</font>"));
+
+        int pitchValue = Math.round(pitch);
+        textViewHudPitchValue.setText(""+pitchValue);
+
+        // This slows shit up, No idea why, investigate. because having this would be good
+        /*
+        if (pitchValue == 100)
+            textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>100</font>"));
+        else if (pitchValue == 0)
+            textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>000</font>"));
+        else if (pitchValue < 10)
+            textViewHudPitchValue.setText(Html.fromHtml("<font color='#333333'>00</font>"+pitchValue));
+        else
+            textViewHudPitchValue.setText(Html.fromHtml("<font color='#333333'>0</font>"+pitchValue));
+        */
     }
     
     /**
@@ -211,10 +236,20 @@ public class FragmentHudCar extends FragmentHud
      */
     public void setHudRoll(float roll)
     {
-        if (roll < 0.0)
-            textViewHudRollValue.setText("Negative?");
+        //Display invalid values when things are out of range
+        if (roll < 0.0f || roll > 100.0f)
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>---</font>"));
 
-        textViewHudRollValue.setText(Math.round(roll)+"");
+        int rollValue = Math.round(roll);
+
+        if (rollValue == 100)
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>100</font>"));
+        else if (rollValue == 0)
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>000</font>"));
+        else if (rollValue < 10)
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#333333'>00</font>"+rollValue));
+        else
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#333333'>0</font>"+rollValue));
     }
     
     /**
