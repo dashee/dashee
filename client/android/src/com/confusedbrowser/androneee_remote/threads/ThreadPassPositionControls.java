@@ -70,10 +70,10 @@ public class ThreadPassPositionControls extends Thread
 
     /**
      * Initiate our thread. Set the variables from the params, and 
-     * set our ipAdress object. Also create a new instance of socket 
-     * @param ip - The ip address to send the commands to
-     * @param modelVehicle 
-     * @param roll - The default position which is to be set
+     * set our ipAdress object. Also create a new instance of socket
+     *
+     * @param modelServerState - Set our pointer to the modelServerState
+     * @param modelVehicle - Set our variable reference to the modelVehicle
      */
     public ThreadPassPositionControls(ModelServerState modelServerState, ModelVehicle modelVehicle)
     {

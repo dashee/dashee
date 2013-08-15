@@ -74,7 +74,6 @@ public class FragmentHudCar extends FragmentHud
     /**
      * Constructor. Required by Fragment type Objects,
      * and they have to be public
-     * @param modelVehicle 
      */
     public FragmentHudCar()
     {
@@ -172,7 +171,7 @@ public class FragmentHudCar extends FragmentHud
     /**
      * Set our textbox ip value
      *
-     * @param value - the ip address
+     * @param ip - the ip address
      */
     public void setHudIp(String ip)
     {
@@ -182,7 +181,7 @@ public class FragmentHudCar extends FragmentHud
     /**
      * Set our textbox connection value
      *
-     * @param value - the ip address
+     * @param ip - the ip address
      */
     public void setHudConnection(String ip)
     {
@@ -268,7 +267,8 @@ public class FragmentHudCar extends FragmentHud
      * The vehicle must be a ModelVehicleCar, other
      * wise an exception will be thrown.
      *
-     * @param car - The vehicle
+     * @param vehicle - The vehicle
+     *
      * @throws Exception - If vehicle is not ModelVehicleCar
      */
     public void setPosition(ModelVehicle vehicle)

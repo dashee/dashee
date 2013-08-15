@@ -136,7 +136,7 @@ public class MainActivity
     /**
      * Create a listener to activate when SharedPreferences are changed.
      *
-     * @param pref - The SharedPreferences
+     * @param prefs - The SharedPreferences
      * @param key - The key value changed
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 

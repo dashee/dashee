@@ -43,11 +43,8 @@ public class RangeMapping
     /**
      * Set up a new range function
      * 
-     * @param curMin - Current range min
-     * @param curMax - Current range max
      * @param targetMin - Current range min
      * @param targetMax - Current range max
-     * 
      */
     public void updateTargets(float targetMin, float targetMax)
     {

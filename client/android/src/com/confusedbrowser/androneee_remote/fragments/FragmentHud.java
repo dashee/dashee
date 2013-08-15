@@ -57,14 +57,14 @@ public abstract class FragmentHud extends Fragment
     /**
      * Set the Position of the hud
      *
-     * @param v - The vehicle object
+     * @param modelVehicle - The vehicle object
      */
-    public abstract void setPosition(ModelVehicle vehicle);
+    public abstract void setPosition(ModelVehicle modelVehicle);
 
     /**
      * Assign a reference of vehicle model to the hud
      *
-     * @param v - The vehicle object
+     * @param modelVehicle - The vehicle object
      */
 	public abstract void setVehicle(ModelVehicle modelVehicle);
 }

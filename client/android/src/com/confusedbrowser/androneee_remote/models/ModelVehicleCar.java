@@ -44,7 +44,7 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private enum powerControls {
         PHONEPITCH, SLIDER 
-    };
+    }
     
     private powerControls powerControl = powerControls.SLIDER;
     
@@ -82,7 +82,7 @@ public class ModelVehicleCar implements ModelVehicle
     }
 
     /**
-     * @see com.confusedbrowser.androneee_remote.models.ModelVehicle#getCommand()
+     * @see com.confusedbrowser.androneee_remote.models.ModelVehicle:getCommand()
      */
     @Override
     public ArrayList<byte[]> getCommands() 
@@ -91,8 +91,8 @@ public class ModelVehicleCar implements ModelVehicle
         // of command the second is the value.
         ArrayList<byte[]> commands = new ArrayList<byte[]>();
 
-        int steerInt = (int)Math.round(this.steer);
-        int powerInt = (int)Math.round(this.power);
+        int steerInt = Math.round(this.steer);
+        int powerInt = Math.round(this.power);
         
         if(steerInt != this.prevSteer)
         {
@@ -136,7 +136,7 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * Set steer and power, given the phone's coordinates
      *
-     * @param position - The phone position object
+     * @param sliderPos - The phone position object
      */
     @Override
     public void setFromSlider(int sliderPos) 

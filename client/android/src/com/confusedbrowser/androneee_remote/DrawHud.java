@@ -83,7 +83,7 @@ public class DrawHud extends View
     /**
      * Set our paint colours, for use with the Draw functions
      * 
-     * @param Context mContext - The context required by super
+     * @param mContext - The context required by super
      */
     public DrawHud(Context mContext)
     {

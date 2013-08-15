@@ -80,7 +80,7 @@ public class ModelServerState
      * the observer if the previous value was not the same
      * Helpful when you want to detect a connection success or failure
      *
-     * @param controls - The value to be set
+     * @param status - The value to be set
      */
     public void setStatusControls(boolean status)
     {
@@ -98,7 +98,7 @@ public class ModelServerState
      * the observer if the previous value was not the same
      * Helpful when you want to detect a connection success or failure
      *
-     * @param controls - The value to be set
+     * @param status - The value to be set
      */
     public void setStatusTelemetery(boolean status)
     {
@@ -116,7 +116,7 @@ public class ModelServerState
      * the observer if the previous value was not the same
      * Helpful when you want to detect a connection success or failure
      *
-     * @param controls - The value to be set
+     * @param status - The value to be set
      */
     public void setStatusFpv(boolean status)
     {
@@ -132,7 +132,7 @@ public class ModelServerState
     /**
      * Set the Controls port value.
      *
-     * @param int - A port greater than 1000, and not the same as telemetry or FPV
+     * @param port - A port greater than 1000, and not the same as telemetry or FPV
      */
     public void setControlsPort(int port)
     {
@@ -147,7 +147,7 @@ public class ModelServerState
     /**
      * Set the Telemetry port value.
      *
-     * @param int - A port greater than 1000, and not the same as Controls or Fpv
+     * @param port - A port greater than 1000, and not the same as Controls or Fpv
      */
     public void setTelemetryPort(int port)
     {
@@ -162,7 +162,7 @@ public class ModelServerState
     /**
      * Set the FPV port value.
      *
-     * @param int - A port greater than 1000, and not the same as Controls or Telemetry
+     * @param port - A port greater than 1000, and not the same as Controls or Telemetry
      */
     public void setFpvPort(int port)
     {
@@ -197,7 +197,7 @@ public class ModelServerState
     /**
      * Get the IP string
      *
-     * @returns InetAddress - The IP address
+     * @return InetAddress - The IP address
      */
     public InetAddress getIp()
     {
@@ -221,7 +221,7 @@ public class ModelServerState
      *
      * @param strict - True it is strict, false otherwise
      *
-     * @returns boolean - the server state
+     * @return boolean - the server state
      */
     public boolean isAlive(boolean strict)
     {
@@ -234,7 +234,7 @@ public class ModelServerState
     /**
      * non-strict mode of isAlive(boolean) function
      *
-     * @returns boolean - the server state
+     * @return boolean - the server state
      */
     public boolean isAlive()
     {

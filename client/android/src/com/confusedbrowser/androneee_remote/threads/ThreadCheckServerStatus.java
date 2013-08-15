@@ -55,9 +55,7 @@ public class ThreadCheckServerStatus extends Thread
      * Initiate our thread. Set the variables from the parameter, and 
      * set our ipAdress object. Also create a new instance of socket 
      *
-     * @param context - The context of this thread
-     * @param ip - The IP address to send the commands to
-     * @param roll - The default position which is to be set
+     * @param modelServerState - the data model to change
      */
     public ThreadCheckServerStatus(ModelServerState modelServerState)
     {
