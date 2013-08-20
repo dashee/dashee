@@ -152,20 +152,34 @@ public class FragmentHudCar extends FragmentHud
         textViewHudRollMinValue.setTypeface(visitorFont);
         textViewHudRollMinValue.getPaint().setAntiAlias(false);
 
-        textViewHudRollMaxValue = (TextView)view.findViewById(R.id.hud_text_roll_max_value);
-        textViewHudRollMaxValue.setTypeface(visitorFont);
-        textViewHudRollMaxValue.getPaint().setAntiAlias(false);
+
+        this.setElementsFont(R.id.hud_text_roll_max_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_ip_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_connection_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_power_label, visitorFont);
+        this.setElementsFont(R.id.hud_text_pitch_min_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_pitch_max_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_tilt_label, visitorFont);
         
         this.setHudConnection("unknown");
-        this.setHudBps(0);
-        this.setHudPitch(0.0f);
-        this.setHudRoll(0.0f);
+        //this.setHudBps(0);
+        this.setHudPitch(50.0f);
+        this.setHudRoll(50.0f);
         
         // Get the sharedPreferences so the values can be set
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         this.setHudIp(sharedPreferences.getString("pref_server_ip", "192.168.1.115"));
         
         return view;
+    }
+
+    /*
+     * Sets the ids listed to the font listed
+     */
+    private void setElementsFont(int elementID, Typeface font){
+        TextView textElement = (TextView)view.findViewById(elementID);
+        textElement.setTypeface(font);
+        textElement.getPaint().setAntiAlias(false);
     }
     
     /**
@@ -241,14 +255,16 @@ public class FragmentHudCar extends FragmentHud
 
         int rollValue = Math.round(roll);
 
-        if (rollValue == 100)
+        textViewHudRollValue.setText(rollValue+"");
+
+        /*if (rollValue == 100)
             textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>100</font>"));
         else if (rollValue == 0)
             textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>000</font>"));
         else if (rollValue < 10)
             textViewHudRollValue.setText(Html.fromHtml("<font color='#333333'>00</font>"+rollValue));
         else
-            textViewHudRollValue.setText(Html.fromHtml("<font color='#333333'>0</font>"+rollValue));
+            textViewHudRollValue.setText(Html.fromHtml("<font color='#333333'>0</font>"+rollValue));*/
     }
     
     /**
