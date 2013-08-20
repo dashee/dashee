@@ -14,7 +14,10 @@ class ServoControllerUARTTest : public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(ServoControllerUARTTest);
     CPPUNIT_TEST_EXCEPTION(testInvalidFile, Exception_ServoController);
     CPPUNIT_TEST_EXCEPTION(testInvalidChannel, Exception_ServoController_OutOfBound);
-    CPPUNIT_TEST_EXCEPTION(testInvalidTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, Exception_Servo);
     CPPUNIT_TEST(testSetAndGetServoTarget);
     CPPUNIT_TEST(testFallbackAndRevertTarget);
     CPPUNIT_TEST_SUITE_END();
@@ -25,7 +28,10 @@ private:
 protected:
     void testInvalidFile();
     void testInvalidChannel();
-    void testInvalidTarget();
+    void testInvalidPositiveTarget();
+    void testInvalidNegativeTarget();
+    void testInvalidLargePositiveTarget();
+    void testInvalidLargeNegativeTarget();
     void testSetAndGetServoTarget();
     void testFallbackAndRevertTarget();
 
@@ -61,9 +67,35 @@ void ServoControllerUARTTest::testInvalidChannel()
 /**
  * Exception is thrown when the target is invalid
  */
-void ServoControllerUARTTest::testInvalidTarget()
+void ServoControllerUARTTest::testInvalidPositiveTarget()
 {
     this->servoController->setTarget(1, 1000);
+}
+
+/**
+ * Exception is thrown when the target is invalid
+ */
+void ServoControllerUARTTest::testInvalidNegativeTarget()
+{
+    this->servoController->setTarget(1, -1000);
+}
+
+/**
+ * Exception is thrown when the target is invalid and set to a 
+ * very very large number
+ */
+void ServoControllerUARTTest::testInvalidLargePositiveTarget()
+{
+    this->servoController->setTarget(1, 100084);
+}
+
+/**
+ * Exception is thrown when the target is invalid and set to a 
+ * very very large negative number
+ */
+void ServoControllerUARTTest::testInvalidLargeNegativeTarget()
+{
+    this->servoController->setTarget(1, -234128989934832);
 }
 
 /**
@@ -87,6 +119,9 @@ void ServoControllerUARTTest::testSetAndGetServoTarget()
  */ 
 void ServoControllerUARTTest::testFallbackAndRevertTarget()
 {
+    // Call revert without any reason, just to see all works
+    this->servoController->revert();
+
     // Call fallback without any reason to make sure no exceptions are 
     // thrown
     this->servoController->fallback();

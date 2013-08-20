@@ -34,7 +34,7 @@ RELEASEID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
 
 # Create all required binaries, but in debug mode
 # Use `make release`
-all: tests debug
+all: debug
 libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
@@ -43,7 +43,7 @@ release: $(BINARIES)
 # A helpfull function for debug configurations
 debug: CFLAGS += -g -DDEBUG 
 debug: LFLAGS += -g -DDEBUG
-debug: $(BINARIES)
+debug: $(BINARIES) tests
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
@@ -79,16 +79,18 @@ $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	@$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
 # Tests
+tests: CFLAGS += -g -DDEBUG 
 tests: $(TESTS)
+	install --mode=775 src/runtest.sh bin/runtest
 
 $(TESTDIR)/testServoControllerDummy: tests/testServoControllerDummy.cpp $(LIBRARIES) $(OBJECTS) | $(TESTDIR)
 	@echo "Building test:binary 'testServoControllerDummy'"
-	@$(CC) $(CFLAGS) -Isrc $< \
+	@$(CC) $(CFLAGS) -Wno-overflow -Isrc $< \
 	    src/ServoController/Dummy.o src/ServoController.o src/Servo.o src/Servo/Dummy.o \
 	    -ldashee -lcppunit -o $@
 $(TESTDIR)/testServoControllerUART: tests/testServoControllerUART.cpp $(LIBRARIES) $(OBJECTS) | $(TESTDIR)
 	@echo "Building test:binary 'testServoControllerUART'"
-	@$(CC) $(CFLAGS) -Isrc $< \
+	@$(CC) $(CFLAGS) -Wno-overflow -Isrc $< \
 	    src/ServoController/UART.o src/ServoController.o src/Servo.o src/Servo/UART.o \
 	    -ldashee -lcppunit -o $@
 

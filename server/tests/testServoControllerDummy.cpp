@@ -7,6 +7,9 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResultCollector.h>
 
+#include <dashee/Common.h>
+#include <dashee/Log.h>
+
 #include "ServoController/Dummy.h"
 
 class ServoControllerDummyTest : public CppUnit::TestFixture
@@ -14,7 +17,10 @@ class ServoControllerDummyTest : public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(ServoControllerDummyTest);
     CPPUNIT_TEST_EXCEPTION(testInvalidFile, Exception_ServoController);
     CPPUNIT_TEST_EXCEPTION(testInvalidChannel, Exception_ServoController_OutOfBound);
-    CPPUNIT_TEST_EXCEPTION(testInvalidTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, Exception_Servo);
     CPPUNIT_TEST(testSetAndGetServoTarget);
     CPPUNIT_TEST(testFallbackAndRevertTarget);
     CPPUNIT_TEST_SUITE_END();
@@ -25,12 +31,15 @@ private:
 protected:
     void testInvalidFile();
     void testInvalidChannel();
-    void testInvalidTarget();
+    void testInvalidPositiveTarget();
+    void testInvalidNegativeTarget();
+    void testInvalidLargePositiveTarget();
+    void testInvalidLargeNegativeTarget();
     void testSetAndGetServoTarget();
     void testFallbackAndRevertTarget();
 
 public:
-    void setUp();
+    virtual void setUp();
     void tearDown();
 };
 
@@ -61,9 +70,35 @@ void ServoControllerDummyTest::testInvalidChannel()
 /**
  * Exception is thrown when the target is invalid
  */
-void ServoControllerDummyTest::testInvalidTarget()
+void ServoControllerDummyTest::testInvalidPositiveTarget()
 {
     this->servoController->setTarget(1, 1000);
+}
+
+/**
+ * Exception is thrown when the target is invalid
+ */
+void ServoControllerDummyTest::testInvalidNegativeTarget()
+{
+    this->servoController->setTarget(1, -1000);
+}
+
+/**
+ * Exception is thrown when the target is invalid and set to a 
+ * very very large number
+ */
+void ServoControllerDummyTest::testInvalidLargePositiveTarget()
+{
+    this->servoController->setTarget(1, 100084);
+}
+
+/**
+ * Exception is thrown when the target is invalid and set to a 
+ * very very large negative number
+ */
+void ServoControllerDummyTest::testInvalidLargeNegativeTarget()
+{
+    this->servoController->setTarget(1, -234128989934832);
 }
 
 /**
@@ -87,6 +122,9 @@ void ServoControllerDummyTest::testSetAndGetServoTarget()
  */ 
 void ServoControllerDummyTest::testFallbackAndRevertTarget()
 {
+    // Call revert without any reason, just to see all works
+    this->servoController->revert();
+
     // Call fallback without any reason to make sure no exceptions are 
     // thrown
     this->servoController->fallback();
@@ -161,6 +199,19 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ServoControllerDummyTest);
 
 int main(int argc, char ** argv)
 {
+    // Load the data file
+    char * datafile = (char *)"data/Servo.bin";
+    if (argc == 1)
+        datafile = argv[0]; 
+
+    // If the file does not exist, bomb out and return to user
+    // with an error
+    if (!dashee::Common::fexists(datafile))
+    {
+        dashee::Log::error("Data file '%s' does not exist!", datafile);
+        return 2;
+    }
+
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestRunner runner;
     CPPUNIT_NS::TestFactoryRegistry &registry = CPPUNIT_NS::TestFactoryRegistry::getRegistry();

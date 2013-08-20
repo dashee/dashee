@@ -1,4 +1,13 @@
 #!/bin/bash
+# 
+# This program is a simple wrapper that runs programs
+# which it find by argument, and checks there exit code
+# if all is well prints a pass, otherwise fail and moves
+# along to the next one.
+# 
+#
+# @compiled - bin/runtests
+# @author Shahmir Javaid
 
 # Go through each test and run it
 for t in "$@"; 
