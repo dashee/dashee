@@ -28,8 +28,8 @@ public class ModelVehicleCar implements ModelVehicle
     private float steerMax = 100.0f;
     private float steerMin = 0.0f;
     
-    private float powerMax = 60.0f;
-    private float powerMin = 40.0f;
+    private float powerMax = 100.0f;
+    private float powerMin = 0.0f;
     
     private boolean steerInverted = false;
     private boolean powerInverted = true;
@@ -58,15 +58,40 @@ public class ModelVehicleCar implements ModelVehicle
     {
     	return steer;
     }
-    
+
     /*
      * Getter for power
-     * 
+     *
      * @returns power
      */
     public float getPower()
     {
     	return power;
+    }
+
+
+    /**
+     * return the power of the car
+     * interally this will be from 0 - 100 so need to compensate for min max and invert
+     * @return float - the power value
+     */
+    private float getActualPower()
+    {
+        // 50 in case of power is stop
+        float powerValue = 50.0f;
+
+        if(this.power > this.powerMax){
+            powerValue = this.powerMax;
+        }else if (this.power < this.powerMin){
+            powerValue = this.powerMin;
+        }else{
+            powerValue = this.power;
+        }
+
+        if(this.powerInverted)
+            powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
+
+        return powerValue;
     }
 
     //public int get
@@ -92,7 +117,7 @@ public class ModelVehicleCar implements ModelVehicle
         ArrayList<byte[]> commands = new ArrayList<byte[]>();
 
         int steerInt = Math.round(this.steer);
-        int powerInt = Math.round(this.power);
+        int powerInt = Math.round(this.getActualPower());
         
         if(steerInt != this.prevSteer)
         {
@@ -129,7 +154,7 @@ public class ModelVehicleCar implements ModelVehicle
     {
         this.steer = this.getSteer(position.getRoll());
         if(powerControl == powerControls.PHONEPITCH)
-        	this.power = this.getPower(position.getPitch());
+        	this.power = this.getPowerFromPitch(position.getPitch());
     }
     
     
@@ -154,7 +179,7 @@ public class ModelVehicleCar implements ModelVehicle
      *
      * @return float - the power value
      */
-    private float getPower(float pitch) 
+    private float getPowerFromPitch(float pitch)
     {
     	// 50 in case of power is stop
     	float powerValue = 50.0f; 
@@ -171,6 +196,7 @@ public class ModelVehicleCar implements ModelVehicle
     	
     	return powerValue;
     }
+
 
     /**
      * Return the steer value, given the roll of the phone.

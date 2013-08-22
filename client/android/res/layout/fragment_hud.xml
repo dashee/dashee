@@ -58,15 +58,15 @@
             android:textStyle="bold"
             android:layout_marginBottom="6dp"/>
             <TextView
-                    android:id="@+id/hud_text_pitch_max_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:gravity="center"
-                    android:textColor="#444444"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
-                    android:typeface="monospace"
-                    android:text="000"/>
+                android:id="@+id/hud_text_pitch_max_value"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="#444444"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:typeface="monospace"
+                android:text="000"/>
         </LinearLayout>
         <LinearLayout
                 android:layout_width="fill_parent"
