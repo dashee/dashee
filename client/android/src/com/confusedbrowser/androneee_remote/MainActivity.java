@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.SeekBar;
+
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -111,6 +113,7 @@ public class MainActivity
         
         // Create our vehicle model
         this.modelVehicle = new ModelVehicleCar();
+
         
     	// Create our fragment views
         this.fragmentHud = new FragmentHudCar();
@@ -131,6 +134,21 @@ public class MainActivity
         this.threadCheckServerStatus = new ThreadCheckServerStatus(this.modelServerState);
         this.threadCheckServerStatus.start();
 
+        this.initAllSettings();
+
+    }
+
+    /*
+     * Iterate through the settings and apply the current values via the
+     * onSharedPreferenceChanged handler.
+     */
+    private void initAllSettings(){
+        Map<String,?> values = this.sharedPreferences.getAll();
+        for (Map.Entry<String, ?> entry : values.entrySet())
+        {
+            Log.d("Dashee", "init setting " + entry.getKey());
+            onSharedPreferenceChanged(this.sharedPreferences, entry.getKey());
+        }
     }
     
     /**
@@ -141,15 +159,13 @@ public class MainActivity
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
+        Log.d("Dashee", "Setting:: " + key);
     	if(key.equals("pref_server_ip")){
     		Log.d("Dashee", "Setting new ip addess: "+prefs.getString("pref_server_ip", "192.168.115"));
     		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.115"));
     	}else if(key.equals("pref_server_port")){
     		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
     	}else if(key.contains("pref_channel")){
-    		//e.g. pref_channel01
-    		Log.d("Dashee", "Channel Requested: "+key);
-    		Log.d("Dashee", "Channel Requested: "+key.substring(13, 14));
     		int channel =  Integer.parseInt(key.substring(13, 14));
     		
     		if(key.contains("invert")){

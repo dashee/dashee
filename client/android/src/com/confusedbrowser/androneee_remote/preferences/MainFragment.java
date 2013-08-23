@@ -10,7 +10,9 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import com.confusedbrowser.androneee_remote.R;
- 
+
+import java.util.Map;
+
 /**
  * This will handle our Preference object
  * 
@@ -21,13 +23,15 @@ public class MainFragment
     extends PreferenceFragment 
     implements OnSharedPreferenceChangeListener
 {
+    SharedPreferences sharedPref;
+
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
             
-        SharedPreferences sharedPref = getPreferenceScreen().getSharedPreferences();
+        this.sharedPref = getPreferenceScreen().getSharedPreferences();
         sharedPref.registerOnSharedPreferenceChangeListener(this);
         
         Log.d("Dashee", "Init main setting fragment");
@@ -57,11 +61,18 @@ public class MainFragment
     private void setSharedPreferenceState(SharedPreferences sharedPref) 
     {
     	Log.d("Dashee", "Setting the prefernces summeries onload");
-        findPreference("pref_server_ip").setSummary(sharedPref.getString("pref_server_ip", "192.168.1.115"));
+        /*findPreference("pref_server_ip").setSummary(sharedPref.getString("pref_server_ip", "192.168.1.115"));
         findPreference("pref_server_port").setSummary(sharedPref.getString("pref_server_port", "2047"));
         findPreference("pref_channel01_trim").setSummary(sharedPref.getString("pref_channel01_trim", "0"));
         findPreference("pref_channel02_trim").setSummary(sharedPref.getString("pref_channel02_trim", "0"));
-        findPreference("pref_channel03_trim").setSummary(sharedPref.getString("pref_channel03_trim", "0"));
+        findPreference("pref_channel03_trim").setSummary(sharedPref.getString("pref_channel03_trim", "0"));*/
+        Map<String,?> values = this.sharedPref.getAll();
+        for (Map.Entry<String, ?> entry : values.entrySet())
+        {
+            Log.d("Dashee", "init setting " + entry.getKey());
+            findPreference(entry.getKey()).setSummary(sharedPref.getString(entry.getKey(), "0"));
+            onSharedPreferenceChanged(this.sharedPref, entry.getKey());
+        }
     }
 
     /**

@@ -1,9 +1,12 @@
 package com.confusedbrowser.androneee_remote.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.lang.Math;
 
 import com.confusedbrowser.androneee_remote.RangeMapping;
+
 
 
 /**
@@ -190,8 +193,10 @@ public class ModelVehicleCar implements ModelVehicle
         	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f,this.powerMax); // TODO: invert option
         else if(pitch <=-1.70f) 
         	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, this.powerMin, 50.0f);
-    	
-    	if(this.powerInverted)
+
+        Log.d("Dashee", "Power Inverterd: " + this.powerInverted);
+
+        if(this.powerInverted)
     		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
     	
     	return powerValue;
@@ -209,7 +214,7 @@ public class ModelVehicleCar implements ModelVehicle
     private float getSteer(float roll) 
     {
     	float steerValue = steerMapping.remapValue(roll);
-    	if(this.steerInverted) 
+    	if(this.steerInverted)
     		steerValue =  this.steerMax - steerValue;
     	return steerValue;
     }
