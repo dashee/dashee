@@ -58,4 +58,11 @@ public interface ModelVehicle {
      * @param sliderPos - Current position of the slider.
      */
 	void setFromSlider(int sliderPos);
+
+    /**
+     * Use pitch to control power
+     *
+     * @param value - Set it to use pitch or not
+     */
+    public void setPowerToUsePitch(boolean value);
 }

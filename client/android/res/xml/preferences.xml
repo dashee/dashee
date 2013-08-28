@@ -14,6 +14,11 @@
             android:key="pref_server_port"
             android:summary="@string/pref_server_port_default"
             android:title="@string/pref_server_port" />
+        <SwitchPreference
+            android:defaultValue="0"
+            android:key="pref_phone_tilt"
+            android:summary="Use the phone pitch to control power"
+            android:title="Power Control" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_channel" >
         <PreferenceScreen

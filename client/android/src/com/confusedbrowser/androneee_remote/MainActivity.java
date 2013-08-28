@@ -165,7 +165,9 @@ public class MainActivity
     		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.115"));
     	}else if(key.equals("pref_server_port")){
     		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
-    	}else if(key.contains("pref_channel")){
+        }else if(key.contains("pref_phone_tilt")){
+            this.modelVehicle.setPowerToUsePitch(prefs.getBoolean(key, false));
+        }else if(key.contains("pref_channel")){
     		int channel =  Integer.parseInt(key.substring(13, 14));
     		
     		if(key.contains("invert")){

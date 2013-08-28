@@ -19,10 +19,11 @@ import com.confusedbrowser.androneee_remote.RangeMapping;
  */
 public class ModelVehicleCar implements ModelVehicle 
 {
-    private float steer = 50.0f;
+    private float steer = 50.0f; // Between 0 - 100
+    private float actualSteer = 50.0f;
     private int prevSteer;
     
-    private float power = 0.0f;
+    private float power = 50.0f; // Between 0 - 100
     private int prevPower;
 
     private int steerTrim = 0;
@@ -36,22 +37,39 @@ public class ModelVehicleCar implements ModelVehicle
     
     private boolean steerInverted = false;
     private boolean powerInverted = true;
+
+    // When things like steerMax and and steerMin
+    // Change want temp flag so UI can update efficiently instead of all the time
+    private boolean settingsChanged = false;
     
     // Set up mappings
     private RangeMapping steerMapping;
+    private RangeMapping visualSteerMapping;
     
     
     /*
      *  We can either use the phone pitch or an on screen slider
-     *  to set the cars power. So setting that option as an enum.
+     *  to set the cars power. So setting that option as a boolean
      */
-    private enum powerControls {
+    /*private enum powerControls {
         PHONEPITCH, SLIDER 
+    }*/
+    
+    private boolean powerControlSlider = true;
+
+
+
+    /**
+     * Set up the car vehicle type
+     */
+    public ModelVehicleCar()
+    {
+        this.prevSteer = (int)this.steer;
+        this.prevPower = (int)this.power;
+        this.steerMapping = new RangeMapping(-0.523f,0.523f,this.steerMax,this.steerMin);
+        this.visualSteerMapping = new RangeMapping(-0.523f,0.523f,100.0f,0.0f);
     }
-    
-    private powerControls powerControl = powerControls.SLIDER;
-    
-    
+
     /*
      * Getter for steer
      * 
@@ -59,7 +77,51 @@ public class ModelVehicleCar implements ModelVehicle
      */
     public float getSteer()
     {
-    	return steer;
+    	return this.steer;
+    }
+
+
+    /*
+     * Getter for steer
+     *
+     * @returns steer
+     */
+    public float getSteerMax()
+    {
+        return this.steerMax;
+    }
+
+
+    /*
+     * Getter for steer
+     *
+     * @returns steer
+     */
+    public float getSteerMin()
+    {
+        return this.steerMin;
+    }
+
+
+    /*
+     * Getter for steer
+     *
+     * @returns steer
+     */
+    public float getPowerMax()
+    {
+        return this.powerMax;
+    }
+
+
+    /*
+     * Getter for steer
+     *
+     * @returns steer
+     */
+    public float getPowerMin()
+    {
+        return this.powerMin;
     }
 
     /*
@@ -69,9 +131,21 @@ public class ModelVehicleCar implements ModelVehicle
      */
     public float getPower()
     {
-    	return power;
+    	return this.power;
     }
 
+
+    /*
+     * Flag to check if some settings have changed to allow UI updates
+     *
+     * @returns setting changed
+     */
+    public boolean getSettingChange()
+    {
+        boolean curValue = this.settingsChanged;
+        this.settingsChanged = false;
+        return curValue;
+    }
 
     /**
      * return the power of the car
@@ -83,12 +157,20 @@ public class ModelVehicleCar implements ModelVehicle
         // 50 in case of power is stop
         float powerValue = 50.0f;
 
-        if(this.power > this.powerMax){
+        /*if(this.power > this.powerMax){
             powerValue = this.powerMax;
         }else if (this.power < this.powerMin){
             powerValue = this.powerMin;
         }else{
             powerValue = this.power;
+        }*/
+
+        // Going from 50 - 100 is forward apply forward this.powerMax
+        if(this.power >= 50.0f)
+            powerValue = RangeMapping.mapValue(this.power, 50.0f, 100.0f, 50.0f, this.powerMax);
+        else{
+            // Going from 0 - 50 is reverse apply this.powerMin
+            powerValue = RangeMapping.mapValue(this.power, 0.0f, 50.0f, this.powerMin, 50.0f);
         }
 
         if(this.powerInverted)
@@ -99,15 +181,7 @@ public class ModelVehicleCar implements ModelVehicle
 
     //public int get
 	
-    /**
-     * Set up the car vehicle type
-     */
-    public ModelVehicleCar() 
-    {
-        this.prevSteer = (int)this.steer;
-        this.prevPower = (int)this.power;
-        steerMapping = new RangeMapping(-0.523f,0.523f,this.steerMax,this.steerMin);
-    }
+
 
     /**
      * @see com.confusedbrowser.androneee_remote.models.ModelVehicle:getCommand()
@@ -119,7 +193,7 @@ public class ModelVehicleCar implements ModelVehicle
         // of command the second is the value.
         ArrayList<byte[]> commands = new ArrayList<byte[]>();
 
-        int steerInt = Math.round(this.steer);
+        int steerInt = Math.round(this.actualSteer);
         int powerInt = Math.round(this.getActualPower());
         
         if(steerInt != this.prevSteer)
@@ -155,8 +229,9 @@ public class ModelVehicleCar implements ModelVehicle
     @Override
     public void setFromPhonePosition(ModelPhonePosition position) 
     {
-        this.steer = this.getSteer(position.getRoll());
-        if(powerControl == powerControls.PHONEPITCH)
+        this.steer = visualSteerMapping.remapValue(position.getRoll());
+        this.actualSteer = this.getActualSteer(position.getRoll());
+        if(!powerControlSlider)
         	this.power = this.getPowerFromPitch(position.getPitch());
     }
     
@@ -169,7 +244,7 @@ public class ModelVehicleCar implements ModelVehicle
     @Override
     public void setFromSlider(int sliderPos) 
     {
-        if(powerControl == powerControls.SLIDER)
+        if(powerControlSlider)
         	this.power = sliderPos;
     }
     
@@ -190,14 +265,14 @@ public class ModelVehicleCar implements ModelVehicle
     	if(pitch >= -0.1f)
     		powerValue = 50.0f;
         else if(pitch >= -1.17f)
-        	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f,this.powerMax); // TODO: invert option
+        	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f, 100.0f); // TODO: invert option
         else if(pitch <=-1.70f) 
-        	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, this.powerMin, 50.0f);
+        	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, 0.0f, 50.0f);
 
-        Log.d("Dashee", "Power Inverterd: " + this.powerInverted);
+        //Log.d("Dashee", "Power Inverterd: " + this.powerInverted);
 
-        if(this.powerInverted)
-    		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
+        /*if(this.powerInverted)
+    		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);*/
     	
     	return powerValue;
     }
@@ -211,10 +286,9 @@ public class ModelVehicleCar implements ModelVehicle
      *
      * @return float - the steer value
      */
-    private float getSteer(float roll) 
+    private float getActualSteer(float roll)
     {
     	float steerValue = steerMapping.remapValue(roll);
-        Log.d("Dashee", "Steer inverted: " + this.steerInverted);
     	if(this.steerInverted)
     		steerValue =  this.steerMax - steerValue + (100 - this.steerMax);
     	return steerValue;
@@ -223,6 +297,7 @@ public class ModelVehicleCar implements ModelVehicle
 	@Override
 	public void setTrim(int channel, int value)
 	{
+        settingsChanged = true;
 		switch(channel){
 			case 1:
 				this.steerTrim = value;
@@ -238,6 +313,7 @@ public class ModelVehicleCar implements ModelVehicle
 	@Override
 	public void setMax(int channel, float value)
 	{
+        settingsChanged = true;
 		switch(channel){
 			case 1:
 				this.steerMax = value;
@@ -255,6 +331,7 @@ public class ModelVehicleCar implements ModelVehicle
 	@Override
 	public void setMin(int channel, float value)
 	{
+        settingsChanged = true;
 		switch(channel){
 			case 1:
 				this.steerMin = value;
@@ -272,6 +349,7 @@ public class ModelVehicleCar implements ModelVehicle
 	@Override
 	public void setInvert(int channel, boolean value)
 	{
+        settingsChanged = true;
 		switch(channel){
 			case 1:
 				this.steerInverted = value;
@@ -283,5 +361,14 @@ public class ModelVehicleCar implements ModelVehicle
 				break;
 		}
 	}
+
+    /**
+     * Sets if we are using the screen as a slider or not
+     */
+    @Override
+    public void setPowerToUsePitch(boolean value)
+    {
+        this.powerControlSlider = !value;
+    }
 	
 }

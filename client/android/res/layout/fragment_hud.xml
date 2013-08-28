@@ -42,29 +42,27 @@
                     android:layout_height="fill_parent"
                     android:gravity="center"
                     android:textColor="#444444"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
+                    android:textSize="18dp"
                     android:typeface="monospace"
                     android:text="000"/>
             <TextView
             android:id="@+id/hud_text_pitch_value"
-            android:layout_width="140dp"
+            android:layout_width="84dp"
             android:layout_height="65dp"
             android:textColor="#FFFFFF"
-            android:textSize="85dp"
-            android:text="25"
+            android:textSize="90dp"
+            android:text="50"
             android:gravity="center"
             android:padding="0dp"
             android:textStyle="bold"
-            android:layout_marginBottom="6dp"/>
+            android:layout_marginBottom="9dp"/>
             <TextView
                 android:id="@+id/hud_text_pitch_max_value"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:textColor="#444444"
-                android:textSize="10dp"
-                android:textStyle="bold"
+                android:textSize="18dp"
                 android:typeface="monospace"
                 android:text="000"/>
         </LinearLayout>
@@ -73,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:layout_marginTop="-8dp">
+                android:layout_marginTop="-12dp">
             <TextView
                     android:id="@+id/hud_text_power_label"
                     android:layout_width="fill_parent"
@@ -121,17 +119,16 @@
                     android:layout_height="fill_parent"
                     android:gravity="center"
                     android:textColor="#444444"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
+                    android:textSize="18dp"
                     android:typeface="monospace"
                     android:text="000"/>
             <TextView
                 android:id="@+id/hud_text_roll_value"
-                android:layout_width="80dp"
+                android:layout_width="50dp"
                 android:layout_height="35dp"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
-                android:textSize="46dp"
+                android:textSize="48dp"
                 android:textStyle="bold"
                 android:includeFontPadding="false"
                 android:layout_marginBottom="4dp"
@@ -142,8 +139,7 @@
                     android:layout_height="fill_parent"
                     android:gravity="center"
                     android:textColor="#444444"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
+                    android:textSize="18dp"
                     android:typeface="monospace"
                     android:text="000"/>
         </LinearLayout>

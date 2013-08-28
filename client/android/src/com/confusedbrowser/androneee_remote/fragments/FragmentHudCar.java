@@ -66,7 +66,9 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudRollValue; //Pitch Value
     private TextView textViewHudRollMinValue; //Pitch Min Value
     private TextView textViewHudRollMaxValue; //Pitch Max Value
-    
+    private TextView textViewHudPowerMinValue;
+    private TextView textViewHudPowerMaxValue;
+
     private ModelVehicleCar car; //Pitch Value
     
 
@@ -110,7 +112,7 @@ public class FragmentHudCar extends FragmentHud
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				//Log.d("dashee", "Got click");
-				float mapVal = RangeMapping.mapValue(event.getY(), 72, iv.getHeight()-72, 100, 50);
+				float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 100, 50);
 				setVehiclePower((int) mapVal);
 				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
 				if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -150,16 +152,20 @@ public class FragmentHudCar extends FragmentHud
         textViewHudRollValue.getPaint().setAntiAlias(false);
 
         textViewHudRollMinValue = (TextView)view.findViewById(R.id.hud_text_roll_min_value);
-        textViewHudRollMinValue.setTypeface(visitorFont);
+        textViewHudRollMinValue.setTypeface(novamonoFont);
         textViewHudRollMinValue.getPaint().setAntiAlias(false);
 
+        textViewHudRollMaxValue = (TextView)view.findViewById(R.id.hud_text_roll_max_value);
 
-        this.setElementsFont(R.id.hud_text_roll_max_value, visitorFont);
+        textViewHudPowerMaxValue = (TextView)view.findViewById(R.id.hud_text_pitch_max_value);
+        textViewHudPowerMinValue = (TextView)view.findViewById(R.id.hud_text_pitch_min_value);
+
+        this.setElementsFont(R.id.hud_text_roll_max_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_ip_value, visitorFont);
         this.setElementsFont(R.id.hud_text_connection_value, visitorFont);
         this.setElementsFont(R.id.hud_text_power_label, visitorFont);
-        this.setElementsFont(R.id.hud_text_pitch_min_value, visitorFont);
-        this.setElementsFont(R.id.hud_text_pitch_max_value, visitorFont);
+        this.setElementsFont(R.id.hud_text_pitch_min_value, novamonoFont);
+        this.setElementsFont(R.id.hud_text_pitch_max_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_tilt_label, visitorFont);
         
         this.setHudConnection("unknown");
@@ -242,6 +248,30 @@ public class FragmentHudCar extends FragmentHud
             textViewHudPitchValue.setText(Html.fromHtml("<font color='#333333'>0</font>"+pitchValue));
         */
     }
+
+
+
+    /**
+     * Set our textbox Pitch value
+     *
+     * @param car - the car model
+     */
+    public void setMaxMinValues(ModelVehicleCar car)
+    {
+        if(car.getSettingChange()){
+            Log.d("Dashee", "Updating minor settings");
+            String steerMin = String.format("%03d", Math.round(car.getSteerMin()));
+            String steerMax = String.format("%03d", Math.round(car.getSteerMax()));
+            String powerMin = String.format("%03d", Math.round(car.getPowerMin()));
+            String powerMax = String.format("%03d", Math.round(car.getPowerMax()));
+            textViewHudRollMinValue.setText(steerMin+"");
+            textViewHudRollMaxValue.setText(steerMax+"");
+
+            textViewHudPowerMinValue.setText(powerMin+"");
+            textViewHudPowerMaxValue.setText(powerMax+"");
+        }
+    }
+
     
     /**
      * Set our textbox Roll value
@@ -297,6 +327,7 @@ public class FragmentHudCar extends FragmentHud
             this.setHudRoll(this.steer);
             this.setHudPitch(car.getPower());
             this.rotateHud(this.steer);
+            this.setMaxMinValues(car);
             draw_hud.setPowerPerc((car.getPower()-50)/50);
         }
         else

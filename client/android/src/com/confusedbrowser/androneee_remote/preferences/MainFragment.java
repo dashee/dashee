@@ -68,7 +68,7 @@ public class MainFragment
         Map<String,?> values = sharedPref.getAll();
         for (Map.Entry<String, ?> entry : values.entrySet())
         {
-            Log.d("Dashee", "init setting " + entry.getKey());
+            ///Log.d("Dashee", "init setting " + entry.getKey());
             if(summaryToValue.contains(entry.getKey()))
                 findPreference(entry.getKey()).setSummary(sharedPref.getString(entry.getKey(), "0"));
         }
