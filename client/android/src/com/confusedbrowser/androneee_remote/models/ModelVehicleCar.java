@@ -214,8 +214,9 @@ public class ModelVehicleCar implements ModelVehicle
     private float getSteer(float roll) 
     {
     	float steerValue = steerMapping.remapValue(roll);
+        Log.d("Dashee", "Steer inverted: " + this.steerInverted);
     	if(this.steerInverted)
-    		steerValue =  this.steerMax - steerValue;
+    		steerValue =  this.steerMax - steerValue + (100 - this.steerMax);
     	return steerValue;
     }
 
@@ -240,7 +241,7 @@ public class ModelVehicleCar implements ModelVehicle
 		switch(channel){
 			case 1:
 				this.steerMax = value;
-				steerMapping.updateTargets(this.steerMin, this.steerMax);
+				steerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
 			case 2:
 				this.powerMax = value;
@@ -257,7 +258,7 @@ public class ModelVehicleCar implements ModelVehicle
 		switch(channel){
 			case 1:
 				this.steerMin = value;
-				steerMapping.updateTargets(this.steerMin, this.steerMax);
+				steerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
 			case 2:
 				this.powerMin = value;

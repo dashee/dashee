@@ -134,6 +134,7 @@ public class FragmentHudCar extends FragmentHud
 
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         Typeface visitorFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/visitor1.ttf");
+        Typeface novamonoFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/novamono2.ttf");
 
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
@@ -141,11 +142,11 @@ public class FragmentHudCar extends FragmentHud
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
 
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
-        textViewHudPitchValue.setTypeface(visitorFont);
+        textViewHudPitchValue.setTypeface(novamonoFont);
         textViewHudPitchValue.getPaint().setAntiAlias(false);
 
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
-        textViewHudRollValue.setTypeface(visitorFont);
+        textViewHudRollValue.setTypeface(novamonoFont);
         textViewHudRollValue.getPaint().setAntiAlias(false);
 
         textViewHudRollMinValue = (TextView)view.findViewById(R.id.hud_text_roll_min_value);
