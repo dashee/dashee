@@ -156,24 +156,21 @@ int main(int argc, char **argv)
             {
                 //if (EXIT) { break; }
                 
+                // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
+                // the command byte uses the first 4 bits to set the command and the 2 4 bit to set the channel
                 // ---------
-                // 000000001 &
-                // 00000000-
+                // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
+                // command otherwise this must be a value
                 if ((serverUDP.getBuffer()[0] & 1) == 1)
                 {   
                     // @throw Exception_Servo
                     try
                     {
-                        // --------
-                        // 00001110 & 14
-                        // 0000---0 >> 1
-                        // 00000---
+                        // Bitwise AND with 00001110 (14) to zero the channel number, shift 1 as the first bit just tells us this is a command
                         unsigned char command = (serverUDP.getBuffer()[0] & 14) >> 1;
 
-                        // --------
-                        // 11110000 & 240
-                        // ----0000 >> 4
-                        // 0000----
+                        // Bitwise AND the command byte with 11110000 (240 in decimal) to zero the command number
+                        // then shift 4 to find the channel number as that is the last 4 bits of the command.
                         unsigned char channel = (serverUDP.getBuffer()[0] & 240) >> 4;
                         dashee::Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
 
