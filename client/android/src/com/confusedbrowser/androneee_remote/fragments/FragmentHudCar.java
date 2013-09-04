@@ -122,8 +122,8 @@ public class FragmentHudCar extends FragmentHud
 				return true;
 			}
 		});
-        
-        LinearLayout optsButton = (LinearLayout)view.findViewById(R.id.hud_text_right_top);
+
+        Button optsButton = (Button)view.findViewById(R.id.dot_settings);
         optsButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
