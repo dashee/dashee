@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
@@ -99,7 +100,7 @@ public class FragmentHudCar extends FragmentHud
     {
         view = inflater.inflate(R.layout.fragment_hud, container, false);
         layout_hud = (LinearLayout)view.findViewById(R.id.hud_canvas);
-        draw_hud = new DrawHud (this.getActivity());
+        draw_hud = new DrawHud (this.getActivity(), view);
         layout_hud.addView(draw_hud);
         
         /*LinearLayout slider_layout = (LinearLayout)view.findViewById(R.id.hud_power_slider);
@@ -140,20 +141,19 @@ public class FragmentHudCar extends FragmentHud
 
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
+
+
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
 
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
         textViewHudPitchValue.setTypeface(novamonoFont);
-        textViewHudPitchValue.getPaint().setAntiAlias(false);
 
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
         textViewHudRollValue.setTypeface(novamonoFont);
-        textViewHudRollValue.getPaint().setAntiAlias(false);
 
         textViewHudRollMinValue = (TextView)view.findViewById(R.id.hud_text_roll_min_value);
         textViewHudRollMinValue.setTypeface(novamonoFont);
-        textViewHudRollMinValue.getPaint().setAntiAlias(false);
 
         textViewHudRollMaxValue = (TextView)view.findViewById(R.id.hud_text_roll_max_value);
 
@@ -186,7 +186,6 @@ public class FragmentHudCar extends FragmentHud
     private void setElementsFont(int elementID, Typeface font){
         TextView textElement = (TextView)view.findViewById(elementID);
         textElement.setTypeface(font);
-        textElement.getPaint().setAntiAlias(false);
     }
     
     /**

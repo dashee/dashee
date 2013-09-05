@@ -1,9 +1,14 @@
 package com.confusedbrowser.androneee_remote;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.*;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 /**
  * This is currently mapping out the HUD display
@@ -80,16 +85,18 @@ public class DrawHud extends View
     int activePowerInsetColor = 0xDF8429;
     int activeBatterInsetColor = 0xC8C8C8;
 
+    View view;
+
     /**
      * Set our paint colours, for use with the Draw functions
      * 
      * @param mContext - The context required by super
      */
-    public DrawHud(Context mContext)
+    public DrawHud(Context mContext, View inView)
     {
         super(mContext);
         context = mContext;
-      
+        this.view = inView;
         steerLine = new Paint();
         steerLine.setAntiAlias(true);
         steerLine.setColor(lineColor);
@@ -196,8 +203,30 @@ public class DrawHud extends View
     	this.addGaugePath(this.batteryPathsInner, false, this.innerGaugeRadius2, this.outerGaugeRadius);
     	this.addArc(this.powerOuterArc, true);
     	this.addArc(this.batteryOuterArc, false);
+
+        // Position some xml elements
+        LinearLayout ipInfo = (LinearLayout)view.findViewById(R.id.ip_info);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)ipInfo.getLayoutParams();
+        float textWidth = this.convertDpToPixel(73.0f, context);
+        float textHeight = this.convertDpToPixel(10.0f, context);
+        params.setMargins(Math.round(this.getMiddleInnerRightPos() - textWidth), Math.round(this.centerY-textHeight), 10, 0);
+        ipInfo.setLayoutParams(params);
     }
-    
+
+    /**
+    * This method converts dp unit to equivalent pixels, depending on device density.
+    *
+    * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+    * @param context Context to get resources and device specific display metrics
+    * @return A float value to represent px equivalent to dp depending on device density
+    */
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
+    }
+
     /*
      * Put together the arc that is to rotate on steer.
      */
@@ -327,6 +356,14 @@ public class DrawHud extends View
     	double angle2 = Math.atan2(this.centerY - y, this.centerX - x);
     	return -Math.toDegrees(angle1-angle2);
 	}
+
+    public float getMiddleInnerLeftPos(){
+        return this.centerX-this.steerArcRadius;
+    }
+
+    public float getMiddleInnerRightPos(){
+        return this.centerX+this.steerArcRadius;
+    }
     
     /**
      * Draw our hud paths and apply appropriate paints
