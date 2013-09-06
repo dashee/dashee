@@ -208,7 +208,7 @@ public class DrawHud extends View
         LinearLayout ipInfo = (LinearLayout)view.findViewById(R.id.ip_info);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)ipInfo.getLayoutParams();
         float textWidth = this.convertDpToPixel(73.0f, context);
-        float textHeight = this.convertDpToPixel(10.0f, context);
+        float textHeight = this.convertDpToPixel(11.0f, context);
         params.setMargins(Math.round(this.getMiddleInnerRightPos() - textWidth), Math.round(this.centerY-textHeight), 10, 0);
         ipInfo.setLayoutParams(params);
     }

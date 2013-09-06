@@ -71,6 +71,9 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudPowerMaxValue;
 
     private ModelVehicleCar car; //Pitch Value
+
+    // Touch control to pass reverse numbers?
+    private boolean Reverse = false;
     
 
 
@@ -113,8 +116,14 @@ public class FragmentHudCar extends FragmentHud
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				//Log.d("dashee", "Got click");
-				float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 100, 50);
-				setVehiclePower((int) mapVal);
+                if(Reverse){
+                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 0, 50);
+                    setVehiclePower((int) mapVal);
+                }else{
+                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 100, 50);
+                    setVehiclePower((int) mapVal);
+                }
+
 				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					//moveGrip(150,150);
@@ -123,6 +132,15 @@ public class FragmentHudCar extends FragmentHud
 				return true;
 			}
 		});
+
+        LinearLayout powerToggle = (LinearLayout)view.findViewById(R.id.power_direction_toggle);
+        powerToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Reverse = !Reverse;
+            }
+        });
+
 
         Button optsButton = (Button)view.findViewById(R.id.dot_settings);
         optsButton.setOnClickListener(new View.OnClickListener() {

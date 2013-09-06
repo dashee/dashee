@@ -41,7 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_weight="20">
+        android:layout_weight="20"
+        >
     </LinearLayout>
     <LinearLayout
             android:layout_width="fill_parent"
@@ -52,7 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:id="@+id/power_direction_toggle">
             <TextView
                     android:id="@+id/hud_text_pitch_min_value"
                     android:layout_width="wrap_content"
@@ -209,6 +211,7 @@
             android:text="!!!!"
             android:textAlignment="textEnd"
             android:gravity="right"
+            android:layout_marginBottom="2dp"
             />
         <TextView
             android:id="@+id/hud_text_ip_value"
