@@ -1,6 +1,8 @@
 package com.confusedbrowser.androneee_remote.fragments;
 
 import java.text.DecimalFormat;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -69,6 +71,8 @@ public class FragmentHudCar extends FragmentHud
     private TextView textViewHudRollMaxValue; //Pitch Max Value
     private TextView textViewHudPowerMinValue;
     private TextView textViewHudPowerMaxValue;
+    private TextView textViewDrive;
+    private TextView textViewReverse;
 
     private ModelVehicleCar car; //Pitch Value
 
@@ -138,6 +142,13 @@ public class FragmentHudCar extends FragmentHud
             @Override
             public void onClick(View v) {
                 Reverse = !Reverse;
+                if(Reverse){
+                    textViewDrive.setTextColor(Color.parseColor("#444444"));
+                    textViewReverse.setTextColor(Color.parseColor("#FFFFFF"));
+                }else{
+                    textViewReverse.setTextColor(Color.parseColor("#444444"));
+                    textViewDrive.setTextColor(Color.parseColor("#FFFFFF"));
+                }
             }
         });
 
@@ -177,11 +188,15 @@ public class FragmentHudCar extends FragmentHud
 
         textViewHudPowerMaxValue = (TextView)view.findViewById(R.id.hud_text_pitch_max_value);
         textViewHudPowerMinValue = (TextView)view.findViewById(R.id.hud_text_pitch_min_value);
+        textViewDrive = (TextView)view.findViewById(R.id.hud_text_drive_label);
+        textViewReverse = (TextView)view.findViewById(R.id.hud_text_reverse_label);
 
         this.setElementsFont(R.id.hud_text_roll_max_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_ip_value, visitorFont);
         this.setElementsFont(R.id.hud_text_connection_value, visitorFont);
-        this.setElementsFont(R.id.hud_text_power_label, visitorFont);
+        this.setElementsFont(R.id.hud_text_drive_label, visitorFont);
+        this.setElementsFont(R.id.hud_text_drive_divider, visitorFont);
+        this.setElementsFont(R.id.hud_text_reverse_label, visitorFont);
         this.setElementsFont(R.id.hud_text_pitch_min_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_pitch_max_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_tilt_label, visitorFont);
@@ -345,7 +360,8 @@ public class FragmentHudCar extends FragmentHud
             this.setHudPitch(car.getPower());
             this.rotateHud(this.steer);
             this.setMaxMinValues(car);
-            draw_hud.setPowerPerc((car.getPower()-50)/50);
+            float powerVal = (this.Reverse) ? 50-car.getPower() : car.getPower()-50 ;
+            draw_hud.setPowerPerc((powerVal)/50);
         }
         else
         {

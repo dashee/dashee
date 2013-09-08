@@ -38,6 +38,23 @@ public class ModelVehicleCar implements ModelVehicle
     private boolean steerInverted = false;
     private boolean powerInverted = true;
 
+    /**
+     * Define the gap when the values are resent. We want
+     * to ensure that the client communicates with the
+     * server in a regular basis, so the server can know
+     * the client is still alive. Change this value to determine
+     * the milliseconds the client should talk to the server if
+     * no new commands are being sent
+     */
+    private int timeOut = 200;
+
+    /**
+     * Hold the last time value of the command sent. This will help
+     * us determine the last time the value was sent, we can use this
+     * for comparison before we can send another value.
+     */
+    private long timeValueSent = 0; // Time when last value was set
+
     // When things like steerMax and and steerMin
     // Change want temp flag so UI can update efficiently instead of all the time
     private boolean settingsChanged = false;
@@ -189,6 +206,9 @@ public class ModelVehicleCar implements ModelVehicle
     @Override
     public ArrayList<byte[]> getCommands() 
     {
+        long currentTime = System.currentTimeMillis();
+        boolean somethingToSend = false;
+
         // Commands are sent as 2 byte packets, the first byte, is the type
         // of command the second is the value.
         ArrayList<byte[]> commands = new ArrayList<byte[]>();
@@ -196,7 +216,7 @@ public class ModelVehicleCar implements ModelVehicle
         int steerInt = Math.round(this.actualSteer);
         int powerInt = Math.round(this.getActualPower());
         
-        if(steerInt != this.prevSteer)
+        if(steerInt != this.prevSteer || (currentTime-this.timeValueSent > this.timeOut))
         {
             int sendSteer = steerInt+this.steerTrim;
             if (sendSteer > 100) { sendSteer = 100; }
@@ -205,9 +225,10 @@ public class ModelVehicleCar implements ModelVehicle
             // Steering 17 converts to 00010001.
             commands.add(new byte[]{ 17, (byte)(sendSteer << 1) });
             this.prevSteer = steerInt;
+            somethingToSend = true;
         }
         
-        if(powerInt != this.prevPower)
+        if(powerInt != this.prevPower || (currentTime-this.timeValueSent > this.timeOut))
         {
             int sendPower = powerInt+this.powerTrim;
             if (sendPower > 100) { sendPower = 100; }
@@ -216,8 +237,12 @@ public class ModelVehicleCar implements ModelVehicle
             // Steering 33 converts to 00100001.
             commands.add( new byte[]{ 33, (byte)(sendPower << 1) });
             this.prevPower = powerInt;
+            somethingToSend = true;
         }
-        
+
+        if(somethingToSend)
+            this.timeValueSent = System.currentTimeMillis();
+
         return commands;
     }
 
