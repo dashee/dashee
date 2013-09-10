@@ -2,9 +2,15 @@ package com.confusedbrowser.androneee_remote.models;
 
 import java.util.ArrayList;
 
-
-public interface ModelVehicle {
-	
+/**
+ * This is our interface from which all ModelVehicles
+ * are designed
+ *
+ * @author Shahmir Javaid
+ * @author David Buttar
+ */
+public interface ModelVehicle
+{
     /**
      * Build vehicle specific commands to the controller
      * 
@@ -17,7 +23,7 @@ public interface ModelVehicle {
      * 
      * @param position - Current position of the phone.
      */
-    void setFromPhonePosition(ModelPhonePosition position);
+    public void setFromPhonePosition(ModelPhonePosition position);
     
     /**
      * Set the trim value for channel.
@@ -25,8 +31,7 @@ public interface ModelVehicle {
      * @param channel - Desired channel number.
      * @param value - Desired trim value.
      */
-	void setTrim(int channel, int value);
-	
+    public void setTrim(int channel, int value);
 	
 	/**
      * Set the trim value for channel.
@@ -34,7 +39,7 @@ public interface ModelVehicle {
      * @param channel - Desired channel number.
      * @param value - Desired invert bool.
      */
-	void setInvert(int channel, boolean value);
+    public void setInvert(int channel, boolean value);
 
 	/**
      * Set the min value for channel.
@@ -42,7 +47,7 @@ public interface ModelVehicle {
      * @param channel - Desired channel number.
      * @param value - Set desired min.
      */
-	void setMin(int channel, float value);
+    public void setMin(int channel, float value);
 
 	/**
      * Set the max value for channel.
@@ -50,14 +55,14 @@ public interface ModelVehicle {
      * @param channel - Desired channel number.
      * @param value - Set desired man.
      */
-	void setMax(int channel, float value);
+    public void setMax(int channel, float value);
 
 	/**
      * Use on screen sliders to set power value.
      * 
      * @param sliderPos - Current position of the slider.
      */
-	void setFromSlider(int sliderPos);
+	public void setFromSlider(int sliderPos);
 
     /**
      * Use pitch to control power

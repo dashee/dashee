@@ -1,41 +1,38 @@
 package com.confusedbrowser.androneee_remote.models;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.lang.Math;
 
 import com.confusedbrowser.androneee_remote.RangeMapping;
 
-
-
 /**
  * @author shahmirj is a cock
- *
  */
+
 /**
  * @author shahmirj
- *
  */
 public class ModelVehicleCar implements ModelVehicle 
 {
+    /**
+     * The set of variables which hold steering information
+     */
     private float steer = 50.0f; // Between 0 - 100
     private float actualSteer = 50.0f;
     private int prevSteer;
-    
-    private float power = 50.0f; // Between 0 - 100
-    private int prevPower;
-
     private int steerTrim = 0;
-    private int powerTrim = 0;
-    
     private float steerMax = 100.0f;
     private float steerMin = 0.0f;
-    
+    private boolean steerInverted = false;
+
+    /**
+     * Set of variables which hold power information
+     */
+    private float power = 50.0f; // Between 0 - 100
+    private int prevPower;
+    private int powerTrim = 0;
     private float powerMax = 100.0f;
     private float powerMin = 0.0f;
-    
-    private boolean steerInverted = false;
     private boolean powerInverted = true;
 
     /**
@@ -55,26 +52,30 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private long timeValueSent = 0; // Time when last value was set
 
-    // When things like steerMax and and steerMin
-    // Change want temp flag so UI can update efficiently instead of all the time
+    /**
+     * When things like steerMax and and steerMin
+     * Change want temp flag so UI can update efficiently instead of all the time
+     */
     private boolean settingsChanged = false;
-    
-    // Set up mappings
+
+    /**
+     * The mapping objects for turning degrees into steer values
+     */
     private RangeMapping steerMapping;
     private RangeMapping visualSteerMapping;
     
-    
-    /*
-     *  We can either use the phone pitch or an on screen slider
-     *  to set the cars power. So setting that option as a boolean
+    /**
+     * We can either use the phone pitch or an on screen slider
+     * to set the cars power. So setting that option as a boolean
      */
     /*private enum powerControls {
         PHONEPITCH, SLIDER 
     }*/
-    
+
+    /**
+     * This will change the power to use pitch or the touch
+     */
     private boolean powerControlSlider = true;
-
-
 
     /**
      * Set up the car vehicle type
@@ -87,75 +88,69 @@ public class ModelVehicleCar implements ModelVehicle
         this.visualSteerMapping = new RangeMapping(-0.523f,0.523f,100.0f,0.0f);
     }
 
-    /*
+    /**
      * Getter for steer
      * 
-     * @returns steer
+     * @return float - The current steer value
      */
     public float getSteer()
     {
     	return this.steer;
     }
 
-
-    /*
-     * Getter for steer
+    /**
+     * Get the max steer value
      *
-     * @returns steer
+     * @return float - The max steer value
      */
     public float getSteerMax()
     {
         return this.steerMax;
     }
 
-
-    /*
-     * Getter for steer
+    /**
+     * Get the min steer value
      *
-     * @returns steer
+     * @return float - The min steer value
      */
     public float getSteerMin()
     {
         return this.steerMin;
     }
 
-
-    /*
-     * Getter for steer
+    /**
+     * Getter for power
      *
-     * @returns steer
+     * @returns float - The current power value
+     */
+    public float getPower()
+    {
+        return this.power;
+    }
+    /**
+     * Get the max power value
+     *
+     * @return float - The max power value
      */
     public float getPowerMax()
     {
         return this.powerMax;
     }
 
-
-    /*
-     * Getter for steer
+    /**
+     * Get the min power value
      *
-     * @returns steer
+     * @return float - The min power value
      */
     public float getPowerMin()
     {
         return this.powerMin;
     }
 
-    /*
-     * Getter for power
-     *
-     * @returns power
-     */
-    public float getPower()
-    {
-    	return this.power;
-    }
-
-
-    /*
+    /**
      * Flag to check if some settings have changed to allow UI updates
      *
-     * @returns setting changed
+     * @return boolean - settingChanged value
      */
     public boolean getSettingChange()
     {
@@ -166,13 +161,14 @@ public class ModelVehicleCar implements ModelVehicle
 
     /**
      * return the power of the car
-     * interally this will be from 0 - 100 so need to compensate for min max and invert
+     * internally this will be from 0 - 100 so need to compensate for min max and invert
+     *
      * @return float - the power value
      */
     private float getActualPower()
     {
         // 50 in case of power is stop
-        float powerValue = 50.0f;
+        float powerValue;
 
         /*if(this.power > this.powerMax){
             powerValue = this.powerMax;
@@ -196,12 +192,10 @@ public class ModelVehicleCar implements ModelVehicle
         return powerValue;
     }
 
-    //public int get
-	
-
-
     /**
      * @see com.confusedbrowser.androneee_remote.models.ModelVehicle:getCommand()
+     *
+     * @return ArrayList<byte> - A list of bytes which form the command to be sent to the server
      */
     @Override
     public ArrayList<byte[]> getCommands() 
@@ -260,7 +254,6 @@ public class ModelVehicleCar implements ModelVehicle
         	this.power = this.getPowerFromPitch(position.getPitch());
     }
     
-    
     /**
      * Set steer and power, given the phone's coordinates
      *
@@ -294,14 +287,11 @@ public class ModelVehicleCar implements ModelVehicle
         else if(pitch <=-1.70f) 
         	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, 0.0f, 50.0f);
 
-        //Log.d("Dashee", "Power Inverterd: " + this.powerInverted);
-
         /*if(this.powerInverted)
     		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);*/
     	
     	return powerValue;
     }
-
 
     /**
      * Return the steer value, given the roll of the phone.
@@ -319,6 +309,12 @@ public class ModelVehicleCar implements ModelVehicle
     	return steerValue;
     }
 
+    /**
+     * Sets the Trim value
+     *
+     * @param channel - Desired channel number.
+     * @param value - Desired trim value.
+     */
 	@Override
 	public void setTrim(int channel, int value)
 	{
@@ -334,47 +330,103 @@ public class ModelVehicleCar implements ModelVehicle
 				break;
 		}
 	}
-	
+
+    /**
+     * This will set the steer max, or power max according to the channel
+     * value.
+     *
+     * @param channel - Desired channel number.
+     * @param value - The max value of the channel.
+     *
+     * @throws java.lang.RuntimeException - If max is invalid
+     */
 	@Override
 	public void setMax(int channel, float value)
 	{
+        // TODO: Create a custom exception
+        if (value < 0 || value > 100)
+            throw new RuntimeException("Value of Max must be from 0-100.");
+
         settingsChanged = true;
+
 		switch(channel){
 			case 1:
+                // TODO: Use a custom Exception
+                if (value <= this.steerMin)
+                    throw new RuntimeException("The Max value must be greater than Min.");
+
 				this.steerMax = value;
 				steerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
+
 			case 2:
+
+                // TODO: Use a custom Exception
+                if (value <= this.powerMin)
+                    throw new RuntimeException("The Max value must be greater than Min.");
+
 				this.powerMax = value;
 				break;
+
 			default:
 				break;
 		}
 	}
-	
-	
+
+    /**
+     * This will set the steer min, or power min according to the channel
+     * value.
+     *
+     * @param channel - Desired channel number.
+     * @param value - The max value of the channel.
+     *
+     * @throws java.lang.RuntimeException - If min is invalid
+     */
 	@Override
 	public void setMin(int channel, float value)
 	{
+        // TODO: Create a custom exception
+        if (value < 0 || value > 100)
+            throw new RuntimeException("Value of Max must be from 0-100");
+
         settingsChanged = true;
+
 		switch(channel){
 			case 1:
+
+                // TODO: Use a custom Exception
+                if (value > this.steerMax)
+                    throw new RuntimeException("The Min value must not be greater than Max.");
+
 				this.steerMin = value;
 				steerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
+
 			case 2:
+
+                // TODO: Use a custom Exception
+                if (value >= this.powerMax)
+                    throw new RuntimeException("The Min value must not be greater than Max.");
+
 				this.powerMin = value;
 				break;
+
 			default:
 				break;
 		}
 	}
-	
-	
+
+    /**
+     * Set the invert variable
+     *
+     * @param channel - Desired channel number.
+     * @param value - Desired invert as a boolean.
+     */
 	@Override
 	public void setInvert(int channel, boolean value)
 	{
         settingsChanged = true;
+
 		switch(channel){
 			case 1:
 				this.steerInverted = value;
@@ -389,11 +441,12 @@ public class ModelVehicleCar implements ModelVehicle
 
     /**
      * Sets if we are using the screen as a slider or not
+     *
+     * @param value - The enable value
      */
     @Override
     public void setPowerToUsePitch(boolean value)
     {
         this.powerControlSlider = !value;
     }
-	
 }

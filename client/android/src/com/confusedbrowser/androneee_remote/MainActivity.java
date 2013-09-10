@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import java.util.Map;
 import java.util.Observable;
@@ -159,27 +160,35 @@ public class MainActivity
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
     {
-        Log.d("Dashee", "Setting:: " + key);
-    	if(key.equals("pref_server_ip")){
-    		Log.d("Dashee", "Setting new ip addess: "+prefs.getString("pref_server_ip", "192.168.115"));
-    		this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.115"));
-    	}else if(key.equals("pref_server_port")){
-    		this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
-        }else if(key.contains("pref_phone_tilt")){
-            this.modelVehicle.setPowerToUsePitch(prefs.getBoolean(key, false));
-        }else if(key.contains("pref_channel")){
-    		int channel =  Integer.parseInt(key.substring(13, 14));
-    		
-    		if(key.contains("invert")){
-    			this.modelVehicle.setInvert(channel, prefs.getBoolean(key, false));
-    		}else if(key.contains("max")){
-    			this.modelVehicle.setMax(channel, Integer.parseInt(prefs.getString(key, "100")));
-    		}else if(key.contains("min")){
-    			this.modelVehicle.setMin(channel, Float.parseFloat(prefs.getString(key, "0")));
-    		}else{
-    			this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "0")));
-    		}
-    	}
+        try
+        {
+            Log.d("Dashee", "Setting:: " + key);
+            if(key.equals("pref_server_ip")){
+                Log.d("Dashee", "Setting new ip address: "+prefs.getString("pref_server_ip", "192.168.115"));
+                this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.115"));
+            }else if(key.equals("pref_server_port")){
+                this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
+            }else if(key.contains("pref_phone_tilt")){
+                this.modelVehicle.setPowerToUsePitch(prefs.getBoolean(key, false));
+            }else if(key.contains("pref_channel")){
+                int channel =  Integer.parseInt(key.substring(13, 14));
+
+                if(key.contains("invert")){
+                    this.modelVehicle.setInvert(channel, prefs.getBoolean(key, false));
+                }else if(key.contains("max")){
+                    this.modelVehicle.setMax(channel, Integer.parseInt(prefs.getString(key, "100")));
+                }else if(key.contains("min")){
+                    this.modelVehicle.setMin(channel, Float.parseFloat(prefs.getString(key, "0")));
+                }else{
+                    this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "0")));
+                }
+            }
+        }
+        catch(RuntimeException e)
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     /**
