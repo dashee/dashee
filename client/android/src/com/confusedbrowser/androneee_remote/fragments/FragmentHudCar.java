@@ -1,7 +1,5 @@
 package com.confusedbrowser.androneee_remote.fragments;
 
-import java.text.DecimalFormat;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,7 +15,6 @@ import android.graphics.Typeface;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import com.confusedbrowser.androneee_remote.DrawHud;
 import com.confusedbrowser.androneee_remote.R;
 import com.confusedbrowser.androneee_remote.RangeMapping;
@@ -45,15 +42,10 @@ public class FragmentHudCar extends FragmentHud
      * Draw our Hud object
      */
     DrawHud draw_hud;
-    
-    /*
-     * Hud Slider to control power
-     */
-    SeekBar mSeekBar;
-    
+
     View view;
     
-    /*
+    /**
      * Assign area for current steer value
      */
     float steer;
@@ -77,8 +69,6 @@ public class FragmentHudCar extends FragmentHud
 
     // Touch control to pass reverse numbers?
     private boolean Reverse = false;
-    
-
 
     /**
      * Constructor. Required by Fragment type Objects,
@@ -87,12 +77,22 @@ public class FragmentHudCar extends FragmentHud
     public FragmentHudCar()
     {
     }
-    
+
+    /**
+     * Set the ModelVehicle
+     *
+     * @param modelVehicle - The vehicle object
+     */
     public void setVehicle(ModelVehicle modelVehicle)
     {
     	this.car = (ModelVehicleCar) modelVehicle;
     }
-    
+
+    /**
+     * Set the vehicle power
+     *
+     * @param power - The value to set it to
+     */
     private void setVehiclePower(int power)
     {
     	this.car.setFromSlider(power);
@@ -105,6 +105,8 @@ public class FragmentHudCar extends FragmentHud
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
     {
         view = inflater.inflate(R.layout.fragment_hud, container, false);
+
+        assert view != null;
         layout_hud = (LinearLayout)view.findViewById(R.id.hud_canvas);
         draw_hud = new DrawHud (this.getActivity(), view);
         layout_hud.addView(draw_hud);
@@ -151,7 +153,6 @@ public class FragmentHudCar extends FragmentHud
             }
         });
 
-
         Button optsButton = (Button)view.findViewById(R.id.dot_settings);
         optsButton.setOnClickListener(new View.OnClickListener() {
 
@@ -169,7 +170,6 @@ public class FragmentHudCar extends FragmentHud
 
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
-
 
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
@@ -212,7 +212,7 @@ public class FragmentHudCar extends FragmentHud
         return view;
     }
 
-    /*
+    /**
      * Sets the ids listed to the font listed
      */
     private void setElementsFont(int elementID, Typeface font){
@@ -346,8 +346,6 @@ public class FragmentHudCar extends FragmentHud
      * wise an exception will be thrown.
      *
      * @param vehicle - The vehicle
-     *
-     * @throws Exception - If vehicle is not ModelVehicleCar
      */
     public void setPosition(ModelVehicle vehicle)
     {
@@ -361,10 +359,6 @@ public class FragmentHudCar extends FragmentHud
             this.setMaxMinValues(car);
             float powerVal = (this.Reverse) ? 50-car.getPower() : car.getPower()-50 ;
             draw_hud.setPowerPerc((powerVal)/50);
-        }
-        else
-        {
-            //throw new Exception("vehicle must be a ModelVehicleCar");
         }
     }
 }
