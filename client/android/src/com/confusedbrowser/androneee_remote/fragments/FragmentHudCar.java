@@ -145,10 +145,10 @@ public class FragmentHudCar extends FragmentHud
                 Reverse = !Reverse;
                 if(Reverse){
                     textViewDrive.setTextColor(Color.parseColor("#444444"));
-                    textViewReverse.setTextColor(Color.parseColor("#FFFFFF"));
+                    textViewReverse.setTextColor(Color.parseColor("#CCCCCC"));
                 }else{
                     textViewReverse.setTextColor(Color.parseColor("#444444"));
-                    textViewDrive.setTextColor(Color.parseColor("#FFFFFF"));
+                    textViewDrive.setTextColor(Color.parseColor("#CCCCCC"));
                 }
             }
         });

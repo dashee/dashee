@@ -95,12 +95,11 @@
                     android:id="@+id/hud_text_drive_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#ffffff"
+                    android:textColor="#cccccc"
                     android:textSize="13dp"
                     android:gravity="center"
-                    android:textStyle="bold"
                     android:typeface="monospace"
-                    android:text="Drive"/>
+                    android:text="Drv"/>
             <TextView
                 android:id="@+id/hud_text_drive_divider"
                 android:layout_width="wrap_content"
@@ -108,7 +107,6 @@
                 android:textColor="#444444"
                 android:textSize="13dp"
                 android:gravity="center"
-                android:textStyle="bold"
                 android:typeface="monospace"
                 android:text="/"/>
             <TextView
@@ -118,9 +116,8 @@
                 android:textColor="#444444"
                 android:textSize="13dp"
                 android:gravity="center"
-                android:textStyle="bold"
                 android:typeface="monospace"
-                android:text="Reverse"/>
+                android:text="Rvs"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
