@@ -104,7 +104,6 @@ public class DrawHud extends View
         steerLine.setStrokeWidth(2.0f);
         steerLine.setStyle(Paint.Style.STROKE);
         
-        
         horizonLine = new Paint();
         horizonLine.setAntiAlias(true);
         horizonLine.setColor(horizonLineColor);
@@ -168,7 +167,6 @@ public class DrawHud extends View
         batteryArc.setAlpha(255);
         batteryArc.setStrokeWidth(3.0f);
         batteryArc.setStyle(Paint.Style.STROKE);
-
     }
     
     /**
@@ -176,7 +174,8 @@ public class DrawHud extends View
      * those calculation can be done as required (usually just once), instead of doing them
      * constantly in the draw.
      */
-    protected void onSizeChanged (int canvasWidth, int canvasHeight, int oldw, int oldh){
+    protected void onSizeChanged (int canvasWidth, int canvasHeight, int oldw, int oldh)
+    {
     	// Noticed it sometimes runs with 0 values, not sure why.
     	if(canvasWidth ==0 || canvasHeight==0) return;
     	
@@ -207,30 +206,33 @@ public class DrawHud extends View
         // Position some xml elements
         LinearLayout ipInfo = (LinearLayout)view.findViewById(R.id.ip_info);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)ipInfo.getLayoutParams();
-        float textWidth = this.convertDpToPixel(73.0f, context);
-        float textHeight = this.convertDpToPixel(11.0f, context);
+        float textWidth = convertDpToPixel(73.0f, context);
+        float textHeight = convertDpToPixel(11.0f, context);
+
         params.setMargins(Math.round(this.getMiddleInnerRightPos() - textWidth), Math.round(this.centerY-textHeight), 10, 0);
         ipInfo.setLayoutParams(params);
     }
 
     /**
-    * This method converts dp unit to equivalent pixels, depending on device density.
-    *
-    * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
-    * @param context Context to get resources and device specific display metrics
-    * @return A float value to represent px equivalent to dp depending on device density
-    */
-    public static float convertDpToPixel(float dp, Context context){
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp - A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context - Context to get resources and device specific display metrics
+     *
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp, Context context)
+    {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+        return (dp * (metrics.densityDpi / 160f));
     }
 
-    /*
+    /**
      * Put together the arc that is to rotate on steer.
      */
-    private void buildSteerPath(){
+    private void buildSteerPath()
+    {
     	float steerArcSweepAngle = 280.0f;
         float steerArcStartAngle = -180.0f;
         
@@ -243,7 +245,7 @@ public class DrawHud extends View
         this.steerPath.arcTo(this.steerOval, steerArcStartAngle, -steerArcSweepAngle, true);
     }
     
-    /*
+    /**
      * Build the outer long arcs on either side of the hud.
      */
     private void addArc(Path inPath, boolean leftHandSide){
@@ -260,8 +262,8 @@ public class DrawHud extends View
         inPath.arcTo(outerOval, outerArcParams[0], -outerArcParams[1], true);
     }
     
-    /*
-     * Put togther a collection of arc-ed bar paths, with an innerArc and outerArc
+    /**
+     * Put together a collection of arc-ed bar paths, with an innerArc and outerArc
      */
     private void addGaugePath(Path[] paths, boolean leftHandSide, float innerRadius, float outerRadius){
     	final RectF innerOval = new RectF();
@@ -305,12 +307,13 @@ public class DrawHud extends View
         }
     }
     
-    /*
+    /**
      * Based on desired starY and endY and radius get the appropriate 'path.arcTo' parameters.
      * Uses getCircleX to find the x coordinates that intersect the centered circle, and then
      * the getAngle function calculated the start angle form the center. 
      */
-    private float[] getArcParams(double startY, double endY, float radius, boolean reverse, boolean leftHandSide){
+    private float[] getArcParams(double startY, double endY, float radius, boolean reverse, boolean leftHandSide)
+    {
     	double startXCoor[] = getCircleX(startY, radius);
     	double endXCoor[] = getCircleX(endY, radius);
     	
@@ -335,7 +338,7 @@ public class DrawHud extends View
         return returnArray;
     }
     
-    /*
+    /**
      * Calculated the x coordinate of a circle with radius r at the center of the display
      * returns both coordinates as line will intersect 2 times.
      */
@@ -346,7 +349,7 @@ public class DrawHud extends View
         return returnArray;
     }
    
-    /*
+    /**
      * Calculate the angle from the center of the screen to x, y. Starting at 3 O'Clock.
      * Always return a negative angle, e.g -90 at 12, -180 at 9, -270 at 6.
      */
@@ -357,18 +360,20 @@ public class DrawHud extends View
     	return -Math.toDegrees(angle1-angle2);
 	}
 
-    public float getMiddleInnerLeftPos(){
+    public float getMiddleInnerLeftPos()
+    {
         return this.centerX-this.steerArcRadius;
     }
 
-    public float getMiddleInnerRightPos(){
+    public float getMiddleInnerRightPos()
+    {
         return this.centerX+this.steerArcRadius;
     }
     
     /**
      * Draw our hud paths and apply appropriate paints
      * 
-     * @param Canvas canvas - The canvas object to draw on.
+     * @param canvas - The canvas object to draw on.
      */
     protected void onDraw(Canvas canvas)
     {
@@ -421,12 +426,24 @@ public class DrawHud extends View
     	
         invalidate();
     }
-    
-    public void setTilt(float degrees){
-    	tilt = degrees;
+
+    /**
+     * Set the values of tilt in degrees
+     *
+     * @param degrees - The value in degrees
+     */
+    public void setTilt(float degrees)
+    {
+    	this.tilt = degrees;
     }
-    
-    public void setPowerPerc(float powerPerc){
+
+    /**
+     * Set the value of power in percentage
+     *
+     * @param powerPerc - The value in percentage
+     */
+    public void setPowerPerc(float powerPerc)
+    {
     	this.powerPerc = powerPerc;
     }
     

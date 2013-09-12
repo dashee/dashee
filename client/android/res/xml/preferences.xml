@@ -39,12 +39,14 @@
                 android:defaultValue="100"
                 android:key="pref_channel01_max"
                 android:summary="0"
-                android:title="Max" />
+                android:title="Max"
+                android:numeric="decimal"/>
             <EditTextPreference
                 android:defaultValue="0"
                 android:key="pref_channel01_min"
                 android:summary="0"
-                android:title="Min" />
+                android:title="Min"
+                android:numeric="decimal"/>
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_channel02"
@@ -64,12 +66,14 @@
                 android:defaultValue="100"
                 android:key="pref_channel02_max"
                 android:summary="0"
-                android:title="Max" />
+                android:title="Max"
+                android:numeric="decimal"/>
             <EditTextPreference
                 android:defaultValue="0"
                 android:key="pref_channel02_min"
                 android:summary="0"
-                android:title="Min" />
+                android:title="Min"
+                android:numeric="decimal"/>
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_channel03"
@@ -89,12 +93,14 @@
                 android:defaultValue="100"
                 android:key="pref_channel03_max"
                 android:summary="0"
-                android:title="Max" />
+                android:title="Max"
+                android:numeric="decimal"/>
             <EditTextPreference
                 android:defaultValue="0"
                 android:key="pref_channel03_min"
                 android:summary="0"
-                android:title="Min" />
+                android:title="Min"
+                android:numeric="decimal"/>
         </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>

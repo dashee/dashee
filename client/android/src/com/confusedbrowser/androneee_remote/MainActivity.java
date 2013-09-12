@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.confusedbrowser.androneee_remote.Exceptions.InvalidValue;
 import com.confusedbrowser.androneee_remote.fragments.*;
 import com.confusedbrowser.androneee_remote.models.*;
 import com.confusedbrowser.androneee_remote.threads.*;
@@ -163,28 +164,31 @@ public class MainActivity
         try
         {
             Log.d("Dashee", "Setting:: " + key);
-            if(key.equals("pref_server_ip")){
+
+            if(key.equals("pref_server_ip"))
+            {
                 Log.d("Dashee", "Setting new ip address: "+prefs.getString("pref_server_ip", "192.168.115"));
                 this.modelServerState.setIp(prefs.getString("pref_server_ip", "192.168.115"));
-            }else if(key.equals("pref_server_port")){
+            }
+            else if(key.equals("pref_server_port"))
                 this.modelServerState.setControlsPort(Integer.parseInt(prefs.getString("pref_server_port", "2047")));
-            }else if(key.contains("pref_phone_tilt")){
+            else if(key.contains("pref_phone_tilt"))
                 this.modelVehicle.setPowerToUsePitch(prefs.getBoolean(key, false));
-            }else if(key.contains("pref_channel")){
+            else if(key.contains("pref_channel"))
+            {
                 int channel =  Integer.parseInt(key.substring(13, 14));
 
-                if(key.contains("invert")){
+                if(key.contains("invert"))
                     this.modelVehicle.setInvert(channel, prefs.getBoolean(key, false));
-                }else if(key.contains("max")){
+                else if(key.contains("max"))
                     this.modelVehicle.setMax(channel, Integer.parseInt(prefs.getString(key, "100")));
-                }else if(key.contains("min")){
+                else if(key.contains("min"))
                     this.modelVehicle.setMin(channel, Float.parseFloat(prefs.getString(key, "0")));
-                }else{
+                else
                     this.modelVehicle.setTrim(channel, Integer.parseInt(prefs.getString(key, "0")));
-                }
             }
         }
-        catch(RuntimeException e)
+        catch(InvalidValue e)
         {
             Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
             toast.show();

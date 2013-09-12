@@ -10,6 +10,7 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import com.confusedbrowser.androneee_remote.R;
+import com.confusedbrowser.androneee_remote.models.ModelServerState;
 
 import java.util.List;
 import java.util.Map;
@@ -81,12 +82,29 @@ public class MainFragment
      * @param key - The preference changed
      */
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) 
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         Preference pref = findPreference(key);
         if (pref instanceof EditTextPreference) 
         {
             EditTextPreference etp = (EditTextPreference) pref;
+
+            if (
+                    key.contentEquals("pref_channel01_min") ||
+                    key.contentEquals("pref_channel01_max") ||
+                    key.contentEquals("pref_channel02_min") ||
+                    key.contentEquals("pref_channel02_max") ||
+                    key.contentEquals("pref_channel03_min") ||
+                    key.contentEquals("pref_channel03_max")
+            )
+            {
+                float val = Float.parseFloat(etp.getText());
+
+                // Invalid value so break out of any following tasks
+                if (val < 0.0f || val > 100.0f)
+                    return;
+            }
+
             pref.setSummary(etp.getText());
         }
     }

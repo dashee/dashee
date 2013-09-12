@@ -143,12 +143,15 @@ public class FragmentHudCar extends FragmentHud
             @Override
             public void onClick(View v) {
                 Reverse = !Reverse;
-                if(Reverse){
+                if(Reverse)
+                {
                     textViewDrive.setTextColor(Color.parseColor("#444444"));
-                    textViewReverse.setTextColor(Color.parseColor("#CCCCCC"));
-                }else{
+                    textViewReverse.setTextColor(Color.parseColor("#FF0000"));
+                }
+                else
+                {
                     textViewReverse.setTextColor(Color.parseColor("#444444"));
-                    textViewDrive.setTextColor(Color.parseColor("#CCCCCC"));
+                    textViewDrive.setTextColor(Color.parseColor("#00FF00"));
                 }
             }
         });
@@ -166,16 +169,19 @@ public class FragmentHudCar extends FragmentHud
 
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         Typeface visitorFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/visitor1.ttf");
+        Typeface visitor2Font = Typeface.createFromAsset(getActivity().getAssets(),"fonts/visitor2.ttf");
         Typeface novamonoFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/novamono2.ttf");
 
         // Set all of our textViews        
         textViewHudIpValue = (TextView)view.findViewById(R.id.hud_text_ip_value);
+        textViewHudIpValue.getPaint().setAntiAlias(false);
 
         textViewHudConnectionValue = (TextView)view.findViewById(R.id.hud_text_connection_value);
+        textViewHudConnectionValue.getPaint().setAntiAlias(false);
         textViewHudBpsValue = (TextView)view.findViewById(R.id.hud_text_bps_value);
 
         textViewHudPitchValue = (TextView)view.findViewById(R.id.hud_text_pitch_value);
-        textViewHudPitchValue.setTypeface(novamonoFont);
+        textViewHudPitchValue.setTypeface(visitor2Font);
 
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
         textViewHudRollValue.setTypeface(novamonoFont);
@@ -187,14 +193,16 @@ public class FragmentHudCar extends FragmentHud
 
         textViewHudPowerMaxValue = (TextView)view.findViewById(R.id.hud_text_pitch_max_value);
         textViewHudPowerMinValue = (TextView)view.findViewById(R.id.hud_text_pitch_min_value);
+
         textViewDrive = (TextView)view.findViewById(R.id.hud_text_drive_label);
+        textViewDrive.getPaint().setAntiAlias(false);
         textViewReverse = (TextView)view.findViewById(R.id.hud_text_reverse_label);
+        textViewReverse.getPaint().setAntiAlias(false);
 
         this.setElementsFont(R.id.hud_text_roll_max_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_ip_value, visitorFont);
         this.setElementsFont(R.id.hud_text_connection_value, visitorFont);
         this.setElementsFont(R.id.hud_text_drive_label, visitorFont);
-        this.setElementsFont(R.id.hud_text_drive_divider, visitorFont);
         this.setElementsFont(R.id.hud_text_reverse_label, visitorFont);
         this.setElementsFont(R.id.hud_text_pitch_min_value, novamonoFont);
         this.setElementsFont(R.id.hud_text_pitch_max_value, novamonoFont);

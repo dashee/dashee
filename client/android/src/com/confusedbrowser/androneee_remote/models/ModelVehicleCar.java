@@ -3,6 +3,7 @@ package com.confusedbrowser.androneee_remote.models;
 import java.util.ArrayList;
 import java.lang.Math;
 
+import com.confusedbrowser.androneee_remote.Exceptions.InvalidValue;
 import com.confusedbrowser.androneee_remote.RangeMapping;
 
 /**
@@ -345,7 +346,7 @@ public class ModelVehicleCar implements ModelVehicle
 	{
         // TODO: Create a custom exception
         if (value < 0 || value > 100)
-            throw new RuntimeException("Value of Max must be from 0-100.");
+            throw new InvalidValue("Value of Max must be from 0-100.");
 
         settingsChanged = true;
 
@@ -353,7 +354,7 @@ public class ModelVehicleCar implements ModelVehicle
 			case 1:
                 // TODO: Use a custom Exception
                 if (value <= this.steerMin)
-                    throw new RuntimeException("The Max value must be greater than Min.");
+                    throw new InvalidValue("The Max value must be greater than Min.");
 
 				this.steerMax = value;
 				steerMapping.updateTargets(this.steerMax, this.steerMin);
@@ -363,7 +364,7 @@ public class ModelVehicleCar implements ModelVehicle
 
                 // TODO: Use a custom Exception
                 if (value <= this.powerMin)
-                    throw new RuntimeException("The Max value must be greater than Min.");
+                    throw new InvalidValue("The Max value must be greater than Min.");
 
 				this.powerMax = value;
 				break;
@@ -387,7 +388,7 @@ public class ModelVehicleCar implements ModelVehicle
 	{
         // TODO: Create a custom exception
         if (value < 0 || value > 100)
-            throw new RuntimeException("Value of Max must be from 0-100");
+            throw new InvalidValue("Value of Max must be from 0-100");
 
         settingsChanged = true;
 
@@ -396,7 +397,7 @@ public class ModelVehicleCar implements ModelVehicle
 
                 // TODO: Use a custom Exception
                 if (value > this.steerMax)
-                    throw new RuntimeException("The Min value must not be greater than Max.");
+                    throw new InvalidValue("The Min value must not be greater than Max.");
 
 				this.steerMin = value;
 				steerMapping.updateTargets(this.steerMax, this.steerMin);
@@ -406,7 +407,7 @@ public class ModelVehicleCar implements ModelVehicle
 
                 // TODO: Use a custom Exception
                 if (value >= this.powerMax)
-                    throw new RuntimeException("The Min value must not be greater than Max.");
+                    throw new InvalidValue("The Min value must not be greater than Max.");
 
 				this.powerMin = value;
 				break;

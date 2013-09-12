@@ -1,5 +1,6 @@
 package com.confusedbrowser.androneee_remote.threads;
 
+
 import java.net.*;
 
 import com.confusedbrowser.androneee_remote.models.*;
@@ -20,7 +21,7 @@ public class ThreadCheckServerStatus extends Thread
     /**
      * The lock object, used when during pause
      */
-    private Object lockPause = new Object();
+    private final Object lockPause = new Object();
 
     /**
      *  Variable controlling the pause state of this thread.
@@ -28,13 +29,6 @@ public class ThreadCheckServerStatus extends Thread
      *  which in turn will call wait on lockPause.
      */
     private boolean pause = false;
-    
-    /**
-     * Variable controlling the execution of a thread.
-     * The run() function runs constantly, so exit variable
-     * controls the infinite loop
-     */
-    private boolean exit = false;
 
     /**
      * Define the gap when the values are resent. We want
@@ -84,10 +78,12 @@ public class ThreadCheckServerStatus extends Thread
      */
     public void run() 
     {   
-        while(!exit)
+        while(true)
         {
             try 
             {
+                Thread.sleep(this.timeOut);
+
                 // first byte sets the protocol and the channel number
                 // second byte will set the position
                 byte command[] = new byte[]{ 7 };
@@ -110,13 +106,8 @@ public class ThreadCheckServerStatus extends Thread
                     this.modelServerState.setStatusControls(true);
                 else
                     this.modelServerState.setStatusControls(false);
-                
-                Thread.sleep(this.timeOut);
             }
-            catch (SocketTimeoutException e)
-            {
-                e.printStackTrace();
-            }
+            catch (SocketTimeoutException ignored) {}
             catch (Exception e) 
             {
                 e.printStackTrace();
@@ -136,9 +127,7 @@ public class ThreadCheckServerStatus extends Thread
                     {
                         lockPause.wait();
                     } 
-                    catch (InterruptedException e) 
-                    {
-                    }
+                    catch (InterruptedException ignored) {}
                 }
             }
         }
