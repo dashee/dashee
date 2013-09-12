@@ -1,5 +1,7 @@
 package com.confusedbrowser.androneee_remote.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -304,7 +306,31 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getActualSteer(float roll)
     {
-    	float steerValue = steerMapping.remapValue(roll);
+
+        float steerValue;
+    	//float steerValue = steerMapping.remapValue(roll);
+
+        float sensitivity = 0.0f;
+        float sensitivityRange = (float)((float)sensitivity*Math.pow(0.523, 3));
+
+        if (sensitivity != 0.0)
+        {
+
+            //roll = 0.01f*Math.pow(Double.parseDouble(roll,3);
+            //Log.d("Dashee", "Roll: " +roll+"");
+            //double steerValueTemp = RangeMapping.mapValue(roll, -0.523f, 0.523f, -5.0f, 5.0f);
+            //Log.d("Dashee", "First Map: " +steerValueTemp+"");
+            double steerValueTemp = sensitivity*Math.pow(roll,3);
+            //Log.d("Dashee", "Function applyd: " +steerValueTemp+"");
+            steerValue = RangeMapping.mapValue((float)steerValueTemp, -sensitivityRange, sensitivityRange, this.steerMax, this.steerMin);
+            //Log.d("Dashee", "2nd map: " +steerValue+"");
+        }
+        else
+        {
+            steerValue = steerMapping.remapValue(roll);
+        }
+
+
     	if(this.steerInverted)
     		steerValue =  this.steerMax - steerValue + (100 - this.steerMax);
     	return steerValue;
