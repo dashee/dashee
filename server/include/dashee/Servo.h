@@ -1,5 +1,5 @@
 /**
- * @file src/Servo.h
+ * @file include/dashee/Servo.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -28,9 +28,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include <dashee/Log.h>
 
-#include "Exception/Servo.h"
+#include <dashee/Log.h>
+#include <dashee/Exception/Servo.h>
+
+namespace dashee
+{
+    class Servo;
+}
 
 /**
  * Servo abstraction.
@@ -39,7 +44,7 @@
  * you should be able to control a servo using some major public functions
  * defined here
  */
-class Servo
+class dashee::Servo
 {
 private:
     

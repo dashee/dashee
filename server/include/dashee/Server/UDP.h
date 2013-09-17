@@ -1,5 +1,5 @@
 /**
- * @file src/Server/UDP.h
+ * @file include/dashee/Server/UDP.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -24,8 +24,13 @@
 
 #include <stdio.h>
 
-#include "../Server.h"
-#include "../Exception/Server/Signal.h"
+#include <dashee/Server.h>
+#include <dashee/Exception/Server/Signal.h>
+
+namespace dashee
+{
+    class ServerUDP;
+}
 
 /**
  * UDP server class.
@@ -39,7 +44,7 @@
  *
  * Note write should only work if and only if a read has returned.
  */
-class ServerUDP: public Server
+class dashee::ServerUDP: public dashee::Server
 {
 
 protected:

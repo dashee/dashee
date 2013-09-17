@@ -1,4 +1,6 @@
-#include "UART.h"
+#include <dashee/Servo/UART.h>
+
+using namespace dashee;
 
 /**
  * Constructor.
@@ -42,9 +44,9 @@ ServoUART::~ServoUART()
  *  3rd byte - The command to set target it is 0x10
  *  4th byte - The channel
  *
- * @throws Exception_Servo() If a read write error occurs
+ * @throws ExceptionServo If a read write error occurs
  *
- * @return The Target value of a channel
+ * @returns The Target value of a channel
  */
 unsigned short int ServoUART::getTarget()
 {
@@ -55,7 +57,7 @@ unsigned short int ServoUART::getTarget()
     command[3] = (char)this->channel;
 
     if(write(*this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("ServoUART::getTarget write failed");
+        throw ExceptionServo("ServoUART::getTarget write failed");
 
     unsigned char response[2];
     
@@ -63,13 +65,13 @@ unsigned short int ServoUART::getTarget()
     for (int n = 0, total = 0; n < 2; total++)
     {
         if (total > 10)
-            throw Exception_Servo("Reading getError, ran more than 10 times");
+            throw ExceptionServo("Reading getError, ran more than 10 times");
 
         int ec = read(*this->fd, response+n, 1);
 
         // the ec came back with read error, lets not continue
         if(ec < 0)
-            throw Exception_Servo("read failed in ServoUART::getTarget");
+            throw ExceptionServo("read failed in ServoUART::getTarget");
 
         // the ec came back with 0, which means sleep and try again
         if (ec == 0)
@@ -79,7 +81,7 @@ unsigned short int ServoUART::getTarget()
         n++;
     }
 
-    return TargetToPercentage(response[0] + 256*response[1]);
+    return this->TargetToPercentage(response[0] + 256*response[1]);
 }
 
 /**
@@ -97,13 +99,13 @@ unsigned short int ServoUART::getTarget()
  *
  * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
- * @throws Exception_Servo If writing to the board fails
+ * @throws ExceptionServo If writing to the board fails
  */
 void ServoUART::setTarget(unsigned short int target)
 {
     // Convert the percentage target value
     // to Servo controller target value
-    PercentageToTarget(&target);
+    this->PercentageToTarget(&target);
  
     unsigned char command[6];
     command[0] = 0xAA;
@@ -122,5 +124,5 @@ void ServoUART::setTarget(unsigned short int target)
     command[5] = (target >> 7) & 127;
 
     if (write(*this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo("ServoUART::setTarget write failed");
+        throw ExceptionServo("ServoUART::setTarget write failed");
 }

@@ -1,4 +1,6 @@
-#include "Servo.h"
+#include <dashee/Servo.h>
+
+using namespace dashee;
 
 /** 
  * Initiate the Servo's defaults, fallback and current
@@ -11,10 +13,10 @@ Servo::Servo(const unsigned short int channel)
     this->channel = channel;
     
     // Reset all values to 0;   
-    memset(&defaults, 0, sizeof(defaults));
-    memset(&fallbacks, 0, sizeof(fallbacks));
-    memset(&current, 0, sizeof(current));
-    memset(&fallbackEnabled, 0, sizeof(fallbackEnabled));
+    memset(&this->defaults, 0, sizeof(this->defaults));
+    memset(&this->fallbacks, 0, sizeof(this->fallbacks));
+    memset(&this->current, 0, sizeof(this->current));
+    memset(&this->fallbackEnabled, 0, sizeof(this->fallbackEnabled));
 }
 
 /**
@@ -23,12 +25,12 @@ Servo::Servo(const unsigned short int channel)
  *
  * @param target - The value of the target
  *
- * @throws Exception_Servo - If the value is greated than 100
+ * @throws ExceptionServo - If the value is greated than 100
  */
 void Servo::setTargetDefault(unsigned short int target)
 {
     if (target > 100)
-        throw Exception_Servo("setTargetDefault: Invalid defaults.target, must be 0-100!\n");
+        throw ExceptionServo("setTargetDefault: Invalid defaults.target, must be 0-100!\n");
 
     this->defaults.target = target;
     this->setTarget(target);
@@ -40,12 +42,12 @@ void Servo::setTargetDefault(unsigned short int target)
  *
  * @param target - The target to set to
  *
- * @throws Exception_Servo - If the value is greated than 100
+ * @throws ExceptionServo - If the value is greated than 100
  */
 void Servo::setTargetFallback(unsigned short int target)
 {
     if (target > 100)
-        throw Exception_Servo("setTargetFallback: Invalid fallback.target, must be 0-100!\n");
+        throw ExceptionServo("setTargetFallback: Invalid fallback.target, must be 0-100!\n");
 
     this->fallbacks.target = target;
 
@@ -67,9 +69,9 @@ void Servo::setTargetFallbackEnabled(bool enabled)
  * frequency value, represented from 3968-8000, It does a check weather or not
  * the value falls between the range of 0-100, if not it throws an exception
  *
- * @param target - The target represented in 0-100
+ * @param target The target represented in 0-100
  *
- * @throw Exception_Servo - If the target is out of range
+ * @throw ExceptionServo If the target is out of range
  */
 void Servo::PercentageToTarget(unsigned short int * target)
 {
@@ -97,16 +99,17 @@ void Servo::PercentageToTarget(unsigned short int * target)
             *target = (unsigned short int)roundf( (((float)difference/100.0f) * (*target)) + zero );
     }
     else
-        throw Exception_Servo("Invalid Target!\n");
+        throw ExceptionServo("Invalid Target!\n");
 }
+
 
 /**
  * This is a wrapper around the pointer function to make
  * life easier
  *
- * @param target - The target represented in 0-100
+ * @param target The target represented in 0-100
  *
- * @returns unsigned short int - The target value in percentage
+ * @returns The target value in percentage
  */
 unsigned short int Servo::PercentageToTarget(unsigned short int target)
 {
@@ -118,9 +121,9 @@ unsigned short int Servo::PercentageToTarget(unsigned short int target)
  * This function takes a value between 3968-8000 and converts it into
  * percentage such as 0-100. It is the oposite of the function above
  *
- * @param target - The target represented in 0-100
+ * @param target The target represented in 0-100
  *
- * @throw Exception_Servo - If the target is out of range
+ * @throw ExceptionServo If the target is out of range
  */
 void Servo::TargetToPercentage(unsigned short int * target)
 {
@@ -135,7 +138,7 @@ void Servo::TargetToPercentage(unsigned short int * target)
     if (*target < zero) 
     {
         dashee::Log::warning(4, "target:%d, channel:%d, zero:%d", *target, this->channel, zero);
-        throw Exception_Servo("Channel returned low voltage, meaning it is invalid!");
+        throw ExceptionServo("Channel returned low voltage, meaning it is invalid!");
     }
     
     // Zero the target
@@ -150,9 +153,9 @@ void Servo::TargetToPercentage(unsigned short int * target)
  * Wrapper around TargetToPercentage that returns the new value
  * rather than changing it.
  *
- * @param target - The target represented in 0-100
+ * @param target The target represented in 0-100
  *
- * @returns unsigned short int - The target value in percentage
+ * @returns The target value in percentage
  */
 unsigned short int Servo::TargetToPercentage(unsigned short int target)
 {
@@ -166,12 +169,12 @@ unsigned short int Servo::TargetToPercentage(unsigned short int target)
  */
 void Servo::fallback()
 {
-    current.target = getTarget();
+    this->current.target = this->getTarget();
     //current.speed = getSpeed();
     //current.acceleration = getAcceleration();
 
-    if (fallbackEnabled.target) 
-        setTarget(fallbacks.target);
+    if (this->fallbackEnabled.target) 
+        this->setTarget(this->fallbacks.target);
     //if (fallbackEnabled.speed) 
         //setSpeed(fallbacks.speed);
     //if (fallbackEnabled.acceleration) 
@@ -186,8 +189,8 @@ void Servo::fallback()
  */
 void Servo::revert()
 {
-    if (fallbackEnabled.target)
-        setTarget(current.target);
+    if (this->fallbackEnabled.target)
+        this->setTarget(this->current.target);
     //if (fallbackEnabled.speed) 
         //setSpeed(current.speed);
     //if (fallbackEnabled.acceleration) 

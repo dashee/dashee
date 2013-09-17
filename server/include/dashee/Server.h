@@ -1,5 +1,5 @@
 /**
- * @file src/Server.h
+ * @file include/dashee/Server.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -31,9 +31,14 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <signal.h>
-#include <dashee/Log.h>
 
-#include "Exception/Server.h"
+#include <dashee/Log.h>
+#include <dashee/Exception/Server.h>
+
+namespace dashee
+{
+    class Server;
+}
 
 /**
  * Maximum size of the buffer.
@@ -47,7 +52,7 @@
  * required functionality for a server to be initiated. Future classes
  * such as UDP or TCP can overwrite this
  */
-class Server
+class dashee::Server
 {
 
 protected:

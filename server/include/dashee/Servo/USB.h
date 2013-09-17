@@ -1,5 +1,5 @@
 /**
- * @file src/Servo/USB.h
+ * @file include/dashee/Servo/USB.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,7 +22,12 @@
 #ifndef SERVO_USB_H_
 #define SERVO_USB_H_
 
-#include "../Servo.h"
+#include <dashee/Servo.h>
+
+namespace dashee
+{
+    class ServoUSB;
+}
 
 /**
  * Servo USB.
@@ -33,7 +38,7 @@
  * This class represents one servo/channel at a time, The handel is held externally
  * usually in the ServoController class, or its ServoController<CounterPart> version
  */
-class ServoUSB : public Servo
+class dashee::ServoUSB : public dashee::Servo
 {
 private:
 

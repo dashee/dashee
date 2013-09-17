@@ -1,4 +1,6 @@
-#include "USB.h"
+#include <dashee/Servo/USB.h>
+
+using namespace dashee;
 
 /**
  * Constructor.
@@ -39,7 +41,7 @@ ServoUSB::~ServoUSB()
  * tells is we are using getTarget from the board, and the second tells it which channel
  * The byte to get is 0x90 as set by Pololu
  *
- * @throws Exception_Servo() - If a read write error occurs
+ * @throws ExceptionServo If a read write error occurs
  *
  * @returns The Target value of a channel 
  */
@@ -50,11 +52,11 @@ unsigned short int ServoUSB::getTarget()
     command[1] = (char)this->channel;
 
     if(write(*fd, command, sizeof(command)) == -1)
-        throw Exception_Servo();
+        throw ExceptionServo();
 
     unsigned char response[2];
     if(read(*fd,response,2) != 2)
-        throw Exception_Servo("Invalid Target");
+        throw ExceptionServo("Invalid Target");
 
     return TargetToPercentage(response[0] + 256*response[1]);
 }
@@ -73,7 +75,7 @@ unsigned short int ServoUSB::getTarget()
  *
  * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
- * @throws Exception_Servo If writing to the board fails
+ * @throws ExceptionServo If writing to the board fails
  */
 void ServoUSB::setTarget(unsigned short int target)
 {
@@ -96,5 +98,5 @@ void ServoUSB::setTarget(unsigned short int target)
     command[3] = (target >> 7) & 127;
 
     if (write(*this->fd, command, sizeof(command)) == -1)
-        throw Exception_Servo();
+        throw ExceptionServo();
 }

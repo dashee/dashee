@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/GPIO.h
+ * @file include/dashee/Exception/Server.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,26 +19,26 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_GPIO_H_
-#define DASHEE_EXCEPTION_GPIO_H_
+#ifndef EXCEPTION_SERVER_H_
+#define EXCEPTION_SERVER_H_
 
 #include <dashee/Exception.h>
 
 namespace dashee
 {
-    class ExceptionGPIO;
+    class ExceptionServer;
 }
 
-class dashee::ExceptionGPIO: public dashee::Exception
+class dashee::ExceptionServer: public dashee::Exception
 {
 public:
-    explicit ExceptionGPIO() : Exception()
+    explicit ExceptionServer() : Exception()
     {
     }
-    explicit ExceptionGPIO(const int ec) : Exception(ec)
+    explicit ExceptionServer(const int ec) : Exception(ec)
     { 
     }
-    explicit ExceptionGPIO(std::string msg) : Exception(msg)
+    explicit ExceptionServer(std::string msg) : Exception(msg)
     { 
     }
 };

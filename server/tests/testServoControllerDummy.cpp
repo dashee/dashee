@@ -9,24 +9,23 @@
 
 #include <dashee/Common.h>
 #include <dashee/Log.h>
-
-#include "ServoController/Dummy.h"
+#include <dashee/ServoController/Dummy.h>
 
 class ServoControllerDummyTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(ServoControllerDummyTest);
-    CPPUNIT_TEST_EXCEPTION(testInvalidFile, Exception_ServoController);
-    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, Exception_ServoController_OutOfBound);
-    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidFile, dashee::ExceptionServoController);
+    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, dashee::ExceptionServoControllerOutOfBound);
+    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, dashee::ExceptionServo);
     CPPUNIT_TEST(testSetAndGetServoTarget);
     CPPUNIT_TEST(testFallbackAndRevertTarget);
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    ServoControllerDummy * servoController;
+    dashee::ServoControllerDummy * servoController;
 
 protected:
     void testInvalidFile();
@@ -48,7 +47,7 @@ public:
  */ 
 void ServoControllerDummyTest::setUp()
 {
-    this->servoController = new ServoControllerDummy("data/Servo.bin", 6);
+    this->servoController = new dashee::ServoControllerDummy("data/Servo.bin", 6);
 }
 
 /**
@@ -56,7 +55,7 @@ void ServoControllerDummyTest::setUp()
  */
 void ServoControllerDummyTest::testInvalidFile()
 {
-    this->servoController = new ServoControllerDummy("poop", 6);
+    this->servoController = new dashee::ServoControllerDummy("poop", 6);
 }
 
 /**

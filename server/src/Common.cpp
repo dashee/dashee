@@ -12,7 +12,7 @@ using namespace dashee;
  * @param string The string to convert to number
  * @param base The base of the string number
  *
- * @throws Exception_InvalidNumber When `string` is not a number
+ * @throws ExceptionInvalidNumber When `string` is not a number
  *
  * returns The converted value
  */
@@ -25,7 +25,7 @@ long int Common::strtol(const char * string, const int base)
     {
         char error[20];
         sprintf(error, "Number '%s' is invalid", string);
-        throw Exception_InvalidNumber(error);
+        throw ExceptionInvalidNumber(error);
     }
 
     return number;

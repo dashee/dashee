@@ -11,11 +11,11 @@ DATADIR=data
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR)
 
 # All the objects that are built
-OBJECTS := $(addprefix src/, Servo.o Servo/USB.o Servo/Dummy.o Server.o\
-		Server/UDP.o ServoController.o ServoController/USB.o \
-		ServoController/Dummy.o Config/Servod.o\
-		ServoController/UART.o Servo/UART.o)
-OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o)
+OBJECTS := $(addprefix src/, Config/Servod.o)
+OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o Servo.o \
+    		Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o \
+		ServoController.o ServoController/Dummy.o ServoController/USB.o \
+		ServoController/UART.o Server/UDP.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)

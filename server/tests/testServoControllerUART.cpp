@@ -7,23 +7,23 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResultCollector.h>
 
-#include "ServoController/UART.h"
+#include <dashee/ServoController/UART.h>
 
 class ServoControllerUARTTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(ServoControllerUARTTest);
-    CPPUNIT_TEST_EXCEPTION(testInvalidFile, Exception_ServoController);
-    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, Exception_ServoController_OutOfBound);
-    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, Exception_Servo);
-    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, Exception_Servo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidFile, dashee::ExceptionServoController);
+    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, dashee::ExceptionServoControllerOutOfBound);
+    CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, dashee::ExceptionServo);
+    CPPUNIT_TEST_EXCEPTION(testInvalidLargeNegativeTarget, dashee::ExceptionServo);
     CPPUNIT_TEST(testSetAndGetServoTarget);
     CPPUNIT_TEST(testFallbackAndRevertTarget);
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    ServoControllerUART * servoController;
+    dashee::ServoControllerUART * servoController;
 
 protected:
     void testInvalidFile();
@@ -45,7 +45,7 @@ public:
  */ 
 void ServoControllerUARTTest::setUp()
 {
-    this->servoController = new ServoControllerUART("/dev/ttyAMA0");
+    this->servoController = new dashee::ServoControllerUART("/dev/ttyAMA0");
 }
 
 /**
@@ -53,7 +53,7 @@ void ServoControllerUARTTest::setUp()
  */
 void ServoControllerUARTTest::testInvalidFile()
 {
-    this->servoController = new ServoControllerUART("poop", 6);
+    this->servoController = new dashee::ServoControllerUART("poop", 6);
 }
 
 /**

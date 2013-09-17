@@ -1,4 +1,6 @@
-#include "USB.h"
+#include <dashee/ServoController/USB.h>
+
+using namespace dashee;
 
 /**
  * Construct.
@@ -9,18 +11,18 @@
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throw Exception_Servo If device opening fails, an exception will be thrown
+ * @throw ExceptionServoController If device opening fails, an exception will be thrown
  */
 ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
     this->fd = open(this->dev, O_RDWR | O_NOCTTY);
 
     if (fd == -1)
-        throw Exception_ServoController();
+        throw ExceptionServoController();
     
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
-        servos.push_back(new ServoUSB(&this->fd, x));
+        this->servos.push_back(new ServoUSB(&this->fd, x));
 }
 
 /**
@@ -48,7 +50,7 @@ ServoControllerUSB::~ServoControllerUSB()
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
  * 
- * @throws Exception_ServoController If read/write fails
+ * @throws ExceptionServoController If read/write fails
  *
  * @returns The error code
  */
@@ -58,10 +60,10 @@ short int ServoControllerUSB::getError()
     unsigned char response[2];
 
     if (write(this->fd, command, sizeof(command)) == -1)
-        throw Exception_ServoController();
+        throw ExceptionServoController();
     
     if(read(this->fd, response,2) != 2)
-        throw Exception_ServoController();
+        throw ExceptionServoController();
     
     //TODO This needs to be fixed, its wrong at the moment
     return (short int)sqrt(response[0] + 256*response[1]);

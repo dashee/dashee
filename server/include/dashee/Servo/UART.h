@@ -1,5 +1,5 @@
 /**
- * @file src/Servo/UART.h
+ * @file include/dashee/Servo/UART.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,7 +22,12 @@
 #ifndef SERVO_UART_H_
 #define SERVO_UART_H_
 
-#include "../Servo.h"
+#include <dashee/Servo.h>
+
+namespace dashee
+{
+    class ServoUART;
+}
 
 /**
  * Servo UART.
@@ -33,7 +38,7 @@
  * This class represents one servo/channel at a time, The handle is held externally
  * usually in the ServoController class, or its ServoController<CounterPart> version
  */
-class ServoUART : public Servo
+class dashee::ServoUART : public dashee::Servo
 {
 private:
 

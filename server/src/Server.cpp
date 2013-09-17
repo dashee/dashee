@@ -1,4 +1,6 @@
-#include "Server.h"
+#include <dashee/Server.h>
+
+using namespace dashee;
 
 /**
  * Constructor.
@@ -8,6 +10,8 @@
  * and set the server_in to have all 0's as its value.
  *
  * @param port The value of the port
+ *
+ * @throws ExceptionServer
  */
 Server::Server(unsigned int port)
 {
@@ -25,7 +29,7 @@ Server::Server(unsigned int port)
     sigaddset (&mask, SIGINT);
 
     if (sigprocmask(SIG_BLOCK, &mask, &origmask) < 0)
-        throw Exception_Server();
+        throw ExceptionServer();
 }
 
 /**
@@ -56,11 +60,13 @@ unsigned char * Server::getBuffer()
  *
  * @param seconds Number of seconds to timeout
  * @param miliseconds Number of nanoseconds to timeout
+ *
+ * @throws ExceptionServer If the timeout value was more than 999
  */
 void Server::setTimeout(const unsigned int seconds, const unsigned int miliseconds)
 {
     if (miliseconds > 999)
-        throw Exception_Server("SetTimeout set to value that is not between 0-999");
+        throw ExceptionServer("SetTimeout set to value that is not between 0-999");
         
     pselect_timeout.tv_sec = seconds;
     pselect_timeout.tv_nsec = miliseconds * 1000000l;

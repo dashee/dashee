@@ -1,5 +1,5 @@
 /**
- * @file src/ServoController/USB.h
+ * @file include/dashee/ServoController/USB.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,8 +22,13 @@
 #ifndef SERVOCONTROLLER_USB_H_
 #define SERVOCONTROLLER_USB_H_
 
-#include "../ServoController.h"
-#include "../Servo/USB.h"
+#include <dashee/ServoController.h>
+#include <dashee/Servo/USB.h>
+
+namespace dashee
+{
+    class ServoControllerUSB;
+}
 
 /**
  * This is a class which handels communications with the Pololu board
@@ -35,7 +40,7 @@
  * You can see the full documentaion of the Pololu boart at http://www.pololu.com/docs/0J40/all
  * Please read and understand the above to understand in detail the protocol's used in this code
  */
-class ServoControllerUSB : public ServoController
+class dashee::ServoControllerUSB : public dashee::ServoController
 {
 private:
 

@@ -29,7 +29,7 @@ ConfigServod::ConfigServod() : Config()
  *
  * @param s is the handel to the ServoController
  */
-void ConfigServod::setServoController(ServoController * s)
+void ConfigServod::setServoController(dashee::ServoController * s)
 {
     for(configs_it = configs.begin(); configs_it != configs.end(); ++configs_it)
     {
@@ -73,9 +73,9 @@ void ConfigServod::setServoController(ServoController * s)
                     dashee::Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
             }
 
-            catch (dashee::Exception_InvalidNumber e)
+            catch (dashee::ExceptionInvalidNumber e)
             {
-                dashee::Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. Exception_InvalidNumber:%s", configs_it->first, e.what());
+                dashee::Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. ExceptionInvalidNumber:%s", configs_it->first, e.what());
             }
         }
     }
@@ -96,7 +96,7 @@ void ConfigServod::setServoController(ServoController * s)
  * @retval TRUE Setting was successfull
  * @retval FALSE Setting failed
  */
-bool ConfigServod::setDefault(ServoController * s, const char * what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setDefault(dashee::ServoController * s, const char * what, const char * value, const unsigned short int & channel)
 {
     try
     {
@@ -121,9 +121,9 @@ bool ConfigServod::setDefault(ServoController * s, const char * what, const char
             
         dashee::Log::warning(1, "ConfigServod::setDefault: Invalid value '%s'.", what);
     }
-    catch (dashee::Exception_InvalidNumber e)
+    catch (dashee::ExceptionInvalidNumber e)
     {
-        dashee::Log::warning(1, "ConfigServod::setDefault: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        dashee::Log::warning(1, "ConfigServod::setDefault: Failed setting '%s' to '%s' NaN. ExceptionInvalidNumber:%s", what, value, e.what());
     }
 
     return false;
@@ -144,7 +144,7 @@ bool ConfigServod::setDefault(ServoController * s, const char * what, const char
  * @retval TRUE Setting was successfull
  * @retval FALSE Setting failed
  */
-bool ConfigServod::setFallback(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setFallback(dashee::ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
     try
     {
@@ -169,9 +169,9 @@ bool ConfigServod::setFallback(ServoController * s, const char *what, const char
             
         dashee::Log::warning(1, "ConfigServod::setFallback invalid value '%s'.", what);
     }
-    catch (dashee::Exception_InvalidNumber e)
+    catch (dashee::ExceptionInvalidNumber e)
     {
-        dashee::Log::warning(1, "ConfigServod::setFallback: Failed setting '%s' to '%s' NaN. Exception_InvalidNumber:%s", what, value, e.what());
+        dashee::Log::warning(1, "ConfigServod::setFallback: Failed setting '%s' to '%s' NaN. ExceptionInvalidNumber:%s", what, value, e.what());
     }
 
     return false;
@@ -191,7 +191,7 @@ bool ConfigServod::setFallback(ServoController * s, const char *what, const char
  * @retval TRUE Setting was successfull
  * @retval FALSE Setting failed
  */
-bool ConfigServod::setFallbackEnabled(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
+bool ConfigServod::setFallbackEnabled(dashee::ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
     return false;
 }

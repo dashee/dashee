@@ -1,5 +1,5 @@
 /**
- * @file src/Servo/Dummy.h
+ * @file include/dashee/Servo/Dummy.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,7 +22,12 @@
 #ifndef SERVO_DUMMY_H_
 #define SERVO_DUMMY_H_
 
-#include "../Servo.h"
+#include <dashee/Servo.h>
+
+namespace dashee
+{
+    class ServoDummy;
+}
 
 /**
  * Servo Dummy class for testing.
@@ -41,7 +46,7 @@
  * This class represents one servo/channel at a time, The handel is held externally
  * usually in the ServoController class, or its ServoController<CounterPart> version
  */
-class ServoDummy : public Servo
+class dashee::ServoDummy : public dashee::Servo
 {
 private:
 

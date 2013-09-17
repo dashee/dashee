@@ -1,4 +1,6 @@
-#include "Dummy.h"
+#include <dashee/ServoController/Dummy.h>
+
+using namespace dashee;
 
 /**
  * Construct.
@@ -11,14 +13,14 @@
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throws Exception_Servo If device opening fails, an exception will be thrown
+ * @throws ExceptionServoController If device opening fails, an exception will be thrown
  */
 ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
     fd = fopen(this->dev, "r+b");
 
     if (fd == NULL)
-        throw Exception_ServoController();
+        throw ExceptionServoController();
 
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
@@ -27,7 +29,7 @@ ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned shor
     //Make sure the binary file is of correct size
     fseek(fd, 0, SEEK_END);
     if (ftell(fd) != (ServoDummy::headerByteSize + (ServoDummy::channelByteSize * channels)))
-        throw Exception_Servo("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
+        throw ExceptionServoController("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
 }
 
 /**

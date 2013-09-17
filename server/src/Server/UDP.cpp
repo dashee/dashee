@@ -1,4 +1,6 @@
-#include "UDP.h"
+#include <dashee/Server/UDP.h>
+
+using namespace dashee;
 
 /** 
  * Construct our server.
@@ -10,13 +12,13 @@
  *
  * @param port The port the server will run on
  *
- * @throws Exception_Server when socket call or bind call fails
+ * @throws ExceptionServer when socket call or bind call fails
  */
 ServerUDP::ServerUDP(unsigned int port) : Server(port)
 {
     socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0)
-        throw Exception_Server();
+        throw ExceptionServer();
     
     server_in.sin_family = AF_INET; //IPV4
     server_in.sin_port = htons(port);
@@ -24,7 +26,7 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
     
     //Bind, Note the second parameter needs to be a sockaddr
     if (bind(socketfd, (struct sockaddr *) &server_in, sizeof(server_in)) == -1)
-        throw Exception_Server();
+        throw ExceptionServer();
 }
 
 /**
@@ -34,7 +36,7 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
  * and then do a recvfrom give the socket. The recvfrom will set our @p client_in variable
  * so it can be used to write data back to the client
  *
- * @throws Exception_Server - When recvfrom comes back with an error 
+ * @throws ExceptionServer - When recvfrom comes back with an error 
  *
  * @returns always true
  * @retval TRUE always returned
@@ -45,7 +47,7 @@ bool ServerUDP::read()
     
     //Recieave from client        
     if (recvfrom(socketfd, buffer, SERVER_BUFFER_SIZE, 0, (struct sockaddr *) &client_in, (socklen_t *)&client_in_length) == -1)
-        throw Exception_Server();
+        throw ExceptionServer();
     return true;
 }
 
@@ -62,8 +64,8 @@ bool ServerUDP::read()
  * @param seconds Number of seconds to timeout
  * @param miliseconds Number of miliseconds to timeout
  *
- * @throws Exception_Server If read fails
- * @throws Exception_Server_Signal If select timesout, or signal is intercepted
+ * @throws ExceptionServer If read fails
+ * @throws ExceptionServerSignal If select timesout, or signal is intercepted
  *
  * @returns Boolean indicating read status
  * @retval TRUE if there was something read
@@ -85,10 +87,10 @@ bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
         // A signal went off in wait(), so throw an exception
         // Which can be caught correctly by our main program
         if (errno == EINTR) 
-            throw Exception_Server_Signal();
+            throw ExceptionServerSignal();
 
         // Throw an exception so the main can set error
-        throw Exception_Server("ServerUDP::read failed with -1.");
+        throw ExceptionServer("ServerUDP::read failed with -1.");
     }
 
     return false;
@@ -102,13 +104,13 @@ bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
  * 
  * @param message The message to send
  *
- * @throws Exception_Server If write fails
+ * @throws ExceptionServer If write fails
  */
 bool ServerUDP::write(const char * message)
 {
     //const char message[] = "Error: Invalid Range, number must be between 1-100\n";
     if (sendto(socketfd, message, strlen(message), 0, (struct sockaddr *) &client_in, client_in_length) == -1)
-        throw Exception_Server("Write failed with -1.");
+        throw ExceptionServer("Write failed with -1.");
 
     return true;
 }

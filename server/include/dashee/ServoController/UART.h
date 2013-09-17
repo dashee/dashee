@@ -1,5 +1,5 @@
 /**
- * @file src/ServoController/UART.h
+ * @file include/dashee/ServoController/UART.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -25,9 +25,13 @@
 #include <termios.h>
 
 #include <dashee/GPIO.h>
+#include <dashee/ServoController.h>
+#include <dashee/Servo/UART.h>
 
-#include "../ServoController.h"
-#include "../Servo/UART.h"
+namespace dashee
+{
+    class ServoControllerUART;
+}
 
 /**
  * This is a class which handels communications with the Pololu board
@@ -40,7 +44,7 @@
  * `UART detect baud rate`. However this means the device baud rate is set by the 
  * constructor
  */
-class ServoControllerUART : public ServoController
+class dashee::ServoControllerUART : public dashee::ServoController
 {
 private:
 

@@ -1,5 +1,5 @@
 /**
- * @file src/ServoController/Dummy.h
+ * @file include/dashee/ServoController/Dummy.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,8 +22,13 @@
 #ifndef SERVOCONTROLLER_DUMMY_H_
 #define SERVOCONTROLLER_DUMMY_H_
 
-#include "../ServoController.h"
-#include "../Servo/Dummy.h"
+#include <dashee/ServoController.h>
+#include <dashee/Servo/Dummy.h>
+
+namespace dashee
+{
+    class ServoControllerDummy;
+}
 
 /**
  * The Dummy ServoController, used for testing.
@@ -39,7 +44,7 @@
  *
  * This program presumes that there are SERVO_DUMMY_CHANNEL's in our file
  */
-class ServoControllerDummy : public ServoController
+class dashee::ServoControllerDummy : public dashee::ServoController
 {
 private:
 

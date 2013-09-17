@@ -1,4 +1,6 @@
-#include "UART.h"
+#include <dashee/ServoController/UART.h>
+
+using namespace dashee;
 
 /**
  * Construct.
@@ -9,7 +11,7 @@
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throw Exception_Servo If device opening fails, an exception will be thrown
+ * @throw ExceptionServoController If device opening fails, an exception will be thrown
  */
 ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
@@ -19,7 +21,7 @@ ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short 
     // Open the device
     this->fd = open(this->dev, O_RDWR | O_NOCTTY);
     if (this->fd == -1)
-        throw Exception_ServoController();
+        throw ExceptionServoController();
 
     dashee::Log::info(5, "Device open with handler: %d", this->fd);
     
@@ -36,7 +38,7 @@ ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short 
  *
  * This function simpley sets the BAUD rates between the serial devices
  * 
- * @throw Exception_ServoController If `tcsetattr` fails
+ * @throw ExceptionServoController If `tcsetattr` fails
  */
 void ServoControllerUART::init()
 {
@@ -64,7 +66,7 @@ void ServoControllerUART::init()
     options.c_cc[VTIME] = 10;
 
     if (tcsetattr(this->fd, TCSANOW, &options) < 0)
-        throw Exception_ServoController("Initilizing UART failed");
+        throw ExceptionServoController("Initilizing UART failed");
     
     dashee::Log::info(5, "Initlized UART with BAUD 9600");
 }
@@ -99,7 +101,7 @@ void ServoControllerUART::reset()
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
  * 
- * @throws Exception_ServoController
+ * @throws ExceptionServoController
  *
  * @returns The last error value
  */
@@ -109,17 +111,17 @@ short int ServoControllerUART::getError()
     unsigned char response[2];
 
     if (write(this->fd, command, sizeof(command)) == -1)
-        throw Exception_ServoController("ServoControllerUART::getError write failed");
+        throw ExceptionServoController("ServoControllerUART::getError write failed");
         
     // Go through and read each byte by byte
     for (int n = 0, total = 0; n < 2; total++)
     {
         if (total > 10)
-            throw Exception_ServoController("Reading ServoControllerUART::getError, ran more than 10 times");
+            throw ExceptionServoController("Reading ServoControllerUART::getError, ran more than 10 times");
 
         int ec = read(this->fd, response+n, 1);
         if(ec < 0)
-            throw Exception_ServoController("read failed in ServoControllerUART::getError");
+            throw ExceptionServoController("read failed in ServoControllerUART::getError");
 
         if (ec == 0)
             continue;

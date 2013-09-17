@@ -1,5 +1,5 @@
 /**
- * @file src/ServoController.h
+ * @file include/dashee/ServoController.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -23,11 +23,16 @@
 #define SERVOCONTROLLER_H_
 
 #include <vector>
-#include <dashee/Log.h>
 
-#include "Exception/ServoController.h"
-#include "Exception/ServoController/OutOfBound.h"
-#include "Servo.h"
+#include <dashee/Log.h>
+#include <dashee/Exception/ServoController.h>
+#include <dashee/Exception/ServoController/OutOfBound.h>
+#include <dashee/Servo.h>
+
+namespace dashee
+{
+    class ServoController;
+}
 
 /** 
  * ServoController abstraction.
@@ -44,7 +49,7 @@
  * This class's main job is to open the handel to our device, and send the readwrite
  * commands to our Servo class, which is stored in our servos
  */
-class ServoController
+class dashee::ServoController
 {   
 private:
 

@@ -1,4 +1,6 @@
-#include "ServoController.h"
+#include <dashee/ServoController.h>
+
+using namespace dashee;
 
 /** 
  * Construct our ServoController.
@@ -48,14 +50,14 @@ ServoController::~ServoController()
  *
  * @param channel The Channel to get
  * 
- * @throws Exception_Servo() If a read write error occurs
+ * @throws ExceptionServoControllerOutOfBound If a read write error occurs
  *
  * @returns The target value of the channel 
  */
 unsigned short int ServoController::getTarget(const unsigned short int channel)
 {
     if (channel >= this->size())
-        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to get.");
+        throw ExceptionServoControllerOutOfBound("Invalid Channel Number when trying to get.");
 
     return servos[channel]->getTarget();
 }
@@ -75,17 +77,17 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  * @param channel The channel number represented in one byte
  * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
- * @throws Exception_Servo If writing to the board fails
+ * @throws ExceptionServoControllerOutOfBound If invalid servo is chosen
  */
 void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
 {
-    if (fallbackmode)
-        revert();
+    if (this->fallbackmode)
+        this->revert();
 
     if (channel >= this->size())
-        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set.");
+        throw ExceptionServoControllerOutOfBound("Invalid Channel Number when trying to set.");
 
-    return servos[channel]->setTarget(target);
+    return this->servos[channel]->setTarget(target);
 }
 
 /**
@@ -97,14 +99,14 @@ void ServoController::setTarget(const unsigned short int channel, unsigned short
  * @param channel Servo channel number
  * @param target The value of the target
  *
- * @throws Exception_ServoController_OutOfBound
+ * @throws ExceptionServoControllerOutOfBound
  */
 void ServoController::setTargetDefault(const unsigned short int channel, unsigned short int target)
 {
     if (channel >= this->size())
-        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+        throw ExceptionServoControllerOutOfBound("Invalid Channel Number when trying to set default value.");
 
-    servos[channel]->setTargetDefault(target);
+    this->servos[channel]->setTargetDefault(target);
 }
 
 /**
@@ -113,14 +115,14 @@ void ServoController::setTargetDefault(const unsigned short int channel, unsigne
  * @param channel Servo channel number
  * @param target The target to set to
  *
- * @throws Exception_ServoController_OutOfBound
+ * @throws ExceptionServoControllerOutOfBound
  */
 void ServoController::setTargetFallback(const unsigned short int channel, unsigned short int target)
 {
     if (channel >= this->size())
-        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+        throw ExceptionServoControllerOutOfBound("Invalid Channel Number when trying to set default value.");
 
-    servos[channel]->setTargetFallback(target);
+    this->servos[channel]->setTargetFallback(target);
 }
 
 /**
@@ -137,9 +139,9 @@ void ServoController::setTargetFallback(const unsigned short int channel, unsign
 void ServoController::setTargetFallbackEnabled(const unsigned short int channel, bool enabled)
 {
     if (channel >= this->size())
-        throw Exception_ServoController_OutOfBound("Invalid Channel Number when trying to set default value.");
+        throw ExceptionServoControllerOutOfBound("Invalid Channel Number when trying to set default value.");
 
-    servos[channel]->setTargetFallbackEnabled(enabled);
+    this->servos[channel]->setTargetFallbackEnabled(enabled);
 }
 
 /** 
@@ -152,7 +154,7 @@ void ServoController::setTargetFallbackEnabled(const unsigned short int channel,
  */
 unsigned int ServoController::size()
 {
-    return servos.size();
+    return this->servos.size();
 }
 
 /** 
@@ -169,7 +171,7 @@ void ServoController::fallback()
 {
     // Already in fallbackmode, dont bother with 
     // anything.
-    if (fallbackmode) { return; }
+    if (this->fallbackmode) { return; }
 
     for (unsigned int x = 0; x < servos.size(); x++)
         servos[x]->fallback();
@@ -191,15 +193,15 @@ void ServoController::revert()
 {
     // If we are not in fallback mode, don't revert
     // because you will revert back to the last known fallback value
-    if (!fallbackmode) return;
+    if (!this->fallbackmode) return;
     
-    for (unsigned int x = 0; x < servos.size(); x++)
+    for (unsigned int x = 0; x < this->servos.size(); x++)
     {
         try
         {
-            servos[x]->revert();
+            this->servos[x]->revert();
         }
-        catch (Exception_Servo e)
+        catch (ExceptionServo e)
         {
             //Dont throw here, because Invalid channels 
             //should not be prevent others from reverting
@@ -208,5 +210,5 @@ void ServoController::revert()
         }
     }
     
-    fallbackmode = false;
+    this->fallbackmode = false;
 }
