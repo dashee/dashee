@@ -42,20 +42,6 @@ namespace dashee
 }
 
 /**
- * The Config Comaprison class.
- *
- *  This is our comparitor class override, that is used by the multimap
- * to actually compare the values of char *, rather than just pointers
- */
-class dashee::Config_Comparitor
-{
-public:
-
-    //return true if 1st param matched character is less than its 2nd param
-    bool operator()(const char *, const char *) const;
-};
-
-/**
  * The Config class.
  *
  * Class which holds configuration values in a map for easy access.
@@ -77,6 +63,21 @@ class dashee::Config
 private:
 
 protected:
+    
+    /**
+     * The Config Comaprison class.
+     *
+     *  This is our comparitor class override, that is used by the multimap
+     * to actually compare the values of char *, rather than just pointers
+     */
+    class Comparitor
+    {
+    public:
+
+        //return true if 1st param matched character is less than its 2nd param
+        bool operator()(const char *, const char *) const;
+    };
+
  
     /** 
      * Map which holds all the configuration values.
@@ -91,15 +92,7 @@ protected:
      *
      * Note because this is static, it has to initialized in Config.cpp
      */
-    std::map<const char *, char *, Config_Comparitor> configs;
-
-    /**
-     * Global iterator value.
-     *
-     * We also define the iterator to save us redefining it every turn of the function
-     * as this class is non threaded, this is a good idea. Need to change this otherwise
-     */
-    std::map<const char *, char *, Config_Comparitor>::iterator configs_it;
+    std::map<const char *, char *, Comparitor> configs;
 
     /**
      * Configure the loglevel globally for configuration.

@@ -15,7 +15,7 @@ using namespace dashee;
  * @retval TRUE if the first character in `lhs` is less than the `rhs` counterpart
  * @retval FALSE false if the firstcharacter in `lhs` is not less than `rhs`
  */
-bool Config_Comparitor::operator()(const char * lhs, const char * rhs) const
+bool Config::Comparitor::operator()(const char * lhs, const char * rhs) const
 {
     int comparison = strcmp(lhs, rhs);
     if (comparison < 0) { return true; }
@@ -50,12 +50,12 @@ void Config::set(const char * key, const char * value, const unsigned short int 
 {
     // A previous, key exists. and we should delete the char array from memory
     // If threading, this requires locking. otherwise the world will blow up
-    configs_it = configs.find(key);
+    std::map<const char *, char *>::iterator it = configs.find(key);
 
     // Override is not allowed, and the key was found, so dont set
     // We only know the key is found, by seeing wheather the find iterator
     // is not on the end, os it must be pointing at a found element
-    if (override == 0 && configs_it != configs.end())
+    if (override == 0 && it != configs.end())
     {
         dashee::Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key);
         return;
@@ -67,10 +67,10 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         
     // If we found a previous value delete the previous
     // And point to the new.
-    if (configs_it != configs.end())
+    if (it != configs.end())
     {
-        char * pointedkey = configs_it->second;
-        configs_it->second = pvalue;
+        char * pointedkey = it->second;
+        it->second = pvalue;
         delete [] pointedkey;
 
         // Set our value
@@ -153,11 +153,11 @@ void Config::set_float(const char * key, const float value, const unsigned short
  */
 const char * Config::get(const char * key, const char * defaultvalue)
 {
-    configs_it = configs.find((char *)key);
-    if (configs_it != configs.end())
+    std::map<const char *, char *>::iterator it = configs.find((char *)key);
+    if (it != configs.end())
     {
-        dashee::Log::info(loglevel+1, "Config::get %s: %s", key, configs_it->second);
-        return configs_it->second;
+        dashee::Log::info(loglevel+1, "Config::get %s: %s", key, it->second);
+        return it->second;
     }
     
     dashee::Log::info(loglevel+1, "Config::get %s: default(%s)", key, defaultvalue);
@@ -356,12 +356,12 @@ void Config::read(const char * file)
 void Config::print()
 {
     for (
-        configs_it=configs.begin();
-        configs_it != configs.end();
-        ++configs_it
+        std::map<const char *, char *>::iterator it=configs.begin();
+        it != configs.end();
+        ++it
     )
     {
-        dashee::Log::info(loglevel, "Config[%s] %s", configs_it->first, configs_it->second);
+        dashee::Log::info(loglevel, "Config[%s] %s", it->first, it->second);
     }
 }
 
@@ -374,13 +374,13 @@ void Config::print()
 void Config::cleanup()
 {
     for (
-        configs_it=configs.begin();
-        configs_it != configs.end();
-        ++configs_it
+        std::map<const char *, char *>::iterator it=configs.begin();
+        it != configs.end();
+        ++it
     )
     {
-        delete [] configs_it->first;
-        delete [] configs_it->second;
+        delete [] it->first;
+        delete [] it->second;
     }
     
     configs.clear();
