@@ -3,15 +3,17 @@
 using namespace dashee;
 
 /** 
+ * Compare lhs vs rhs.
+ *
  * This will ensure when comparing our char * string in maps, that it compares
  * the actual value of the char * rather than its pointer position. 
  *
- * @param lhs - Left hand side to be compared with the @rhs
- * @param rhs - The right hand side to be compared against @lhs
+ * @param lhs Left hand side to be compared with the `rhs`
+ * @param rhs The right hand side to be compared against `lhs`
  *
- * @return bool - true if the first character in lhs is less than the rhs counterpart
- * @retval TRUE if the first character in @p lhs is less than the @p rhs counterpart
- * @retval FALSE false if the firstcharacter in @p lhs is not less than @p rhs
+ * @returns A boolean value depending on the weight of `lhs` vs `rhs`
+ * @retval TRUE if the first character in `lhs` is less than the `rhs` counterpart
+ * @retval FALSE false if the firstcharacter in `lhs` is not less than `rhs`
  */
 bool Config_Comparitor::operator()(const char * lhs, const char * rhs) const
 {
@@ -35,14 +37,14 @@ Config::Config()
  *
  * This function will set a value in our Configs::configs map, the first parameter
  * represents the key value, the second represents the value to set, and the third
- * is a flag that will enable disable override of a key if present. The @override
+ * is a flag that will enable disable override of a key if present. The override
  * key is by default set to 1 representing the variable will be overwritten
  *
  * Every time we set a new value, we delete the previous pointer
  * 
- * @param key - The key to set
- * @param value - The value to set the key
- * @param override - Should the existing value be overwritten
+ * @param key The key to set
+ * @param value The value to set the key
+ * @param override Should the existing value be overwritten
  */
 void Config::set(const char * key, const char * value, const unsigned short int override)
 {
@@ -96,12 +98,12 @@ void Config::set(const char * key, const char * value, const unsigned short int 
  * we need to store this information in a keys array. Before reallocating the same key, 
  * we delete the previous found key using the keys array.
  *
- * The deleting is performed in the @set function. It will analyise wheather or not the
+ * The deleting is performed in the Config::set function. It will analyise wheather or not the
  * previous value needs to be deleted
  *
- * @param key - The key to set
- * @param value - The integer to turn into a new char array
- * @param override - Weather or not to leave the variable alone if it is set
+ * @param key The key to set
+ * @param value The integer to turn into a new char array
+ * @param override Weather or not to leave the variable alone if it is set
  */
 void Config::set_uint(const char * key, const unsigned int value, const unsigned short int override)
 {
@@ -121,9 +123,9 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
  *
  * Same as Config::set_uint, except uses float in sprintf
  * 
- * @param key - The key to set
- * @param value - The float to turn into a new char array
- * @param override - Weather or not to leave the variable alone if it is set
+ * @param key The key to set
+ * @param value The float to turn into a new char array
+ * @param override Weather or not to leave the variable alone if it is set
  */
 void Config::set_float(const char * key, const float value, const unsigned short int override)
 {
@@ -144,10 +146,10 @@ void Config::set_float(const char * key, const float value, const unsigned short
  * This will return a unsigne char * of the value from the Config::configs map in our class
  * The default value set to @p NULL is returned if no key is found. 
  * 
- * @param key - The key to look for
- * @param defaultvalue - The default value to return if no key was found
+ * @param key The key to look for
+ * @param defaultvalue The default value to return if no key was found
  *
- * @return unsigned char * - The key value as found, otherwise default
+ * @returns The key value as found, otherwise default
  */
 const char * Config::get(const char * key, const char * defaultvalue)
 {
@@ -167,10 +169,10 @@ const char * Config::get(const char * key, const char * defaultvalue)
  *
  * Similar to the get function, except this deals in getting back a const unsigned int
  * 
- * @param key - The key value to get
- * @param defaultvalue - The default values to return if none is found
+ * @param key The key value to get
+ * @param defaultvalue The default values to return if none is found
  *
- * @returns const usigned int - The number if found, otherwise default
+ * @returns The number if found, otherwise default
  */
 const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
 {
@@ -189,10 +191,10 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
  *
  * Similar to the Config::get_uint, except deals in float
  * 
- * @param key - The key value to get
- * @param defaultvalue - The default values to return if none is found
+ * @param key The key value to get
+ * @param defaultvalue The default values to return if none is found
  *
- * @returns const float - The number if found, otherwise default
+ * @returns The number if found, otherwise default
  */
 const float Config::get_float(const char * key, const float defaultvalue)
 {
@@ -217,7 +219,7 @@ const float Config::get_float(const char * key, const float defaultvalue)
  *
  * This function will not throw any errors or return types. It will output log::warning(3)
  *
- * @param file - The filename to load.
+ * @param file The filename to load.
  */
 void Config::read(const char * file)
 {
@@ -385,7 +387,7 @@ void Config::cleanup()
 }
 
 /**
- * Destruct.
+ * Destructor.
  *
  * Our destructor which only calls cleanup
  */

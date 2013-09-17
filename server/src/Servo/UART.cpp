@@ -1,12 +1,16 @@
 #include "UART.h"
 
 /**
+ * Constructor.
+ *
  * This constructor will get the fd of the servo device that is open by 
  * its parrent ServoControllerUART class. The fd is used to talk to the 
  * servo
  *
- * @param (const char *)dev - The name of the device which will be open
- * @throw Exception_Servo - If device opening fails, an exception will be thrown
+ * @param fd The file handle to the servo used for read/write
+ * @param channel The channel which this ServoUART class represents
+ *
+ * @throws Exception_Servo If device opening fails, an exception will be thrown
  */
 ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel)
 {
@@ -14,16 +18,20 @@ ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel
 }
 
 /**
- * destruct
+ * Destructor.
+ *
+ * Does nothing.
  */
 ServoUART::~ServoUART()
 {
 }
 
 /**
+ * Get the target value.
+ *
  * This command gets the target of a given channel.
  * To do this however we first need to write to the servo telling it that we want
- * the target value, of our given @channel. We then read from the board, which returns
+ * the target value, of our given `channel`. We then read from the board, which returns
  * the value in a 2 bytes which in collation represent one number.
  * 
  * The value's returned can range from 992 - 8000
@@ -34,9 +42,9 @@ ServoUART::~ServoUART()
  *  3rd byte - The command to set target it is 0x10
  *  4th byte - The channel
  *
- * @throw Exception_Servo() - If a read write error occurs
+ * @throws Exception_Servo() If a read write error occurs
  *
- * @return int - The Target value of a channel 
+ * @return The Target value of a channel
  */
 unsigned short int ServoUART::getTarget()
 {
@@ -75,6 +83,8 @@ unsigned short int ServoUART::getTarget()
 }
 
 /**
+ * Set the target.
+ *
  * This function will talk to our board and set the specific channel to the required byte
  *
  * The command to tell the servo that we want to set channel number requires 6 bytes 
@@ -85,9 +95,9 @@ unsigned short int ServoUART::getTarget()
  *  5th byte - The data first byte
  *  6th byte - The data second byte
  *
- * @param (short int)target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
- * @throw Exception_Servo - If writing to the board fails
+ * @throws Exception_Servo If writing to the board fails
  */
 void ServoUART::setTarget(unsigned short int target)
 {

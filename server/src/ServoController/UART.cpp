@@ -1,11 +1,15 @@
 #include "UART.h"
 
 /**
+ * Construct.
+ *
  * The constructor of servo which takes in the device to open
  * usually the device is /dev/ttyAMA0 but this could be different going from system to system
  *
- * @param (const char *)dev - The name of the device which will be open
- * @throw Exception_Servo - If device opening fails, an exception will be thrown
+ * @param dev The name of the device which will be open
+ * @param channels The number of channels to set
+ *
+ * @throw Exception_Servo If device opening fails, an exception will be thrown
  */
 ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
@@ -28,9 +32,11 @@ ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short 
 }
 
 /**
+ * Initialize the UART.
+ *
  * This function simpley sets the BAUD rates between the serial devices
  * 
- * @throw Exception_ServoController - If tcsetattr fails
+ * @throw Exception_ServoController If `tcsetattr` fails
  */
 void ServoControllerUART::init()
 {
@@ -64,6 +70,8 @@ void ServoControllerUART::init()
 }
 
 /** 
+ * Reset the Pololu board.
+ *
  * The Pololu board will only run once successfully, so
  * for the second iteration either the board must be hard reset or
  * the reset pin must be driven low. Once the pin is driven low, the board is
@@ -77,6 +85,8 @@ void ServoControllerUART::reset()
 }
 
 /**
+ * Get last known error.
+ *
  * The Pololu board provides a error handling, This function is designed to 
  * get the last error from the Pololy Maestro USB Servo board, Note on retriving 
  * the error, the error is reset. So it is always a good idea to periodicly
@@ -89,7 +99,9 @@ void ServoControllerUART::reset()
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
  * 
- * @reuturn short int - The integer response
+ * @throws Exception_ServoController
+ *
+ * @returns The last error value
  */
 short int ServoControllerUART::getError()
 {
@@ -120,7 +132,9 @@ short int ServoControllerUART::getError()
 }
 
 /**
- * Handler to close our @fd opened device, and delete all servo's
+ * Destruct.
+ *
+ * Handler to close our ServoControllerUART::fd opened device, and delete all servo's
  */
 ServoControllerUART::~ServoControllerUART()
 {

@@ -3,11 +3,11 @@
 /**
  * Constructor.
  *
- * This function will initialize the @a port value which is passed as a parameter
+ * This function will initialize the @p port value which is passed as a parameter
  * it will also set the Server::client_in_length value to be the sizeof Server::client_in 
  * and set the server_in to have all 0's as its value.
  *
- * @param port - The value of the port
+ * @param port The value of the port
  */
 Server::Server(unsigned int port)
 {
@@ -54,8 +54,8 @@ unsigned char * Server::getBuffer()
  * This function will set our timeout value
  * Note if it is set to 0, then our select will never return.
  *
- * @param seconds - Number of seconds to timeout
- * @param miliseconds - Number of nanoseconds to timeout
+ * @param seconds Number of seconds to timeout
+ * @param miliseconds Number of nanoseconds to timeout
  */
 void Server::setTimeout(const unsigned int seconds, const unsigned int miliseconds)
 {
@@ -73,7 +73,7 @@ void Server::setTimeout(const unsigned int seconds, const unsigned int milisecon
  * function and the call select, it will also return the value
  * of select
  *
- * @returns int - The value of select
+ * @returns The value returned by @p pselect
  */
 int Server::wait()
 {   

@@ -4,13 +4,13 @@
  * Construct our server.
  *
  * Our constructor sends the port to our base class, Along with that it also
- * initialized our @a socketfd by calling socket. It then sets and initializes
- * our @a server_in variable given the port, and any interface. Once all is done, 
+ * initialized our @p socketfd by calling socket. It then sets and initializes
+ * our @p server_in variable given the port, and any interface. Once all is done, 
  * it binds our server to a port. Any errors, will throw an exception
  *
- * @param port - The port the server will run on
+ * @param port The port the server will run on
  *
- * @throws Exception_Server - when socket call or bind call fails
+ * @throws Exception_Server when socket call or bind call fails
  */
 ServerUDP::ServerUDP(unsigned int port) : Server(port)
 {
@@ -31,12 +31,13 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
  * Read from the client.
  *
  * Our wrapper to the recvfrom function, This is designed to set our buffer to null
- * and then do a recvfrom give the socket. The recvfrom will set our @client_in variable
+ * and then do a recvfrom give the socket. The recvfrom will set our @p client_in variable
  * so it can be used to write data back to the client
  *
  * @throws Exception_Server - When recvfrom comes back with an error 
  *
- * @return bool - true always
+ * @returns always true
+ * @retval TRUE always returned
  */
 bool ServerUDP::read()
 {
@@ -58,13 +59,15 @@ bool ServerUDP::read()
  * the timestructure value. 0 value will set the timeout to nothing, 
  * so select will be instantanious.
  *
- * @param seconds - Number of seconds to timeout
- * @param miliseconds - Number of miliseconds to timeout
+ * @param seconds Number of seconds to timeout
+ * @param miliseconds Number of miliseconds to timeout
  *
- * @throws Exception_Server - If read fails
- * @throws Exception_Server_Signal - If select timesout, or signal is intercepted
+ * @throws Exception_Server If read fails
+ * @throws Exception_Server_Signal If select timesout, or signal is intercepted
  *
- * @returns bool - true, if there was something read. false on timeout
+ * @returns Boolean indicating read status
+ * @retval TRUE if there was something read
+ * @retval FALSE if there was nothing read
  */ 
 bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
 {
@@ -97,9 +100,9 @@ bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
  * This function will write to the client, Note that you need to get atleast
  * one read, before you can send to client, as it wont know where it is going
  * 
- * @param message - The message to send
+ * @param message The message to send
  *
- * @throws Exception_Server - If write fails.
+ * @throws Exception_Server If write fails
  */
 bool ServerUDP::write(const char * message)
 {

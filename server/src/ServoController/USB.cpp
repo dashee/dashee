@@ -1,11 +1,15 @@
 #include "USB.h"
 
 /**
- * The constructor of servo which takes in the device to open
- * usually the device is /dev/ttyACM0 but this could be different going from system to system
+ * Construct.
  *
- * @param (const char *)dev - The name of the device which will be open
- * @throw Exception_Servo - If device opening fails, an exception will be thrown
+ * The constructor of servo which takes in the device to open
+ * usually the device is `/dev/ttyACM0` but this could be different going from system to system
+ *
+ * @param dev The name of the device which will be open
+ * @param channels The number of channels to set
+ *
+ * @throw Exception_Servo If device opening fails, an exception will be thrown
  */
 ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short int channels) : ServoController(dev)
 {
@@ -20,7 +24,9 @@ ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short in
 }
 
 /**
- * Handler to close our @fd opened device, and delete all servo's
+ * Destruct.
+ *
+ * Handler to close our ServoControllerUSB::fd opened device, and delete all servo's.
  */
 ServoControllerUSB::~ServoControllerUSB()
 {
@@ -28,6 +34,8 @@ ServoControllerUSB::~ServoControllerUSB()
 }
 
 /**
+ * Get last known error.
+ *
  * The Pololu board provides a error handling, This function is designed to 
  * get the last error from the Pololy Maestro USB Servo board, Note on retriving 
  * the error, the error is reset. So it is always a good idea to periodicly
@@ -40,7 +48,9 @@ ServoControllerUSB::~ServoControllerUSB()
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
  * 
- * @reuturn short int - The integer response
+ * @throws Exception_ServoController If read/write fails
+ *
+ * @returns The error code
  */
 short int ServoControllerUSB::getError()
 {

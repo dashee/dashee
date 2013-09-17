@@ -1,13 +1,16 @@
 #include "Dummy.h"
 
 /**
- * This constructor opens a stream to the file name, so it can be used for 
- * read and write operations. Our file is in binary so we fopen in binary mode
+ * Construct.
  *
+ * This constructor opens a stream to the file name, so it can be used for 
+ * read and write operations. Our file is in binary so we fopen in binary mode.
  * We also pass the device name in a constructor
  *
- * @param (const char *)dev - The name of the device which will be open
- * @throw Exception_Servo - If device opening fails, an exception will be thrown
+ * @param fd The file handle used by the Servo to read/write to the servo
+ * @param channel The channel number this servo class represents
+ *
+ * @throws Exception_Servo If device opening fails, an exception will be thrown
  */
 ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(channel)
 {
@@ -15,20 +18,22 @@ ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(chan
 }
 
 /**
- * Handler to close our @fd opened device
+ * Destruct.
  */
 ServoDummy::~ServoDummy()
 {
 }
 
 /**
+ * Get the target value.
+ *
  * Seek to the current channel, and retrieve the first 2 bytes
  * which hold the target information. Make sure to flush any write data
  * left over otherwise things will start looking messy.
  *
- * @throw Exception_Servo() - If a read write error occurs
+ * @throws Exception_Servo If a read write error occurs
  *
- * @return int - The value of the channel 
+ * @return The target value of the servo.
  */
 unsigned short int ServoDummy::getTarget()
 {
@@ -44,12 +49,14 @@ unsigned short int ServoDummy::getTarget()
 }
 
 /**
+ * Set the target value.
+ *
  * This function will write to our binary file give a channel number.
  * The target is always written to the first two bytes of the channel.
  *
- * @param (short int)target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param target Target to set represented in 2 byte, with a value of 0-100
  *
- * @throw Exception_Servo - If writing to the board fails
+ * @throws Exception_Servo If writing to the board fails
  */
 void ServoDummy::setTarget(unsigned short int target)
 {

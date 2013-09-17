@@ -1,17 +1,22 @@
-/** 
- * This class, holds a vector of our servo's. 
- * It allows you to interface with individual servo's, and this 
- * class holds the filedescriptor to the device of servo's
- *
- * ServoController cannot be initiated and must be derived, It is upto 
- * the derived class to populate the @servos variable. Cleanup of servos should be
- * left to this class. Doing it in the base class, will work effiecently as 
- * this class will have no pointers to delete.
- *
- * This class's main job is to open the handel to our device, and send the readwrite
- * commands to our Servo class, which is stored in our servos
- *
+/**
+ * @file src/ServoController.h
  * @author Shahmir Javaid
+ *
+ * @section LICENSE
+ *
+ * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. In general
+ * you are free to copy, distribute, display, and perform the work, 
+ * you are also free to make derivative works, under the following conditions:
+ *  - Attribution    — You must give dashee's author credit.
+ *  - Non-Commercial - You may not use this dashee for commercial 
+ *                     purposes without permission.
+ *  - Share Alike    — If you alter, transform, or build upon this work, 
+ *                     you may distribute the resulting work only under a licence 
+ *                     identical to this one.
+ *
+ * The terms and conditions are updated at http://dashee.co.uk/license. View the
+ * project site for more details
  */
 
 #ifndef SERVOCONTROLLER_H_
@@ -24,6 +29,21 @@
 #include "Exception/ServoController/OutOfBound.h"
 #include "Servo.h"
 
+/** 
+ * ServoController abstraction.
+ *
+ * This class, holds a vector of our servo's. 
+ * It allows you to interface with individual servo's, and this 
+ * class holds the filedescriptor to the device of servo's
+ *
+ * ServoController cannot be initiated and must be derived, It is upto 
+ * the derived class to populate the @p servos variable. Cleanup of servos should be
+ * left to this class. Doing it in the base class, will work effiecently as 
+ * this class will have no pointers to delete.
+ *
+ * This class's main job is to open the handel to our device, and send the readwrite
+ * commands to our Servo class, which is stored in our servos
+ */
 class ServoController
 {   
 private:
@@ -31,17 +51,23 @@ private:
 protected:
 
     /** 
+     * List of Servo's.
+     *
      * List of Uninitialized servos, as a vector. This vector is initialized
      * in the derived classes,
      */
     std::vector<Servo *> servos;
     
-    /** 
+    /**
+     * Fallback mode flag.
+     *
      * This determines whather the controller is in fallback mode
      */
     int fallbackmode;
         
     /**
+     * The device filename.
+     *
      * This variable is set during the construct
      * It represents the textual format of the file currently open
      * Great for debugging purposes. And as this class is called once

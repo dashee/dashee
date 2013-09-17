@@ -1,11 +1,22 @@
 /**
- * This is a class which handels communications with the Pololu board
- * it is a wrapper over the read and write commands sent to usually /dev/ttyACM0
- *
- * This class represents one servo/channel at a time, The handel is held externally
- * usually in the ServoController class, or its ServoController<CounterPart> version
- *
+ * @file src/Servo/USB.h
  * @author Shahmir Javaid
+ *
+ * @section LICENSE
+ *
+ * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. In general
+ * you are free to copy, distribute, display, and perform the work, 
+ * you are also free to make derivative works, under the following conditions:
+ *  - Attribution    — You must give dashee's author credit.
+ *  - Non-Commercial - You may not use this dashee for commercial 
+ *                     purposes without permission.
+ *  - Share Alike    — If you alter, transform, or build upon this work, 
+ *                     you may distribute the resulting work only under a licence 
+ *                     identical to this one.
+ *
+ * The terms and conditions are updated at http://dashee.co.uk/license. View the
+ * project site for more details
  */
 
 #ifndef SERVO_USB_H_
@@ -13,15 +24,25 @@
 
 #include "../Servo.h"
 
+/**
+ * Servo USB.
+ *
+ * This is a class which handels communications with the Pololu board
+ * it is a wrapper over the read and write commands sent to usually `/dev/ttyACM0`
+ *
+ * This class represents one servo/channel at a time, The handel is held externally
+ * usually in the ServoController class, or its ServoController<CounterPart> version
+ */
 class ServoUSB : public Servo
 {
 private:
-    
 
 protected:
     
     /** 
-     * The pointer of the filedescriptor help by ServoController,
+     * File Handle.
+     *
+     * The pointer of the filedescriptor held by ServoController,
      * we use this to actually read and write to the device
      */
     int * fd;

@@ -1,7 +1,9 @@
 #include "ServoController.h"
 
 /** 
- * This constructor sets our @dev variable, 
+ * Construct our ServoController.
+ *
+ * This constructor sets our `dev` variable, 
  * The dev variable is defined by param dev.
  * This constructer is initialized by derved clases, 
  * Also set the fallbackmode to false, in the begining
@@ -16,6 +18,8 @@ ServoController::ServoController(const char * dev)
 }
 
 /** 
+ * Destruct and cleanup.
+ *
  * Clean up our servos array using delete, and remove it from
  * our list
  */ 
@@ -29,9 +33,11 @@ ServoController::~ServoController()
 }
 
 /**
+ * Get the target of a servo identified by channel.
+ *
  * This command gets the target of a given channel.
  * To do this however we first need to write to the servo telling it that we want
- * the target value, of our given @channel. We then read from the board, which returns
+ * the target value, of our given `channel`. We then read from the board, which returns
  * the value in a 2 bytes which in collation represent one number.
  * 
  * The value's returned can range from 992 - 8000
@@ -40,11 +46,11 @@ ServoController::~ServoController()
  * tells is we are using getTarget from the board, and the second tells it which channel
  * The byte to get is 0x90 as set by Pololu
  *
- * @param channel - The Channel to get
+ * @param channel The Channel to get
  * 
- * @throw Exception_Servo() - If a read write error occurs
+ * @throws Exception_Servo() If a read write error occurs
  *
- * @return int - The value of the channel 
+ * @returns The target value of the channel 
  */
 unsigned short int ServoController::getTarget(const unsigned short int channel)
 {
@@ -55,6 +61,8 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
 }
 
 /**
+ * Set the target of a servo identified by channel.
+ *
  * This sets the target of a channel given a servo. The target value is between
  * 0-100, the value is converted to the actual target using the calculateTarget()
  * function.
@@ -64,10 +72,10 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
  * represents the channel, and the 3rd and 4rth represent the value. Note that the 4th
  * and third byte have there Most significant byte set to 0.
  *
- * @param channel - The channel number represented in one byte
- * @paran target - Our target to set represented in 2 byte, with a value of 0-100
+ * @param channel The channel number represented in one byte
+ * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
- * @throw Exception_Servo - If writing to the board fails
+ * @throws Exception_Servo If writing to the board fails
  */
 void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
 {
@@ -81,10 +89,13 @@ void ServoController::setTarget(const unsigned short int channel, unsigned short
 }
 
 /**
- * Set the default Target values of a given Channel
+ * Set the default target for a given channel.
  *
- * @param channel - Servo channel number
- * @param target - The value of the target
+ * This is a helper function which allows the use to change
+ * or set the default value of a target.
+ *
+ * @param channel Servo channel number
+ * @param target The value of the target
  *
  * @throws Exception_ServoController_OutOfBound
  */
@@ -99,8 +110,8 @@ void ServoController::setTargetDefault(const unsigned short int channel, unsigne
 /**
  * Set the fallbacks.target for the given Channel
  *
- * @param channel - Servo channel number
- * @param target - The target to set to
+ * @param channel Servo channel number
+ * @param target The target to set to
  *
  * @throws Exception_ServoController_OutOfBound
  */
@@ -113,10 +124,13 @@ void ServoController::setTargetFallback(const unsigned short int channel, unsign
 }
 
 /**
- * Set the fallbacksEnabled.target for a given channel
+ * Set the Servo::fallbacksEnabled for a given channel.
+ * 
+ * Helpfull passthrough to modify the Servo::fallbackEnabled value
+ * for the given servo, identified by @p channel
  *
- * @param channel - Servo channel number
- * @param enabled - The value
+ * @param channel Servo channel number
+ * @param enabled The value
  *
  * @throws Exception_ServoController_OutOfBound
  */
@@ -129,10 +143,12 @@ void ServoController::setTargetFallbackEnabled(const unsigned short int channel,
 }
 
 /** 
- * This function will return the size of @servos, it is a pass through
- * to the std::vector.size() function for the variable @servos
+ * Get the size of Servo's.
  *
- * @return unsigned int - Unsigned integral type
+ * This function will return the size of @p servos, it is a pass through
+ * to the std::vector.size() function for the variable @p servos
+ *
+ * @return The number of servos in ServoController::servos
  */
 unsigned int ServoController::size()
 {
@@ -140,12 +156,14 @@ unsigned int ServoController::size()
 }
 
 /** 
- * Given the current state of @fallbackmode, we iterate
+ * Perform the fallback.
+ *
+ * Given the current state of @p fallbackmode, we iterate
  * through all servo's and set them to fallback mode, If
  * we have already fallen back then the flag should be true
  * in this case dont do any thing.
  *
- * turn @fallbackmode to true at the end
+ * Turn @p fallbackmode to true at the end
  */
 void ServoController::fallback()
 {
@@ -162,9 +180,11 @@ void ServoController::fallback()
 }
 
 /** 
- * Given the current state of @fallbackmode, we iterate
+ * Perform the revert.
+ *
+ * Given the current state of @p fallbackmode, we iterate
  * through all servo's and revert them to there original 
- * position. At the end @fallbackmode is set to false, as
+ * position. At the end @p fallbackmode is set to false, as
  * we have reverted
  */
 void ServoController::revert()

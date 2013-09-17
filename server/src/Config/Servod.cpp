@@ -1,17 +1,21 @@
 #include "Servod.h"
 
 /** 
- * Initialize our maps, and internal variables
+ * Construct.
+ *
+ * Call our parent class constructor, internally do nothing.
  */
 ConfigServod::ConfigServod() : Config()
 {
 }
 
 /** 
+ * Set the servoController variable.
+ *
  * This function goes through the configs map and looks for in the shape of
  * channelXX-default-target, where "channel" is the identifier, the "XX" is a 
  * number from 0-99, we then hit a seperator "-" what comes exactly after
- * the dash is the struct value from @Servo class. In our example default will
+ * the dash is the struct value from Servo class. In our example default will
  * go to Servo::default. We then get another seperator, which is used as the value
  * of the struct, so in the example above we are setting Servo::defalt.target to the value
  * where the value is an integer
@@ -23,7 +27,7 @@ ConfigServod::ConfigServod() : Config()
  * In some cases, the value channelXX-fallbackEnabled-target=1 will call:
  *   ServoController::setFallbackenabled::target(<channel>, <value>)
  *
- * @param s - is the handel to the ServoController
+ * @param s is the handel to the ServoController
  */
 void ConfigServod::setServoController(ServoController * s)
 {
@@ -78,16 +82,19 @@ void ConfigServod::setServoController(ServoController * s)
 }
 
 /**
+ * Set default values.
+ *
  * This function will take the key value of the Config
  * and depending on that set default values for either `target`, `speed` or `acceleration`.
  *
- * @param s - Pointer to the ServoController so setting values can be accessed
- * @param what - What to set, `target`, `speed` or `acceleration`
- * @param value - the value
- * @param channel - The channel Number
+ * @param s Pointer to the ServoController so setting values can be accessed
+ * @param what What to set, `target`, `speed` or `acceleration`
+ * @param value The value to set
+ * @param channel The channel Number
  *
- * @returns bool - If the set was successfull, false any other way
- *
+ * @returns bool flag representing settings status
+ * @retval TRUE Setting was successfull
+ * @retval FALSE Setting failed
  */
 bool ConfigServod::setDefault(ServoController * s, const char * what, const char * value, const unsigned short int & channel)
 {
@@ -123,16 +130,19 @@ bool ConfigServod::setDefault(ServoController * s, const char * what, const char
 }
 
 /**
+ * Set the value of fallback.
+ *
  * this Function will will set fallback values. So when the system fallbacks these 
  * are the values it will be set to
  *
- * @param s - Pointer to the ServoController so setting values can be accessed
- * @param what - What to set, `target`, `speed` or `acceleration`
- * @param value - the value
- * @param channel - The channel Number
+ * @param s Pointer to the ServoController so setting values can be accessed
+ * @param what What to set, `target`, `speed` or `acceleration`
+ * @param value the value
+ * @param channel The channel Number
  *
- * @returns bool - If the set was successfull, false any other way
- *
+ * @returns bool flag representing settings status
+ * @retval TRUE Setting was successfull
+ * @retval FALSE Setting failed
  */
 bool ConfigServod::setFallback(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
@@ -167,16 +177,19 @@ bool ConfigServod::setFallback(ServoController * s, const char *what, const char
     return false;
 }
 
-/**
+/** 
+ * Set the fallback enabled.
+ *
  * This function will enable/disable fallback for a given channel
  *
- * @param s - Pointer to the ServoController so setting values can be accessed
- * @param what - What to set, `target`, `speed` or `acceleration`
- * @param value - the value
- * @param channel - The channel Number
+ * @param s Pointer to the ServoController so setting values can be accessed
+ * @param what What to set, `target`, `speed` or `acceleration`
+ * @param value the value
+ * @param channel The channel Number
  *
- * @returns bool - If the set was successfull, false any other way
- *
+ * @returns bool flag representing settings status
+ * @retval TRUE Setting was successfull
+ * @retval FALSE Setting failed
  */
 bool ConfigServod::setFallbackEnabled(ServoController * s, const char *what, const char * value, const unsigned short int & channel)
 {
@@ -184,7 +197,9 @@ bool ConfigServod::setFallbackEnabled(ServoController * s, const char *what, con
 }
 
 /**
- * Destruct if required
+ * Destruct.
+ *
+ * Does nothing
  */ 
 ConfigServod::~ConfigServod()
 {

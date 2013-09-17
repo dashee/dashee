@@ -1,4 +1,25 @@
 /** 
+ * @file include/dashee/Common.h
+ * @author Shahmir Javaid
+ *
+ * @section LICENSE
+ *
+ * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. In general
+ * you are free to copy, distribute, display, and perform the work, 
+ * you are also free to make derivative works, under the following conditions:
+ *  - Attribution    — You must give dashee's author credit.
+ *  - Non-Commercial - You may not use this dashee for commercial 
+ *                     purposes without permission.
+ *  - Share Alike    — If you alter, transform, or build upon this work, 
+ *                     you may distribute the resulting work only under a licence 
+ *                     identical to this one.
+ *
+ * The terms and conditions are updated at http://dashee.co.uk/license. View the
+ * project site for more details
+ *
+ * @section DESCRIPTION 
+ *
  * This program is designed to connect to the servo controller using the COM port
  * which is usually defined by /dev/ttyACM0. It can then interface with this port 
  * by reading and writing to it. The read write protocol is defined by the POLOLU
@@ -14,8 +35,6 @@
  * This server is not daemonized, as its mostly run in debug mode.
  *
  * This was developed for Linux and has never been tested in other operating systems
- *
- * @author Shahmir Javaid
  */
 
 #include <stdlib.h>
@@ -63,10 +82,14 @@ void setconfig(int, char **, dashee::Config *);
  * and run a UDP server. The UDP server provides a interface to the outside world
  * which can communicate and send commands to our Servo controller.
  *
- * @param (int)argc - The number of arguments
- * @param (char **)argv - The arguments array
+ * @param argc The number of arguments
+ * @param argv The arguments array
  *
- * @return int - 0 on successfull shutdown and any other number for error.
+ * @returns 0 on successfull shutdown and any other number for error.
+ * @retval 0 Successfull process
+ * @retval -3 Failed on Configuration
+ * @retval -2 Failed because an Exception occrred
+ * @retval -1 Failed because runtime::error exception occurred
  */
 int main(int argc, char **argv)
 {
@@ -257,7 +280,7 @@ int main(int argc, char **argv)
 /**
  * Our signal handler as overwritten by our main function
  *
- * @param (int)sig - The signal that was thrown
+ * @param sig The signal that was thrown
  */
 void sighandler(int sig)
 {
@@ -270,11 +293,9 @@ void sighandler(int sig)
  * do do that we use this function which takes in argc and argv amongst other arguments
  * other arguments are pointers so this function can modify there value
  *
- * @param (int)argc - The number of arguments
- * @param (char **)argv - The arguments array
- * @param (unsigned int *)servotype - The type of servo, 1 for USB, 2 for FILE
- * @param (char **)servo - The file name for the servo
- * @param (unsigned int *)port - The port the server will run on
+ * @param argc The number of cmdline arguments.
+ * @param argv The array of cmdline arguments sent
+ * @param conf Pointer to the Config object used to set/get
  */
 void setconfig(int argc, char ** argv, dashee::Config *conf)
 {

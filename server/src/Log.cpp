@@ -1,13 +1,10 @@
-/**
- * Definition for the Log class, which handels the Log pringint
- * 
- * @author Shahmir Javaid
- */
-
 #include <dashee/Log.h>
+
 using namespace dashee;
 
 /**
+ * Print log.
+ *
  * This function takes a short int which represents the value
  * to be printed from the logstatus array. The value in the index
  * reprsents the error string type, We use an array as its easy to modify
@@ -19,8 +16,8 @@ using namespace dashee;
  * 
  * The function takes the c argument which represents the message to print
  * 
- * @param (const short int)errorStringIndex - The logstatus string, accessed from the Log::logstatus array
- * @param (const char *)message - The character string to print
+ * @param errorStringIndex The logstatus string, accessed from the Log::logstatus array
+ * @param message The character string to print
  */
 void Log::print(const short int errorStringIndex, const char *message) 
 {
@@ -43,6 +40,8 @@ void Log::print(const short int errorStringIndex, const char *message)
 }
 
 /**
+ * Print informational log.
+ *
  * This function takes in the verbosity level and checks it to be lower than Log::vebosity
  * this will determine wheather or not this function will print.
  * 
@@ -50,9 +49,9 @@ void Log::print(const short int errorStringIndex, const char *message)
  * string to print, followed by the ..., which represents a list of arguments which
  * are representd in c
  *
- * @param (const unsigned short int)verbosity - An identifier which represents wheater this message is printed
- * @param (const char *)format - The printf like format string
- * @param (va_args)... - The va_args list of parameters for format string
+ * @param verbosity An identifier which represents wheater this message is printed
+ * @param format The printf like format string
+ * @param ... The va_args list of parameters for format string
  */
 void Log::info(const unsigned short int verbosity, const char *format, ...)
 {
@@ -67,12 +66,14 @@ void Log::info(const unsigned short int verbosity, const char *format, ...)
 }
 
 /**
+ * Print information log, given a string.
+ *
  * This function is a helpfull std::string counterpart of the printf like
  * Log::info function, It also optionaly requires the verbosity level
  * by default verbosity is set to 1
  * 
- * @param (std::string)message - The message to print
- * @param (const unsigned short int)verbosity = 1 - The vebosity level check
+ * @param message The message to print
+ * @param verbosity The vebosity level check
  */
 void Log::info(std::string message, const unsigned short int verbosity)
 {
@@ -80,6 +81,8 @@ void Log::info(std::string message, const unsigned short int verbosity)
 }
 
 /**
+ * Print a warning.
+ *
  * This function takes in the verbosity level and checks it to be lower than Log::vebosity
  * this will determine wheather or not this function will print.
  * 
@@ -87,9 +90,9 @@ void Log::info(std::string message, const unsigned short int verbosity)
  * string to print, followed by the ..., which represents a list of arguments which
  * are representd in format
  *
- * @param (const unsigned short int)verbosity - An identifier which represents wheater this message is printed
- * @param (const char *)format - The printf like format string
- * @param (va_args)... - The va_args list of parameters for format string
+ * @param verbosity An identifier which represents wheater this message is printed
+ * @param format The printf like format string
+ * @param ... The va_args list of parameters for format string
  */
 void Log::warning(const unsigned short int verbosity, const char *format, ...)
 {
@@ -104,12 +107,14 @@ void Log::warning(const unsigned short int verbosity, const char *format, ...)
 }
 
 /**
+ * Print a warning, given a string.
+ *
  * This function is a helpfull std::string counterpart of the printf like
  * Log::warning function, It also optionaly requires the verbosity level
  * by default verbosity is set to 1
- * 
- * @param (std::string)message - The message to print
- * @param (const unsigned short int)verbosity = 1 - The vebosity level check
+ *
+ * @param message The message to print
+ * @param verbosity The vebosity level check
  */
 void Log::warning(std::string message, const unsigned short int verbosity)
 {
@@ -117,12 +122,13 @@ void Log::warning(std::string message, const unsigned short int verbosity)
 }
 
 /**
+ * Print an error.
+ *
  * This function takes a char array which is the format of the 
  * string to print, followed by the ..., which represents a list of arguments which
  * are representd in format
  *
- * @param (const char *)format - The printf like format string
- * @param (va_args)... - The va_args list of parameters for format string
+ * @param format The printf like format string
  */
 void Log::error(const char *format, ...) 
 { 
@@ -135,28 +141,30 @@ void Log::error(const char *format, ...)
 }
 
 /**
+ * Print an error, given a string.
+ *
  * This function is a helpfull std::string counterpart of the printf like
  * Log::error function, It also optionaly requires the verbosity level
  * by default verbosity is set to 1
  * 
- * @param (std::string)message - The message to print
- * @param (const unsigned short int)verbosity = 1 - The vebosity level check
+ * @param message The message to print
  */
 void Log::error(std::string message) 
 { 
     Log::error(message.c_str()); 
 }
 
-
 /**
+ * Print a fatal error.
+ *
  * Unlike other messages in the log class, this one is specifically designed
  * to shut the program down by calling exit(-1) on the program.
  *
  * It takes the format string, and a va_args ... to print the printf like message
  * before it inevetably commits suicide. Marvin the fatal function
  *
- * @param (const char *)format - The printf like format string
- * @param (va_args)... - The va_args list of parameters for format string
+ * @param format The printf like format string
+ * @param ... The va_args list of parameters for format string
  */
 void Log::fatal(const char *format, ...)
 {
@@ -170,12 +178,13 @@ void Log::fatal(const char *format, ...)
 }
 
 /**
+ * Print a fatal error, given a string.
+ *
  * This function is a helpfull std::string counterpart of the printf like
  * Log::fatal function, It also optionaly requires the verbosity level
  * by default verbosity is set to 1
  * 
- * @param (std::string)message - The message to print
- * @param (const unsigned short int)verbosity = 1 - The vebosity level check
+ * @param message The message to print
  */
 void Log::fatal(std::string message) 
 { 
