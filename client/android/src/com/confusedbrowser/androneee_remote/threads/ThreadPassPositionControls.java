@@ -66,6 +66,11 @@ public class ThreadPassPositionControls extends Thread
      * Current vehicle in use.
      */
     private ModelVehicle modelVehicle;
+
+    /*
+     * Current list of commands
+     */
+    ArrayList<byte[]> commands;
 	
 
     /**
@@ -119,9 +124,8 @@ public class ThreadPassPositionControls extends Thread
     {   
         while(!exit)
         {
+                this.sendCommands();
 
-            this.sendCommands();
-            
             // We are in lock state, so sent the thread to wait
             // which can be then woken up by a notify
             synchronized (lockPause) 
@@ -131,7 +135,8 @@ public class ThreadPassPositionControls extends Thread
                     try 
                     {
                         lockPause.wait();
-                    } 
+                    }
+
                     catch (InterruptedException e) 
                     {
                     }
@@ -145,7 +150,7 @@ public class ThreadPassPositionControls extends Thread
      */
     private void sendCommands()
     {
-    	ArrayList<byte[]> commands =  this.modelVehicle.getCommands();
+    	commands =  this.modelVehicle.getCommands();
     	for(byte[] command : commands)
     	{
             this.sendCommandBytes(command);

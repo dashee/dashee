@@ -1,7 +1,5 @@
 package com.confusedbrowser.androneee_remote.models;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -28,6 +26,11 @@ public class ModelVehicleCar implements ModelVehicle
     private float steerMin = 0.0f;
     private boolean steerInverted = false;
 
+    float tempSteer; // Used in get actual steer calculation
+    float tempPower;
+    int steerInt;
+    int powerInt;
+
     /**
      * Set of variables which hold power information
      */
@@ -46,7 +49,7 @@ public class ModelVehicleCar implements ModelVehicle
      * the milliseconds the client should talk to the server if
      * no new commands are being sent
      */
-    private int timeOut = 200;
+    private int timeOut = 300;
 
     /**
      * Hold the last time value of the command sent. This will help
@@ -54,12 +57,20 @@ public class ModelVehicleCar implements ModelVehicle
      * for comparison before we can send another value.
      */
     private long timeValueSent = 0; // Time when last value was set
+    private long currentTime;
+    boolean somethingToSend = false;
+
+    // Commands are sent as 2 byte packets, the first byte, is the type
+    // of command the second is the value.
+    ArrayList<byte[]> commands = new ArrayList<byte[]>();
 
     /**
      * When things like steerMax and and steerMin
      * Change want temp flag so UI can update efficiently instead of all the time
      */
     private boolean settingsChanged = false;
+
+
 
     /**
      * The mapping objects for turning degrees into steer values
@@ -124,7 +135,7 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * Getter for power
      *
-     * @returns float - The current power value
+     * @return float - The current power value
      */
     public float getPower()
     {
@@ -170,29 +181,18 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getActualPower()
     {
-        // 50 in case of power is stop
-        float powerValue;
-
-        /*if(this.power > this.powerMax){
-            powerValue = this.powerMax;
-        }else if (this.power < this.powerMin){
-            powerValue = this.powerMin;
-        }else{
-            powerValue = this.power;
-        }*/
-
         // Going from 50 - 100 is forward apply forward this.powerMax
         if(this.power >= 50.0f)
-            powerValue = RangeMapping.mapValue(this.power, 50.0f, 100.0f, 50.0f, this.powerMax);
+            tempPower = RangeMapping.mapValue(this.power, 50.0f, 100.0f, 50.0f, this.powerMax);
         else{
             // Going from 0 - 50 is reverse apply this.powerMin
-            powerValue = RangeMapping.mapValue(this.power, 0.0f, 50.0f, this.powerMin, 50.0f);
+            tempPower = RangeMapping.mapValue(this.power, 0.0f, 50.0f, this.powerMin, 50.0f);
         }
 
         if(this.powerInverted)
-            powerValue =  this.powerMax - powerValue + (100 - this.powerMax);
+            tempPower =  100 - tempPower;
 
-        return powerValue;
+        return tempPower;
     }
 
     /**
@@ -203,41 +203,33 @@ public class ModelVehicleCar implements ModelVehicle
     @Override
     public ArrayList<byte[]> getCommands() 
     {
-        long currentTime = System.currentTimeMillis();
-        boolean somethingToSend = false;
+        this.currentTime = System.currentTimeMillis();
+        this.somethingToSend = (this.currentTime-this.timeValueSent > this.timeOut);
 
-        // Commands are sent as 2 byte packets, the first byte, is the type
-        // of command the second is the value.
-        ArrayList<byte[]> commands = new ArrayList<byte[]>();
+        this.steerInt = Math.round(this.actualSteer);
+        this.powerInt = Math.round(this.getActualPower());
 
-        int steerInt = Math.round(this.actualSteer);
-        int powerInt = Math.round(this.getActualPower());
-        
-        if(steerInt != this.prevSteer || (currentTime-this.timeValueSent > this.timeOut))
+        commands.clear();
+
+        if(this.steerInt != this.prevSteer || this.somethingToSend)
         {
-            int sendSteer = steerInt+this.steerTrim;
-            if (sendSteer > 100) { sendSteer = 100; }
-            if (sendSteer < 0) { sendSteer = 0; }
-            //Log.d("Dashee", "Steer Value: "+sendSteer);
+            this.steerInt = this.steerInt+this.steerTrim;
+
             // Steering 17 converts to 00010001.
-            commands.add(new byte[]{ 17, (byte)(sendSteer << 1) });
-            this.prevSteer = steerInt;
-            somethingToSend = true;
+            commands.add(new byte[]{ 17, (byte)(this.steerInt << 1) });
+            this.prevSteer = this.steerInt;
         }
         
-        if(powerInt != this.prevPower || (currentTime-this.timeValueSent > this.timeOut))
+        if(this.powerInt != this.prevPower || this.somethingToSend)
         {
-            int sendPower = powerInt+this.powerTrim;
-            if (sendPower > 100) { sendPower = 100; }
-            if (sendPower < 0) { sendPower = 0; }
+            this.powerInt = this.powerInt+this.powerTrim;
 
             // Steering 33 converts to 00100001.
-            commands.add( new byte[]{ 33, (byte)(sendPower << 1) });
-            this.prevPower = powerInt;
-            somethingToSend = true;
+            commands.add( new byte[]{ 33, (byte)(this.powerInt << 1) });
+            this.prevPower = this.powerInt;
         }
 
-        if(somethingToSend)
+        if(!commands.isEmpty())
             this.timeValueSent = System.currentTimeMillis();
 
         return commands;
@@ -289,9 +281,6 @@ public class ModelVehicleCar implements ModelVehicle
         	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f, 100.0f); // TODO: invert option
         else if(pitch <=-1.70f) 
         	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, 0.0f, 50.0f);
-
-        /*if(this.powerInverted)
-    		powerValue =  this.powerMax - powerValue + (100 - this.powerMax);*/
     	
     	return powerValue;
     }
@@ -307,33 +296,33 @@ public class ModelVehicleCar implements ModelVehicle
     private float getActualSteer(float roll)
     {
 
-        float steerValue;
-    	//float steerValue = steerMapping.remapValue(roll);
+        //float steerValue;
+        this.tempSteer = steerMapping.remapValue(roll);
 
-        float sensitivity = 0.0f;
-        float sensitivityRange = (float)((float)sensitivity*Math.pow(0.523, 3));
+        //float sensitivity = 0.0f;
+        //float sensitivityRange = (float)((float)sensitivity*Math.pow(0.523, 3));
 
-        if (sensitivity != 0.0)
+        /*if (sensitivity != 0.0)
         {
 
             //roll = 0.01f*Math.pow(Double.parseDouble(roll,3);
             //Log.d("Dashee", "Roll: " +roll+"");
             //double steerValueTemp = RangeMapping.mapValue(roll, -0.523f, 0.523f, -5.0f, 5.0f);
             //Log.d("Dashee", "First Map: " +steerValueTemp+"");
-            double steerValueTemp = sensitivity*Math.pow(roll,3);
+            //double steerValueTemp = sensitivity*Math.pow(roll,3);
             //Log.d("Dashee", "Function applyd: " +steerValueTemp+"");
-            steerValue = RangeMapping.mapValue((float)steerValueTemp, -sensitivityRange, sensitivityRange, this.steerMax, this.steerMin);
+            //steerValue = RangeMapping.mapValue((float)steerValueTemp, -sensitivityRange, sensitivityRange, this.steerMax, this.steerMin);
             //Log.d("Dashee", "2nd map: " +steerValue+"");
         }
         else
         {
             steerValue = steerMapping.remapValue(roll);
-        }
+        }*/
 
 
     	if(this.steerInverted)
-    		steerValue =  this.steerMax - steerValue + (100 - this.steerMax);
-    	return steerValue;
+            this.tempSteer =  100 - this.tempSteer;
+    	return this.tempSteer;
     }
 
     /**
