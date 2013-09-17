@@ -1,8 +1,10 @@
 #include "Server.h"
 
 /**
- * This function will initialize the @port value which is passed as a parameter
- * it will also set the @client_in_length value to be the sizeof @client_in 
+ * Constructor.
+ *
+ * This function will initialize the @a port value which is passed as a parameter
+ * it will also set the Server::client_in_length value to be the sizeof Server::client_in 
  * and set the server_in to have all 0's as its value.
  *
  * @param port - The value of the port
@@ -16,7 +18,7 @@ Server::Server(unsigned int port)
     // 0 our server_in variable
     memset((char *) &server_in, 0, sizeof(server_in));
     
-    // Initaize our @mask variable as pselect will jump out on
+    // Initaize our mask variable as pselect will jump out on
     // SIGTERM
     memset((sigset_t *)&mask, 0, sizeof(mask));
     sigemptyset (&mask);
@@ -27,9 +29,9 @@ Server::Server(unsigned int port)
 }
 
 /**
- * This function will return our @socket parameter
+ * This function will return our @a socket parameter.
  *
- * @return int - The @socket protected variable
+ * @returns The Server::socketfd protected variable
  */
 int Server::getSocketfd()
 {
@@ -37,9 +39,9 @@ int Server::getSocketfd()
 }
 
 /**
- * This returns a pointer to the buffer variable
+ * This returns a pointer to the buffer variable.
  *
- * @returns char * - The @buffer variable
+ * @returns The Server::buffer variable
  */
 unsigned char * Server::getBuffer()
 {
@@ -47,6 +49,8 @@ unsigned char * Server::getBuffer()
 }
 
 /**
+ * Set timeout values.
+ *
  * This function will set our timeout value
  * Note if it is set to 0, then our select will never return.
  *
@@ -63,7 +67,9 @@ void Server::setTimeout(const unsigned int seconds, const unsigned int milisecon
 }
 
 /**
- * This function will set the @select_read using the @FD_
+ * Wait using pselect or timeout.
+ *
+ * This function will set the @a select_read using the @a FD_
  * function and the call select, it will also return the value
  * of select
  *

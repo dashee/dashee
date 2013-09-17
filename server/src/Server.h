@@ -20,6 +20,9 @@
 
 #include "Exception/Server.h"
 
+/**
+ * Maximum size of the buffer.
+ */ 
 #define SERVER_BUFFER_SIZE 32
 
 class Server
@@ -28,36 +31,48 @@ class Server
 protected:
 
     /** 
+     * Socket handler.
+     *
      * This is our filedescriptor for our socket
      */
     int socketfd;
 
     /**
+     * Port number.
+     *
      * set by our constructor this is the port
      * the server will listen on
      */ 
     unsigned int port;
     
     /** 
+     * Socket address for the server.
+     *
      * This holds the information required
      * to start our server.
      */
     struct sockaddr_in server_in;
     
     /**
+     * Socket addresss for the client.
+     *
      * Initialize our client socket settings
      * this is used to communicate back to the client
-     * and set by our @read() function
+     * and set by our @a read() function
      */
     struct sockaddr_in client_in;
 
     /** 
+     * Socket client address length.
+     *
      * recvfrom takes an int * for the length.
      * so we initialize the client lenght into a variable
      */
     int client_in_length;
     
     /** 
+     * The maximum size of the read/write buffer.
+     *
      * This is the buffer size used for our project
      * it usually should be set to 2 bytes, and longer
      * commands should just reread the buffer till its empty
@@ -65,16 +80,22 @@ protected:
     unsigned char buffer[SERVER_BUFFER_SIZE];
 
     /** 
+     * Server timeout for read.
+     *
      * Set our select timeout
      */
     struct timespec pselect_timeout;
 
     /**
+     * Selected socket file handle.
+     *
      * Our read select fd
      */
     fd_set select_read;
     
     /** 
+     * Signal masking.
+     *
      * This is our mask set in the constructor which is 
      * required by pselect
      */

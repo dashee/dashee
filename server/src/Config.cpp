@@ -1,10 +1,3 @@
-/**
- * Define our static variables for the Config class. 
- * See Config.h for decleration
- * 
- * @author Shahmir Javaid
- */
-
 #include <dashee/Config.h>
 
 using namespace dashee;
@@ -17,6 +10,8 @@ using namespace dashee;
  * @param rhs - The right hand side to be compared against @lhs
  *
  * @return bool - true if the first character in lhs is less than the rhs counterpart
+ * @retval TRUE if the first character in @p lhs is less than the @p rhs counterpart
+ * @retval FALSE false if the firstcharacter in @p lhs is not less than @p rhs
  */
 bool Config_Comparitor::operator()(const char * lhs, const char * rhs) const
 {
@@ -26,6 +21,8 @@ bool Config_Comparitor::operator()(const char * lhs, const char * rhs) const
 }
 
 /** 
+ * Construct.
+ *
  * Initialize our maps, and internal variables
  */
 Config::Config()
@@ -34,7 +31,9 @@ Config::Config()
 }
 
 /** 
- * This function will set a value in our @configs map, the first parameter
+ * Set a config value.
+ *
+ * This function will set a value in our Configs::configs map, the first parameter
  * represents the key value, the second represents the value to set, and the third
  * is a flag that will enable disable override of a key if present. The @override
  * key is by default set to 1 representing the variable will be overwritten
@@ -88,7 +87,9 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     }
 }
 
-/** 
+/**
+ * Set an integer config value.
+ *
  * This function is HACKEY, Given a int we need to convert it into a char *, and as our 
  * char * variable scope will only exist inside this function scope, we need to allocate
  * a pointer in memory. This has other problems. Altough our pointer is allocated in memory
@@ -116,6 +117,8 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
 }
 
 /** 
+ * Set a float config value.
+ *
  * Same as Config::set_uint, except uses float in sprintf
  * 
  * @param key - The key to set
@@ -136,8 +139,10 @@ void Config::set_float(const char * key, const float value, const unsigned short
 }
 
 /** 
- * This will return a unsigne char * of the value from the @configs map in our class
- * The @defaultvalue set to NULL is returned if no key is found. 
+ * Get a config value.
+ *
+ * This will return a unsigne char * of the value from the Config::configs map in our class
+ * The default value set to @p NULL is returned if no key is found. 
  * 
  * @param key - The key to look for
  * @param defaultvalue - The default value to return if no key was found
@@ -158,6 +163,8 @@ const char * Config::get(const char * key, const char * defaultvalue)
 }
 
 /** 
+ * Get an integer config value.
+ *
  * Similar to the get function, except this deals in getting back a const unsigned int
  * 
  * @param key - The key value to get
@@ -178,6 +185,8 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
 }
 
 /** 
+ * Get a float config value.
+ *
  * Similar to the Config::get_uint, except deals in float
  * 
  * @param key - The key value to get
@@ -197,7 +206,9 @@ const float Config::get_float(const char * key, const float defaultvalue)
     return strtof((char *)Config::get(key, buf.str().c_str()), (char **)NULL);
 }
 
-/** 
+/**
+ * Read configuration from a file. 
+ *
  * Given a file name as a parameter, this function will read a config file
  * a config file holds key value pairs, seperated by the first space.
  * Each config line is broken by \n character and config files can have comments
@@ -335,6 +346,8 @@ void Config::read(const char * file)
 }
 
 /** 
+ * Print a configuration.
+ *
  * This is a helpfull print function, which iterates the config values
  * and logs them
  */
@@ -351,6 +364,8 @@ void Config::print()
 }
 
 /**
+ * Clean up the configuration.
+ *
  * This will delete the pointers, allocated in configs. And also clear, the
  * maps
  */
@@ -370,6 +385,8 @@ void Config::cleanup()
 }
 
 /**
+ * Destruct.
+ *
  * Our destructor which only calls cleanup
  */
 Config::~Config()

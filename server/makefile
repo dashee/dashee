@@ -108,6 +108,10 @@ binfile: $(DATADIR)/Servo.bin
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38
 
+# Builds the documentation
+documentation:
+	@doxygen docs/doxygen.conf > /dev/null
+
 # This will remove our data/Servo.bin file, to build it again 
 cleandata:
 	@$(RM) $(DATADIR)/Servo.bin
@@ -131,3 +135,6 @@ cleanall: clean
 	@$(RM) $(DIRECTORIES)
 	@echo "Deleting 'etc'"
 	@$(RM) etc
+	@echo "Deleting documentation"
+	@$(RM) docs/html
+	@$(RM) docs/xml

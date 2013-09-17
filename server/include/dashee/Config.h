@@ -1,19 +1,3 @@
-/**
- * This config files, allows us to set config values, It also gives an interface,
- * which allows us to get a value which is not set, by using a default parameter
- * for get. Read more in the get functionality.
- *
- * When setting values, all previous values are overwritten, unless specified not to.
- *
- * All of our values are stored in char arrays. Conversions are done by helper functions
- * defined by getType.
- *
- * Note if you ever use, set_uint, you MUST MUST MUST call Config::cleanup, or
- * Initiate the Config object, then the destructor will call the cleanup
- *
- * @author Shahmir Javaid
- */
-
 #ifndef DASHEE_CONFIG_H_
 #define DASHEE_CONFIG_H_
 
@@ -36,10 +20,13 @@ namespace dashee
     class Config;
 }
 
-/* This is our comparitor class override, that is used by the multimap
+/**
+ * The dashee::Config Comaprison class.
+ *
+ *  This is our comparitor class override, that is used by the multimap
  * to actually compare the values of char *, rather than just pointers
- * 
- * See the definition of @configs and @configs_it in the class @Config below
+ *
+ * @author Shahmir Javaid
  */
 class dashee::Config_Comparitor
 {
@@ -49,6 +36,21 @@ public:
     bool operator()(const char *, const char *) const;
 };
 
+/**
+ * Class which holds configuration values in a map for easy access.
+ * 
+ * This config class, allows us to set config values, It also gives an interface,
+ * which allows us to get a value which is not set, by using a default parameter
+ * for get. Read more in the get functionality.
+ *
+ * When setting values, all previous values are overwritten, unless specified not to.
+ *
+ * All of our values are stored in char arrays. Conversions are done by helper functions
+ * defined by getType.
+ *
+ * Note if you ever use, set_uint, you **must call Config::cleanup, or
+ * Initiate the Config object**, then the destructor will call the cleanup
+ */
 class dashee::Config
 {
 private:
@@ -56,6 +58,8 @@ private:
 protected:
  
     /** 
+     * Map which holds all the configuration values.
+     *
      * This will hold our, config values in key value pairs of characters.
      * All values are in character strings, so if a get is required
      * to be in a format use getType, where Type is the value. each type has do
@@ -64,16 +68,22 @@ protected:
      * We choose a map as it gives us a quick an efficient way to get to our any given
      * key value
      *
-     * We also define the iterator to save us redefining it every turn of the function
-     * as this class is non threaded, this is a good idea. Need to change this otherwise
-     *
      * Note because this is static, it has to initialized in Config.cpp
      */
     std::map<const char *, char *, Config_Comparitor> configs;
+
+    /**
+     * Global iterator value.
+     *
+     * We also define the iterator to save us redefining it every turn of the function
+     * as this class is non threaded, this is a good idea. Need to change this otherwise
+     */
     std::map<const char *, char *, Config_Comparitor>::iterator configs_it;
 
     /**
-     * This function is sent to all log::info and log::waring, It is a handy way
+     * Configure the loglevel globally for configuration.
+     *
+     * This function is sent to all Log::info() and Log::warning(), It is a handy way
      * to turn the loging up, for just the config class, by default it should be set to
      * 5
      */
