@@ -15,7 +15,8 @@
   },
   "permissions": [
     {"socket": [
-      "udp-send-to"
+      "udp-send-to",
+      "udp-bind"
     ]}
   ]
 }

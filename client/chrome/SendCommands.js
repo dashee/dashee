@@ -18,6 +18,7 @@ var baseClient = function(socketMode) {
     socket.create(socketMode, {}, function(_socketInfo) {
       socketInfo = _socketInfo;
       socket.connect(socketInfo.socketId, address, port, function(connectResult) {
+        // We are now connected to the socket so send it some data
         console.debug('connectResult', connectResult);
         connected = (connectResult == 0);
         socket.ondata = function(result) {
@@ -25,13 +26,14 @@ var baseClient = function(socketMode) {
             callbacks.shift()(result);           
           }
         };
-        that.poll();
+        //that.poll();
         callback(connected);
       });
     });
   };
 
-  that.poll = function() {
+  /*that.poll = function() {
+    console.log('here');
     if(!!address == false) throw NoAddressException; 
     if(connected == false) throw NotConnectedException;
     socket.read(socketInfo.socketId, function(result) {
@@ -40,7 +42,7 @@ var baseClient = function(socketMode) {
       }
       that.poll();
     });
-  };
+  };*/
 
   that.send = function(data, callback) {
     callback = callback || function() {};

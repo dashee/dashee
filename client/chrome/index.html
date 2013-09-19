@@ -3,17 +3,21 @@
 <head>
     <meta charset="utf-8">
     <title>Hello World</title>
-    <script src="SendCommands.js"></script>
-    <script src="Load.js"></script>
+    <!--script src="SendCommands.js"></script>
+    <script src="Load.js"></script-->
+    <script src="UDPServer.js"></script>
+    
     <link href="styles/main.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Dashee on Chrome</h1>
-    <label>Steer</label>
-    	<input type="range" name="steer" min="0" max="100" id="steer" >
-    
-    <label>Power</label>
-    	<input type="range" name="power" min="0" max="100" id="power" >
-	
+    <h1>Dashee Server Monitor</h1>
+    <label>Packets Per Second</label>
+    <p id="packets-per-sec">0</p>
+    <div style="width:200px; height:200px; margin:0 auto">
+        <div id="rotater" style="width:100px; height:100px; background:#ccc; border:1px solid #555; margin:0 auto;">
+        </div>
+	</div>
+    <canvas id="packetMonitor" width="600" height="200" style="margin:0 auto;">
+    </canvas>
 </body>
 </html>
