@@ -2,6 +2,7 @@ package com.confusedbrowser.androneee_remote.models;
 
 import java.util.ArrayList;
 import java.lang.Math;
+import java.util.List;
 
 import com.confusedbrowser.androneee_remote.Exceptions.InvalidValue;
 import com.confusedbrowser.androneee_remote.RangeMapping;
@@ -49,7 +50,7 @@ public class ModelVehicleCar implements ModelVehicle
      * the milliseconds the client should talk to the server if
      * no new commands are being sent
      */
-    private int timeOut = 300;
+    private int timeOut = 75;
 
     /**
      * Hold the last time value of the command sent. This will help
@@ -62,7 +63,7 @@ public class ModelVehicleCar implements ModelVehicle
 
     // Commands are sent as 2 byte packets, the first byte, is the type
     // of command the second is the value.
-    ArrayList<byte[]> commands = new ArrayList<byte[]>();
+    List<Byte> commands = new ArrayList<Byte>();
 
     /**
      * When things like steerMax and and steerMin
@@ -201,13 +202,15 @@ public class ModelVehicleCar implements ModelVehicle
      * @return ArrayList<byte> - A list of bytes which form the command to be sent to the server
      */
     @Override
-    public ArrayList<byte[]> getCommands() 
+    public List<Byte> getCommands()
     {
         this.currentTime = System.currentTimeMillis();
         this.somethingToSend = (this.currentTime-this.timeValueSent > this.timeOut);
 
         this.steerInt = Math.round(this.actualSteer);
         this.powerInt = Math.round(this.getActualPower());
+
+        byte[] commandBytes = new byte[]{ 0, 0, 0, 0 };
 
         commands.clear();
 
@@ -216,7 +219,9 @@ public class ModelVehicleCar implements ModelVehicle
             this.steerInt = this.steerInt+this.steerTrim;
 
             // Steering 17 converts to 00010001.
-            commands.add(new byte[]{ 17, (byte)(this.steerInt << 1) });
+            commands.add((byte)17);
+            commands.add((byte)(this.steerInt << 1));
+
             this.prevSteer = this.steerInt;
         }
         
@@ -225,7 +230,8 @@ public class ModelVehicleCar implements ModelVehicle
             this.powerInt = this.powerInt+this.powerTrim;
 
             // Steering 33 converts to 00100001.
-            commands.add( new byte[]{ 33, (byte)(this.powerInt << 1) });
+            commands.add((byte)33);
+            commands.add((byte)(this.powerInt << 1));
             this.prevPower = this.powerInt;
         }
 

@@ -2,6 +2,7 @@ package com.confusedbrowser.androneee_remote.threads;
 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.confusedbrowser.androneee_remote.models.ModelServerState;
 import com.confusedbrowser.androneee_remote.models.ModelVehicle;
@@ -70,8 +71,8 @@ public class ThreadPassPositionControls extends Thread
     /*
      * Current list of commands
      */
-    ArrayList<byte[]> commands;
-	
+    List<Byte> commands;
+
 
     /**
      * Initiate our thread. Set the variables from the params, and 
@@ -151,12 +152,17 @@ public class ThreadPassPositionControls extends Thread
     private void sendCommands()
     {
     	commands =  this.modelVehicle.getCommands();
-    	for(byte[] command : commands)
-    	{
-            this.sendCommandBytes(command);
-    	}
+        if(commands.isEmpty()) return;
+
+    	byte[] tempArray = new byte[commands.size()];
+
+        for(int i = 0; i < commands.size(); i++) {
+          tempArray[i] = commands.get(i);
+        }
+
+        this.sendCommandBytes(tempArray);
     }
-    
+
     /**
      * Passes dashee server protocol commands to the server.
      */
@@ -166,27 +172,27 @@ public class ThreadPassPositionControls extends Thread
         {
         	//Log.d("Dashee", "Server using ip: "+this.modelServerState.getIp());
             DatagramPacket packet = new DatagramPacket(
-                command, 
+                command,
                 command.length,
-                this.modelServerState.getIp(), 
+                this.modelServerState.getIp(),
                 this.modelServerState.getControlPort()
             );
             this.sockHandler.send(packet);
-        } 
-        catch (Exception e) 
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Change the pause flag. When we pause
      * the flag will prevent call lockPause.wait();
      * see run for this behaviour
      */
-    public void onPause() 
+    public void onPause()
     {
-        synchronized (lockPause) 
+        synchronized (lockPause)
         {
             pause = true;
         }

@@ -1,6 +1,7 @@
 package com.confusedbrowser.androneee_remote.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is our interface from which all ModelVehicles
@@ -16,7 +17,7 @@ public interface ModelVehicle
      * 
      * @return byte array of commands
      */
-    ArrayList<byte[]> getCommands();
+    List<Byte> getCommands();
     
     /**
      * Converts current phone position to relevant state for the vehicle.
