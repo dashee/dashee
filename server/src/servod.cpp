@@ -226,6 +226,8 @@ int main(int argc, char **argv)
  */
 void processCommands(dashee::Server * server, dashee::ServoController * servoController)
 {
+    dashee::Log::info(5, "Number of Bytes: %d", server->size());
+
     for (size_t i = 0; i < server->size(); i=i+2)
     {
         // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
