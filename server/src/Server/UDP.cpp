@@ -45,9 +45,20 @@ bool ServerUDP::read()
 {
     memset(buffer, 0, sizeof(buffer));
     
+    ssize_t numberOfBytesInBuffer = recvfrom(
+            socketfd, 
+            buffer, 
+            SERVER_BUFFER_SIZE, 
+            0, 
+            (struct sockaddr *)&client_in, 
+            (socklen_t *)&client_in_length
+        );
+
     //Recieave from client        
-    if (recvfrom(socketfd, buffer, SERVER_BUFFER_SIZE, 0, (struct sockaddr *) &client_in, (socklen_t *)&client_in_length) == -1)
+    if (numberOfBytesInBuffer == -1)
         throw ExceptionServer();
+
+    this->setNumberOfBytesInBuffer((size_t)numberOfBytesInBuffer);
     return true;
 }
 
@@ -79,7 +90,8 @@ bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
     
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {
-        return read();
+        read();
+        return true;
     }
     else if (select_return == -1)
     {

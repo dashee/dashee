@@ -16,6 +16,7 @@ using namespace dashee;
 Server::Server(unsigned int port)
 {
     this->port = port;
+    this->numberOfBytesInBuffer = 0;
     
     client_in_length = sizeof(client_in);
 
@@ -50,6 +51,37 @@ int Server::getSocketfd()
 unsigned char * Server::getBuffer()
 {
     return buffer;
+}
+
+/**
+ * Set the number of bytes read() from the command.
+ * 
+ * The value should always be greater or equall to 0
+ *
+ * @param size_t The number of bytes which are returned from recvfrom
+ *                in read() function
+ *
+ * @throws Exception if parameter value is not valid
+ */
+void Server::setNumberOfBytesInBuffer(size_t numberOfBytesInBuffer)
+{
+    if (numberOfBytesInBuffer < 0)
+        throw Exception("The number of bytes must be positive");
+
+    this->numberOfBytesInBuffer = numberOfBytesInBuffer;
+
+}
+
+/**
+ * Returns the size of bytes in the buffer.
+ *
+ * Usefull for looping through the objects buffer.
+ *
+ * @returns Number representing the size of bytes
+ */ 
+size_t Server::size()
+{
+    return numberOfBytesInBuffer;
 }
 
 /**

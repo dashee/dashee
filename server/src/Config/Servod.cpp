@@ -31,51 +31,51 @@ ConfigServod::ConfigServod() : Config()
  */
 void ConfigServod::setServoController(dashee::ServoController * s)
 {
-    for(configs_it = configs.begin(); configs_it != configs.end(); ++configs_it)
+    for(std::map<const char *, char *>::iterator it = configs.begin(); it != configs.end(); ++it)
     {
         // Only go through if the first 7 characters are "channel"
-        if (strncmp(configs_it->first, "channel", 7) == 0)
+        if (strncmp(it->first, "channel", 7) == 0)
         {
-            int keyN = strlen(configs_it->first);
+            int keyN = strlen(it->first);
 
             // Make sure the value is atleast "channelXX-" long
             if (keyN <= 10) continue;
             
             // Make sure the value "channel[0-9][0-9]" is an integer
-            if (configs_it->first[7] < 48 || configs_it->first[7] > 57) continue;
-            if (configs_it->first[8] < 48 || configs_it->first[8] > 57) continue;
+            if (it->first[7] < 48 || it->first[7] > 57) continue;
+            if (it->first[8] < 48 || it->first[8] > 57) continue;
 
             // Sanity check, as we expect '-' after "channelXX", so "channelXX-"
-            if (configs_it->first[9] != '-') continue;
+            if (it->first[9] != '-') continue;
     
             // copy the "XX" value into @channel from the string "channelXX"
             char channel[40];
             memset(channel, 0, sizeof(channel));
-            memcpy(channel, configs_it->first+7, 2);
+            memcpy(channel, it->first+7, 2);
 
             try
             {
                 long int channel_num = dashee::Common::strtol(channel);
 
                 // if the value is "channelXX-default-" and is greater than 17 characters
-                if (keyN > 17 && strncmp(configs_it->first+10, "default-", 8) == 0)
-                    setDefault(s, configs_it->first+18, configs_it->second, channel_num);
+                if (keyN > 17 && strncmp(it->first+10, "default-", 8) == 0)
+                    setDefault(s, it->first+18, it->second, channel_num);
                 
                 // if the value is "channelXX-fallbackEnabled-" and is greater than 24 characters
-                else if (keyN > 24 && strncmp(configs_it->first+10, "fallbackEnabled-", 16) == 0)
-                    setFallbackEnabled(s, configs_it->first+25, configs_it->second, channel_num);
+                else if (keyN > 24 && strncmp(it->first+10, "fallbackEnabled-", 16) == 0)
+                    setFallbackEnabled(s, it->first+25, it->second, channel_num);
 
                 // if the value is "channelXX-fallback-" and is greater than 18 characters
-                else if (keyN > 18 && strncmp(configs_it->first+10, "fallback-", 9) == 0)
-                    setFallback(s, configs_it->first+19, configs_it->second, channel_num);
+                else if (keyN > 18 && strncmp(it->first+10, "fallback-", 9) == 0)
+                    setFallback(s, it->first+19, it->second, channel_num);
 
                 else
-                    dashee::Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, configs_it->first);
+                    dashee::Log::warning(6, "ConfigServod::setServoController: channel%02d- value was found, but not valid (%s)", channel_num, it->first);
             }
 
             catch (dashee::ExceptionInvalidNumber e)
             {
-                dashee::Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. ExceptionInvalidNumber:%s", configs_it->first, e.what());
+                dashee::Log::warning(7, "ConfigServod::setServoController: Invalid number conversion on '%s'. ExceptionInvalidNumber:%s", it->first, e.what());
             }
         }
     }

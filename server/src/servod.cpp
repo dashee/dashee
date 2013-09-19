@@ -78,6 +78,12 @@ void sighandler(int);
 void setconfig(int, char **, dashee::Config *);
 
 /**
+ * Read the commnds returned from the server
+ * and run them appropriatly
+ */
+void processCommands(dashee::Server *, dashee::ServoController *);
+
+/**
  * Our main function is designed to take in arguments from the command line
  * and run a UDP server. The UDP server provides a interface to the outside world
  * which can communicate and send commands to our Servo controller.
@@ -177,69 +183,7 @@ int main(int argc, char **argv)
             // Recieave from client and timeout after 4 seconds
             if (serverUDP.read(readtimeout, readtimeoutM))
             {
-                //if (EXIT) { break; }
-                
-                // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
-                // the command byte uses the first 4 bits to set the command and the 2 4 bit to set the channel
-                // ---------
-                // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
-                // command otherwise this must be a value
-                if ((serverUDP.getBuffer()[0] & 1) == 1)
-                {   
-                    // @throw ExceptionServo
-                    try
-                    {
-                        // Bitwise AND with 00001110 (14) to zero the channel number, shift 1 as the first bit just tells us this is a command
-                        unsigned char command = (serverUDP.getBuffer()[0] & 14) >> 1;
-
-                        // Bitwise AND the command byte with 11110000 (240 in decimal) to zero the command number
-                        // then shift 4 to find the channel number as that is the last 4 bits of the command.
-                        unsigned char channel = (serverUDP.getBuffer()[0] & 240) >> 4;
-                        dashee::Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
-
-                        switch (command)
-                        {
-                            case 0:
-                            {
-                                // -------- >> 1
-                                // 0-------
-                                unsigned char target = (serverUDP.getBuffer()[1] >> 1);
-
-                                // Set the target for channel 1 as requested
-                                //servoController->setTarget(1, target);
-                                dashee::Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
-                                servoController->setTarget(channel, target);
-                                break;
-                            }
-                            case 1:
-                                dashee::Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
-                                break;
-                            case 2:
-                                dashee::Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
-                                break;
-                            case 3:
-                                    dashee::Log::info(3, "pong");
-                                    if (!serverUDP.write("\x80"))
-                                        throw dashee::ExceptionServoController("Pong write failed");
-                                    break;
-                            default:
-                                throw dashee::ExceptionServo("Invalid Command!");
-                                break;
-                                
-                        }
-                    }
-                    // User is out of range, only then do you print the error message, Otherwise,
-                    // other exceptions are errors, 
-                    // 
-                    // TODO Make this ExceptionServo_Outofrange, for clairty
-                    // so we dont catch fatal errors
-                    catch (dashee::ExceptionServoController e)
-                    {   
-                        dashee::Log::warning(1, e.what());
-                        if (!serverUDP.write(e.what())) 
-                            throw dashee::ExceptionServer("Write failed");
-                    }
-                }
+                processCommands(&serverUDP, servoController);
             }
 
             // Timeout and set the servo's in fallback mode
@@ -275,6 +219,77 @@ int main(int argc, char **argv)
 
     dashee::Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
+}
+
+/**
+ *
+ */
+void processCommands(dashee::Server * server, dashee::ServoController * servoController)
+{
+    for (size_t i = 0; i < server->size(); i=i+2)
+    {
+        // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
+        // the command byte uses the first 4 bits to set the command and the 2 4 bit to set the channel
+        // ---------
+        // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
+        // command otherwise this must be a value
+        if ((server->getBuffer()[i] & 1) == 1)
+        {
+            // @throw ExceptionServo
+            try
+            {
+                // Bitwise AND with 00001110 (14) to zero the channel number, shift 1 as the first bit just tells us this is a command
+                unsigned char command = (server->getBuffer()[i] & 14) >> 1;
+
+                // Bitwise AND the command byte with 11110000 (240 in decimal) to zero the command number
+                // then shift 4 to find the channel number as that is the last 4 bits of the command.
+                unsigned char channel = (server->getBuffer()[i] & 240) >> 4;
+                dashee::Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
+
+                switch (command)
+                {
+                    case 0:
+                    {
+                        // -------- >> 1
+                        // 0-------
+                        unsigned char target = (server->getBuffer()[i+1] >> 1);
+
+                        // Set the target for channel 1 as requested
+                        //servoController->setTarget(1, target);
+                        dashee::Log::info(2, "setTarget(%d, %d)" , (unsigned short int)channel, (unsigned short int)target);
+                        servoController->setTarget(channel, target);
+                        break;
+                    }
+                    case 1:
+                        dashee::Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
+                        break;
+                    case 2:
+                        dashee::Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
+                        break;
+                    case 3:
+                            dashee::Log::info(3, "pong");
+                            if (!server->write("\x80"))
+                                throw dashee::ExceptionServoController("Pong write failed");
+                            break;
+                    default:
+                        throw dashee::ExceptionServo("Invalid Command!");
+                        break;
+                        
+                }
+            }
+            // User is out of range, only then do you print the error message, Otherwise,
+            // other exceptions are errors, 
+            // 
+            // TODO Make this ExceptionServo_Outofrange, for clairty
+            // so we dont catch fatal errors
+            catch (dashee::ExceptionServoController e)
+            {   
+                dashee::Log::warning(1, e.what());
+                if (!server->write(e.what())) 
+                    throw dashee::ExceptionServer("Write failed");
+            }
+        }
+    }
 }
 
 /**

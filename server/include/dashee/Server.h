@@ -106,6 +106,14 @@ protected:
      */ 
     unsigned char buffer[SERVER_BUFFER_SIZE];
 
+    /**
+     * The number of bytes read from a packet into the buffer.
+     *
+     * This value is set by read() function, by default
+     * this will return 0;
+     */
+    size_t numberOfBytesInBuffer;
+
     /** 
      * Server timeout for read.
      *
@@ -142,6 +150,9 @@ protected:
     //Creates a read select
     int wait();
 
+    // Sets the number of bytes read
+    void setNumberOfBytesInBuffer(size_t);
+
 public:
     
     // Get the @socketfd
@@ -149,6 +160,9 @@ public:
 
     // Get the @buffer
     unsigned char * getBuffer();
+
+    // Returns the number of bytes read
+    size_t size();
     
     // Set our timeout value
     void setTimeout(const unsigned int, const unsigned int = 0);
