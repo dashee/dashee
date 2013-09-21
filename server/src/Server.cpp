@@ -44,13 +44,36 @@ int Server::getSocketfd()
 }
 
 /**
- * This returns a pointer to the buffer variable.
+ * Get the byte set in the buffer.
  *
- * @returns The Server::buffer variable
+ * The index specified the byte which is set in the buffer.
+ * If the index is greater than or equal to the numberOfBytesInBuffer
+ * an OutOfBound exception is thrown
+ *
+ * @param index The index value to get
+ *
+ * @throws ExceptionOutOfBounds();
+ *
+ * @returns The character which is set in the buffer
  */
-unsigned char * Server::getBuffer()
+unsigned char Server::getBufferByte(const unsigned int index) const
 {
-    return buffer;
+    if (index >= numberOfBytesInBuffer)
+        throw ExceptionOutOfBounds("Trying to access an unset buffer");
+
+    return buffer[index];
+}
+
+/**
+ * Operator to facilitate getBufferByte() function.
+ *
+ * @param index The index value to get
+ *
+ * @returns The character
+ */
+unsigned char Server::operator[](const unsigned int index) const
+{
+    return this->getBufferByte(index);
 }
 
 /**
@@ -58,7 +81,7 @@ unsigned char * Server::getBuffer()
  * 
  * The value should always be greater or equall to 0
  *
- * @param size_t The number of bytes which are returned from recvfrom
+ * @param numberOfBytesInBuffer The number of bytes which are returned from recvfrom
  *                in read() function
  *
  * @throws Exception if parameter value is not valid

@@ -34,6 +34,7 @@
 
 #include <dashee/Log.h>
 #include <dashee/Exception/Server.h>
+#include <dashee/Exception/OutOfBounds.h>
 
 namespace dashee
 {
@@ -158,17 +159,19 @@ public:
     // Get the @socketfd
     int getSocketfd();
 
-    // Get the @buffer
-    unsigned char * getBuffer();
+    // Get the @buffer byte value
+    unsigned char getBufferByte(const unsigned int index) const;
+    unsigned char operator[](const unsigned int index) const;
 
     // Returns the number of bytes read
     size_t size();
     
     // Set our timeout value
-    void setTimeout(const unsigned int, const unsigned int = 0);
+    void setTimeout(const unsigned int seconds, const unsigned int miliseconds = 0);
     
     // Read from the client
     virtual bool read() = 0;
+    virtual bool read(const unsigned int seconds, const unsigned int miliseconds) = 0;
 
     // Write back to our client
     virtual bool write(const char *) = 0;

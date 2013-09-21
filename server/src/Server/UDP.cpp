@@ -44,6 +44,7 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
 bool ServerUDP::read()
 {
     memset(buffer, 0, sizeof(buffer));
+    this->setNumberOfBytesInBuffer(0);
     
     ssize_t numberOfBytesInBuffer = recvfrom(
             socketfd, 

@@ -93,9 +93,10 @@ void processCommands(dashee::Server *, dashee::ServoController *);
  *
  * @returns 0 on successfull shutdown and any other number for error.
  * @retval 0 Successfull process
- * @retval -3 Failed on Configuration
- * @retval -2 Failed because an Exception occrred
- * @retval -1 Failed because runtime::error exception occurred
+ * @retval -4 Failed on Configuration
+ * @retval -3 Failed because an Exception occrred
+ * @retval -2 Failed because runtime::error exception occurred
+ * @retval -1 Failed because exception occured when fallback activated
  */
 int main(int argc, char **argv)
 {
@@ -106,9 +107,10 @@ int main(int argc, char **argv)
     if (sigaction(SIGINT, &act, 0))
         throw new std::runtime_error("Sigaction failed");
     
-    // Create a dummy Servo to be initiated later
+    // Create the pointers which will be initiated later
     // Initialising to NULL is important otherwise you will seg fault
     dashee::ServoController *servoController = NULL;
+    dashee::Server *server = NULL;
 
     // Create our Config_servod, as a new pointer, as we will
     // delete it mid point to clear our heap.
@@ -133,31 +135,24 @@ int main(int argc, char **argv)
 
     try
     {
-        // Set our servo to the COM PORT
-        if (servotype == 1)
+        switch (servotype)
         {
-            // Create a Servo
-            dashee::Log::info(1, "Loading UART device '%s'.", servo);
-            servoController = new dashee::ServoControllerUART(servo);
+            case 1:
+                dashee::Log::info(1, "Loading UART device '%s'.", servo);
+                servoController = new dashee::ServoControllerUART(servo);
+                break;
+            case 2:
+                dashee::Log::info(1, "Loading USB device '%s'.", servo);
+                servoController = new dashee::ServoControllerUSB(servo);
+                break;
+            case 3:
+                dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
+                servoController = new dashee::ServoControllerDummy(servo, SERVO_DUMMY_CHANNELS);
+                break;
+            default:
+                dashee::Log::fatal("Servotype invalid, set to %u.", servotype);
+                break;
         }
-        
-        // Set our servo to the Binary file
-        else if(servotype == 2)
-        {
-            dashee::Log::info(1, "Loading USB device '%s'.", servo);
-            servoController = new dashee::ServoControllerUSB(servo);
-        }
-
-        // Set our servo to the Binary file
-        else if(servotype == 3)
-        {
-            dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
-            servoController = new dashee::ServoControllerDummy(servo, SERVO_DUMMY_CHANNELS);
-        }
-
-        // Fail as the options must fall within the above
-        else
-            dashee::Log::fatal("Servotype invalid, set to %u.", servotype);
     
         // Set the Servocontroller, from the config file
         // and then delete the variable, as we dont use it any more
@@ -174,16 +169,16 @@ int main(int argc, char **argv)
             dashee::Log::error("Servo failed with eccode %d", error);
         
         // Create a UDP server
-        dashee::ServerUDP serverUDP(port);
+        server = new dashee::ServerUDP(port);
         dashee::Log::info(1, "Port initialized on %d.", port);
 
         // Loop through read and write our server
         while (!EXIT)
         {
             // Recieave from client and timeout after 4 seconds
-            if (serverUDP.read(readtimeout, readtimeoutM))
+            if (server->read(readtimeout, readtimeoutM))
             {
-                processCommands(&serverUDP, servoController);
+                processCommands(server, servoController);
             }
 
             // Timeout and set the servo's in fallback mode
@@ -201,51 +196,70 @@ int main(int argc, char **argv)
     catch (dashee::ExceptionConfig e)
     {
         dashee::Log::info(4, "caught(ExceptionConfig): %s", e.what());
-        RETVAL = -3;
+        RETVAL = -4;
     }
     catch (dashee::Exception e)
     {
         dashee::Log::warning(1, "caught(Exception): %s.", e.what());
-        RETVAL = -2;
+        RETVAL = -3;
     }
     catch (std::runtime_error e)
     {
         dashee::Log::warning(3, "caught(runtime_error): %s.", e.what());
+        RETVAL = -2;
+    }
+    
+    // Make sure to run the fallbackmode so the host is not left
+    // on full power
+    try
+    {
+        dashee::Log::info(3, "Calling fallback, before exiting to the host");
+        servoController->fallback();
+    }
+    catch (dashee::Exception e)
+    {
+        dashee::Log::info(4, "Clean up fallback threw an exception: %s", e.what());
         RETVAL = -1;
     }
     
     dashee::Log::info(4, "Performing cleanups.");
     delete servoController;
+    delete server;
 
     dashee::Log::info(4, "Returning with %d.", RETVAL);
     return RETVAL;
 }
 
 /**
+ * Read from server and set the servocontroller.
  *
+ * @param server The pointer to the server variable
+ * @param servoController The pointer to the servocontroller
+ *
+ * @throws ExceptionServer when write fails
  */
-void processCommands(dashee::Server * server, dashee::ServoController * servoController)
+void processCommands(dashee::Server *server, dashee::ServoController *servoController)
 {
-    dashee::Log::info(5, "Number of Bytes: %d", server->size());
+    //dashee::Log::info(5, "recieved[%d] = { %x }", server->size(), server->getBuffer());
+    dashee::Log::info(5, "recieved[%d]", server->size());
 
-    for (size_t i = 0; i < server->size(); i=i+2)
+    for (unsigned int i = 0; i < server->size(); i=i+2)
     {
         // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
         // the command byte uses the first 4 bits to set the command and the 2 4 bit to set the channel
         // ---------
         // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
         // command otherwise this must be a value
-        if ((server->getBuffer()[i] & 1) == 1)
+        if ((server->getBufferByte(1) & 1) == 1)
         {
-            // @throw ExceptionServo
             try
             {
                 // Bitwise AND with 00001110 (14) to zero the channel number, shift 1 as the first bit just tells us this is a command
-                unsigned char command = (server->getBuffer()[i] & 14) >> 1;
+                unsigned char command = (server->getBufferByte(i) & 14) >> 1;
 
                 // Bitwise AND the command byte with 11110000 (240 in decimal) to zero the command number
                 // then shift 4 to find the channel number as that is the last 4 bits of the command.
-                unsigned char channel = (server->getBuffer()[i] & 240) >> 4;
+                unsigned char channel = (server->getBufferByte(i) & 240) >> 4;
                 dashee::Log::info(3, "Command: %02d:%02d", (unsigned short int)command, (unsigned short int)channel);
 
                 switch (command)
@@ -254,7 +268,7 @@ void processCommands(dashee::Server * server, dashee::ServoController * servoCon
                     {
                         // -------- >> 1
                         // 0-------
-                        unsigned char target = (server->getBuffer()[i+1] >> 1);
+                        unsigned char target = (server->getBufferByte(i+1) >> 1);
 
                         // Set the target for channel 1 as requested
                         //servoController->setTarget(1, target);

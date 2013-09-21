@@ -9,13 +9,14 @@
 
 #include <dashee/Common.h>
 #include <dashee/Log.h>
+#include <dashee/Exception/OutOfBounds.h>
 #include <dashee/ServoController/Dummy.h>
 
 class ServoControllerDummyTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(ServoControllerDummyTest);
     CPPUNIT_TEST_EXCEPTION(testInvalidFile, dashee::ExceptionServoController);
-    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, dashee::ExceptionServoControllerOutOfBound);
+    CPPUNIT_TEST_EXCEPTION(testInvalidChannel, dashee::ExceptionOutOfBounds);
     CPPUNIT_TEST_EXCEPTION(testInvalidPositiveTarget, dashee::ExceptionServo);
     CPPUNIT_TEST_EXCEPTION(testInvalidNegativeTarget, dashee::ExceptionServo);
     CPPUNIT_TEST_EXCEPTION(testInvalidLargePositiveTarget, dashee::ExceptionServo);

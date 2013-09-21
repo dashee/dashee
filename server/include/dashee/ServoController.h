@@ -26,7 +26,7 @@
 
 #include <dashee/Log.h>
 #include <dashee/Exception/ServoController.h>
-#include <dashee/Exception/ServoController/OutOfBound.h>
+#include <dashee/Exception/OutOfBounds.h>
 #include <dashee/Servo.h>
 
 namespace dashee
@@ -111,7 +111,7 @@ public:
     virtual short int getError() = 0;
     
     // Get the channel size
-    virtual unsigned int size();
+    virtual unsigned int size() const;
     
     // Delete and empty our @servo's array
     virtual ~ServoController();

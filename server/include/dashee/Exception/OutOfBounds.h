@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/ServoController/OutOfBound.h
+ * @file include/dashee/Exception/OutOfBounds.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,27 +19,26 @@
  * project site for more details
  */
 
-#ifndef EXCEPTION_SERVERCONTROLLER_OUTOFBOUND_H_
-#define EXCEPTION_SERVERCONTROLLER_OUTOFBOUND_H_
+#ifndef EXCEPTION_OUTOFBOUNDS_H_
+#define EXCEPTION_OUTOFBOUNDS_H_
 
-#include <dashee/Exception/ServoController.h>
 #include <dashee/Exception.h>
 
 namespace dashee
 {
-    class ExceptionServoControllerOutOfBound;
+    class ExceptionOutOfBounds;
 }
 
-class dashee::ExceptionServoControllerOutOfBound: public dashee::ExceptionServoController
+class dashee::ExceptionOutOfBounds: public dashee::Exception
 {
 public:
-    explicit ExceptionServoControllerOutOfBound() : ExceptionServoController()
+    explicit ExceptionOutOfBounds() : Exception()
     {
     }
-    explicit ExceptionServoControllerOutOfBound(const int ec) : ExceptionServoController(ec)
+    explicit ExceptionOutOfBounds(const int ec) : Exception(ec)
     { 
     }
-    explicit ExceptionServoControllerOutOfBound(std::string msg) : ExceptionServoController(msg)
+    explicit ExceptionOutOfBounds(std::string msg) : Exception(msg)
     { 
     }
 };

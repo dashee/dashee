@@ -45,6 +45,7 @@ debug: CFLAGS += -g -DDEBUG
 debug: LFLAGS += -g -DDEBUG
 debug: $(BINARIES) tests
 
+
 # Create a compressed tar archive file, usefull for releases
 # and packaging
 tar:
@@ -55,12 +56,14 @@ tar:
 	@tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
 	@echo "Tar archive 'dashee-src-$(RELEASEID).tar.gz' created."
 
+
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
 # Variable
 $(DIRECTORIES):
 	@$(MKDIR) $@
 	@echo "Directory '$@' Created"
+
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
@@ -77,6 +80,7 @@ $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	@echo "Building binary 'servod'"
 	@$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+
 
 # Tests
 tests: CFLAGS += -g -DDEBUG 
@@ -95,10 +99,6 @@ $(TESTDIR)/testServoControllerUART: tests/testServoControllerUART.cpp $(LIBRARIE
 	    -ldashee -lcppunit -o $@
 
 
-# Remove only the tests
-cleantest:
-	@$(RM) $(BINDIR)/tests
-
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
 binfile: $(DATADIR)/Servo.bin
@@ -108,9 +108,15 @@ binfile: $(DATADIR)/Servo.bin
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38
 
+
 # Builds the documentation
 documentation:
 	@doxygen docs/doxygen.conf > /dev/null
+
+
+# Remove only the tests
+cleantest:
+	@$(RM) $(BINDIR)/tests
 
 # This will remove our data/Servo.bin file, to build it again 
 cleandata:
@@ -134,7 +140,6 @@ cleanall: clean
 	@echo "Deleting all directories"
 	@$(RM) $(DIRECTORIES)
 	@echo "Deleting 'etc'"
-	@$(RM) etc
 	@echo "Deleting documentation"
 	@$(RM) docs/html
 	@$(RM) docs/xml
