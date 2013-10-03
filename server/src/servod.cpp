@@ -243,14 +243,14 @@ void processCommands(dashee::Server *server, dashee::ServoController *servoContr
     //dashee::Log::info(5, "recieved[%d] = { %x }", server->size(), server->getBuffer());
     dashee::Log::info(5, "recieved[%d]", server->size());
 
-    for (unsigned int i = 0; i < server->size(); i=i+2)
+    for (unsigned int i = 0; i < server->size(); i+=2)
     {
         // Dashe commands are 2 bytes with the first byte driving the command and the second byte the value
         // the command byte uses the first 4 bits to set the command and the 2 4 bit to set the channel
         // ---------
         // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
         // command otherwise this must be a value
-        if ((server->getBufferByte(1) & 1) == 1)
+        if ((server->getBufferByte(i) & 1) == 1)
         {
             try
             {
