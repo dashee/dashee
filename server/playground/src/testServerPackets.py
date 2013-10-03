@@ -2,6 +2,7 @@
 
 import socket
 import sys
+import time
 
 UDP_IPADDR = "127.0.0.1"
 UDP_PORT = 2047
@@ -12,10 +13,14 @@ byteArray[1] = 33;
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 
-bytelimit = 0;
+numberOfBytes=0;
 while True:
-    client.sendto(byteArray, (UDP_IPADDR, UDP_PORT));
-    bytelimit=bytelimit+1
 
-    if bytelimit == sys.argv[1]:
+    client.sendto(byteArray, (UDP_IPADDR, UDP_PORT));
+    
+    numberOfBytes=numberOfBytes+1
+
+    if numberOfBytes > int(sys.argv[1]):
         break
+
+    #time.sleep(10.0 / 1000.0)
