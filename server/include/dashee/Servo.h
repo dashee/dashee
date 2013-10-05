@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVO_H_
-#define SERVO_H_
+#ifndef DASHEE_SERVO_H_
+#define DASHEE_SERVO_H_
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -72,7 +72,14 @@ protected:
         unsigned short int target;
         unsigned short int speed;
         unsigned short int acceleration;
-    } fallbacks, defaults, current, fallbackEnabled;
+    } fallbacks, defaults, lastknown, fallbackEnabled;
+    
+    /**
+     * Fallback mode flag.
+     *
+     * This determines whather the controller is in fallback mode
+     */
+    bool fallbackmode;
 
     /** 
      * The channel this Servo class represents
@@ -84,21 +91,25 @@ protected:
     
 public:
 
-    // Get the target of a given channel
-    virtual unsigned short int getTarget() = 0;
-
     // Set the target of a given channel
-    virtual void setTarget(unsigned short int) = 0;
+    virtual void setTarget(unsigned short int target) = 0;
+    virtual unsigned short int getTarget() = 0;
     
     // Set the struct defaults.target and call setTarget
-    virtual void setTargetDefault(unsigned short int);
+    virtual void setTargetDefault(unsigned short int target);
+    virtual unsigned short int getTargetDefault();
     
     // Set the struct fallbacks.target
-    virtual void setTargetFallback(unsigned short int);
+    virtual void setTargetFallback(unsigned short int target);
+    virtual unsigned short int getTargetFallback();
     
     // Set the struct fallbacks.target
     virtual void setTargetFallbackEnabled(bool);
-    
+    virtual bool getTargetFallbackEnabled();
+ 
+    // Returns the status of fallback
+    virtual bool isFallback();
+
     // Call fallback on this servo
     virtual void fallback();
     
@@ -106,15 +117,11 @@ public:
     virtual void revert();
 
     // Calculate the Target, turn 0-100 to be from 3968-8000
-    void PercentageToTarget(unsigned short int *);
-
-    // Calculate the Target, turn 0-100 to be from 3968-8000, and return the value
-    unsigned short int PercentageToTarget(unsigned short int);
+    void PercentageToTarget(unsigned short int * percentage);
+    unsigned short int PercentageToTarget(unsigned short int percentage);
 
     // Calculate the Target, turn 0-100 to be from 3968-8000
-    void TargetToPercentage(unsigned short int *);
-
-    // Calculate the Target, turn 0-100 to be from 3968-8000, and return the value
+    void TargetToPercentage(unsigned short int * target);
     unsigned short int TargetToPercentage(unsigned short int target);
     
     // Destroy all internals, before cleanup

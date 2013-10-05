@@ -18,10 +18,30 @@ ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(chan
 }
 
 /**
- * Destruct.
+ * Set the target value.
+ *
+ * This function will write to our binary file give a channel number.
+ * The target is always written to the first two bytes of the channel.
+ *
+ * @param target Target to set represented in 2 byte, with a value of 0-100
+ *
+ * @throws ExceptionServo If writing to the board fails
  */
-ServoDummy::~ServoDummy()
+void ServoDummy::setTarget(unsigned short int target)
 {
+    this->fallbackmode = false;
+
+    PercentageToTarget(&target);
+        
+    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
+        throw ExceptionServo("Seek failed in setTarget");
+    
+    //Create our buffer
+    buffer[0] = target;
+    buffer[1] = target >> 8;
+    
+    //Write to our servo
+    fwrite((const char *)buffer, 2, sizeof(buffer), fd);
 }
 
 /**
@@ -49,26 +69,8 @@ unsigned short int ServoDummy::getTarget()
 }
 
 /**
- * Set the target value.
- *
- * This function will write to our binary file give a channel number.
- * The target is always written to the first two bytes of the channel.
- *
- * @param target Target to set represented in 2 byte, with a value of 0-100
- *
- * @throws ExceptionServo If writing to the board fails
+ * Destruct.
  */
-void ServoDummy::setTarget(unsigned short int target)
+ServoDummy::~ServoDummy()
 {
-    PercentageToTarget(&target);
-        
-    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
-        throw ExceptionServo("Seek failed in setTarget");
-    
-    //Create our buffer
-    buffer[0] = target;
-    buffer[1] = target >> 8;
-    
-    //Write to our servo
-    fwrite((const char *)buffer, 2, sizeof(buffer), fd);
 }

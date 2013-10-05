@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVOCONTROLLER_H_
-#define SERVOCONTROLLER_H_
+#ifndef DASHEE_SERVOCONTROLLER_H_
+#define DASHEE_SERVOCONTROLLER_H_
 
 #include <vector>
 
@@ -62,13 +62,6 @@ protected:
      * in the derived classes,
      */
     std::vector<Servo *> servos;
-    
-    /**
-     * Fallback mode flag.
-     *
-     * This determines whather the controller is in fallback mode
-     */
-    int fallbackmode;
         
     /**
      * The device filename.
@@ -86,20 +79,21 @@ protected:
 
 public:
     
-    // Get the target of the given channel
+    // Given a channel number, set its given target
+    virtual void setTarget(const unsigned short int channel, unsigned short int target);
     virtual unsigned short int getTarget(const unsigned short int channel);
     
-    // Given a channel number, set its given target
-    virtual void setTarget(const unsigned short int, unsigned short int);
+    // Set and Get the struct defaults.target and call setTarget
+    virtual void setTargetDefault(const unsigned short int channel, unsigned short int target);
+    virtual unsigned short int getTargetDefault(const unsigned short int channel);
     
-    // Set the struct defaults.target and call setTarget
-    virtual void setTargetDefault(const unsigned short int, unsigned short int);
+    // Set and Get the struct fallbacks.target
+    virtual void setTargetFallback(const unsigned short int channel, unsigned short int target);
+    virtual unsigned short int getTargetFallback(const unsigned short int channel);
     
-    // Set the struct fallbacks.target
-    virtual void setTargetFallback(const unsigned short int, unsigned short int);
-    
-    // Set the struct fallbacks.target
-    virtual void setTargetFallbackEnabled(const unsigned short int, bool);
+    // Set and Get the struct fallbacks.target
+    virtual void setTargetFallbackEnabled(const unsigned short int channel, bool flag);
+    virtual bool getTargetFallbackEnabled(const unsigned short int channel);
     
     // Call fallback on all servos
     virtual void fallback();

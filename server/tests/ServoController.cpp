@@ -1,6 +1,17 @@
 #include "ServoController.h"
 
 /**
+ * Throw an exception. because we cant have abstract classes
+ * in CPPUnit this is a dumb way of doing it but it works
+ *
+ * @throws ExceptionServoController
+ */
+void dashee::test::ServoController::setUp()
+{
+    throw dashee::ExceptionServoController("This class is abstract");
+}
+
+/**
  * This test will set the Servo Value, and see if the 
  * get value is correct
  *
@@ -18,19 +29,78 @@ void dashee::test::ServoController::testSetAndGetTarget()
     }
 }
 
+/**
+ * Go through each servo channel and set the Target.
+ *
+ * Once a default target is set, the system also sets the target
+ * of that channel, make sure to check the actual target value is
+ * changed as well
+ */
 void dashee::test::ServoController::testSetAndGetTargetDefault()
 {
-
+    for (unsigned short int servos = 0; servos < 6; servos++) 
+    {
+        for (unsigned short int x = 0; x <= 100; x++)
+        {
+            this->servoController->setTargetDefault(servos, x);
+            CPPUNIT_ASSERT(this->servoController->getTargetDefault(servos) == x);
+            CPPUNIT_ASSERT(this->servoController->getTarget(servos) == x);
+        }
+    }
 }
 
+/**
+ * Go through each servo channel and set the fallback value.
+ *
+ */
 void dashee::test::ServoController::testSetAndGetTargetFallback()
 {
-
+    for (unsigned short int servos = 0; servos < 6; servos++) 
+    {
+        for (unsigned short int x = 0; x <= 100; x++)
+        {
+            this->servoController->setTargetFallbackEnabled(servos, false);
+            this->servoController->setTargetFallback(servos, x);
+            CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == true);
+            CPPUNIT_ASSERT(this->servoController->getTargetFallback(servos) == x);
+        }
+    }
 }
 
+/**
+ * Go through each channel and test TargetFallbackEnabled value.
+ * 
+ * Once a fallback value is set, the fallbackEnabled is automaticly
+ * enabled. So to start with set the fallback to false, change the fallback
+ * check the value of fallback and also ensure that the fallback is enabled.
+ */
 void dashee::test::ServoController::testSetAndGetTargetFallbackEnabled()
 {
+    for (unsigned short int servos = 0; servos < 6; servos++) 
+    {
+        // By default it should be set to false
+        CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == true);
 
+        // Check false
+        this->servoController->setTargetFallbackEnabled(servos, false);
+        CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == false);
+            
+        // Check true
+        this->servoController->setTargetFallbackEnabled(servos, true);
+        CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == true);
+
+        // Check flag being changed everytime setTargetFallback is called
+        for (unsigned short int x = 0; x <= 100; x++)
+        {
+            // Reset the flag
+            this->servoController->setTargetFallbackEnabled(servos, false);
+            CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == false);
+
+            // Change the TargetFallback and check the enabled value
+            this->servoController->setTargetFallback(servos, x);
+            CPPUNIT_ASSERT(this->servoController->getTargetFallbackEnabled(servos) == true);
+        }
+    }
 }
 
 /**
@@ -45,63 +115,44 @@ void dashee::test::ServoController::testFallbackAndRevertTarget()
     // thrown
     this->servoController->fallback();
         
-    // set initial positions to something unique
-    this->servoController->setTarget(0, 5);
-    this->servoController->setTarget(1, 5);
-    this->servoController->setTarget(2, 5);
-    this->servoController->setTarget(3, 5);
-    this->servoController->setTarget(4, 5);
-    this->servoController->setTarget(5, 5);
+    for (unsigned short int servos = 0; servos < 6; servos++) 
+    {   
+        // Set some initial values to ensure the change
+        this->servoController->setTarget(servos, 5);
+        this->servoController->setTargetFallback(servos, 10);
 
-    // Check to ensure that initial positions are valid
-    CPPUNIT_ASSERT(this->servoController->getTarget(0) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(1) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(2) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(3) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(4) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(5) == 5);
+        // Call fallback and check the target value
+        this->servoController->fallback();
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 10);
+
+        // Ensure that reverting brings the value back to normal
+        this->servoController->revert();
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 5);
     
-    // Set the fallbacks
-    this->servoController->setTargetFallback(0, 10);
-    this->servoController->setTargetFallback(1, 20);
-    this->servoController->setTargetFallback(2, 30);
-    this->servoController->setTargetFallback(3, 40);
-    this->servoController->setTargetFallback(4, 50);
-    this->servoController->setTargetFallback(5, 60);
+        // Ensure that reverting the second time does not mod the 
+        // set value
+        this->servoController->setTarget(servos, 99);
+        this->servoController->revert();
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 99);
 
-    // Run and check fallback and see weather it worked
-    this->servoController->fallback();
-    CPPUNIT_ASSERT(this->servoController->getTarget(0) == 10);
-    CPPUNIT_ASSERT(this->servoController->getTarget(1) == 20);
-    CPPUNIT_ASSERT(this->servoController->getTarget(2) == 30);
-    CPPUNIT_ASSERT(this->servoController->getTarget(3) == 40);
-    CPPUNIT_ASSERT(this->servoController->getTarget(4) == 50);
-    CPPUNIT_ASSERT(this->servoController->getTarget(5) == 60);
-
-    // Run and cheack weather the reverting of the servo worked
-    this->servoController->revert();
-    CPPUNIT_ASSERT(this->servoController->getTarget(0) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(1) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(2) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(3) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(4) == 5);
-    CPPUNIT_ASSERT(this->servoController->getTarget(5) == 5);
-    
-    // Call revert unnesesorily and make sure the values dont budge
-    this->servoController->setTarget(0, 99);
-    this->servoController->setTarget(1, 99);
-    this->servoController->setTarget(2, 99);
-    this->servoController->setTarget(3, 99);
-    this->servoController->setTarget(4, 99);
-    this->servoController->setTarget(5, 99);
-    this->servoController->revert();
-    CPPUNIT_ASSERT(this->servoController->getTarget(0) == 99);
-    CPPUNIT_ASSERT(this->servoController->getTarget(1) == 99);
-    CPPUNIT_ASSERT(this->servoController->getTarget(2) == 99);
-    CPPUNIT_ASSERT(this->servoController->getTarget(3) == 99);
-    CPPUNIT_ASSERT(this->servoController->getTarget(4) == 99);
-    CPPUNIT_ASSERT(this->servoController->getTarget(5) == 99);
+        // Ensure that fallback is not activated on a given servo
+        // when fallback is disabled.
+        this->servoController->setTargetFallbackEnabled(servos, false);
+        this->servoController->fallback();
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 99);
+    }       
 }
+
+/**
+ * Checks the size of the servo value.
+ *
+ * @throws ExceptionServoController
+ */ 
+void dashee::test::ServoController::testSizeValue()
+{
+    throw dashee::ExceptionServoController("This class is abstract");
+}
+
 
 /**
  * Exception is thrown when the channel is invalid
@@ -146,22 +197,11 @@ void dashee::test::ServoController::testExceptionInvalidLargeNegativeTarget()
 }
 
 /**
- * The function defined 
+ * Abstract ExceptionInvalidFile
  */
 void dashee::test::ServoController::testExceptionInvalidFile()
 {
-    throw dashee::ExceptionServoController("Please define this function in subclass");
-}
-
-/**
- * Throw an exception. because we cant have abstract classes
- * in CPPUnit this is a dumb way of doing it but it works
- *
- * @throws
- */
-void dashee::test::ServoController::setUp()
-{
-    throw dashee::ExceptionServoController("This class is abstract");
+    throw dashee::ExceptionServoController("This function is abstract");
 }
 
 /**

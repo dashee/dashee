@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVOCONTROLLER_UART_H_
-#define SERVOCONTROLLER_UART_H_
+#ifndef DASHEE_SERVOCONTROLLER_UART_H_
+#define DASHEE_SERVOCONTROLLER_UART_H_
 
 #include <termios.h>
 

@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVER_H_
-#define SERVER_H_
+#ifndef DASHEE_SERVER_H_
+#define DASHEE_SERVER_H_
 
 #include <stdio.h>
 #include <unistd.h>

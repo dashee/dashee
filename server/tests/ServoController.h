@@ -53,6 +53,7 @@ class dashee::test::ServoController : public CppUnit::TestFixture
 
     // Revert and Fallback
     CPPUNIT_TEST(testFallbackAndRevertTarget);
+    CPPUNIT_TEST(testSizeValue);
     
     // Exception
     CPPUNIT_TEST_EXCEPTION(testExceptionInvalidFile, dashee::ExceptionServoController);
@@ -86,6 +87,9 @@ protected:
     
     // test the revert and fallback functionality
     void testFallbackAndRevertTarget();
+
+    // test the size function
+    virtual void testSizeValue();
     
     // test exception when file is invalid
     virtual void testExceptionInvalidFile();

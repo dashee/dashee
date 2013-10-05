@@ -43,6 +43,10 @@ int dashee::test::run(int argc, char ** argv)
 
     runner.addTest(registry.makeTest());
     runner.run(testresult);
+
+    // Print test in a compiler compatible format.
+    CppUnit::CompilerOutputter outputter( &collectedresults, std::cout );
+    outputter.write(); 
     
     return collectedresults.wasSuccessful() ? 0 : 1;
 }

@@ -57,6 +57,8 @@ private:
 protected:
     
     virtual void testExceptionInvalidFile();
+    
+    virtual void testSizeValue();
 
 public:
 

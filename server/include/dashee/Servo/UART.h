@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVO_UART_H_
-#define SERVO_UART_H_
+#ifndef DASHEE_SERVO_UART_H_
+#define DASHEE_SERVO_UART_H_
 
 #include <dashee/Servo.h>
 

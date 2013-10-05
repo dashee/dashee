@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef EXCEPTION_OUTOFBOUNDS_H_
-#define EXCEPTION_OUTOFBOUNDS_H_
+#ifndef DASHEE_EXCEPTION_OUTOFBOUNDS_H_
+#define DASHEE_EXCEPTION_OUTOFBOUNDS_H_
 
 #include <dashee/Exception.h>
 

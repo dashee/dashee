@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef SERVOCONTROLLER_DUMMY_H_
-#define SERVOCONTROLLER_DUMMY_H_
+#ifndef DASHEE_SERVOCONTROLLER_DUMMY_H_
+#define DASHEE_SERVOCONTROLLER_DUMMY_H_
 
 #include <dashee/ServoController.h>
 #include <dashee/Servo/Dummy.h>

@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef EXCEPTION_SERVER_H_
-#define EXCEPTION_SERVER_H_
+#ifndef DASHEE_EXCEPTION_SERVER_H_
+#define DASHEE_EXCEPTION_SERVER_H_
 
 #include <dashee/Exception.h>
 

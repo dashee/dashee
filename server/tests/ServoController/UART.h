@@ -56,11 +56,13 @@ class dashee::test::ServoControllerUART : public dashee::test::ServoController
 private:
 protected:
     
+    // @Override
     virtual void testExceptionInvalidFile();
+    virtual void testSizeValue();
 
 public:
 
-    // Change the setup
+    // @Override
     virtual void setUp();
 };
 

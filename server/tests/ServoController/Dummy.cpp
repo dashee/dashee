@@ -10,6 +10,14 @@ void dashee::test::ServoControllerDummy::setUp()
 }
 
 /**
+ * Test the size command
+ */
+void dashee::test::ServoControllerDummy::testSizeValue()
+{
+    CPPUNIT_ASSERT(this->servoController->size() == 6);
+}
+
+/**
  * Catch an exception when an invalid file is called
  */
 void dashee::test::ServoControllerDummy::testExceptionInvalidFile()

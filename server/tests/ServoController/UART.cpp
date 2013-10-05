@@ -10,6 +10,14 @@ void dashee::test::ServoControllerUART::setUp()
 }
 
 /**
+ * Test the size command
+ */
+void dashee::test::ServoControllerUART::testSizeValue()
+{
+    CPPUNIT_ASSERT(this->servoController->size() == 6);
+}
+
+/**
  * Catch an exception when an invalid file is called
  */
 void dashee::test::ServoControllerUART::testExceptionInvalidFile()
