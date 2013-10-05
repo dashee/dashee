@@ -16,12 +16,15 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o Common.o GPIO.o Servo.o \
     		Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o \
 		ServoController.o ServoController/Dummy.o ServoController/USB.o \
 		ServoController/UART.o Server/UDP.o)
+OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
+    		 ServoController/UART.o GPIO.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servod)
-TESTS := $(addprefix $(TESTDIR)/, testServoControllerDummy testServoControllerUART)
+TESTS := $(addprefix $(TESTDIR)/, testServoControllerDummy testServoControllerUART \
+           testGPIO)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
@@ -41,19 +44,19 @@ libraries: $(LIBRARIES)
 release: $(BINARIES)
 
 # A helpfull function for debug configurations
-debug: CFLAGS += -g -DDEBUG 
-debug: LFLAGS += -g -DDEBUG
+debug: CFLAGS+=-g -DDEBUG
+debug: LFLAGS+=-g -DDEBUG
 debug: $(BINARIES) tests
 
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
 tar:
-	@if [ -f dashee-$(RELEASEID).tar.gz ]; then \
+	if [ -f dashee-$(RELEASEID).tar.gz ]; then \
 	    echo "Tar file 'dashee-src-$(RELEASEID).tar.gz' already exist!";\
 	    exit 1;\
 	fi
-	@tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
+	tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
 	@echo "Tar archive 'dashee-src-$(RELEASEID).tar.gz' created."
 
 
@@ -61,43 +64,49 @@ tar:
 # To add a directory to the list modify the DIRECTORIES
 # Variable
 $(DIRECTORIES):
-	@$(MKDIR) $@
+	$(MKDIR) $@
 	@echo "Directory '$@' Created"
 
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
-$(OBJECTS) $(OBJECTSLIB): %.o: %.cpp
+$(OBJECTSTEST): CFLAGS+=-Wno-overflow
+$(OBJECTSTEST): INCLUDES+=-Itests
+$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	@echo "Building object '$@'"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Log shared object
 $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	@echo "Building lib 'libdashee.so'"
-	@$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
+	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # Our main program that uses the objects
 $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	@echo "Building binary 'servod'"
-	@$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
 
 # Tests
-tests: CFLAGS += -g -DDEBUG 
-tests: $(TESTS)
+tests: $(TESTS) $(BINDIR)/runtest
+
+$(BINDIR)/runtest:
 	install --mode=775 src/runtest.sh bin/runtest
 
-$(TESTDIR)/testServoControllerDummy: tests/testServoControllerDummy.cpp $(LIBRARIES) $(OBJECTS) | $(TESTDIR)
+$(TESTDIR)/testServoControllerDummy: tests/testServoControllerDummy.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	@echo "Building test:binary 'testServoControllerDummy'"
-	@$(CC) $(CFLAGS) -Wno-overflow -Isrc $< \
-	    src/ServoController/Dummy.o src/ServoController.o src/Servo.o src/Servo/Dummy.o \
-	    -ldashee -lcppunit -o $@
-$(TESTDIR)/testServoControllerUART: tests/testServoControllerUART.cpp $(LIBRARIES) $(OBJECTS) | $(TESTDIR)
-	@echo "Building test:binary 'testServoControllerUART'"
-	@$(CC) $(CFLAGS) -Wno-overflow -Isrc $< \
-	    src/ServoController/UART.o src/ServoController.o src/Servo.o src/Servo/UART.o \
-	    -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
+$(TESTDIR)/testServoControllerUART: tests/testServoControllerUART.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
+	@echo "Building test:binary 'testServoControllerUART'"
+	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+
+$(TESTDIR)/testGPIO: tests/testGPIO.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
+	@echo "Building test:binary 'testGPIO'"
+	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
@@ -106,21 +115,21 @@ binfile: $(DATADIR)/Servo.bin
 # This is a test bin directory, that is set as null of 38 bytes
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
+	@echo "Building data 'data/Servo.bin'"
 	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38
-
 
 # Builds the documentation
 documentation:
-	@doxygen docs/doxygen.conf > /dev/null
-
+	@echo "Building documentation 'docs/doxygen.conf'"
+	doxygen docs/doxygen.conf > /dev/null
 
 # Remove only the tests
 cleantest:
-	@$(RM) $(BINDIR)/tests
+	$(RM) $(BINDIR)/tests
 
 # This will remove our data/Servo.bin file, to build it again 
 cleandata:
-	@$(RM) $(DATADIR)/Servo.bin
+	$(RM) $(DATADIR)/Servo.bin
 
 # Will generate ctags for vim
 tags:
@@ -130,16 +139,17 @@ tags:
 # And finally cleans all directories.
 clean: cleantest
 	@echo "Deleting 'src/*.o' files recursively"
-	@$(RM) $(shell find src -name "*.o")
+	$(RM) $(shell find src -name "*.o")
+	$(RM) $(shell find tests -name "*.o")
 	@echo "Deleting binary and library directories"
-	@$(RM) $(BINDIR) $(LIBDIR)
+	$(RM) $(BINDIR) $(LIBDIR)
 	@echo "Deleting 'tags'"
-	@$(RM) tags
+	$(RM) tags
 
 cleanall: clean
 	@echo "Deleting all directories"
-	@$(RM) $(DIRECTORIES)
+	$(RM) $(DIRECTORIES)
 	@echo "Deleting 'etc'"
 	@echo "Deleting documentation"
-	@$(RM) docs/html
-	@$(RM) docs/xml
+	$(RM) docs/html
+	$(RM) docs/xml

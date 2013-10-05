@@ -19,8 +19,8 @@
  * project site for more details
  */
 
-#ifndef DASHEE_GPIO_H
-#define DASHEE_GPIO_H
+#ifndef DASHEE_GPIO_H_
+#define DASHEE_GPIO_H_
 
 #include <sys/stat.h>
 #include <sys/types.h>
