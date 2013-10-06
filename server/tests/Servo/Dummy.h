@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file tests/Servo/Dummy.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,30 +19,52 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_TEST_SERVO_DUMMY_H_
+#define DASHEE_TEST_SERVO_DUMMY_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
+/**
+ * Include Locals
+ */
+#include <dashee/Servo/Dummy.h>
+#include "Servo.h"
 
-#include <dashee/Exception/OutOfBounds.h>
-
-#include "ServoController/Dummy.h"
-#include "ServoController/UART.h"
-#include "Servo/Dummy.h"
-#include "GPIO.h"
-
+/**
+ * Set the name space
+ */
 namespace dashee
 {
     namespace test
     {
-        int run(int argc, char ** argv);
+        class ServoDummy;
     }
 }
+
+/**
+ * Class which only creates an instance
+ * ServoDummy and the base class sets and runs all the known
+ * tests
+ */
+class dashee::test::ServoDummy : public dashee::test::Servo
+{
+    CPPUNIT_TEST_SUB_SUITE(
+            dashee::test::ServoDummy,
+            dashee::test::Servo
+        );
+    CPPUNIT_TEST_SUITE_END();
+
+private:
+protected:
+
+    FILE * fd;
+
+    // Test set and get target
+    virtual void testSetAndGetTarget();
+
+public:
+
+    // SetUp and TearDown
+    virtual void setUp();
+    virtual void tearDown();
+};
 
 #endif

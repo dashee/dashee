@@ -85,6 +85,14 @@ protected:
      * The channel this Servo class represents
      */
     unsigned short int channel;
+    
+    // Calculate the Target, turn 0-100 to be from 3968-8000
+    void PercentageToTarget(unsigned short int * percentage);
+    unsigned short int PercentageToTarget(unsigned short int percentage);
+
+    // Calculate the Target, turn 0-100 to be from 3968-8000
+    void TargetToPercentage(unsigned short int * target);
+    unsigned short int TargetToPercentage(unsigned short int target);
 
     // Set the @dev
     explicit Servo(const unsigned short int channel);
@@ -115,14 +123,6 @@ public:
     
     // revert back to last known values
     virtual void revert();
-
-    // Calculate the Target, turn 0-100 to be from 3968-8000
-    void PercentageToTarget(unsigned short int * percentage);
-    unsigned short int PercentageToTarget(unsigned short int percentage);
-
-    // Calculate the Target, turn 0-100 to be from 3968-8000
-    void TargetToPercentage(unsigned short int * target);
-    unsigned short int TargetToPercentage(unsigned short int target);
     
     // Destroy all internals, before cleanup
     virtual ~Servo(){};

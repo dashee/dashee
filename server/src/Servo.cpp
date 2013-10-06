@@ -33,7 +33,7 @@ Servo::Servo(const unsigned short int channel)
  */
 void Servo::setTargetDefault(unsigned short int target)
 {
-    if (target > 100)
+    if (target > 100 || target < 0)
         throw ExceptionServo("setTargetDefault: Invalid defaults.target, must be 0-100!\n");
 
     this->defaults.target = target;
@@ -62,7 +62,7 @@ unsigned short int Servo::getTargetDefault()
  */
 void Servo::setTargetFallback(unsigned short int target)
 {
-    if (target > 100)
+    if (target > 100 || target < 0)
         throw ExceptionServo("setTargetFallback: Invalid fallback.target, must be 0-100!\n");
 
     this->fallbacks.target = target;
@@ -149,7 +149,6 @@ void Servo::PercentageToTarget(unsigned short int * target)
     else
         throw ExceptionServo("Invalid Target!\n");
 }
-
 
 /**
  * This is a wrapper around the pointer function to make
