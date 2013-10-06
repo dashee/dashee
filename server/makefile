@@ -23,8 +23,7 @@ OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Du
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servod)
-TESTS := $(addprefix $(TESTDIR)/, testServoControllerDummy testServoControllerUART \
-           testGPIO testServoDummy)
+TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
@@ -46,8 +45,7 @@ release: $(BINARIES)
 # A helpfull function for debug configurations
 debug: CFLAGS+=-g -DDEBUG
 debug: LFLAGS+=-g -DDEBUG
-debug: $(BINARIES) tests
-
+debug: test $(BINARIES)
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
@@ -59,14 +57,12 @@ tar:
 	tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
 	@echo "Tar archive 'dashee-src-$(RELEASEID).tar.gz' created."
 
-
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
 # Variable
 $(DIRECTORIES):
 	$(MKDIR) $@
 	@echo "Directory '$@' Created"
-
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
@@ -86,31 +82,31 @@ $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	@echo "Building binary 'servod'"
 	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
+# Build and run all the tests
+test: testbuild binfile
+	@echo "\nRUNNING TESTS"
+	bin/runtest dummy 2> /dev/null
+	@echo ""
 
-# Tests
-tests: $(TESTS) $(BINDIR)/runtest
+# BUILD all the tests
+testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest:
-	install --mode=775 src/runtest.sh bin/runtest
+	install --mode=775 tests/runtest.sh $@
 
-$(TESTDIR)/testServoControllerDummy: tests/testServoControllerDummy.cpp \
+$(TESTDIR)/testDummy: tests/testDummy.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	@echo "Building test:binary 'testServoControllerDummy'"
+	@echo "Building test:binary 'testDummy'"
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
-$(TESTDIR)/testServoControllerUART: tests/testServoControllerUART.cpp \
+$(TESTDIR)/testUART: tests/testUART.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	@echo "Building test:binary 'testServoControllerUART'"
+	@echo "Building test:binary 'testDummy'"
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testGPIO: tests/testGPIO.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	@echo "Building test:binary 'testGPIO'"
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testServoDummy: tests/testServoDummy.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	@echo "Building test:binary 'testServoDummy'"
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 # Our test build, builds the dummy bin file, called Servo.bin
@@ -121,7 +117,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	@echo "Building data 'data/Servo.bin'"
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38 >/dev/null
 
 # Builds the documentation
 documentation:

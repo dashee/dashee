@@ -9,7 +9,7 @@ void dashee::test::ServoDummy::setUp()
     this->fd = fopen("data/Servo.bin", "r+b");
 
     if (fd == NULL)
-        throw ExceptionServo("Cannot open file");
+        CPPUNIT_FAIL("Cannot open file!");
 
     this->servo = new dashee::ServoDummy(this->fd, 1);
 }
@@ -20,7 +20,9 @@ void dashee::test::ServoDummy::setUp()
  */
 void dashee::test::ServoDummy::tearDown()
 {
-    fclose(this->fd);
+    if (this->fd != NULL)
+        fclose(this->fd);
+
     Servo::tearDown();
 }
 

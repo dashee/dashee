@@ -45,7 +45,7 @@ int dashee::test::run(int argc, char ** argv)
     runner.run(testresult);
 
     // Print test in a compiler compatible format.
-    CppUnit::CompilerOutputter outputter( &collectedresults, std::cout );
+    CppUnit::CompilerOutputter outputter( &collectedresults, std::cerr );
     outputter.write(); 
     
     return collectedresults.wasSuccessful() ? 0 : 1;
