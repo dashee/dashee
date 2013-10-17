@@ -27,7 +27,7 @@ Server::Server(unsigned int port)
     // SIGTERM
     memset((sigset_t *)&mask, 0, sizeof(mask));
     sigemptyset (&mask);
-    sigaddset (&mask, SIGINT);
+    sigaddset (&mask, SIGINT|SIGTERM);
 
     if (sigprocmask(SIG_BLOCK, &mask, &origmask) < 0)
         throw ExceptionServer();

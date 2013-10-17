@@ -27,18 +27,14 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include <syslog.h>
+
+#include <dashee/Exception.h>
 
 namespace dashee
 {
     class Log;
 }
-
-// Define some index's which 
-// represent the log level
-#define LOG_INFO    0
-#define LOG_WARNING 1
-#define LOG_ERROR   2
-#define LOG_FATAL   3
 
 /**
  * Logging class.
@@ -50,7 +46,7 @@ class dashee::Log
 {
 
 private:
-
+    
     /**
      * The log status static array.
      *
@@ -58,38 +54,89 @@ private:
      */
     static char logstatus[4][6];
     
+    /**
+     * File pointer to the out file.
+     *
+     * This is used by the log file to print to 
+     * file
+     */
+    static FILE * fd;
+
+    /**
+     * The current type of log output.
+     *
+     * This holds the current type the log
+     * is set to.
+     */
+    static int type;
+    
     // Print the message given its message type
-    static void print(const short int, const char *);
+    static void print(int level, const char * message);
+
+    // Print to a given stream
+    static void printToStream(const int &level, const char * message);
+
+    // print calls this
+    static void printToSyslog(const int &level, const char * message);
+
+    /**
+     * Log levels which helps print
+     * decide which way to go
+     */
+    enum levels
+    {
+        INFO,
+        WARNING,
+        ERROR,
+        FATAL
+    };
+
+protected:
+
 
 public:
     // Verbosity level can be shifted to hide debug messages
-    static unsigned short int verbosity;
+    static int verbosity;
+    
+    /**
+     * types which describe the type
+     * that logoutput will use
+     */
+    enum types
+    {
+        STDOUT,
+        STDOUTONLY,
+        SYSLOG,
+        FILEWRITE,
+        NOOUTPUT
+    };
+
+    // Close any pending logs
+    static void close();
+
+    // Open a FILE * stream
+    static void openFile(const char * file);
+    static void closeFile();
+
+    // Open a syslog stream
+    static void openSyslog(const char * identity, int facility);
+    static void closeSyslog();
     
     // Print informational message
-    static void info(const unsigned short int, const char *, ...);
-
-    // Print infromational message given in std::string
-    static void info(std::string, const unsigned short int = 1);
+    static void info(const int, const char *, ...);
+    static void info(std::string, const int = 1);
 
     // Print warning message
-    static void warning(const unsigned short int, const char *, ...);
-
-    // Print warning message given in std::string
-    static void warning(std::string, const unsigned short int = 1);
+    static void warning(const int, const char *, ...);
+    static void warning(std::string, const int = 1);
 
     // Print error message
     static void error(const char *, ...);
-
-    // Print warning error given in std::string
     static void error(std::string);
 
     // Print fatal message, and call exit(-1)
     static void fatal(const char *, ...);
-
-    // Print fatal message given in string, and call exit(-1)
     static void fatal(std::string);
-
-protected:
 };
 
 #endif

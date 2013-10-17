@@ -1,0 +1,67 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:		dashee-servod
+# Required-Start:	$remote_fs
+# Required-Stop:	$remote_fs
+# Should-Start:		$network
+# Should-Stop:
+# Default-Start:	2 3 4 5
+# Default-Stop:		0 1 6
+# Short-Description:	Dashee Controll Server
+# Description:		Server which allows control from network to the 
+#                       servo's
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON_SBIN=/usr/bin/dashee-servod
+DAEMON_CONF=/etc/dashee/servod.conf
+NAME=dashee-servod
+DESC="Dashee Control Server"
+PID_DIRECTORY=/var/run/dashee
+PIDFILE=$PID_DIRECTORY/servod.pid
+
+[ -x "$DAEMON_SBIN" ] || exit 0
+#[ -n "$DAEMON_CONF" ] || exit 0
+[ -d "$PIDFILE" ] || mkdir -p $PID_DIRECTORY
+
+DAEMON_OPTS="--config /etc/dashee/servod.conf --pidfile $PIDFILE"
+
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "$NAME"
+	start-stop-daemon --start --oknodo --quiet --exec "$DAEMON_SBIN" \
+		--pidfile "$PIDFILE" -- $DAEMON_OPTS >/dev/null
+	log_end_msg "$?"
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "$NAME"
+	start-stop-daemon --stop --oknodo --quiet --exec "$DAEMON_SBIN" \
+		--pidfile "$PIDFILE"
+	log_end_msg "$?"
+	;;
+  reload)
+  	log_daemon_msg "Reloading $DESC" "$NAME"
+	start-stop-daemon --stop --signal HUP --exec "$DAEMON_SBIN" \
+		--pidfile "$PIDFILE"
+	log_end_msg "$?"
+	;;
+  restart|force-reload)
+  	$0 stop
+	sleep 8
+	$0 start
+	;;
+  status)
+	status_of_proc "$DAEMON_SBIN" "$NAME"
+	exit $?
+	;;
+  *)
+	N=/etc/init.d/$NAME
+	echo "Usage: $N {start|stop|restart|force-reload|reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

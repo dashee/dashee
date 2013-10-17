@@ -23,7 +23,6 @@
 #define CONFIG_SERVOD_H_
 
 #include <dashee/Config.h>
-#include <dashee/Common.h>
 #include <dashee/ServoController.h>
 
 /**

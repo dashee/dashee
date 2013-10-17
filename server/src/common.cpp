@@ -1,6 +1,4 @@
-#include <dashee/Common.h>
-
-using namespace dashee;
+#include <dashee/common.h>
 
 /**
  * Convert string to long.
@@ -16,7 +14,7 @@ using namespace dashee;
  *
  * returns The converted value
  */
-long int Common::strtol(const char * string, const int base) 
+long int dashee::strtol(const char * string, const int base) 
 {
     char * end;
     long int number = ::strtol(string, &end, base);
@@ -32,6 +30,23 @@ long int Common::strtol(const char * string, const int base)
 }
 
 /**
+ * Convert int to string.
+ *
+ * @param value The value to convert
+ *
+ * @returns the value in a std::string
+ */
+std::string dashee::itostr(int value)
+{
+    std::stringstream ss;
+    ss << value;
+    std::string s(ss.str());
+    return s;
+}
+
+
+
+/**
  * Check if file exists.
  *
  * This function will return true, if file exists.
@@ -42,8 +57,33 @@ long int Common::strtol(const char * string, const int base)
  * @retval TRUE File exists.
  * @retval FALSE Files does not exist.
  */
-bool Common::fexists(const char * filename) 
+bool dashee::fexists(const char * filename) 
 {
     struct stat buffer;   
     return (stat (filename, &buffer) == 0); 
+}
+
+/**
+ * Create a pid file give by filepath.
+ *
+ * @param Create a pid file
+ * @param Overwrite an existing pidfile (default to false)
+ *
+ * @retval false If file exists
+ * @retval true if pid file was created
+ */
+bool dashee::createPID(const char * filepath, bool overwrite)
+{
+    if (dashee::fexists(filepath) && !overwrite)
+        return false;
+
+    FILE * fd = fopen(filepath, "w");
+    
+    if (fd == NULL)
+        throw Exception("PID file '" + (std::string)filepath + "' could not opened for writing");
+
+    // Write to file, close and return true;
+    fprintf(fd, "%d\n", getpid());
+    fclose(fd);
+    return true;
 }

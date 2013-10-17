@@ -18,7 +18,8 @@ using namespace dashee;
 bool Config::Comparitor::operator()(const char * lhs, const char * rhs) const
 {
     int comparison = strcmp(lhs, rhs);
-    if (comparison < 0) { return true; }
+    if (comparison < 0) 
+        return true;
     return false;
 }
 
@@ -56,10 +57,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
     // We only know the key is found, by seeing wheather the find iterator
     // is not on the end, os it must be pointing at a found element
     if (override == 0 && it != configs.end())
-    {
-        dashee::Log::info(loglevel+1, "Config::set Skipping '%s' Override not allowed", key);
         return;
-    }
     
     // Create a new space in memory, for our map to refer to
     char *pvalue = new char[strlen(value)+1];
@@ -72,9 +70,6 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         char * pointedkey = it->second;
         it->second = pvalue;
         delete [] pointedkey;
-
-        // Set our value
-        dashee::Log::info(loglevel+1, "Config::set %s, %s", key, pvalue);
     }
     
     // No previous key was found, so Create a new one
@@ -84,8 +79,6 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         char *pkey = new char[strlen(key)+1];
         memcpy(pkey, key, strlen(key)+1);
         configs[pkey] = pvalue;
-
-        dashee::Log::info(loglevel+1, "Config::set* %s, %s", pkey, pvalue);
     }
 }
 
@@ -107,8 +100,6 @@ void Config::set(const char * key, const char * value, const unsigned short int 
  */
 void Config::set_uint(const char * key, const unsigned int value, const unsigned short int override)
 {
-    dashee::Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
-    
     // Create a new buf, and send to Config::set
     // Also create and add new key value
     char buf[20];
@@ -129,8 +120,6 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
  */
 void Config::set_float(const char * key, const float value, const unsigned short int override)
 {
-    dashee::Log::info(loglevel+4, "Config::set_uint %s, %d", key, value);
-    
     // Create a new buf, and send to Config::set
     // Also create and add new key value
     char buf[20];
@@ -154,13 +143,10 @@ void Config::set_float(const char * key, const float value, const unsigned short
 const char * Config::get(const char * key, const char * defaultvalue)
 {
     std::map<const char *, char *>::iterator it = configs.find((char *)key);
+
     if (it != configs.end())
-    {
-        dashee::Log::info(loglevel+1, "Config::get %s: %s", key, it->second);
         return it->second;
-    }
     
-    dashee::Log::info(loglevel+1, "Config::get %s: default(%s)", key, defaultvalue);
     return defaultvalue;
 }
 
@@ -176,14 +162,12 @@ const char * Config::get(const char * key, const char * defaultvalue)
  */
 const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
 {
-    dashee::Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
-    
     //returns the value, in a buffer
     std::stringstream buf;
     buf << defaultvalue;
 
     //Converts a buffer to an int
-    return Common::strtol((char *)Config::get(key, buf.str().c_str()));
+    return strtol((char *)Config::get(key, buf.str().c_str()));
 }
 
 /** 
@@ -198,8 +182,6 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
  */
 const float Config::get_float(const char * key, const float defaultvalue)
 {
-    dashee::Log::info(loglevel+4, "Config::get_uint %s default(%d)", key, defaultvalue);
-    
     //returns the value, in a buffer
     std::stringstream buf;
     buf << defaultvalue;
@@ -223,17 +205,15 @@ const float Config::get_float(const char * key, const float defaultvalue)
  */
 void Config::read(const char * file)
 {
-    if (!Common::fexists(file))
-    {
-        dashee::Log::warning(1, "Config file '%s' does not exist. Skipping read!", file);
+    if (!fexists(file))
         return;
-    }
 
     FILE * fd;
     fd = fopen(file, "r");
 
     // Problem with a file, not intrested, fall out gracefully
-    if (fd == NULL) { return; }
+    if (fd == NULL) 
+        return;
 
     int c;
     do
@@ -252,7 +232,8 @@ void Config::read(const char * file)
                 
                 //There maybecases, where the config file ends with a comment
                 // In this case break out
-                if (c == EOF) { break; }
+                if (c == EOF) 
+                    break;
             }
         }
         
@@ -393,6 +374,5 @@ void Config::cleanup()
  */
 Config::~Config()
 {
-    dashee::Log::info(loglevel+5, "Deleting ~Config()");
     cleanup();
 }

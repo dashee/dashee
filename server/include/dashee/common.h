@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Common.h
+ * @file include/dashee/common.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -18,40 +18,36 @@
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
  */
+
 #ifndef DASHEE_COMMON_H_
 #define DASHEE_COMMON_H_
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <string>
+#include <sstream>
+#include <iostream>
+
+#include <sys/types.h>
 #include <unistd.h>
+
 
 #include <dashee/Exception/InvalidNumber.h>
 
 namespace dashee
 {
-    class Common;
-}
-
-/**
- * Set of common functions
- * 
- * A static class which provides Common functions which 
- * can be used throughout the program
- */
-class dashee::Common
-{
-
-private:
-protected:
-public:
-    
     // string to long
-    static long int strtol(const char *, const int = 10);
+    long int strtol(const char * longString, const int base = 10);
+
+    // int to string
+    std::string itostr(int value);
 
     // Check to see if a file exists given a path @param
-    static bool fexists(const char *);
-};
+    bool fexists(const char * filename);
+
+    // createPID file given as a filepath
+    bool createPID(const char * filepath, bool overwrite = false);
+}
 
 #endif

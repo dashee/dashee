@@ -31,8 +31,8 @@
 #include <stdlib.h>
 #include <memory>
 
+#include <dashee/common.h>
 #include <dashee/Log.h>
-#include <dashee/Common.h>
 #include <dashee/Exception/Config.h>
 
 namespace dashee

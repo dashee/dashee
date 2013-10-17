@@ -70,7 +70,7 @@ void GPIO::exportPin(int pin)
 {
     const char * file = "/sys/class/gpio/export";
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
     
     int fd = ::open(file, O_WRONLY);
@@ -111,7 +111,7 @@ void GPIO::unexportPin(int pin)
 {
     const char * file = "/sys/class/gpio/unexport";
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
     
     int fd = ::open(file, O_WRONLY);
@@ -155,7 +155,7 @@ void GPIO::setDirection(int pin, char direction)
     char file[100];
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/direction", pin);
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
     int fd = ::open(file, O_WRONLY);
@@ -212,7 +212,7 @@ char GPIO::getDirection(int pin)
     char file[100];
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/direction", pin);
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
     int fd = ::open(file, O_WRONLY);
@@ -264,7 +264,7 @@ void GPIO::write(int pin, unsigned short int value)
     char file[100];
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/value", pin);
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
     int fd = ::open(file, O_WRONLY);
@@ -334,7 +334,7 @@ int GPIO::read(int pin)
     char file[100];
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/value", pin);
 
-    if (!dashee::Common::fexists(file))
+    if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
     int fd = ::open(file, O_WRONLY);
@@ -347,7 +347,7 @@ int GPIO::read(int pin)
 
     ::close(fd);
 
-    return dashee::Common::strtol(value);
+    return strtol(value);
 }
 
 /**

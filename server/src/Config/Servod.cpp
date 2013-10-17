@@ -55,7 +55,7 @@ void ConfigServod::setServoController(dashee::ServoController * s)
 
             try
             {
-                long int channel_num = dashee::Common::strtol(channel);
+                long int channel_num = dashee::strtol(channel);
 
                 // if the value is "channelXX-default-" and is greater than 17 characters
                 if (keyN > 17 && strncmp(it->first+10, "default-", 8) == 0)
@@ -102,19 +102,19 @@ bool ConfigServod::setDefault(dashee::ServoController * s, const char * what, co
     {
         if (strcmp(what, "target") == 0)
         {
-            s->setTargetDefault(channel, dashee::Common::strtol((const char *)value));
+            s->setTargetDefault(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Default target set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "speed") == 0)
         {
-            //s->setSpeedDefault(channel, dashee::Common::strtol((const char *)value));
+            //s->setSpeedDefault(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Default speed set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "acceleration") == 0)
         {
-            //s->setAccelerationDefault(channel, dashee::Common::strtol((const char *)value));
+            //s->setAccelerationDefault(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Default acceleration set for channel%02d to %s.", channel, value);
             return true;
         }
@@ -150,19 +150,19 @@ bool ConfigServod::setFallback(dashee::ServoController * s, const char *what, co
     {
         if (strcmp(what, "target") == 0)
         {
-            s->setTargetFallback(channel, dashee::Common::strtol((const char *)value));
+            s->setTargetFallback(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Fallback target set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "speed") == 0)
         {
-            //s->setSpeedFallback(channel, dashee::Common::strtol((const char *)value));
+            //s->setSpeedFallback(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Fallback speed set for channel%02d to %s.", channel, value);
             return true;
         }
         else if (strcmp(what, "acceleration") == 0)
         {
-            //s->setAccelerationFallback(channel, dashee::Common::strtol((const char *)value));
+            //s->setAccelerationFallback(channel, dashee::strtol((const char *)value));
             dashee::Log::info(3, "Fallback acceleration set for channel%02d to %s.", channel, value);
             return true;
         }

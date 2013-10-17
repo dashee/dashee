@@ -40,8 +40,9 @@
 #include <stdlib.h>
 #include <sstream>
 #include <getopt.h> /* for getopts_long() */
+#include <string>
+#include <dashee/common.h>
 #include <dashee/Log.h>
-#include <dashee/Common.h>
 #include <dashee/ServoController/UART.h>
 #include <dashee/ServoController/USB.h>
 #include <dashee/ServoController/Dummy.h>
@@ -49,10 +50,15 @@
 
 #include "Config/Servod.h"
 
-#define SERVO_DEVICE "/dev/ttyAMA0"
-#define SERVO_DUMMY_CHANNELS 6
-#define SERVER_PORT 2047u
-#define SERVER_TIMEOUT 2u
+#define SERVOD_DEVICE "/dev/ttyAMA0"
+#define SERVOD_DEVICETYPE 1
+#define SERVOD_DUMMY_CHANNELS 6
+#define SERVOD_PORT 2047u
+#define SERVOD_TIMEOUT 2u
+#define SERVOD_LOGFILE "./var/log/dashee/servod.log"
+#define SERVOD_CONFIG "./etc/dashee/servod.conf"
+#define SERVOD_PIDFILE "./var/run/dashee/servod.pid"
+#define SERVOD_WORKINGDIR "."
 
 /**
  * This is our main variable that controls wheather or not the program should be running
@@ -99,42 +105,101 @@ void processCommands(dashee::Server *, dashee::ServoController *);
  * @retval -1 Failed because exception occured when fallback activated
  */
 int main(int argc, char **argv)
-{
-    // Set our sigaction
-    struct sigaction act;
-    memset(&act, 0, sizeof(act));
-    act.sa_handler = sighandler;
-    if (sigaction(SIGINT, &act, 0))
-        throw new std::runtime_error("Sigaction failed");
-    
+{    
     // Create the pointers which will be initiated later
     // Initialising to NULL is important otherwise you will seg fault
     dashee::ServoController *servoController = NULL;
     dashee::Server *server = NULL;
 
-    // Create our Config_servod, as a new pointer, as we will
-    // delete it mid point to clear our heap.
-    ConfigServod *conf = new ConfigServod();
-
-    // Call our setconfig which will look for command line arguments, and set it
-    // in our @conf variables. The command line arguments are read from @argv.
-    // Just add a helpfull print in the end so we can see what is happening
-    setconfig(argc, argv, conf);
-    conf->read(conf->get("config", "etc/servod.conf"));
-    conf->print();
-
-    //Store the required variables in our stack, for easy access.
-    //const char * servo = SERVO_DEVICE;
-    //const unsigned int servotype = 10;
-    //const unsigned int port = SERVER_PORT;
-    const char * servo = conf->get("servo");
-    const unsigned int servotype = conf->get_uint("servotype");
-    const unsigned int port = conf->get_uint("port");
-    const unsigned int readtimeout = conf->get_uint("readtimeout");
-    const unsigned long int readtimeoutM = conf->get_uint("readtimeoutM", 500);
-
     try
     {
+
+// Open to syslog if it is set as a daemon
+#ifdef DAEMON
+        dashee::Log::openSyslog(argv[0], LOG_DAEMON);
+#endif
+        // Set our sigaction
+        struct sigaction act;
+        memset(&act, 0, sizeof(act));
+        act.sa_handler = sighandler;
+        if (sigaction(SIGINT, &act, 0))
+            throw new std::runtime_error("Sigaction failed");
+        if (sigaction(SIGTERM, &act, 0))
+            throw new std::runtime_error("Sigaction failed");
+
+        // Create our Config_servod, as a new pointer, as we will
+        // delete it mid point to clear our heap.
+        ConfigServod *conf = new ConfigServod();
+
+        // Call our setconfig which will look for command line arguments, and set it
+        // in our @conf variables. The command line arguments are read from @argv.
+        // Just add a helpfull print in the end so we can see what is happening
+        setconfig(argc, argv, conf);
+        conf->read(conf->get("config", "etc/servod.conf"));
+        //conf->print();
+
+        //Store the required variables in our stack, for easy access.
+        //const char * servo = SERVO_DEVICE;
+        //const unsigned int servotype = 10;
+        //const unsigned int port = SERVER_PORT;
+        const char * servo = conf->get("servo");
+        const unsigned int servotype = conf->get_uint("servotype");
+        const unsigned int port = conf->get_uint("port");
+        const unsigned int readtimeout = conf->get_uint("readtimeout", SERVOD_TIMEOUT);
+        const unsigned long int readtimeoutM = conf->get_uint("readtimeoutM", 0);
+
+// Start this program as a daemon so it
+// can be run in background
+#ifdef DAEMON
+        const char * logfile = conf->get("logfile");
+        const char * workingdir = conf->get("workingdir");
+        const char * pidfile = conf->get("pidfile");
+
+        if (!dashee::fexists(logfile))
+            throw dashee::Exception("Cannot start, log file is invalid '" + (std::string)logfile + "' not found");
+
+        // Change logging to go to stdout
+        dashee::Log::openFile(logfile);
+
+        pid_t pid;
+        pid_t sid;
+
+        // Fork our process
+        pid = fork();
+
+        // Fork failed
+        if (pid < 0)
+            throw dashee::Exception("fork() returned '" + dashee::itostr(pid) + "'");
+
+        // Fork passed so parent should clean up and die
+        if (pid > 0)
+        {
+            delete conf;
+            exit(0);
+        }
+
+        //Create a new Signature Id for our child
+        sid = setsid();
+        if (sid < 0)
+            throw dashee::Exception("sid() returned '" + dashee::itostr(sid) + "'");
+
+        // Change working directory
+        if (chdir(workingdir) < 0)
+            throw dashee::Exception("Cannot change directory '" + (std::string)workingdir + "'");
+
+        if (!dashee::createPID(pidfile, true))
+            throw dashee::Exception("PID '" + (std::string)pidfile + "' file already exists");
+
+        // Close STDIN and STDOUT
+        close(STDIN_FILENO);
+        close(STDERR_FILENO);
+#endif
+
+        // Helpfull message to let the user know the service is configured
+        // and will now try starting
+        dashee::Log::info(1, "Starting '%s'.", argv[0]);
+
+        // Create a different servotype depending on the variable
         switch (servotype)
         {
             case 1:
@@ -147,7 +212,7 @@ int main(int argc, char **argv)
                 break;
             case 3:
                 dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
-                servoController = new dashee::ServoControllerDummy(servo, SERVO_DUMMY_CHANNELS);
+                servoController = new dashee::ServoControllerDummy(servo, SERVOD_DUMMY_CHANNELS);
                 break;
             default:
                 dashee::Log::fatal("Servotype invalid, set to %u.", servotype);
@@ -191,42 +256,52 @@ int main(int argc, char **argv)
     }
     catch (dashee::ExceptionServerSignal e)
     {
-        dashee::Log::info(4, "caught(ExceptionServerSignal): %s", e.what());
+        dashee::Log::error("caught(ExceptionServerSignal): %s", e.what());
     }
     catch (dashee::ExceptionConfig e)
     {
-        dashee::Log::info(4, "caught(ExceptionConfig): %s", e.what());
+        dashee::Log::error("caught(ExceptionConfig): %s", e.what());
         RETVAL = -4;
     }
     catch (dashee::Exception e)
     {
-        dashee::Log::warning(1, "caught(Exception): %s.", e.what());
+        dashee::Log::error("caught(Exception): %s.", e.what());
         RETVAL = -3;
     }
     catch (std::runtime_error e)
     {
-        dashee::Log::warning(3, "caught(runtime_error): %s.", e.what());
+        dashee::Log::error("caught(runtime_error): %s.", e.what());
         RETVAL = -2;
     }
     
     // Make sure to run the fallbackmode so the host is not left
     // on full power
-    try
+    if (servoController != NULL)
     {
-        dashee::Log::info(3, "Calling fallback, before exiting to the host");
-        servoController->fallback();
-    }
-    catch (dashee::Exception e)
-    {
-        dashee::Log::info(4, "Clean up fallback threw an exception: %s", e.what());
-        RETVAL = -1;
+        try
+        {
+            dashee::Log::info(3, "Calling fallback, before exiting to the host");
+            servoController->fallback();
+        }
+        catch (dashee::Exception e)
+        {
+            dashee::Log::error("Clean up fallback threw an exception: %s", e.what());
+            RETVAL = -1;
+        }
     }
     
-    dashee::Log::info(4, "Performing cleanups.");
+    dashee::Log::info(2, "Performing cleanups.");
     delete servoController;
     delete server;
 
-    dashee::Log::info(4, "Returning with %d.", RETVAL);
+    dashee::Log::info(2, "Exiting with '%d'.", RETVAL);
+
+// Close the daemon_stream if the program
+// was compiled as a daemon
+#ifdef DAEMON
+    dashee::Log::close();
+#endif
+
     return RETVAL;
 }
 
@@ -330,17 +405,31 @@ void sighandler(int sig)
  */
 void setconfig(int argc, char ** argv, dashee::Config *conf)
 {
+    // Default some configuration values
+    conf->set("servo", SERVOD_DEVICE, 0);
+    conf->set_uint("port", SERVOD_PORT, 0);
+    conf->set_uint("servotype", SERVOD_DEVICETYPE, 0);
+    conf->set_uint("readtimeout", SERVOD_TIMEOUT, 0);
+    conf->set_uint("readtimeoutM", 0, 0);
+    conf->set("config", SERVOD_CONFIG, 0);
+    conf->set("logfile", SERVOD_LOGFILE, 0);
+    conf->set("workingdir", SERVOD_WORKINGDIR, 0);
+    conf->set("pidfile", SERVOD_PIDFILE, 0);
+
     int c;
     static struct option long_options[] = {
         { "servotype", 1, 0, 0 },
         { "servo", 1, 0, 0 },
-        { "port", 1, 0, 0 },
-        { "config", 1, 0, 0 },
-        { "verbosity", 1, 0, 'v' }
+        { "port", 1, 0, 'p' },
+        { "config", 1, 0, 'c' },
+        { "verbosity", 1, 0, 'v' },
+        { "logfile", 1, 0, 'l' },
+        { "workingdir", 1, 0, 'w' },
+        { "pidfile", 1, 0, 0 }
     };
     int long_index = 0;
     
-    while((c = getopt_long(argc, argv, "sv", long_options, &long_index)) != -1)
+    while((c = getopt_long(argc, argv, "c:p:v", long_options, &long_index)) != -1)
     {
         // switch our c, if it is 0 then it uses the long options
         switch (c)
@@ -352,78 +441,62 @@ void setconfig(int argc, char ** argv, dashee::Config *conf)
                 // of the case x: is relevent to the long_options array above
                 switch (long_index)
                 {
+                    // Type of Servo
                     case 0:
                     {
-                        try
-                        {
-                            long int servotype = dashee::Common::strtol(optarg);
-                            if (servotype < 1 && servotype > 3) { dashee::Log::fatal("Invalid sevotype '%d' is not valid.", servotype); }
-                            conf->set("servotype", optarg);
-                            dashee::Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
-                        }
-                        // Servotype must be an integer
-                        catch (dashee::ExceptionInvalidNumber e)
-                        {
-                            dashee::Log::fatal("Arg --servotype must be a number");
-                        }
+                        long int servotype = dashee::strtol(optarg);
+                        if (servotype < 1 && servotype > 3) { dashee::Log::fatal("Invalid sevotype '%d' is not valid.", servotype); }
+                        conf->set("servotype", optarg);
+                        dashee::Log::info(3, "Option 'servotype' set to '%s'.",conf->get("servotype"));
                         break;
                     }
+                    // Servo file path
                     case 1:
                         conf->set("servo", optarg);
                         dashee::Log::info(3, "Option 'servo' set to '%s'.", conf->get("servo"));
                         break;
-                    case 2:
-                        try
-                        {
-                            dashee::Common::strtol(optarg); //Do nothing, throw an exception if its not an integer
-                            conf->set("port", optarg);
-                            dashee::Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
-                        }
-                        // Port must be an integer
-                        catch (dashee::ExceptionInvalidNumber e)
-                        {
-                            dashee::Log::fatal("Arg --port must be a number, given '%s'!", optarg);
-                        }
-
-                        break;
-                    case 3:
-                        conf->set("config", optarg);
-                        dashee::Log::info(3, "Option 'config' set to '%s'.", conf->get("config"));
+                    // PID file
+                    case 7:
+                        conf->set("pidfile", optarg);
+                        dashee::Log::info(3, "Option 'pidfile' set to '%s'.", conf->get("pidfile"));
                         break;
                 }
                 break;
-
+            // Set the logfile location
+            case 'l':
+                conf->set("logfile", optarg);
+                dashee::Log::info(3, "Option 'logfile' set to '%s'.", conf->get("workingdir"));
+                break;
+            // Set working directory
+            case 'w':
+                conf->set("workingdir", optarg);
+                dashee::Log::info(3, "Option 'workingdir' set to '%s'.", conf->get("workingdir"));
+                break;
             // Give 'v' we see if optarg is set
             // If so we use its value, otherwise we increase verbosity
             // from its previous state
             case 'v':
-                try
-                {
-                    if (optarg)
-                        dashee::Log::verbosity = dashee::Common::strtol(optarg) == 0 ? 1 : dashee::Common::strtol(optarg);
-                    else
-                        dashee::Log::verbosity++;
-                    dashee::Log::info(1, "Option 'verbosity' set to '%d'.", dashee::Log::verbosity);
-                }
-                // Verbosity value must be an integer
-                catch(dashee::ExceptionInvalidNumber e)
-                {
-                    dashee::Log::fatal("Arg --verbosity must be a number, given '%s'!", optarg);
-                }   
+                if (optarg)
+                    dashee::Log::verbosity = dashee::strtol(optarg) == 0 ? 1 : dashee::strtol(optarg);
+                else
+                    dashee::Log::verbosity++;
+                dashee::Log::info(1, "Option 'verbosity' set to '%d'.", dashee::Log::verbosity);
                 break;
-
+            // Represents the config file which will be read later
+            case 'c':
+                conf->set("config", optarg);
+                dashee::Log::info(3, "Option 'config' set to '%s'.", conf->get("config"));
+                break;
+            // Represents the port
+            case 'p':
+                dashee::strtol(optarg); //Do nothing, throw an exception if its not an integer
+                conf->set("port", optarg);
+                dashee::Log::info(3, "Option 'port' set to '%s'.", conf->get("port"));
+                break;
             // When something goes wrong, a '?' is returned
             case '?':
-                dashee::Log::error("Option '%s' came back with '?'.", optopt);
+                dashee::Log::fatal("Option '%c' requires a value.", optopt);
                 break;
         }
     }
-
-    // Now that we have set our, values from the command line, we default our system values
-    // Into our configs, Its is better to put this here, as -vvvvvvvvv will effect the Config class
-    conf->set("servo", SERVO_DEVICE, 0);
-    conf->set_uint("port", SERVER_PORT, 0);
-    conf->set_uint("servotype", 1, 0);
-    conf->set_uint("readtimeout", SERVER_TIMEOUT, 0);
-    conf->set_uint("readtimeoutM", 0, 0);
 }

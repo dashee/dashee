@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <dashee/common.h>
 #include <dashee/Exception/GPIO.h>
-#include <dashee/Common.h>
 
 namespace dashee
 {
