@@ -34,6 +34,7 @@
 #include <dashee/common.h>
 #include <dashee/Log.h>
 #include <dashee/Exception/Config.h>
+#include <dashee/Exception/InvalidNumber.h>
 
 namespace dashee
 {
@@ -75,7 +76,7 @@ protected:
     public:
 
         //return true if 1st param matched character is less than its 2nd param
-        bool operator()(const char *, const char *) const;
+        bool operator()(const char * lhs, const char * rhs) const;
     };
 
  
@@ -102,38 +103,57 @@ protected:
      * 5
      */
     int loglevel;
+    
+    // Checks to see if the character a valid key
+    bool isValidKeyCharacter(const char * c);
+
+    // Check if the key is valid
+    bool isValidKey(const char * key);
 
 public:
     
     // Initialize our log levels
     Config();
 
-    // Set a given value
-    void set(const char *, const char *, const unsigned short int = 1);
+    // Set a given value, as string, int or 
+    void set(const char *, const char *, const bool overwrite = true);
+    void set(const char * key, const int value, const bool overwrite = true);
+    void set(const char * key, const unsigned int value, const bool overwrite = true);
+    void set(const char * key, const float value, const bool overwrite = true);
+    
+    // Get a given in the default format
+    const char * get(const char * key, const char * defaultValue = NULL);
 
-    // Set a given value
-    void set_uint(const char *, const unsigned int, const unsigned short int = 1);
-
-    // Set a given value
-    void set_float(const char *, const float, const unsigned short int = 1);
-    
-    // Get a given value
-    const char * get(const char *, const char * = NULL);
-    
-    // Get a given value
-    const unsigned int get_uint(const char *, const unsigned int = 0);
-    
-    // Get a given value
-    const float get_float(const char *, const float = 0.0f);
+    // Get the value in a specific type, see return for type
+    int getInt(const char * key, const int defaultValue = 0);
+    unsigned int getUInt(const char * key, const unsigned int defaultValue = 0);
+    float getFloat(const char * key, const float defaultValue = 0.0f);
 
     // Read values from a file
-    void read(const char *);
+    void read(const char * filename);
     
     // A helpfull print function
     void print();
+
+    // Get the size of the config map
+    size_t size();
     
     // A helpfull print function
-    void cleanup();
+    void clear();
+
+    // Deprecated
+    void set_int(const char * key, const int value, const bool overwrite = true) 
+        __attribute__((deprecated("Use set() instead")));
+    void set_uint(const char * key, const unsigned int value, const bool overwrite = true) 
+        __attribute__((deprecated("Use set() instead")));
+    void set_float(const char * key, const float value, const bool overwrite = true) 
+        __attribute__((deprecated("Use set() instead")));
+    int get_int(const char * key, const int defaultValue = 0) 
+        __attribute__((deprecated("Use getInt() instead")));
+    unsigned int get_uint(const char * key, const unsigned int defaultValue = 0u) 
+        __attribute__((deprecated("Use getUInt() instead")));
+    float get_float(const char * key, const float defaultValue = 0.0f) 
+        __attribute__((deprecated("Use getFloat() instead")));
     
     // Cleanup
     virtual ~Config();

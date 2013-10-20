@@ -20,11 +20,7 @@ long int dashee::strtol(const char * string, const int base)
     long int number = ::strtol(string, &end, base);
     
     if (end == string || *end != '\0' || errno == ERANGE)
-    {
-        char error[20];
-        sprintf(error, "Number '%s' is invalid", string);
-        throw ExceptionInvalidNumber(error);
-    }
+        throw ExceptionInvalidNumber("dashee::strtol : Number '" + (std::string)string + "' is invalid");
 
     return number;
 }

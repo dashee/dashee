@@ -33,6 +33,55 @@ Config::Config()
     loglevel = 5;
 }
 
+/**
+ * Checks weather or the the given character is 
+ * a valid key character.
+ *
+ * @param c reference to the character to look at
+ *
+ * @return boolean representing the character
+ * @retval TRUE is valid character
+ * @retval FALSE is invalid character
+ */
+bool Config::isValidKeyCharacter(const char * c)
+{
+    // Ensure the key is within the range
+    if (
+        *c == '-' || 
+        *c == '_' ||
+        (*c >= '0' && *c <= '9') ||
+        (*c >= 'A' && *c <= 'Z') || 
+        (*c >= 'a' && *c <= 'z') 
+    )
+        return true;
+
+    return false;
+}
+
+/**
+ * Checks weather or not the give key is valid.
+ *
+ * @param key The key c string
+ *
+ * @return boolean representing the validity
+ * @retval FALSE is not a valid key
+ * @retval TRUE is valid key
+ */
+bool Config::isValidKey(const char * key)
+{
+    // Avoid empty to be the key
+    if(key[0] == 0) return false;
+
+    // Loop through and test
+    for (const char * c = key; *c != 0; c++)
+    {
+        if (!isValidKeyCharacter(c))
+            return false;
+    }
+
+    return true;
+}
+
 /** 
  * Set a config value.
  *
@@ -47,16 +96,19 @@ Config::Config()
  * @param value The value to set the key
  * @param override Should the existing value be overwritten
  */
-void Config::set(const char * key, const char * value, const unsigned short int override)
+void Config::set(const char * key, const char * value, const bool overwrite)
 {
+    if(!isValidKey(key))
+        throw ExceptionConfig("Key '" + (std::string)key + "' must only have characters like [A-Za-z0-9-_]");
+
     // A previous, key exists. and we should delete the char array from memory
     // If threading, this requires locking. otherwise the world will blow up
-    std::map<const char *, char *>::iterator it = configs.find(key);
+    std::map<const char *, char *>::iterator it = this->configs.find(key);
 
     // Override is not allowed, and the key was found, so dont set
     // We only know the key is found, by seeing wheather the find iterator
     // is not on the end, os it must be pointing at a found element
-    if (override == 0 && it != configs.end())
+    if (overwrite == 0 && it != this->configs.end())
         return;
     
     // Create a new space in memory, for our map to refer to
@@ -65,7 +117,7 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         
     // If we found a previous value delete the previous
     // And point to the new.
-    if (it != configs.end())
+    if (it != this->configs.end())
     {
         char * pointedkey = it->second;
         it->second = pvalue;
@@ -78,35 +130,40 @@ void Config::set(const char * key, const char * value, const unsigned short int 
         // Create a new space in memory, for our map to refer to
         char *pkey = new char[strlen(key)+1];
         memcpy(pkey, key, strlen(key)+1);
-        configs[pkey] = pvalue;
+        this->configs[pkey] = pvalue;
     }
 }
 
 /**
  * Set an integer config value.
- *
- * This function is HACKEY, Given a int we need to convert it into a char *, and as our 
- * char * variable scope will only exist inside this function scope, we need to allocate
- * a pointer in memory. This has other problems. Altough our pointer is allocated in memory
- * we need to store this information in a keys array. Before reallocating the same key, 
- * we delete the previous found key using the keys array.
- *
- * The deleting is performed in the Config::set function. It will analyise wheather or not the
- * previous value needs to be deleted
- *
+ * 
  * @param key The key to set
- * @param value The integer to turn into a new char array
- * @param override Weather or not to leave the variable alone if it is set
+ * @param value The int to turn into a new char array
+ * @param overwrite Weather or not to leave the variable alone if it is set
  */
-void Config::set_uint(const char * key, const unsigned int value, const unsigned short int override)
+void Config::set(const char * key, const int value, const bool overwrite)
 {
     // Create a new buf, and send to Config::set
     // Also create and add new key value
     char buf[20];
     sprintf(buf, "%d", value);
-    set(key, buf, override);
+    set(key, buf, overwrite);
+}
 
-    return;
+/**
+ * Set an unsigned integer config value.
+ *
+ * @param key The key to set
+ * @param value The integer to turn into a new char array
+ * @param overwrite Weather or not to leave the variable alone if it is set
+ */
+void Config::set(const char * key, const unsigned int value, const bool overwrite)
+{
+    // Create a new buf, and send to Config::set
+    // Also create and add new key value
+    char buf[20];
+    sprintf(buf, "%u", value);
+    set(key, buf, overwrite);
 }
 
 /** 
@@ -116,17 +173,15 @@ void Config::set_uint(const char * key, const unsigned int value, const unsigned
  * 
  * @param key The key to set
  * @param value The float to turn into a new char array
- * @param override Weather or not to leave the variable alone if it is set
+ * @param overwrite Weather or not to leave the variable alone if it is set
  */
-void Config::set_float(const char * key, const float value, const unsigned short int override)
+void Config::set(const char * key, const float value, const bool overwrite)
 {
     // Create a new buf, and send to Config::set
     // Also create and add new key value
-    char buf[20];
+    char buf[30];
     sprintf(buf, "%f", value);
-    set(key, buf, override);
-
-    return;
+    set(key, buf, overwrite);
 }
 
 /** 
@@ -150,24 +205,59 @@ const char * Config::get(const char * key, const char * defaultvalue)
     return defaultvalue;
 }
 
+/**
+ * Return the int value
+ *
+ * @param key The key value to get
+ * @param defaultvalue The default values to return if none is found
+ *
+ * @returns The number if found, otherwise default
+ *
+ * @throws ExceptionConfig if ExceptionInvalidNumber is caught
+ */
+int Config::getInt(const char * key, const int defaultvalue)
+{
+    try
+    {
+        //returns the value, in a buffer
+        std::stringstream buf;
+        buf << defaultvalue;
+
+        //Converts a buffer to an int
+        return dashee::strtol((char *)Config::get(key, buf.str().c_str()));
+    }
+    catch (ExceptionInvalidNumber ex)
+    {
+        throw ExceptionConfig("Config::get_int('" + (std::string)key + "') because the value was invalid");
+    }
+
+}
+
 /** 
  * Get an integer config value.
- *
- * Similar to the get function, except this deals in getting back a const unsigned int
  * 
  * @param key The key value to get
  * @param defaultvalue The default values to return if none is found
  *
  * @returns The number if found, otherwise default
+ * 
+ * @throws ExceptionConfig if ExceptionInvalidNumber is caught
  */
-const unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
+unsigned int Config::getUInt(const char * key, const unsigned int defaultvalue)
 {
-    //returns the value, in a buffer
-    std::stringstream buf;
-    buf << defaultvalue;
+    try
+    {
+        //returns the value, in a buffer
+        std::stringstream buf;
+        buf << defaultvalue;
 
-    //Converts a buffer to an int
-    return strtol((char *)Config::get(key, buf.str().c_str()));
+        //Converts a buffer to an int
+        return dashee::strtol((char *)Config::get(key, buf.str().c_str()));
+    }
+    catch (ExceptionInvalidNumber ex)
+    {
+        throw ExceptionConfig("Config::get_uint('" + (std::string)key + "') because the value was invalid");
+    }
 }
 
 /** 
@@ -180,7 +270,7 @@ const unsigned int Config::get_uint(const char * key, const unsigned int default
  *
  * @returns The number if found, otherwise default
  */
-const float Config::get_float(const char * key, const float defaultvalue)
+float Config::getFloat(const char * key, const float defaultvalue)
 {
     //returns the value, in a buffer
     std::stringstream buf;
@@ -201,7 +291,9 @@ const float Config::get_float(const char * key, const float defaultvalue)
  *
  * This function will not throw any errors or return types. It will output log::warning(3)
  *
- * @param file The filename to load.
+ * @param file The filename to load
+ *
+ * @throws ExceptionConfig If key is invalid
  */
 void Config::read(const char * file)
 {
@@ -249,7 +341,7 @@ void Config::read(const char * file)
             continue;
         
         // Create a dynamic key, see below for cleanup comments
-        char * key = new char[40];
+        char * key = new char[50];
         memset(key, 0, sizeof(char)*25); //Important, other wise the comparison goes wrong
         int keyN = 0;
         
@@ -268,24 +360,26 @@ void Config::read(const char * file)
         while (c != '\n')
         {   
             // If there is '=' character switch to value
-            if (iskey && c == '=') { iskey = false; }
+            if (iskey && c == '=') 
+                iskey = false;
             
             // If iskey but there is a space, NOT allowed
-            else if (iskey && c == ' ') { c = fgetc(fd); continue; }
+            else if (iskey && c == ' ') 
+            { 
+                c = fgetc(fd); 
+                continue; 
+            }
             
             // If is key is not in the range of [a-zA-Z0-9]
-            else if (
-                iskey && 
-                (
-                    (c >= 97 && c <= 122) || //a-z
-                    (c >= 48 && c <= 57) || //0-9
-                    (c >= 65 && c <= 90) || //A-Z
-                    (c == '-')
-                )
-            ) 
+            else if (iskey) 
             {
-                key[keyN] = c;
-                keyN++;
+                if (isValidKeyCharacter((const char *)&c))
+                {
+                    key[keyN] = c;
+                    keyN++;
+                }
+                else
+                    throw ExceptionConfig("Invalid key character");
             }
             
             //Set our value
@@ -347,12 +441,25 @@ void Config::print()
 }
 
 /**
+ * Return the number of configurations set.
+ *
+ * A simple function which returns the size of the
+ * current map
+ *
+ * @returns Number of config elemetns set
+ */ 
+size_t Config::size()
+{
+    return this->configs.size();
+}   
+
+/**
  * Clean up the configuration.
  *
  * This will delete the pointers, allocated in configs. And also clear, the
  * maps
  */
-void Config::cleanup()
+void Config::clear()
 {
     for (
         std::map<const char *, char *>::iterator it=configs.begin();
@@ -368,11 +475,59 @@ void Config::cleanup()
 }
 
 /**
+ * @deprecated see set(const char * key, const int value, const bool overwrite);
+ */
+void Config::set_int(const char * key, const int value, const bool overwrite)
+{
+    this->set(key, value, overwrite);
+}
+
+/**
+ * @deprecated see set(const char * key, const unsigned int value, const bool overwrite);
+ */
+void Config::set_uint(const char * key, const unsigned int value, const bool overwrite)
+{
+    this->set(key, value, overwrite);
+}
+
+/**
+ * @deprecated see set(const char * key, const float value, const bool overwrite);
+ */
+void Config::set_float(const char * key, const float value, const bool overwrite)
+{
+    this->set(key, value, overwrite);
+}
+
+/**
+ * @deprecated see getInt
+ */
+int Config::get_int(const char * key, const int defaultvalue)
+{
+    return this->getInt(key, defaultvalue);
+}
+
+/**
+ * @deprecated see getUInt 
+ */
+unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
+{
+    return this->getUInt(key, defaultvalue);
+}
+
+/** 
+ * @deprecated see getFloat()
+ */
+float Config::get_float(const char * key, const float defaultvalue)
+{
+    return this->getFloat(key, defaultvalue);
+}
+
+/**
  * Destructor.
  *
  * Our destructor which only calls cleanup
  */
 Config::~Config()
 {
-    cleanup();
+    this->clear();
 }

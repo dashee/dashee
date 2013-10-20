@@ -19,7 +19,7 @@ RETURN_EC=0
 # List of all tests to run
 TEST_GENERAL=
 TEST_PI="testGPIO testUART"
-TEST_DUMMY="testDummy"
+TEST_DUMMY="testDummy testConfig"
 
 # The directory where all the tests are stored
 TESTDIR=./bin/tests

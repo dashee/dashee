@@ -143,10 +143,10 @@ int main(int argc, char **argv)
         //const unsigned int servotype = 10;
         //const unsigned int port = SERVER_PORT;
         const char * servo = conf->get("servo");
-        const unsigned int servotype = conf->get_uint("servotype");
-        const unsigned int port = conf->get_uint("port");
-        const unsigned int readtimeout = conf->get_uint("readtimeout", SERVOD_TIMEOUT);
-        const unsigned long int readtimeoutM = conf->get_uint("readtimeoutM", 0);
+        const unsigned int servotype = conf->getUInt("servotype");
+        const unsigned int port = conf->getUInt("port");
+        const unsigned int readtimeout = conf->getUInt("readtimeout", SERVOD_TIMEOUT);
+        const unsigned long int readtimeoutM = conf->getUInt("readtimeoutM", 0);
 
 // Start this program as a daemon so it
 // can be run in background
@@ -407,10 +407,10 @@ void setconfig(int argc, char ** argv, dashee::Config *conf)
 {
     // Default some configuration values
     conf->set("servo", SERVOD_DEVICE, 0);
-    conf->set_uint("port", SERVOD_PORT, 0);
-    conf->set_uint("servotype", SERVOD_DEVICETYPE, 0);
-    conf->set_uint("readtimeout", SERVOD_TIMEOUT, 0);
-    conf->set_uint("readtimeoutM", 0, 0);
+    conf->set("port", SERVOD_PORT, 0);
+    conf->set("servotype", SERVOD_DEVICETYPE, 0);
+    conf->set("readtimeout", SERVOD_TIMEOUT, 0);
+    conf->set("readtimeoutM", 0, 0);
     conf->set("config", SERVOD_CONFIG, 0);
     conf->set("logfile", SERVOD_LOGFILE, 0);
     conf->set("workingdir", SERVOD_WORKINGDIR, 0);

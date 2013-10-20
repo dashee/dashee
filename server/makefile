@@ -32,13 +32,13 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
 		ServoController.o ServoController/Dummy.o ServoController/USB.o \
 		ServoController/UART.o Server/UDP.o common.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
-    		 ServoController/UART.o GPIO.o Servo.o Servo/Dummy.o)
+    		 ServoController/UART.o GPIO.o Servo.o Servo/Dummy.o Config.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
-TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy)
+TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy testConfig)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
@@ -127,6 +127,11 @@ $(TESTDIR)/testUART: tests/testUART.cpp \
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testGPIO: tests/testGPIO.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
+	$(call print,"Building","tests","$@")
+	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+
+$(TESTDIR)/testConfig: tests/testConfig.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@

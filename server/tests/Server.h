@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file tests/Server.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,31 +19,47 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_TEST_SERVER_H_
+#define DASHEE_TEST_SERVER_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <dashee/Server.h>
 
-#include <dashee/Exception/OutOfBounds.h>
-
-#include "ServoController/Dummy.h"
-#include "ServoController/UART.h"
-#include "Servo/Dummy.h"
-#include "GPIO.h"
-#include "Config.h"
-
+/*
+ * Set the namespace
+ */
 namespace dashee
 {
     namespace test
     {
-        int run(int argc, char ** argv);
+        class Server;
     }
-}
+}   
+
+/**
+ * Server test class for
+ * unit testing known components
+ */
+class dashee::test::Server : public CppUnit::TestFixture
+{
+    CPPUNIT_TEST_SUITE(dashee::test::Server);
+    
+    //CPPUNIT_TEST(testSetAndGet);
+
+    // Exceptions
+    //CPPUNIT_TEST_EXCEPTION(testInvalidKeyException, ExceptionConfig);
+    
+    CPPUNIT_TEST_SUITE_END();
+
+private:
+    dashee::Server * server;
+
+protected:
+    //virtual void testCleanUp();
+
+public:
+    virtual void setUp();
+    virtual void tearDown();
+};
 
 #endif
