@@ -37,7 +37,7 @@ OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Du
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
-BINARIES := $(addprefix $(BINDIR)/, servo servod)
+BINARIES := $(addprefix $(BINDIR)/, servo servod telemetry telemetryd)
 TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy testConfig)
 
 # Compiler options
@@ -92,7 +92,7 @@ $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(call print,"Building","lib","$@")
 	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
-# Our main program that uses the objects
+# The ServoController program
 $(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
 	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
@@ -100,6 +100,17 @@ $(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 # Our main program that uses the objects
 $(BINDIR)/servod: CFLAGS+=-DDAEMON
 $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
+	$(call print,"Building","binary","$@")
+	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+
+# The ServoController program
+$(BINDIR)/telemetry: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
+	$(call print,"Building","binary","$@")
+	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+
+# Our main program that uses the objects
+$(BINDIR)/telemetryd: CFLAGS+=-DDAEMON
+$(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
 	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
 
