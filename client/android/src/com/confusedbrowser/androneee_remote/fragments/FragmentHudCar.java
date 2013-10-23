@@ -1,7 +1,14 @@
 package com.confusedbrowser.androneee_remote.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +56,11 @@ public class FragmentHudCar extends FragmentHud
      * Assign area for current steer value
      */
     float steer;
+
+    /**
+     * Dont update steer UI if it's same as last time.
+     */
+    int prevSteer = -1;
             
     /**
      * Handle to our TextViews
@@ -147,9 +159,18 @@ public class FragmentHudCar extends FragmentHud
                 {
                     textViewDrive.setTextColor(Color.parseColor("#444444"));
                     textViewReverse.setTextColor(Color.parseColor("#FF0000"));
+                    try {
+                       /* Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        Ringtone r = RingtoneManager.getRingtone(getActivity(), notification);
+                        r.play();*/
+                        final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+                        tg.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
+                    } catch (Exception e) {}
                 }
                 else
                 {
+                    /*final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+                    tg.startTone(ToneGenerator.TONE_PROP_BEEP);*/
                     textViewReverse.setTextColor(Color.parseColor("#444444"));
                     textViewDrive.setTextColor(Color.parseColor("#00FF00"));
                 }
@@ -184,7 +205,7 @@ public class FragmentHudCar extends FragmentHud
         textViewHudPitchValue.setTypeface(visitor2Font);
 
         textViewHudRollValue = (TextView)view.findViewById(R.id.hud_text_roll_value);
-        textViewHudRollValue.setTypeface(novamonoFont);
+        textViewHudRollValue.setTypeface(visitor2Font);
 
         textViewHudRollMinValue = (TextView)view.findViewById(R.id.hud_text_roll_min_value);
         textViewHudRollMinValue.setTypeface(novamonoFont);
@@ -325,7 +346,19 @@ public class FragmentHudCar extends FragmentHud
 
         int rollValue = Math.round(roll);
 
-        textViewHudRollValue.setText(rollValue+"");
+
+        if (rollValue != prevSteer){
+            if (rollValue == 0 || rollValue == 100){
+                // Get instance of Vibrator from current Context
+                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+
+                // Vibrate for 300 milliseconds
+                v.vibrate(10);
+            }
+            textViewHudRollValue.setText(rollValue+"");
+        }
+
+        prevSteer = rollValue;
 
         /*if (rollValue == 100)
             textViewHudRollValue.setText(Html.fromHtml("<font color='#D93600'>100</font>"));

@@ -268,6 +268,7 @@ public class MainActivity
             }
             else if (o instanceof ModelServerState)
             {
+                Log.d("Dashee", "ModelServer Change ");
                 switch ((ModelServerState.Notifier)arg)
                 {
                     case STATUS_CONTROLS:

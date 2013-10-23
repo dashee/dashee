@@ -1,5 +1,7 @@
 package com.confusedbrowser.androneee_remote.threads;
 
+import android.util.Log;
+
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +92,10 @@ public class ThreadPassPositionControls extends Thread
             this.modelServerState = modelServerState;
             //this.timeLastBpsReset = System.currentTimeMillis();
             this.sockHandler = new DatagramSocket();
+
+            // Set low buffer value to discourage queuing.
+            this.sockHandler.setSendBufferSize(100);
+            Log.d("Dashee", "Send Buffer Size: " + this.sockHandler.getSendBufferSize());
         }
         catch(Exception e)
         {
@@ -177,6 +183,7 @@ public class ThreadPassPositionControls extends Thread
                 this.modelServerState.getIp(),
                 this.modelServerState.getControlPort()
             );
+
             this.sockHandler.send(packet);
         }
         catch (Exception e)

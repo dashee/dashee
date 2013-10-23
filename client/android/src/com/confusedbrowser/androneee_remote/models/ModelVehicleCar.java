@@ -1,5 +1,8 @@
 package com.confusedbrowser.androneee_remote.models;
 
+import android.content.Context;
+import android.os.Vibrator;
+
 import java.util.ArrayList;
 import java.lang.Math;
 import java.util.List;
@@ -210,8 +213,6 @@ public class ModelVehicleCar implements ModelVehicle
         this.steerInt = Math.round(this.actualSteer);
         this.powerInt = Math.round(this.getActualPower());
 
-        byte[] commandBytes = new byte[]{ 0, 0, 0, 0 };
-
         commands.clear();
 
         if(this.steerInt != this.prevSteer || this.somethingToSend)
@@ -250,6 +251,7 @@ public class ModelVehicleCar implements ModelVehicle
     public void setFromPhonePosition(ModelPhonePosition position) 
     {
         this.steer = visualSteerMapping.remapValue(position.getRoll());
+
         this.actualSteer = this.getActualSteer(position.getRoll());
         if(!powerControlSlider)
         	this.power = this.getPowerFromPitch(position.getPitch());

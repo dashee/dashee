@@ -148,11 +148,11 @@
                     android:text="000"/>
             <TextView
                 android:id="@+id/hud_text_roll_value"
-                android:layout_width="50dp"
+                android:layout_width="80dp"
                 android:layout_height="35dp"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
-                android:textSize="48dp"
+                android:textSize="42dp"
                 android:textStyle="bold"
                 android:includeFontPadding="false"
                 android:layout_marginBottom="4dp"

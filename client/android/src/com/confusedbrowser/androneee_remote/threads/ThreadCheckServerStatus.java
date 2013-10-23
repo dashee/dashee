@@ -1,6 +1,8 @@
 package com.confusedbrowser.androneee_remote.threads;
 
 
+import android.util.Log;
+
 import java.net.*;
 
 import com.confusedbrowser.androneee_remote.models.*;
@@ -90,16 +92,17 @@ public class ThreadCheckServerStatus extends Thread
 
                 // Create the packet
                 DatagramPacket packet = new DatagramPacket(
-                        command, 
-                        command.length, 
-                        this.modelServerState.getIp(), 
-                        this.modelServerState.getControlPort()
-                    );
+                    command,
+                    command.length,
+                    this.modelServerState.getIp(),
+                    this.modelServerState.getControlPort()
+                );
 
                 // Send the packet
                 this.sockHandler.send(packet);
 
                 byte[] value = new byte[1];
+
                 packet = new DatagramPacket(value, value.length);
                 this.sockHandler.receive(packet);
                 if (value[0] == (byte)128)
@@ -107,7 +110,10 @@ public class ThreadCheckServerStatus extends Thread
                 else
                     this.modelServerState.setStatusControls(false);
             }
-            catch (SocketTimeoutException ignored) {}
+            catch (SocketTimeoutException ignored)
+            {
+                //Log.d("Dashee", "socket timedout");
+            }
             catch (Exception e) 
             {
                 e.printStackTrace();
