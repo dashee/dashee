@@ -158,7 +158,7 @@ public class FragmentHudCar extends FragmentHud
                 if(Reverse)
                 {
                     textViewDrive.setTextColor(Color.parseColor("#444444"));
-                    textViewReverse.setTextColor(Color.parseColor("#FF0000"));
+                    textViewReverse.setTextColor(Color.parseColor("#D93600"));
                     try {
                        /* Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                         Ringtone r = RingtoneManager.getRingtone(getActivity(), notification);
@@ -172,7 +172,7 @@ public class FragmentHudCar extends FragmentHud
                     /*final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
                     tg.startTone(ToneGenerator.TONE_PROP_BEEP);*/
                     textViewReverse.setTextColor(Color.parseColor("#444444"));
-                    textViewDrive.setTextColor(Color.parseColor("#00FF00"));
+                    textViewDrive.setTextColor(Color.parseColor("#2FB900"));
                 }
             }
         });

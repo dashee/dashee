@@ -94,7 +94,7 @@
                     android:id="@+id/hud_text_drive_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#00ff00"
+                    android:textColor="#2FB900"
                     android:textSize="10dp"
                     android:gravity="center"
                 android:typeface="monospace"
