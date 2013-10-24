@@ -231,8 +231,8 @@ public class FragmentHudCar extends FragmentHud
         
         this.setHudConnection("unknown");
         //this.setHudBps(0);
-        this.setHudPitch(50.0f);
-        this.setHudRoll(50.0f);
+        this.setHudPitch(0.0f);
+        this.setHudRoll(0.0f);
         
         // Get the sharedPreferences so the values can be set
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
@@ -293,7 +293,8 @@ public class FragmentHudCar extends FragmentHud
         if (pitch < 0.0f || pitch > 100.0f)
             textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>---</font>"));
 
-        int pitchValue = Math.round(pitch);
+        int pitchValue = Math.round(pitch) - 50;
+
         textViewHudPitchValue.setText(""+pitchValue);
 
         // This slows shit up, No idea why, investigate. because having this would be good
@@ -355,7 +356,7 @@ public class FragmentHudCar extends FragmentHud
                 // Vibrate for 300 milliseconds
                 v.vibrate(10);
             }
-            textViewHudRollValue.setText(rollValue+"");
+            textViewHudRollValue.setText(rollValue-50+"");
         }
 
         prevSteer = rollValue;
