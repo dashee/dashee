@@ -95,7 +95,7 @@ public class ThreadPassPositionControls extends Thread
 
             // Set low buffer value to discourage queuing.
             this.sockHandler.setSendBufferSize(100);
-            Log.d("Dashee", "Send Buffer Size: " + this.sockHandler.getSendBufferSize());
+            //Log.d("Dashee", "Send Buffer Size: " + this.sockHandler.getSendBufferSize());
         }
         catch(Exception e)
         {

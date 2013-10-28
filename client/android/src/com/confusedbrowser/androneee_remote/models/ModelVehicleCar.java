@@ -102,8 +102,8 @@ public class ModelVehicleCar implements ModelVehicle
     {
         this.prevSteer = (int)this.steer;
         this.prevPower = (int)this.power;
-        this.steerMapping = new RangeMapping(-0.523f,0.523f,this.steerMax,this.steerMin);
-        this.visualSteerMapping = new RangeMapping(-0.523f,0.523f,100.0f,0.0f);
+        this.steerMapping = new RangeMapping(-0.5f,0.5f,this.steerMax,this.steerMin);
+        this.visualSteerMapping = new RangeMapping(-0.5f,0.5f,100.0f,0.0f);
     }
 
     /**

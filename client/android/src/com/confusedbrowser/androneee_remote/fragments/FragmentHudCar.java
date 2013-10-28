@@ -155,22 +155,16 @@ public class FragmentHudCar extends FragmentHud
             @Override
             public void onClick(View v) {
                 Reverse = !Reverse;
+                final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
                 if(Reverse)
                 {
+                    tg.startTone(ToneGenerator.TONE_PROP_ACK);
                     textViewDrive.setTextColor(Color.parseColor("#444444"));
                     textViewReverse.setTextColor(Color.parseColor("#D93600"));
-                    try {
-                       /* Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        Ringtone r = RingtoneManager.getRingtone(getActivity(), notification);
-                        r.play();*/
-                        final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-                        tg.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD);
-                    } catch (Exception e) {}
                 }
                 else
                 {
-                    /*final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-                    tg.startTone(ToneGenerator.TONE_PROP_BEEP);*/
+                    tg.startTone(ToneGenerator.TONE_PROP_BEEP2);
                     textViewReverse.setTextColor(Color.parseColor("#444444"));
                     textViewDrive.setTextColor(Color.parseColor("#2FB900"));
                 }
@@ -353,8 +347,8 @@ public class FragmentHudCar extends FragmentHud
                 // Get instance of Vibrator from current Context
                 Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
 
-                // Vibrate for 300 milliseconds
-                v.vibrate(10);
+                // Vibrate for 30 milliseconds
+                v.vibrate(30);
             }
             textViewHudRollValue.setText(rollValue-50+"");
         }
