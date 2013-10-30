@@ -134,17 +134,17 @@ public class FragmentHudCar extends FragmentHud
 			public boolean onTouch(View v, MotionEvent event) {
 				//Log.d("dashee", "Got click");
                 if(Reverse){
-                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 0, 50);
+                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 0, 128);
                     setVehiclePower((int) mapVal);
                 }else{
-                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 100, 50);
+                    float mapVal = RangeMapping.mapValue(event.getY(), 120, iv.getHeight()-72, 255, 128);
                     setVehiclePower((int) mapVal);
                 }
 
 				//moveGrip((int) Math.round(event.getX()),(int) Math.round(event.getY()));
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					//moveGrip(150,150);
-					setVehiclePower(50);
+					setVehiclePower(128);
 				}
 				return true;
 			}
@@ -225,7 +225,7 @@ public class FragmentHudCar extends FragmentHud
         
         this.setHudConnection("unknown");
         //this.setHudBps(0);
-        this.setHudPitch(0.0f);
+        this.setHudPitch(128.0f);
         this.setHudRoll(0.0f);
         
         // Get the sharedPreferences so the values can be set
@@ -287,7 +287,7 @@ public class FragmentHudCar extends FragmentHud
         if (pitch < 0.0f || pitch > 100.0f)
             textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>---</font>"));
 
-        int pitchValue = Math.round(pitch) - 50;
+        int pitchValue = Math.round(pitch) -128;
 
         textViewHudPitchValue.setText(""+pitchValue);
 
@@ -393,8 +393,8 @@ public class FragmentHudCar extends FragmentHud
             this.setHudPitch(car.getPower());
             this.rotateHud(this.steer);
             this.setMaxMinValues(car);
-            float powerVal = (this.Reverse) ? 50-car.getPower() : car.getPower()-50 ;
-            draw_hud.setPowerPerc((powerVal)/50);
+            float powerVal = (this.Reverse) ? 128-car.getPower() : car.getPower()-128 ;
+            draw_hud.setPowerPerc((powerVal)/128);
         }
     }
 }

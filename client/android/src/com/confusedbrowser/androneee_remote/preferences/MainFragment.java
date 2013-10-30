@@ -101,7 +101,7 @@ public class MainFragment
                 float val = Float.parseFloat(etp.getText());
 
                 // Invalid value so break out of any following tasks
-                if (val < 0.0f || val > 100.0f)
+                if (val < 0.0f || val > 255.0f)
                     return;
             }
 

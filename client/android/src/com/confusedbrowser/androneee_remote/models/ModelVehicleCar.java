@@ -2,6 +2,7 @@ package com.confusedbrowser.androneee_remote.models;
 
 import android.content.Context;
 import android.os.Vibrator;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.lang.Math;
@@ -22,11 +23,11 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * The set of variables which hold steering information
      */
-    private float steer = 50.0f; // Between 0 - 100
-    private float actualSteer = 50.0f;
+    private float steer = 128.0f; // Between 0 - 100
+    private float actualSteer = 128.0f;
     private int prevSteer;
     private int steerTrim = 0;
-    private float steerMax = 100.0f;
+    private float steerMax = 255.0f;
     private float steerMin = 0.0f;
     private boolean steerInverted = false;
 
@@ -38,10 +39,10 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * Set of variables which hold power information
      */
-    private float power = 50.0f; // Between 0 - 100
+    private float power = 128.0f; // Between 0 - 100
     private int prevPower;
     private int powerTrim = 0;
-    private float powerMax = 100.0f;
+    private float powerMax = 255.0f;
     private float powerMin = 0.0f;
     private boolean powerInverted = true;
 
@@ -53,7 +54,7 @@ public class ModelVehicleCar implements ModelVehicle
      * the milliseconds the client should talk to the server if
      * no new commands are being sent
      */
-    private int timeOut = 75;
+    private int timeOut = 17;
 
     /**
      * Hold the last time value of the command sent. This will help
@@ -185,16 +186,17 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private float getActualPower()
     {
+        float midVal = 128.0f;
         // Going from 50 - 100 is forward apply forward this.powerMax
-        if(this.power >= 50.0f)
-            tempPower = RangeMapping.mapValue(this.power, 50.0f, 100.0f, 50.0f, this.powerMax);
+        if(this.power >= midVal)
+            tempPower = RangeMapping.mapValue(this.power, midVal, 255.0f, midVal, this.powerMax);
         else{
             // Going from 0 - 50 is reverse apply this.powerMin
-            tempPower = RangeMapping.mapValue(this.power, 0.0f, 50.0f, this.powerMin, 50.0f);
+            tempPower = RangeMapping.mapValue(this.power, 0.0f, midVal, this.powerMin, midVal);
         }
 
         if(this.powerInverted)
-            tempPower =  100 - tempPower;
+            tempPower =  255 - tempPower;
 
         return tempPower;
     }
@@ -215,24 +217,20 @@ public class ModelVehicleCar implements ModelVehicle
 
         commands.clear();
 
-        if(this.steerInt != this.prevSteer || this.somethingToSend)
+
+        if(this.somethingToSend)
         {
+            commands.add((byte)0);
+
             this.steerInt = this.steerInt+this.steerTrim;
-
-            // Steering 17 converts to 00010001.
-            commands.add((byte)17);
-            commands.add((byte)(this.steerInt << 1));
-
+            commands.add((byte)(this.steerInt));
             this.prevSteer = this.steerInt;
-        }
+        //}
         
-        if(this.powerInt != this.prevPower || this.somethingToSend)
-        {
+        //if(this.powerInt != this.prevPower || this.somethingToSend)
+        //{
             this.powerInt = this.powerInt+this.powerTrim;
-
-            // Steering 33 converts to 00100001.
-            commands.add((byte)33);
-            commands.add((byte)(this.powerInt << 1));
+            commands.add((byte)(this.powerInt));
             this.prevPower = this.powerInt;
         }
 
@@ -252,7 +250,7 @@ public class ModelVehicleCar implements ModelVehicle
     {
         this.steer = visualSteerMapping.remapValue(position.getRoll());
 
-        this.actualSteer = this.getActualSteer(position.getRoll());
+        this.setActualSteerFromRoll(position.getRoll());
         if(!powerControlSlider)
         	this.power = this.getPowerFromPitch(position.getPitch());
     }
@@ -301,7 +299,7 @@ public class ModelVehicleCar implements ModelVehicle
      *
      * @return float - the steer value
      */
-    private float getActualSteer(float roll)
+    private void setActualSteerFromRoll(float roll)
     {
 
         //float steerValue;
@@ -329,8 +327,8 @@ public class ModelVehicleCar implements ModelVehicle
 
 
     	if(this.steerInverted)
-            this.tempSteer =  100 - this.tempSteer;
-    	return this.tempSteer;
+            this.tempSteer =  this.steerMax - this.tempSteer;
+        this.actualSteer = this.tempSteer;
     }
 
     /**
@@ -368,8 +366,8 @@ public class ModelVehicleCar implements ModelVehicle
 	public void setMax(int channel, float value)
 	{
         // TODO: Create a custom exception
-        if (value < 0 || value > 100)
-            throw new InvalidValue("Value of Max must be from 0-100.");
+        if (value < 0 || value > 255)
+            throw new InvalidValue("Value of Max must be from 0-255.");
 
         settingsChanged = true;
 
@@ -410,8 +408,8 @@ public class ModelVehicleCar implements ModelVehicle
 	public void setMin(int channel, float value)
 	{
         // TODO: Create a custom exception
-        if (value < 0 || value > 100)
-            throw new InvalidValue("Value of Max must be from 0-100");
+        if (value < 0 || value > 255)
+            throw new InvalidValue("Value of Max must be from 0-255");
 
         settingsChanged = true;
 

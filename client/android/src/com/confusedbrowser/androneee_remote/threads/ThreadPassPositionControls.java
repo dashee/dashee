@@ -24,7 +24,16 @@ public class ThreadPassPositionControls extends Thread
      * DataGram object to send commnds over UDP
      */
     private DatagramSocket sockHandler;
-    
+
+    private long resetTime = 0; // Time when last value was set
+    private long currentTime;
+
+
+    /**
+     * Track packet count
+     */
+    public int packetCount;
+
     /**
      * Locking objects.
      * lockPause is used to make the run thread wait and
@@ -58,7 +67,7 @@ public class ThreadPassPositionControls extends Thread
      * Hold the value of bytes sent. It will be reset to 0 after every
      * second.
      */
-    private int bytesPerSec = 0;
+    private int packetsPerSec = 0;
     
     /**
      * Handle to our ModelServerState, to get port and other values.
@@ -92,10 +101,6 @@ public class ThreadPassPositionControls extends Thread
             this.modelServerState = modelServerState;
             //this.timeLastBpsReset = System.currentTimeMillis();
             this.sockHandler = new DatagramSocket();
-
-            // Set low buffer value to discourage queuing.
-            this.sockHandler.setSendBufferSize(100);
-            //Log.d("Dashee", "Send Buffer Size: " + this.sockHandler.getSendBufferSize());
         }
         catch(Exception e)
         {
@@ -109,12 +114,12 @@ public class ThreadPassPositionControls extends Thread
     {
         if (bps < 0) bps = 0;
 
-        this.bytesPerSec = bps;
+        this.packetsPerSec = bps;
     }
 
     public int getBps()
     {
-        return this.bytesPerSec;
+        return this.packetsPerSec;
     }
     
     /**
@@ -176,14 +181,20 @@ public class ThreadPassPositionControls extends Thread
     {
         try
         {
-        	//Log.d("Dashee", "Server using ip: "+this.modelServerState.getIp());
+            this.currentTime = System.currentTimeMillis();
+            if(this.currentTime - this.resetTime > 1000){
+                this.resetTime = System.currentTimeMillis();
+                //Log.d("Dashee", "Packets Per Second " + this.packetCount);
+                this.packetCount = 0;
+            }
+
             DatagramPacket packet = new DatagramPacket(
                 command,
                 command.length,
                 this.modelServerState.getIp(),
                 this.modelServerState.getControlPort()
             );
-
+            this.packetCount++;
             this.sockHandler.send(packet);
         }
         catch (Exception e)

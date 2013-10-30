@@ -99,7 +99,7 @@ public class ThreadCheckServerStatus extends Thread
                 );
 
                 // Send the packet
-                this.sockHandler.send(packet);
+                //this.sockHandler.send(packet);
 
                 byte[] value = new byte[1];
 
