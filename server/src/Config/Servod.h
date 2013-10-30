@@ -36,13 +36,6 @@ class ConfigServod : public dashee::Config
 {
 protected:
     
-    // Check to see what type the value is, target, speed or acceleration;
-    // and set the value for its specific command type, example default, fallback or 
-    // fallbackEnabled
-    bool setDefault(dashee::ServoController *, const char *, const char *, const unsigned short int &);
-    bool setFallback(dashee::ServoController *, const char *, const char *, const unsigned short int &);
-    bool setFallbackEnabled(dashee::ServoController *, const char *, const char *, const unsigned short int &);
-
 public:
     
     // Initialize using the 
@@ -50,6 +43,7 @@ public:
     
     // Using our config, set the ServoControllers
     void setServoController(dashee::ServoController *);
+    void setModel(dashee::Model *);
         
     // Virtually destruct
     ~ConfigServod();

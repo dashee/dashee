@@ -47,12 +47,6 @@ class dashee::test::ServoController : public CppUnit::TestFixture
     
     // Set and Gets
     CPPUNIT_TEST(testSetAndGetTarget);
-    CPPUNIT_TEST(testSetAndGetTargetDefault);
-    CPPUNIT_TEST(testSetAndGetTargetFallback);
-    CPPUNIT_TEST(testSetAndGetTargetFallbackEnabled);
-
-    // Revert and Fallback
-    CPPUNIT_TEST(testFallbackAndRevertTarget);
     CPPUNIT_TEST(testSizeValue);
     
     // Exception
@@ -75,19 +69,7 @@ protected:
 
     // test setTarget and getTarget
     void testSetAndGetTarget();
-
-    // test setTargetDefault and getTargetDefault
-    void testSetAndGetTargetDefault();
-
-    // test setTargetFallback and getTargetFallback
-    void testSetAndGetTargetFallback();
-
-    // test setTargetFallbackEnabled and getTargetFallbackEnabled
-    void testSetAndGetTargetFallbackEnabled();
     
-    // test the revert and fallback functionality
-    void testFallbackAndRevertTarget();
-
     // test the size function
     virtual void testSizeValue();
     

@@ -33,16 +33,6 @@ ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned shor
 }
 
 /**
- * Destruct.
- *
- * Handler to close our ServoControllerDummy::fd opened device
- */
-ServoControllerDummy::~ServoControllerDummy()
-{
-    fclose(this->fd);    
-}
-
-/**
  * Get the last Error.
  *
  * The function gets the error from the file, The error is stored in the first two bytes
@@ -58,4 +48,14 @@ short int ServoControllerDummy::getError()
 {
     fseek(fd, 0, SEEK_SET);
     return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));
+}
+
+/**
+ * Destruct.
+ *
+ * Handler to close our ServoControllerDummy::fd opened device
+ */
+ServoControllerDummy::~ServoControllerDummy()
+{
+    fclose(this->fd);    
 }

@@ -44,42 +44,20 @@
 #include <dashee/Log.h>
 #include <dashee/Config.h>
 #include <dashee/Server/UDP.h>
-//#include "Config.h"
+#include <dashee/daemon.h>
+#include <dashee/signal.h>
 
-#define TELEMETRYD_PORT 2047u
-#define TELEMETRYD_TIMEOUT 2u
-#define TELEMETRYD_LOGFILE "./var/log/dashee/telemetryd.log"
-#define TELEMETRYD_CONFIG "./etc/dashee/telemetryd.conf"
-#define TELEMETRYD_PIDFILE "./var/run/dashee/telemetryd.pid"
-#define TELEMETRYD_WORKINGDIR "."
+#define DASHEE_PIDFILE "./var/run/dashee/telemetryd.pid"
+#define DASHEE_LOGFILE "./var/log/dashee/telemetryd.log"
+#define DASHEE_WORKINGDIR "."
+#define DASHEE_CONFIG "./etc/dashee/telemetryd.conf"
 
-/**
- * This is our main variable that controls wheather or not the program should be running
- * As soon as this variable is set to 1, all threads should start exiting gracefully, 
- * and pselect() would have by this time timed out
- */
-int volatile EXIT = 0;
+#define DASHEE_SERVER_PORT 2047u
+#define DASHEE_SERVER_TIMEOUT 2u
 
-/**
- * A helpfull variable set by catch exceptions, which change the return value for the main
- * function
- */
-int volatile RETVAL = 0;
-
-/**
- * Our signal handler as overwritten by our main function
- */
-void sighandler(int);
-
-/**
- * Our main loop
- */
-void process(dashee::Server * server);
-
-/**
- * This function will set our given options from command line
- */ 
-void setconfig(int, char **, dashee::Config *);
+// Load object functions
+dashee::Config * loadConfig(int argc, char ** argv);
+dashee::Server * loadServer(dashee::Config * config);
 
 /**
  * Our main function is designed to take in arguments from the command line
@@ -94,6 +72,10 @@ void setconfig(int, char **, dashee::Config *);
 int main(int argc, char **argv)
 {
     dashee::Server * server = NULL;
+    dashee::Config * config = NULL;
+
+    // Program exit code
+    int volatile RETVAL = 0;
 
     try
     {
@@ -102,96 +84,28 @@ int main(int argc, char **argv)
         dashee::Log::openSyslog(argv[0], LOG_DAEMON);
 #endif
     
-        // Set our sigaction
-        struct sigaction act;
-        memset(&act, 0, sizeof(act));
-        act.sa_handler = sighandler;
-        if (sigaction(SIGINT, &act, 0))
-            throw new std::runtime_error("Sigaction failed");
-
-        dashee::Config * conf = new dashee::Config();
+	dashee::initSignalHandler();
+        config = loadConfig(argc, argv);
 
 // Start this program as a daemon so it
 // can be run in background
 #ifdef DAEMON
-        const char * logfile = conf->get("logfile", TELEMETRYD_LOGFILE);
-        const char * workingdir = conf->get("workingdir", TELEMETRYD_WORKINGDIR);
-        const char * pidfile = conf->get("pidfile", TELEMETRYD_PIDFILE);
-
-        if (!dashee::fexists(logfile))
-            throw dashee::Exception("Cannot start, log file is invalid '" + (std::string)logfile + "' not found");
-
-        // Change logging to go to stdout
-        dashee::Log::openFile(logfile);
-
-        pid_t pid;
-        pid_t sid;
-
-        // Fork our process
-        pid = fork();
-
-        // Fork failed
-        if (pid < 0)
-            throw dashee::Exception("fork() returned '" + dashee::itostr(pid) + "'");
-
-        // Fork passed so parent should clean up and die
-        if (pid > 0)
-        {
-            delete conf;
-            exit(0);
-        }
-
-        //Create a new Signature Id for our child
-        sid = setsid();
-        if (sid < 0)
-            throw dashee::Exception("sid() returned '" + dashee::itostr(sid) + "'");
-
-        // Change working directory
-        if (chdir(workingdir) < 0)
-            throw dashee::Exception("Cannot change directory '" + (std::string)workingdir + "'");
-
-        if (!dashee::createPID(pidfile, true))
-            throw dashee::Exception("PID '" + (std::string)pidfile + "' file already exists");
-
-        // Close STDIN and STDOUT
-        close(STDIN_FILENO);
-        close(STDERR_FILENO);
+	dashee::startDaemon(config, DASHEE_LOGFILE, DASHEE_WORKINGDIR, DASHEE_PIDFILE);
 #endif
         
-        // Set some generic varibles to be used later
-        const unsigned int readtimeout = conf->getUInt("readtimeout", TELEMETRYD_TIMEOUT);
-        const unsigned long int readtimeoutM = conf->getUInt("readtimeoutM", 0);
-
         // Initilize the classes
-        server = new dashee::ServerUDP(conf->getUInt("port", TELEMETRYD_PORT));
+        server = loadServer(config);
 
         // Remove unused variables before starting the main loop
-        delete conf;
+        delete config;
 
-        while (!EXIT)
+        while (!dashee::EXIT)
         {
-            try
-            {
-                if (server->read(readtimeout, readtimeoutM))
-                {
-                    if (!server->write("Pong"))
-                        throw dashee::ExceptionServer("Write failed");
-                }
-
-                // Any timeout operations?,
-                // can be performed here.
-                else
-                {
-
-                }
-            }
-            // This only happens when a signal int is called
-            // Note any cleanups must be handled here that relate
-            catch (dashee::ExceptionServerSignal e)
-            {
-               dashee::Log::info(4, "Signal thrown from ServerUDP: %s", e.what());
-               EXIT = 1;
-            }
+	    if (server->read())
+	    {
+		if (!server->write("Pong"))
+		    dashee::Log::warning("Failed to write back to the server");
+	    }
         }
     }
     catch (dashee::ExceptionConfig e)
@@ -225,12 +139,100 @@ int main(int argc, char **argv)
 }
 
 /**
- * Our signal handler as overwritten by our main function
+ * We need to be able to change the server behaviour using command line arguments.
+ * do do that we use this function which takes in argc and argv amongst other arguments
+ * other arguments are pointers so this function can modify there value
  *
- * @param (int)sig - The signal that was thrown
+ * @param argc The number of cmdline arguments.
+ * @param argv The array of cmdline arguments sent
+ * @param conf Pointer to the Config object used to set/get
+ *
+ * @return pointer to the fresh new config object
  */
-void sighandler(int sig)
+dashee::Config * loadConfig(int argc, char ** argv)
 {
-    EXIT = 1;
-    dashee::Log::info(3, "Signal %d called.", sig);
+    dashee::Config * config = new dashee::Config();
+
+    int c;
+    static struct option long_options[] = {
+        { "port", 1, 0, 'p' },
+        { "config", 1, 0, 'c' },
+        { "verbosity", 1, 0, 'v' },
+        { "logfile", 1, 0, 'l' },
+        { "workingdir", 1, 0, 'w' },
+        { "pidfile", 1, 0, 0 }
+    };
+    int long_index = 0;
+    
+    while((c = getopt_long(argc, argv, "c:p:v", long_options, &long_index)) != -1)
+    {
+        // switch our c, if it is 0 then it uses the long options
+        switch (c)
+        {
+            // Use our long options
+            case 0:
+
+                // Switch using the index int, Note that the number
+                // of the case x: is relevent to the long_options array above
+                switch (long_index)
+                {
+                    // PID file
+                    case 5:
+                        config->set("pidfile", optarg);
+                        break;
+                }
+                break;
+            // Set the logfile location
+            case 'l':
+                config->set("logfile", optarg);
+                break;
+            // Set working directory
+            case 'w':
+                config->set("workingdir", optarg);
+                break;
+            // Give 'v' we see if optarg is set
+            // If so we use its value, otherwise we increase verbosity
+            // from its previous state
+            case 'v':
+                if (optarg)
+                    dashee::Log::verbosity = dashee::strtol(optarg) == 0 ? 1 : dashee::strtol(optarg);
+                else
+                    dashee::Log::verbosity++;
+                break;
+            // Represents the config file which will be read later
+            case 'c':
+                config->set("config", optarg);
+                break;
+            // Represents the port
+            case 'p':
+                config->set("port", static_cast<int>(dashee::strtol(optarg)));
+                break;
+            // When something goes wrong, a '?' is returned
+            case '?':
+                dashee::Log::fatal("Option '%c' requires a value.", optopt);
+                break;
+        }
+    }
+        
+    config->read(config->get("config", DASHEE_CONFIG));
+
+    return config;
+}
+
+/**
+ * Function to create a server and return its instance
+ *
+ * @param config The config object to load the values from
+ */
+dashee::Server * loadServer(dashee::Config * config)
+{
+    dashee::Server * server = 
+	new dashee::ServerUDP(config->getUInt("port", DASHEE_SERVER_PORT));
+
+    server->setTimeout(
+            config->getUInt("readtimeout", DASHEE_SERVER_TIMEOUT), 
+            config->getUInt("readtimeoutM", 0)
+        );
+
+    return server;
 }

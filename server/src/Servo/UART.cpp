@@ -14,7 +14,8 @@ using namespace dashee;
  *
  * @throws Exception_Servo If device opening fails, an exception will be thrown
  */
-ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel)
+ServoUART::ServoUART(int * fd, const unsigned short int channel) 
+    : Servo(channel)
 {
     this->fd = fd;
 }
@@ -22,9 +23,11 @@ ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel
 /**
  * Set the target.
  *
- * This function will talk to our board and set the specific channel to the required byte
+ * This function will talk to our board and set the specific channel to the 
+ * required byte
  *
- * The command to tell the servo that we want to set channel number requires 6 bytes 
+ * The command to tell the servo that we want to set channel number requires 6 
+ * bytes 
  *  1st byte - Static protocoal value always set to 0xAA
  *  2nd byte - The device number
  *  3rd byte - The command to set target it is 0x10
@@ -32,49 +35,54 @@ ServoUART::ServoUART(int * fd, const unsigned short int channel) : Servo(channel
  *  5th byte - The data first byte
  *  6th byte - The data second byte
  *
- * @param target Our target to set represented in 2 byte, with a value of 0-100
+ * @param target Our target to set represented in 2 byte, with a value of 0-255
  *
  * @throws ExceptionServo If writing to the board fails
  */
 void ServoUART::setTarget(unsigned short int target)
 {
-    this->fallbackmode = false;
+    try
+    {
+        map<unsigned short int>(&target, 0, 255, SERVO_LOW, SERVO_HIGH);
 
-    // Convert the percentage target value
-    // to Servo controller target value
-    this->PercentageToTarget(&target);
- 
-    unsigned char command[6];
-    command[0] = 0xAA;
-    command[1] = 0xC;
-    command[2] = 0x04;
-    command[3] = this->channel;
+        unsigned char command[6];
+        command[0] = 0xAA;
+        command[1] = 0xC;
+        command[2] = 0x04;
+        command[3] = this->channel;
 
-    // Given an integer needs to be crammed into 2 bytes, with there MSB
-    // Set to 0, we need to use 
-    //    target & 01111111; to zero our MSB
-    // 
-    // Then shift the remaining bits and AND by 127
-    //       (101010101 >> 7) & 011111111
-    // Given us a 2 byte target number with there MSB cleared.
-    command[4] = target & 127;
-    command[5] = (target >> 7) & 127;
+        // Given an integer needs to be crammed into 2 bytes, with there MSB
+        // Set to 0, we need to use 
+        //    target & 01111111; to zero our MSB
+        // 
+        // Then shift the remaining bits and AND by 127
+        //       (101010101 >> 7) & 011111111
+        // Given us a 2 byte target number with there MSB cleared.
+        command[4] = target & 127;
+        command[5] = (target >> 7) & 127;
 
-    if (write(*this->fd, command, sizeof(command)) == -1)
-        throw ExceptionServo("ServoUART::setTarget write failed");
+        if (write(*this->fd, command, sizeof(command)) == -1)
+            throw ExceptionServo("ServoUART::setTarget write failed");
+    }
+    catch (ExceptionInvalidValue e)
+    {
+        throw ExceptionServo(
+            "Invalid setTarget(" + dashee::itostr(target) + ")"
+        );
+    }
 }
 
 /**
  * Get the target value.
  *
  * This command gets the target of a given channel.
- * To do this however we first need to write to the servo telling it that we want
- * the target value, of our given `channel`. We then read from the board, which returns
- * the value in a 2 bytes which in collation represent one number.
+ * To do this however we first need to write to the servo telling it that we 
+ * want the target value, of our given `channel`. We then read from the board, 
+ * which returns the value in a 2 bytes which in collation represent one number.
  * 
  * The value's returned can range from 992 - 8000
  * 
- * The command to tell the servo that we want channel number requires four bytes 
+ * The command to tell the servo that we want channel number requires four bytes
  *  1st byte - Static protocoal value always set to 0xAA
  *  2nd byte - The device number
  *  3rd byte - The command to set target it is 0x10
@@ -117,7 +125,13 @@ unsigned short int ServoUART::getTarget()
         n++;
     }
 
-    return this->TargetToPercentage(response[0] + 256*response[1]);
+    return map<unsigned short int>(
+        response[0] + 256*response[1], 
+        SERVO_LOW, 
+        SERVO_HIGH,
+        0, 
+        256
+    );
 }
 
 /**
@@ -128,4 +142,3 @@ unsigned short int ServoUART::getTarget()
 ServoUART::~ServoUART()
 {
 }
-

@@ -27,10 +27,19 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
     //Bind, Note the second parameter needs to be a sockaddr
     if (bind(socketfd, (struct sockaddr *) &server_in, sizeof(server_in)) == -1)
         throw ExceptionServer();
+
+    // Initaize our mask variable as pselect will jump out on
+    // SIGTERM
+    memset((sigset_t *)&mask, 0, sizeof(mask));
+    sigemptyset (&mask);
+    sigaddset (&mask, SIGINT|SIGTERM);
+
+    if (sigprocmask(SIG_BLOCK, &mask, &origmask) < 0)
+            throw ExceptionServer();
 }
 
 /**
- * Read from the client.
+ * Process from the client and store into buffer.
  *
  * Our wrapper to the recvfrom function, This is designed to set our buffer to null
  * and then do a recvfrom give the socket. The recvfrom will set our @p client_in variable
@@ -41,7 +50,7 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
  * @returns always true
  * @retval TRUE always returned
  */
-bool ServerUDP::read()
+void ServerUDP::process()
 {
     memset(buffer, 0, sizeof(buffer));
     this->setNumberOfBytesInBuffer(0);
@@ -60,53 +69,45 @@ bool ServerUDP::read()
         throw ExceptionServer();
 
     this->setNumberOfBytesInBuffer((size_t)numberOfBytesInBuffer);
-    return true;
 }
 
 /**
  * Read from the client, with a timeout set.
  *
- * This function is a wrapper around read(), but it calls Server::wait()
- * which is a wrapper around systems select() function. This function
- * allows us to have a timout if nothing came in our socket.
- * Note se have to setTimeout every time, as system select() modifes
- * the timestructure value. 0 value will set the timeout to nothing, 
- * so select will be instantanious.
+ * First call wait, when wait breaks it tells us weather
+ * it broke because of there was something to read or weather
+ * nothing was there to read.
  *
- * @param seconds Number of seconds to timeout
- * @param miliseconds Number of miliseconds to timeout
- *
- * @throws ExceptionServer If read fails
- * @throws ExceptionServerSignal If select timesout, or signal is intercepted
+ * If there was nothing to read we check errno to be EINTR to 
+ * determine a timeout, otherwise something went very very wrong
  *
  * @returns Boolean indicating read status
  * @retval TRUE if there was something read
- * @retval FALSE if there was nothing read
+ * @retval FALSE if there was nothing read and it timed out
+ * 
+ * @throws ExceptionServer If read fails
  */ 
-bool ServerUDP::read(const unsigned int seconds, const unsigned int miliseconds)
+bool ServerUDP::read()
 {
-    setTimeout(seconds, miliseconds);
-
+    // Wait and timeout
     int select_return = wait();
     
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {
-        read();
-        return true;
+	process();
+	return true;
     }
-    else if (select_return == -1)
-    {
-        // If the errno is set to EINTR, that means
-        // A signal went off in wait(), so throw an exception
-        // Which can be caught correctly by our main program
-        if (errno == EINTR) 
-            throw ExceptionServerSignal();
 
-        // Throw an exception so the main can set error
+    // Timeout
+    else if (select_return == 0)
+	return false;
+    
+    // If the errno is set to EINTR, that means
+    // a signal went off
+    else if (select_return == -1 && errno == EINTR)
+	return false;
+    else
         throw ExceptionServer("ServerUDP::read failed with -1.");
-    }
-
-    return false;
 }
 
 /** 

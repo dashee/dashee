@@ -3,9 +3,9 @@
 /**
  * Convert string to long.
  *
- * This function will Convert a string to a long int,
- * It follows exactly the strtol function in the standard,
- * except it throws an exception on invalid conversion
+ * This function will Convert a string to a long int, It follows exactly the 
+ * strtol function in the standard, except it throws an exception on invalid 
+ * conversion
  *
  * @param string The string to convert to number
  * @param base The base of the string number
@@ -20,7 +20,11 @@ long int dashee::strtol(const char * string, const int base)
     long int number = ::strtol(string, &end, base);
     
     if (end == string || *end != '\0' || errno == ERANGE)
-        throw ExceptionInvalidNumber("dashee::strtol : Number '" + (std::string)string + "' is invalid");
+        throw ExceptionInvalidNumber(
+                "dashee::strtol : Number '" + 
+                (std::string)string + 
+                "' is invalid"
+            );
 
     return number;
 }
@@ -40,8 +44,6 @@ std::string dashee::itostr(int value)
     return s;
 }
 
-
-
 /**
  * Check if file exists.
  *
@@ -57,29 +59,4 @@ bool dashee::fexists(const char * filename)
 {
     struct stat buffer;   
     return (stat (filename, &buffer) == 0); 
-}
-
-/**
- * Create a pid file give by filepath.
- *
- * @param Create a pid file
- * @param Overwrite an existing pidfile (default to false)
- *
- * @retval false If file exists
- * @retval true if pid file was created
- */
-bool dashee::createPID(const char * filepath, bool overwrite)
-{
-    if (dashee::fexists(filepath) && !overwrite)
-        return false;
-
-    FILE * fd = fopen(filepath, "w");
-    
-    if (fd == NULL)
-        throw Exception("PID file '" + (std::string)filepath + "' could not opened for writing");
-
-    // Write to file, close and return true;
-    fprintf(fd, "%d\n", getpid());
-    fclose(fd);
-    return true;
 }

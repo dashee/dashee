@@ -26,25 +26,26 @@ DATADIR=data
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built
-OBJECTS := $(addprefix src/, Config/Servod.o)
+OBJECTS := $(addprefix src/,)
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     		Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o \
 		ServoController.o ServoController/Dummy.o ServoController/USB.o \
-		ServoController/UART.o Server/UDP.o common.o)
+		ServoController/UART.o Server/UDP.o common.o daemon.o signal.o \
+		Model.o Model/Car.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
-    		 ServoController/UART.o GPIO.o Servo.o Servo/Dummy.o Config.o)
+    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o Config.o Model.o Model/Car.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod telemetry telemetryd)
-TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy testConfig)
+TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy testConfig testModelCar)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
 INCLUDES=-Iinclude -L$(LIBDIR)
 CFLAGS=$(WOPTIONS) $(INCLUDES)
-LFLAGS=-shared
+LFLAGS=-shared -fpic
 
 # Release ID
 RELEASEID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
@@ -95,24 +96,24 @@ $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 # The ServoController program
 $(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # Our main program that uses the objects
 $(BINDIR)/servod: CFLAGS+=-DDAEMON
 $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # The ServoController program
 $(BINDIR)/telemetry: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # Our main program that uses the objects
 $(BINDIR)/telemetryd: CFLAGS+=-DDAEMON
 $(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) -ldashee $< -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # Build and run all the tests
 test: testbuild binfile
@@ -143,6 +144,11 @@ $(TESTDIR)/testGPIO: tests/testGPIO.cpp \
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testConfig: tests/testConfig.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
+	$(call print,"Building","tests","$@")
+	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+
+$(TESTDIR)/testModelCar: tests/testModelCar.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
 	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@

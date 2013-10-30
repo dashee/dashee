@@ -47,12 +47,6 @@ class dashee::test::Servo : public CppUnit::TestFixture
     
     // Set and Gets
     CPPUNIT_TEST(testSetAndGetTarget);
-    CPPUNIT_TEST(testSetAndGetTargetDefault);
-    CPPUNIT_TEST(testSetAndGetTargetFallback);
-    CPPUNIT_TEST(testSetAndGetTargetFallbackEnabled);
-
-    // Revert and Fallback
-    CPPUNIT_TEST(testFallbackAndRevertTarget);
     
     // Exception
     CPPUNIT_TEST_EXCEPTION(testExceptionInvalidPositiveTarget, dashee::ExceptionServo);
@@ -60,16 +54,6 @@ class dashee::test::Servo : public CppUnit::TestFixture
     CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargePositiveTarget, dashee::ExceptionServo);
     CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargeNegativeTarget, dashee::ExceptionServo);
 
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidPositiveTargetDefault, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidNegativeTargetDefault, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargePositiveTargetDefault, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargeNegativeTargetDefault, dashee::ExceptionServo);
-
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidPositiveTargetFallback, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidNegativeTargetFallback, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargePositiveTargetFallback, dashee::ExceptionServo);
-    CPPUNIT_TEST_EXCEPTION(testExceptionInvalidLargeNegativeTargetFallback, dashee::ExceptionServo);
-    
     // End
     CPPUNIT_TEST_SUITE_END();
 
@@ -83,35 +67,12 @@ protected:
     // test setTarget and getTarget
     virtual void testSetAndGetTarget();
 
-    // test setTargetDefault and getTargetDefault
-    void testSetAndGetTargetDefault();
-
-    // test setTargetFallback and getTargetFallback
-    void testSetAndGetTargetFallback();
-
-    // test setTargetFallbackEnabled and getTargetFallbackEnabled
-    void testSetAndGetTargetFallbackEnabled();
-
-    // test fallback and revert functions
-    void testFallbackAndRevertTarget();
-
     // Check invalid exception when target is set
     void testExceptionInvalidPositiveTarget();
     void testExceptionInvalidNegativeTarget();
     void testExceptionInvalidLargePositiveTarget();
     void testExceptionInvalidLargeNegativeTarget();
 
-    // Check invalid exception when defaults are set
-    void testExceptionInvalidPositiveTargetDefault();
-    void testExceptionInvalidNegativeTargetDefault();
-    void testExceptionInvalidLargePositiveTargetDefault();
-    void testExceptionInvalidLargeNegativeTargetDefault();
-
-    // Check invalid exception when fallback is set
-    void testExceptionInvalidPositiveTargetFallback();
-    void testExceptionInvalidNegativeTargetFallback();
-    void testExceptionInvalidLargePositiveTargetFallback();
-    void testExceptionInvalidLargeNegativeTargetFallback();
 public:
 
     // Let the derived class deal with setting up the variables

@@ -83,24 +83,6 @@ public:
     virtual void setTarget(const unsigned short int channel, unsigned short int target);
     virtual unsigned short int getTarget(const unsigned short int channel);
     
-    // Set and Get the struct defaults.target and call setTarget
-    virtual void setTargetDefault(const unsigned short int channel, unsigned short int target);
-    virtual unsigned short int getTargetDefault(const unsigned short int channel);
-    
-    // Set and Get the struct fallbacks.target
-    virtual void setTargetFallback(const unsigned short int channel, unsigned short int target);
-    virtual unsigned short int getTargetFallback(const unsigned short int channel);
-    
-    // Set and Get the struct fallbacks.target
-    virtual void setTargetFallbackEnabled(const unsigned short int channel, bool flag);
-    virtual bool getTargetFallbackEnabled(const unsigned short int channel);
-    
-    // Call fallback on all servos
-    virtual void fallback();
-    
-    // Revert all servo's back to original
-    virtual void revert();
-    
     // Get the error
     virtual short int getError() = 0;
     

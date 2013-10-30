@@ -122,28 +122,28 @@ protected:
      */
     struct timespec pselect_timeout;
 
+    /**                                                                     
+     * Signal masking.                                                      
+     *                                                                      
+     * This is our mask set in the constructor which is                     
+     * required by pselect                                                  
+     */                                                                     
+    sigset_t mask;                                                          
+                                                             
+    /**                                                                     
+    * Original signal masking.                                             
+    *                                                                      
+    * The original mask before it is changed is store                      
+    * in this variable                                                     
+    */                                                                     
+    sigset_t origmask;                                                      
+
     /**
      * Selected socket file handle.
      *
      * Our read select fd
      */
     fd_set select_read;
-    
-    /** 
-     * Signal masking.
-     *
-     * This is our mask set in the constructor which is 
-     * required by pselect
-     */
-    sigset_t mask;
-
-    /**
-     * Original signal masking.
-     *
-     * The original mask before it is changed is store
-     * in this variable
-     */
-    sigset_t origmask;
 
     // Set the port and initialize our server and client variables
     Server(unsigned int port);
@@ -163,6 +163,9 @@ public:
     unsigned char getBufferByte(const unsigned int index) const;
     unsigned char operator[](const unsigned int index) const;
 
+    // Get the port value
+    unsigned int getPort();
+	
     // Returns the number of bytes read
     size_t size();
     
@@ -170,8 +173,8 @@ public:
     void setTimeout(const unsigned int seconds, const unsigned int miliseconds = 0);
     
     // Read from the client
+    virtual void process() = 0;
     virtual bool read() = 0;
-    virtual bool read(const unsigned int seconds, const unsigned int miliseconds) = 0;
 
     // Write back to our client
     virtual bool write(const char *) = 0;

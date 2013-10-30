@@ -25,15 +25,3 @@ void dashee::test::ServoDummy::tearDown()
 
     Servo::tearDown();
 }
-
-/**
- * Test the size command
- */
-void dashee::test::ServoDummy::testSetAndGetTarget()
-{
-    for (int x = 0; x <= 100; x++)
-    {
-        this->servo->setTarget(x);
-        CPPUNIT_ASSERT(this->servo->getTarget() == x);
-    }
-}

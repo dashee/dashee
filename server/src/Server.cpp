@@ -22,7 +22,7 @@ Server::Server(unsigned int port)
 
     // 0 our server_in variable
     memset((char *) &server_in, 0, sizeof(server_in));
-    
+
     // Initaize our mask variable as pselect will jump out on
     // SIGTERM
     memset((sigset_t *)&mask, 0, sizeof(mask));
@@ -74,6 +74,16 @@ unsigned char Server::getBufferByte(const unsigned int index) const
 unsigned char Server::operator[](const unsigned int index) const
 {
     return this->getBufferByte(index);
+}
+
+/**
+ * Get the current port.
+ *
+ * @returns The port number
+ */
+unsigned int Server::getPort()
+{
+    return this->port;
 }
 
 /**

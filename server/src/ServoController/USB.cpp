@@ -5,15 +5,19 @@ using namespace dashee;
 /**
  * Construct.
  *
- * The constructor of servo which takes in the device to open
- * usually the device is `/dev/ttyACM0` but this could be different going from system to system
+ * The constructor of servo which takes in the device to open usually the device
+ * is `/dev/ttyACM0` but this could be different going from system to system
  *
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throw ExceptionServoController If device opening fails, an exception will be thrown
+ * @throw ExceptionServoController If device opening fails, an exception will be
+ *				   thrown
  */
-ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerUSB::ServoControllerUSB(
+	const char * dev, 
+	const unsigned short int channels
+    ) : ServoController(dev)
 {
     this->fd = open(this->dev, O_RDWR | O_NOCTTY);
 
@@ -28,7 +32,8 @@ ServoControllerUSB::ServoControllerUSB(const char * dev, const unsigned short in
 /**
  * Destruct.
  *
- * Handler to close our ServoControllerUSB::fd opened device, and delete all servo's.
+ * Handler to close our ServoControllerUSB::fd opened device, and delete all 
+ * servo's.
  */
 ServoControllerUSB::~ServoControllerUSB()
 {
@@ -39,16 +44,19 @@ ServoControllerUSB::~ServoControllerUSB()
  * Get last known error.
  *
  * The Pololu board provides a error handling, This function is designed to 
- * get the last error from the Pololy Maestro USB Servo board, Note on retriving 
+ * get the last error from the Pololy Maestro USB Servo board, Note on retriving
  * the error, the error is reset. So it is always a good idea to periodicly
  * pole the board.
  *
- * For performance reason we allow the user to worry about errors at his/hers perfernce
+ * For performance reason we allow the user to worry about errors at his/hers 
+ * perfernce
  *
- * The response is returned in a two byte represented by char, Only one bit is always set in
- * these two bytes, The error number is represeted by the nth bit set, For example
+ * The response is returned in a two byte represented by char, Only one bit is 
+ * always set in these two bytes, The error number is represeted by the nth bit 
+ * set, For example
  * 
- *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
+ *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts 
+ *  from 0
  * 
  * @throws ExceptionServoController If read/write fails
  *

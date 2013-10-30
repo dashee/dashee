@@ -57,9 +57,6 @@ protected:
 
     FILE * fd;
 
-    // Test set and get target
-    virtual void testSetAndGetTarget();
-
 public:
 
     // SetUp and TearDown

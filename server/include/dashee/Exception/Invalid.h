@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/Server/Signal.h
+ * @file include/dashee/Exception/InvalidNumber.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -12,25 +12,35 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_SERVER_SIGNAL_H_
-#define DASHEE_EXCEPTION_SERVER_SIGNAL_H_
+#ifndef DASHEE_EXCEPTION_INVALID_H_
+#define DASHEE_EXCEPTION_INVALID_H_
 
-#include <dashee/Exception/Server.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    class ExceptionServerSignal;
+    class ExceptionInvalid;
 }
 
-class dashee::ExceptionServerSignal: public dashee::ExceptionServer
+class dashee::ExceptionInvalid : public dashee::Exception
 {
+public:
+    explicit ExceptionInvalid() : Exception()
+    {
+    }
+    explicit ExceptionInvalid(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionInvalid(std::string msg) : Exception(msg)
+    { 
+    }
 };
 
 #endif

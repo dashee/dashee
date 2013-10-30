@@ -30,19 +30,26 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResultCollector.h>
 
+#include <dashee/common.h>
 #include <dashee/Exception/OutOfBounds.h>
+#include <dashee/Server/UDP.h>
+#include <dashee/ServoController/UART.h>
+#include <dashee/ServoController/USB.h>
+#include <dashee/ServoController/Dummy.h>
 
+#include "Config.h"
+#include "GPIO.h"
+#include "Model/Car.h"
 #include "ServoController/Dummy.h"
 #include "ServoController/UART.h"
 #include "Servo/Dummy.h"
-#include "GPIO.h"
-#include "Config.h"
+#include "Servo/UART.h"
 
 namespace dashee
 {
     namespace test
     {
-        int run(int argc, char ** argv);
+        int run();
     }
 }
 

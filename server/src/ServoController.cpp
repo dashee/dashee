@@ -17,21 +17,6 @@ ServoController::ServoController(const char * dev)
     this->dev = dev;
 }
 
-/** 
- * Destruct and cleanup.
- *
- * Clean up our servos array using delete, and remove it from
- * our list
- */ 
-ServoController::~ServoController()
-{
-    while(!servos.empty())
-    {
-        delete servos.back();
-        servos.pop_back();
-    }
-}
-
 /**
  * Set the target of a servo identified by channel.
  *
@@ -85,115 +70,6 @@ unsigned short int ServoController::getTarget(const unsigned short int channel)
     return servos[channel]->getTarget();
 }
 
-/**
- * Set the default target for a given channel.
- *
- * This is a helper function which allows the use to
- * set the default value of a target.
- *
- * @param channel Servo channel number
- * @param target The value of the target
- *
- * @throws ExceptionOutOfBounds
- */
-void ServoController::setTargetDefault(const unsigned short int channel, unsigned short int target)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-
-    this->servos[channel]->setTargetDefault(target);
-}
-
-/**
- * Return the Target default of a given channel.
- *
- * Go to the channel servo and return the TargetDefault value
- *
- * @param channel The channel to get the value of
- *
- * @return The default target value
- * 
- * @throws ExceptionServoControllerOutOfBound
- */
-unsigned short int ServoController::getTargetDefault(const unsigned short int channel)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-    
-    return this->servos[channel]->getTargetDefault();
-}
-
-/**
- * Set the fallbacks target for the given Channel.
- *
- * @param channel Servo channel number
- * @param target The target to set to
- *
- * @throws ExceptionServoControllerOutOfBound
- */
-void ServoController::setTargetFallback(const unsigned short int channel, unsigned short int target)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-
-    this->servos[channel]->setTargetFallback(target);
-}
-
-/**
- * Get the fallback target value for the given Channel.
- *
- * @param channel The channel value to get
- *
- * @returns the fallback Target of the give channel
- *
- * @throws ExceptionServoControllerOutOfBound
- */
-unsigned short int ServoController::getTargetFallback(const unsigned short int channel)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-
-    return this->servos[channel]->getTargetFallback();
-}
-    
-/**
- * Set the Servo::fallbacksEnabled for a given channel.
- * 
- * Helpfull passthrough to modify the Servo::fallbackEnabled value
- * for the given servo, identified by @p channel.
- *
- * @param channel Servo channel number
- * @param enabled The value
- *
- * @throws ExceptionOutOfBounds
- */
-void ServoController::setTargetFallbackEnabled(const unsigned short int channel, bool enabled)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-
-    this->servos[channel]->setTargetFallbackEnabled(enabled);
-}
-
-/**
- * Get the Fallback Enabled value of the given channel.
- *
- * @param channel The channel in question
- *
- * @return boolean representing the value
- * @retval TRUE allowed to fallback
- * @retval FALSE not allowed to fallback
- *
- * @throws ExceptionOutOfBounds
- */
-bool ServoController::getTargetFallbackEnabled(const unsigned short int channel)
-{
-    if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set default value.");
-
-    return this->servos[channel]->getTargetFallbackEnabled();
-}
-
 /** 
  * Get the size of Servo's.
  *
@@ -208,35 +84,16 @@ unsigned int ServoController::size() const
 }
 
 /** 
- * Perform the fallback.
+ * Destruct and cleanup.
  *
- * Given the current state of @p fallbackmode, we iterate
- * through all servo's and set them to fallback mode, If
- * we have already fallen back then the flag should be true
- * in this case dont do any thing.
- *
- * Turn @p fallbackmode to true at the end
- */
-void ServoController::fallback()
+ * Clean up our servos array using delete, and remove it from
+ * our list
+ */ 
+ServoController::~ServoController()
 {
-    for (unsigned int x = 0; x < this->servos.size(); x++)
+    while(!servos.empty())
     {
-        servos[x]->fallback();
-    }
-}
-
-/** 
- * Perform the revert.
- *
- * Given the current state of @p fallbackmode, we iterate
- * through all servo's and revert them to there original 
- * position. At the end @p fallbackmode is set to false, as
- * we have reverted
- */
-void ServoController::revert()
-{
-    for (unsigned int x = 0; x < this->servos.size(); x++)
-    {
-        this->servos[x]->revert();
+        delete servos.back();
+        servos.pop_back();
     }
 }

@@ -41,15 +41,32 @@ printstatus()
         "PASSED" | "P" | "p" | 0)
             echo -en "\E[0;32;1mPASSED\E[0m"
             ;;
-        "FAILED" | "F" | "f" | 1)
+        *)
             echo -en "\E[0;31;1mFAILED\E[0m"
             ;;
-        *)
-            echo "Invalid 1st argument to print status"
-            exit 1;
     esac
 
     echo " '$2'"
+}
+
+runtest()
+{
+    # If the test does not exist skip
+    if [ ! -f $TESTDIR/$1 ]; then
+	echo "Tests '$1' not found skipping..."
+	continue;
+    fi;
+
+    # Run the test
+    $TESTDIR/$@
+    TEST_EC=$?
+
+    if [ $TEST_EC -ne 0 ]; then
+	RETURN_EC=1
+    fi
+
+    printstatus $TEST_EC $1
+
 }
 
 ##
@@ -64,7 +81,7 @@ printstatus()
 # @retval 0 All tests passed
 # @retval 0 Atleast one test failed
 #
-runtest()
+runtests()
 {
     # Go through each test and run it
     for t in "$@"; 
@@ -74,37 +91,25 @@ runtest()
             continue;
         fi
 
-        # If the test does not exist skip
-        if [ ! -f $TESTDIR/$t ]; then
-            echo "Tests '$t' not found skipping..."
-            continue;
-        fi;
-
-        # Run the test
-        $TESTDIR/$t
-        TEST_EC=$?
-
-        if [ $TEST_EC -ne 0 ]; then
-            RETURN_EC=1
-        fi
-
-        printstatus $TEST_EC $t
+	runtest $t
 
     done;
 }
 
 # Run the general test that are not
 # OS dependant
-runtest $TEST_GENERAL
+runtests $TEST_GENERAL
 
 # Run the tests represented by the parameter
 # $RUN_TYPE, default will exit out with fail
 case "$RUN_TYPE" in 
     "pi")
-        runtest $TEST_PI
+        runtests $TEST_PI
+	runtest testModelCar UART /dev/ttyAMA0 UDP 2097
         ;;
     "dummy")
-        runtest $TEST_DUMMY
+        runtests $TEST_DUMMY
+	runtest testModelCar dummy data/Servo.bin UDP 2097
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2

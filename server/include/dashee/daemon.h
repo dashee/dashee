@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/InvalidNumber.h
+ * @file include/dashee/daemon.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,28 +19,25 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_INVALIDNUMBER_H_
-#define DASHEE_EXCEPTION_INVALIDNUMBER_H_
+#ifndef DASHEE_DAEMON_H_
+#define DASHEE_DAEMON_H_
 
 #include <dashee/Exception.h>
+#include <dashee/Config.h>
+#include <dashee/common.h>
 
 namespace dashee
 {
-    class ExceptionInvalidNumber;
-}
+    // Start the program as daemon
+    pid_t startDaemon(
+	    Config * config, 
+	    const char * logFile, 
+	    const char * workingDir, 
+	    const char * pidFile
+	);
 
-class dashee::ExceptionInvalidNumber : public dashee::Exception
-{
-public:
-    explicit ExceptionInvalidNumber() : Exception()
-    {
-    }
-    explicit ExceptionInvalidNumber(const int ec) : Exception(ec)
-    { 
-    }
-    explicit ExceptionInvalidNumber(std::string msg) : Exception(msg)
-    { 
-    }
-};
+    // createPID file given as a filepath
+    bool createPID(const char * filepath, bool overwrite = false);
+}
 
 #endif

@@ -5,15 +5,19 @@ using namespace dashee;
 /**
  * Construct.
  *
- * The constructor of servo which takes in the device to open
- * usually the device is /dev/ttyAMA0 but this could be different going from system to system
+ * The constructor of servo which takes in the device to open usually the device
+ * is /dev/ttyAMA0 but this could be different going from system to system
  *
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throw ExceptionServoController If device opening fails, an exception will be thrown
+ * @throw ExceptionServoController If device opening fails, an exception will 
+ *				   be thrown
  */
-ServoControllerUART::ServoControllerUART(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerUART::ServoControllerUART(
+    const char * dev, 
+    const unsigned short int channels
+) : ServoController(dev)
 {
     // Reset the board
     this->reset();
@@ -90,16 +94,19 @@ void ServoControllerUART::reset()
  * Get last known error.
  *
  * The Pololu board provides a error handling, This function is designed to 
- * get the last error from the Pololy Maestro USB Servo board, Note on retriving 
+ * get the last error from the Pololy Maestro USB Servo board, Note on retriving
  * the error, the error is reset. So it is always a good idea to periodicly
  * pole the board.
  *
- * For performance reason we allow the user to worry about errors at his/hers perfernce
+ * For performance reason we allow the user to worry about errors at his/hers 
+ * perfernce
  *
- * The response is returned in a two byte represented by char, Only one bit is always set in
- * these two bytes, The error number is represeted by the nth bit set, For example
+ * The response is returned in a two byte represented by char, Only one bit is 
+ * always set in these two bytes, The error number is represeted by the nth bit 
+ * set, For example
  * 
- *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
+ *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts 
+ *  from 0
  * 
  * @throws ExceptionServoController
  *
@@ -111,17 +118,24 @@ short int ServoControllerUART::getError()
     unsigned char response[2];
 
     if (write(this->fd, command, sizeof(command)) == -1)
-        throw ExceptionServoController("ServoControllerUART::getError write failed");
+        throw ExceptionServoController(
+		"ServoControllerUART::getError write failed"
+	    );
         
     // Go through and read each byte by byte
     for (int n = 0, total = 0; n < 2; total++)
     {
         if (total > 10)
-            throw ExceptionServoController("Reading ServoControllerUART::getError, ran more than 10 times");
+            throw ExceptionServoController(
+		    "Reading ServoControllerUART::getError, ran more "
+		    " than 10 times"
+		);
 
         int ec = read(this->fd, response+n, 1);
         if(ec < 0)
-            throw ExceptionServoController("read failed in ServoControllerUART::getError");
+            throw ExceptionServoController(
+		    "read failed in ServoControllerUART::getError"
+		);
 
         if (ec == 0)
             continue;
@@ -136,7 +150,8 @@ short int ServoControllerUART::getError()
 /**
  * Destruct.
  *
- * Handler to close our ServoControllerUART::fd opened device, and delete all servo's
+ * Handler to close our ServoControllerUART::fd opened device, and delete all 
+ * servo's
  */
 ServoControllerUART::~ServoControllerUART()
 {

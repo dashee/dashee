@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -34,7 +34,7 @@
 #include <dashee/common.h>
 #include <dashee/Log.h>
 #include <dashee/Exception/Config.h>
-#include <dashee/Exception/InvalidNumber.h>
+#include <dashee/Exception/Invalid/Number.h>
 
 namespace dashee
 {
@@ -47,14 +47,15 @@ namespace dashee
  *
  * Class which holds configuration values in a map for easy access.
  * 
- * This config class, allows us to set config values, It also gives an interface,
- * which allows us to get a value which is not set, by using a default parameter
- * for get. Read more in the get functionality.
+ * This config class, allows us to set config values, It also gives an 
+ * interface, which allows us to get a value which is not set, by using a 
+ * default parameter for get. Read more in the get functionality.
  *
- * When setting values, all previous values are overwritten, unless specified not to.
+ * When setting values, all previous values are overwritten, unless specified 
+ * not to.
  *
- * All of our values are stored in char arrays. Conversions are done by helper functions
- * defined by getType.
+ * All of our values are stored in char arrays. Conversions are done by helper 
+ * functions defined by getType.
  *
  * Note if you ever use, set_uint, you **must call Config::cleanup, or
  * Initiate the Config object**, then the destructor will call the cleanup
@@ -88,8 +89,8 @@ protected:
      * to be in a format use getType, where Type is the value. each type has do
      * defined in the function
      *
-     * We choose a map as it gives us a quick an efficient way to get to our any given
-     * key value
+     * We choose a map as it gives us a quick an efficient way to get to our any
+     * given key value
      *
      * Note because this is static, it has to initialized in Config.cpp
      */
@@ -98,9 +99,9 @@ protected:
     /**
      * Configure the loglevel globally for configuration.
      *
-     * This function is sent to all Log::info() and Log::warning(), It is a handy way
-     * to turn the loging up, for just the config class, by default it should be set to
-     * 5
+     * This function is sent to all Log::info() and Log::warning(), It is a 
+     * handy way to turn the loging up, for just the config class, by default it
+     * should be set to 5
      */
     int loglevel;
     

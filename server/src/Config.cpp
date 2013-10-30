@@ -85,10 +85,11 @@ bool Config::isValidKey(const char * key)
 /** 
  * Set a config value.
  *
- * This function will set a value in our Configs::configs map, the first parameter
- * represents the key value, the second represents the value to set, and the third
- * is a flag that will enable disable override of a key if present. The override
- * key is by default set to 1 representing the variable will be overwritten
+ * This function will set a value in our Configs::configs map, the first 
+ * parameter represents the key value, the second represents the value to set, 
+ * and the third is a flag that will enable disable override of a key if 
+ * present. The override key is by default set to 1 representing the variable 
+ * will be overwritten.
  *
  * Every time we set a new value, we delete the previous pointer
  * 
@@ -99,7 +100,11 @@ bool Config::isValidKey(const char * key)
 void Config::set(const char * key, const char * value, const bool overwrite)
 {
     if(!isValidKey(key))
-        throw ExceptionConfig("Key '" + (std::string)key + "' must only have characters like [A-Za-z0-9-_]");
+        throw ExceptionConfig(
+                "Key '" + 
+                (std::string)key + 
+                "' must only have characters like [A-Za-z0-9-_]"
+            );
 
     // A previous, key exists. and we should delete the char array from memory
     // If threading, this requires locking. otherwise the world will blow up
@@ -187,8 +192,8 @@ void Config::set(const char * key, const float value, const bool overwrite)
 /** 
  * Get a config value.
  *
- * This will return a unsigne char * of the value from the Config::configs map in our class
- * The default value set to @p NULL is returned if no key is found. 
+ * This will return a unsigne char * of the value from the Config::configs map 
+ * in our class The default value set to @p NULL is returned if no key is found.
  * 
  * @param key The key to look for
  * @param defaultvalue The default value to return if no key was found
@@ -228,9 +233,12 @@ int Config::getInt(const char * key, const int defaultvalue)
     }
     catch (ExceptionInvalidNumber ex)
     {
-        throw ExceptionConfig("Config::get_int('" + (std::string)key + "') because the value was invalid");
+        throw ExceptionConfig(
+            "Config::get_int('" + 
+            (std::string)key + 
+            "') because the value was invalid"
+        );
     }
-
 }
 
 /** 
@@ -256,7 +264,11 @@ unsigned int Config::getUInt(const char * key, const unsigned int defaultvalue)
     }
     catch (ExceptionInvalidNumber ex)
     {
-        throw ExceptionConfig("Config::get_uint('" + (std::string)key + "') because the value was invalid");
+        throw ExceptionConfig(
+            "Config::get_uint('" + 
+            (std::string)key + 
+            "') because the value was invalid"
+        );
     }
 }
 
@@ -289,7 +301,8 @@ float Config::getFloat(const char * key, const float defaultvalue)
  * these comments are defined by # character. Blank space are treated as empty.
  * Lines with only the key are treated as true
  *
- * This function will not throw any errors or return types. It will output log::warning(3)
+ * This function will not throw any errors or return types. It will output 
+ * log::warning(3)
  *
  * @param file The filename to load
  *
@@ -330,8 +343,8 @@ void Config::read(const char * file)
         }
         
         // break out as we are at the end of file, no need to continue
-        // As the only reason why we got to this one is that we were reading a comment
-        // And it ended with the end of file
+        // As the only reason why we got to this one is that we were reading a 
+        // comment, and it ended with the end of file
         if (c == EOF) 
             break; 
         
@@ -342,7 +355,7 @@ void Config::read(const char * file)
         
         // Create a dynamic key, see below for cleanup comments
         char * key = new char[50];
-        memset(key, 0, sizeof(char)*25); //Important, other wise the comparison goes wrong
+        memset(key, 0, sizeof(char)*25);
         int keyN = 0;
         
         // Create a dynamic value, see below for cleanup comments
@@ -385,8 +398,8 @@ void Config::read(const char * file)
             //Set our value
             else
             {   
-                // The starting value is garbage, overwrite it, by taking the pointer back
-                // This will ensure left triming the string
+                // The starting value is garbage, overwrite it, by taking the 
+                // pointer back This will ensure left triming the string
                 if (value[0] == ' ' || value[0] == '=') { valueN--; }
                 value[valueN] = c;
                 valueN++;

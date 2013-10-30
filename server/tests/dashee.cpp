@@ -24,14 +24,11 @@
 /**
  * Run the REGISTERED test SUITE
  *
- * @param argc Command line argument count
- * @param argv Command line argument char * array
- *
  * @returns An integer suggesting test status
  * @retval 1 Test failed
  * @retval 0 Test Passed
  */
-int dashee::test::run(int argc, char ** argv)
+int dashee::test::run()
 {
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestRunner runner;

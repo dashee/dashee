@@ -12,7 +12,8 @@ using namespace dashee;
  * @param fd The file handle used by the Servo to read/write to the servo
  * @param channel The channel number this servo class represents
  */
-ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(channel)
+ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) 
+    : Servo(channel)
 {
     this->fd = fd;
 }
@@ -23,25 +24,39 @@ ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) : Servo(chan
  * This function will write to our binary file give a channel number.
  * The target is always written to the first two bytes of the channel.
  *
- * @param target Target to set represented in 2 byte, with a value of 0-100
+ * @param target Target to set represented in 2 byte, with a value of 0-255
  *
  * @throws ExceptionServo If writing to the board fails
+ *                        or a ExceptionInvalidValue is caught
  */
 void ServoDummy::setTarget(unsigned short int target)
 {
-    this->fallbackmode = false;
-
-    PercentageToTarget(&target);
+    try
+    {
+        map<unsigned short int>(&target, 0, 255, SERVO_LOW, SERVO_HIGH);
+            
+        if (
+            fseek(
+                fd, 
+                headerByteSize + (((int)this->channel) * channelByteSize), 
+                SEEK_SET
+            ) != 0
+        )
+            throw ExceptionServo("Seek failed in setTarget");
         
-    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
-        throw ExceptionServo("Seek failed in setTarget");
-    
-    //Create our buffer
-    buffer[0] = target;
-    buffer[1] = target >> 8;
-    
-    //Write to our servo
-    fwrite((const char *)buffer, 2, sizeof(buffer), fd);
+        //Create our buffer
+        buffer[0] = target;
+        buffer[1] = target >> 8;
+        
+        //Write to our servo
+        fwrite((const char *)buffer, 2, sizeof(buffer), fd);
+    }
+    catch (ExceptionInvalidValue e)
+    {
+        throw ExceptionServo(
+            "Invalid setTarget(" + dashee::itostr(target) + ")"
+        );
+    }
 }
 
 /**
@@ -57,7 +72,13 @@ void ServoDummy::setTarget(unsigned short int target)
  */
 unsigned short int ServoDummy::getTarget()
 {
-    if (fseek(fd, headerByteSize + (((int)this->channel) * channelByteSize), SEEK_SET) != 0)
+    if (
+        fseek(
+            fd, 
+            headerByteSize + (((int)this->channel) * channelByteSize), 
+            SEEK_SET
+        ) != 0
+    )
         throw ExceptionServo("Seek failed in getTarget");
 
     //Flush the stream, as we write one byte at a time
@@ -65,7 +86,13 @@ unsigned short int ServoDummy::getTarget()
     if (fread(buffer, 2, sizeof(buffer), fd) != 2)
         throw ExceptionServo("Reading 2 bytes failed in getTarget");
     
-    return TargetToPercentage((buffer[0] + 256 * buffer[1]));
+    return map<unsigned short int>(
+        buffer[0] + 256*buffer[1], 
+        SERVO_LOW, 
+        SERVO_HIGH,
+        0, 
+        255
+    );
 }
 
 /**

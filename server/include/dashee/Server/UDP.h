@@ -25,7 +25,6 @@
 #include <stdio.h>
 
 #include <dashee/Server.h>
-#include <dashee/Exception/Server/Signal.h>
 
 namespace dashee
 {
@@ -51,16 +50,16 @@ protected:
 
 public:
     //call socket given a port
-    ServerUDP(unsigned int);
+    ServerUDP(unsigned int port);
 
     //Read bytes
-    bool read();
+    void process();
     
     //Read bytes, given a timeout
-    bool read(const unsigned int, const unsigned int = 0);
+    bool read();
 
     //Write bytes from the reciever
-    bool write(const char *);
+    bool write(const char * string);
 };
 
 #endif
