@@ -117,7 +117,7 @@ $(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 
 # Build and run all the tests
 test: testbuild binfile
-	@echo "\nRUNNING TESTS"
+	@echo -e "\nRUNNING TESTS"
 	bin/runtest dummy 2> /dev/null
 	@echo ""
 

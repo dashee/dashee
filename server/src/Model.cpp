@@ -26,9 +26,9 @@ Model::Model(
     this->yawTrim = 0;
     this->throttleTrim = 0;
     
-    this->pitchFallback = 0;
-    this->rollFallback = 0;
-    this->yawFallback = 0;
+    this->pitchFallback = 128;
+    this->rollFallback = 128;
+    this->yawFallback = 128;
     this->throttleFallback = 0;
     
     this->pitchFallbackEnabled = false;
@@ -63,11 +63,6 @@ Model::Model(
  */ 
 void Model::setControl(unsigned short int & control, unsigned short int target)
 {
-    // Fallback is enabled so dont bother changing the model
-    // control surface value
-    if (this->fallbackMode)
-        return;
-
     if (target < 0 || target > 255)
         throw ExceptionModel("Control value cannot be out the range of 0-255");
 
@@ -84,20 +79,18 @@ void Model::setControl(unsigned short int & control, unsigned short int target)
  * @param controlTrim The control surface who's trim to set
  * @param value The trim value of the control to set
  *
- * @throws ExceptionModel if trim is less than -128 and greater than 128 as these
- *                        are invalid values
+ * @throws ExceptionModel if trim is less than -128 and greater than 128 as 
+ *                        these are invalid values
  */
-void Model::setControlTrim(signed short int & controlTrim, signed short int trim)
+void Model::setControlTrim(
+        signed short int & controlTrim, 
+        signed short int trim
+    )
 {
-    // SAFTEY
-    // For saftey we dont want to change the trim when in fallback mode
-    // as in harsh cases, a user may accidently move the throttle to 50% while
-    // in fallback mode, and revert will cause the control surface at 50%
-    if (this->fallbackMode)
-        return;
-
     if (trim < -128 || trim > 128)
-        throw ExceptionModel("Control trim value cannot be out the range of -128-128");
+        throw ExceptionModel(
+                "Control trim value cannot be out the range of -128-128"
+            );
 
     controlTrim = trim;
 }
@@ -137,12 +130,11 @@ unsigned short int Model::getPitch(bool notrim)
     if (notrim)
         return this->pitch;
 
-    short int trimmedPitch = this->pitch - this->pitchTrim;
-    if (trimmedPitch < 0)
-       return 0u;
-    else if (trimmedPitch > 255) 
-        return 255u;
-    return trimmedPitch;
+    return dashee::constrain(
+            this->pitch - this->pitchTrim, 
+            0, 
+            255
+        );
 }
 
 /**
@@ -166,13 +158,12 @@ unsigned short int Model::getRoll(bool notrim)
 {
     if (notrim)
         return this->roll;
-
-    short int trimmedRoll = this->roll - this->rollTrim;
-    if (trimmedRoll < 0)
-       return 0u;
-    else if (trimmedRoll > 255) 
-        return 255u;
-    return trimmedRoll;
+    
+    return dashee::constrain(
+            this->roll - this->rollTrim, 
+            0, 
+            255
+        );
 }
 
 /**
@@ -197,12 +188,11 @@ unsigned short int Model::getYaw(bool notrim)
     if (notrim)
         return this->yaw;
 
-    short int trimmedYaw = this->yaw - this->yawTrim;
-    if (trimmedYaw < 0)
-       return 0u;
-    else if (trimmedYaw > 255) 
-        return 255u;
-    return trimmedYaw;
+    return dashee::constrain(
+            this->yaw - this->yawTrim, 
+            0, 
+            255
+        );
 }
 
 /**
@@ -227,12 +217,11 @@ unsigned short int Model::getThrottle(bool notrim)
     if (notrim)
         return this->throttle;
 
-    short int trimmedThrottle = this->throttle - this->throttleTrim;
-    if (trimmedThrottle < 0)
-       return 0u;
-    else if (trimmedThrottle > 255) 
-        return 255u;
-    return trimmedThrottle;
+    return dashee::constrain(
+            this->throttle - this->throttleTrim, 
+            0, 
+            255
+        );
 }
 
 /**
@@ -243,6 +232,16 @@ unsigned short int Model::getThrottle(bool notrim)
 void Model::setPitchTrim(signed short int pitchTrim)
 {
     this->setControlTrim(this->pitchTrim, pitchTrim);
+}
+
+/**
+ * Get the pitch trim value
+ *
+ * @returns the pitch trim
+ */
+signed short int Model::getPitchTrim()
+{
+    return this->pitchTrim;
 }   
 
 /**
@@ -256,6 +255,16 @@ void Model::setRollTrim(signed short int rollTrim)
 }   
 
 /**
+ * Get the roll trim value
+ *
+ * @returns the roll trim
+ */
+signed short int Model::getRollTrim()
+{
+    return this->rollTrim;
+}   
+
+/**
  * Set the Yaw Trim
  * 
  * @param yawTrim The trim value to set
@@ -266,6 +275,16 @@ void Model::setYawTrim(signed short int yawTrim)
 }   
 
 /**
+ * Get the yaw trim value
+ *
+ * @returns the yaw trim
+ */
+signed short int Model::getYawTrim()
+{
+    return this->yawTrim;
+}   
+
+/**
  * Set the Throttle Trima
  * 
  * @param thottleTrim The trim value to set
@@ -273,6 +292,96 @@ void Model::setYawTrim(signed short int yawTrim)
 void Model::setThrottleTrim(signed short int throttleTrim)
 {
     this->setControlTrim(this->throttleTrim, throttleTrim);
+}   
+
+/**
+ * Get the throttle trim value
+ *
+ * @returns the throttle trim
+ */
+signed short int Model::getThrottleTrim()
+{
+    return this->throttleTrim;
+}   
+
+/**
+ * Set the Pitch Fallback.
+ *
+ * @param value The value of the fallback 0-255
+ */
+void Model::setPitchFallback(unsigned short int value)
+{
+    this->setControl(this->pitchFallback, value);
+}
+
+/**
+ * Get the Pitch fallback value
+ *
+ * @returns the pitch fallback
+ */
+unsigned short int Model::getPitchFallback()
+{
+    return this->pitchFallback;
+}   
+
+/**
+ * Set the Roll Fallback.
+ *
+ * @param value The value of the fallback 0-255
+ */
+void Model::setRollFallback(unsigned short int value)
+{
+    this->setControl(this->rollFallback, value);
+}
+
+/**
+ * Get the Roll fallback value
+ *
+ * @returns the roll fallback
+ */
+unsigned short int Model::getRollFallback()
+{
+    return this->rollFallback;
+}   
+
+/**
+ * Set the Yaw Fallback.
+ *
+ * @param value The value of the fallback 0-255
+ */
+void Model::setYawFallback(unsigned short int value)
+{
+    this->setControl(this->yawFallback, value);
+}
+
+/**
+ * Get the Yaw fallback value
+ *
+ * @returns the Yaw fallback
+ */
+unsigned short int Model::getYawFallback()
+{
+    return this->yawFallback;
+}   
+
+/**
+ * Set the throttle Fallback.
+ *
+ * @param value The value of the fallback 0-255
+ */
+void Model::setThrottleFallback(unsigned short int value)
+{
+    this->setControl(this->throttleFallback, value);
+}
+
+/**
+ * Get the Throttle fallback value
+ *
+ * @returns the Throttle fallback
+ */
+unsigned short int Model::getThrottleFallback()
+{
+    return this->throttleFallback;
 }   
 
 /** 
@@ -320,6 +429,17 @@ Server * Model::getServer()
 }
 
 /**
+ * Simple function to return the current fallbackMode.
+ *
+ * @retval TRUE the server is in fallback mode
+ * @retval FALSE the server is not in fallback mode
+ */ 
+bool Model::isFallback()
+{
+    return this->fallbackMode;
+}
+
+/**
  * Transform the physical model.
  *
  * Before transforming check the value of our 
@@ -329,9 +449,13 @@ Server * Model::getServer()
 void Model::transform()
 {
     if (server == NULL)
-        throw ExceptionModel("Cannot transform model as Server is not set");
+        throw ExceptionModel(
+                "Cannot transform model as Server is not set"
+            );
     if (servoController == NULL)
-        throw ExceptionModel("Cannot transform model as ServoController is not set");
+        throw ExceptionModel(
+                "Cannot transform model as ServoController is not set"
+            );
 
     this->revert();
 }
@@ -375,22 +499,7 @@ void Model::fallback()
  */
 void Model::revert()
 {
-    // Not point reverting as we were not
-    // in fallback mode
-    if (!this->fallbackMode)
-        return;
-
-    // If this is not disabled before reverting controll
-    // surfaces then nothing will be set, set pitch/roll/yaw
-    // and throttle will not do anything
-    //
-    // @see this->setControl(...);
     this->fallbackMode = false;
-
-    this->setPitch(this->pitch);
-    this->setRoll(this->roll);
-    this->setYaw(this->yaw);
-    this->setThrottle(this->throttle);
 }
 
 /**

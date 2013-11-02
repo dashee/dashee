@@ -38,7 +38,7 @@ case "$1" in
 	;;
   stop)
 	log_daemon_msg "Stopping $DESC" "$NAME"
-	start-stop-daemon --stop --oknodo --quiet --exec "$DAEMON_SBIN" \
+	start-stop-daemon --stop --signal 2 --oknodo --quiet --exec "$DAEMON_SBIN" \
 		--pidfile "$PIDFILE"
 	log_end_msg "$?"
 	;;

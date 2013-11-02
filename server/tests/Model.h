@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -62,18 +62,6 @@ class dashee::test::Model : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetRollTrim);
     CPPUNIT_TEST(testSetAndGetYawTrim);
     CPPUNIT_TEST(testSetAndGetThrottleTrim);
-
-    // Test the pitch and roll by it self
-    CPPUNIT_TEST(testPitch);
-    CPPUNIT_TEST(testRoll);
-    CPPUNIT_TEST(testYaw);
-    CPPUNIT_TEST(testThrottle);
-
-    // Test controls with trim enabled
-    CPPUNIT_TEST(testPitchWithTrim);
-    CPPUNIT_TEST(testRollWithTrim);
-    CPPUNIT_TEST(testYawWithTrim);
-    CPPUNIT_TEST(testThrottleWithTrim);
 
     // Test fallback and revert modes
     CPPUNIT_TEST(testFallback);
@@ -133,6 +121,9 @@ protected:
     
     dashee::Model * model;
 
+    // Sleep the servo
+    void sleep();
+
     // test set and get model variables
     void testSetAndGetServer();
     void testSetAndGetServoController();
@@ -148,18 +139,6 @@ protected:
     virtual void testSetAndGetRollTrim();
     virtual void testSetAndGetYawTrim();
     virtual void testSetAndGetThrottleTrim();
-
-    // Test the pitch and roll by it self
-    virtual void testPitch();
-    virtual void testRoll();
-    virtual void testYaw();
-    virtual void testThrottle();
-
-    // Test controls with trim enabled
-    virtual void testPitchWithTrim();
-    virtual void testRollWithTrim();
-    virtual void testYawWithTrim();
-    virtual void testThrottleWithTrim();
 
     // Test fallback and revert modes
     virtual void testFallback();
@@ -180,6 +159,14 @@ protected:
     void testExceptionModelsetThrottleTrimNoRange();
 
 public:
+    Model();
+
+    /**
+     * Simple variable that controls how long to timeout
+     * before every command
+     */
+    static unsigned int MODEL_TIMEOUT;
+
     static dashee::ServoController * servoController;
     static dashee::Server * server;
 

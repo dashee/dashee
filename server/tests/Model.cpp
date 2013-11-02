@@ -1,6 +1,15 @@
 #include "Model.h"
 
 /**
+ * Construct. 
+ *
+ * Set some constant values
+ */ 
+dashee::test::Model::Model()
+{
+}
+
+/**
  * Start up, and check to ensure that our 
  * servocontrollers and server pointers are not null
  */ 
@@ -10,6 +19,20 @@ void dashee::test::Model::setUp()
 	throw dashee::ExceptionModel("ServoController must not be null");
     if (dashee::test::Model::server == NULL)
 	throw dashee::ExceptionModel("Server must not be null");
+}
+
+/**
+ * Run a sleep. 
+ *
+ * Because usleep(0) seems to be slow regardless, so we
+ * overwrite this functio
+ */
+void dashee::test::Model::sleep()
+{
+    if (MODEL_TIMEOUT == 0)
+        return;
+
+    usleep(MODEL_TIMEOUT);
 }
 
 /**
@@ -46,11 +69,17 @@ void dashee::test::Model::testSetAndGetServer()
  */
 void dashee::test::Model::testSetAndGetServoController()
 {
-    CPPUNIT_ASSERT(dashee::test::Model::servoController == this->model->getServoController());
+    CPPUNIT_ASSERT(
+            dashee::test::Model::servoController == 
+            this->model->getServoController()
+        );
 }
 
 /**
- * Test pitch value
+ * Test pitch value.
+ * 
+ * First test from 0-255, then test from 255-0, then from 0-255 in increments of
+ * 8 and lastly 255-0 in increments of 8
  */
 void dashee::test::Model::testSetAndGetPitch()
 {
@@ -60,11 +89,40 @@ void dashee::test::Model::testSetAndGetPitch()
     {
 	this->model->setPitch(x);
 	CPPUNIT_ASSERT(this->model->getPitch() == x);
+        sleep();
     }
+    
+    for (int x = 255; x >= 0; x--)
+    {
+	this->model->setPitch(x);
+	CPPUNIT_ASSERT(this->model->getPitch() == x);
+        sleep();
+    }
+    
+    for (int x = 0; x < 256; x=x+8)
+    {
+	this->model->setPitch(x);
+	CPPUNIT_ASSERT(this->model->getPitch() == x);
+        sleep();
+    }
+    
+    for (int x = 255; x >= 0; x=x-8)
+    {
+	this->model->setPitch(x);
+	CPPUNIT_ASSERT(this->model->getPitch() == x);
+        sleep();
+    }
+    
+    this->model->setPitch(128);
+    CPPUNIT_ASSERT(this->model->getPitch() == 128);
+    sleep();
 }
 
 /**
  * Test the roll value
+ *
+ * First test from 0-255, then test from 255-0, then from 0-255 in increments of
+ * 8 and lastly 255-0 in increments of 8
  */
 void dashee::test::Model::testSetAndGetRoll()
 {
@@ -74,11 +132,40 @@ void dashee::test::Model::testSetAndGetRoll()
     {
 	this->model->setRoll(x);
 	CPPUNIT_ASSERT(this->model->getRoll() == x);
+        sleep();
     }
+    
+    for (int x = 255; x >= 0; x--)
+    {
+	this->model->setRoll(x);
+	CPPUNIT_ASSERT(this->model->getRoll() == x);
+        sleep();
+    }
+    
+    for (int x = 0; x < 256; x=x+8)
+    {
+	this->model->setRoll(x);
+	CPPUNIT_ASSERT(this->model->getRoll() == x);
+        sleep();
+    }
+    
+    for (int x = 255; x >= 0; x=x-8)
+    {
+	this->model->setRoll(x);
+	CPPUNIT_ASSERT(this->model->getRoll() == x);
+        sleep();
+    }
+    
+    this->model->setRoll(128);
+    CPPUNIT_ASSERT(this->model->getRoll() == 128);
+    sleep();
 }
 
 /**
  * Test the yaw value
+ * 
+ * First test from 0-255, then test from 255-0, then from 0-255 in increments of
+ * 8 and lastly 255-0 in increments of 8
  */
 void dashee::test::Model::testSetAndGetYaw()
 {
@@ -88,11 +175,37 @@ void dashee::test::Model::testSetAndGetYaw()
     {
 	this->model->setYaw(x);
 	CPPUNIT_ASSERT(this->model->getYaw() == x);
+        sleep();
     }
+
+    for (int x = 255; x >= 0; x--)
+    {
+	this->model->setYaw(x);
+	CPPUNIT_ASSERT(this->model->getYaw() == x);
+        sleep();
+    }
+
+    for (int x = 0; x < 256; x=x+8)
+    {
+	this->model->setYaw(x);
+	CPPUNIT_ASSERT(this->model->getYaw() == x);
+        sleep();
+    }
+    
+    for (int x = 255; x >= 0; x=x-8)
+    {
+	this->model->setYaw(x);
+	CPPUNIT_ASSERT(this->model->getYaw() == x);
+        sleep();
+    }
+    
+    this->model->setYaw(128);
+    CPPUNIT_ASSERT(this->model->getYaw() == 128);
+    sleep();
 }
 
 /**
- * Test the Throttle value
+ * Test the Throttle value.
  */
 void dashee::test::Model::testSetAndGetThrottle()
 {
@@ -102,36 +215,258 @@ void dashee::test::Model::testSetAndGetThrottle()
     {
 	this->model->setThrottle(x);
 	CPPUNIT_ASSERT(this->model->getThrottle() == x);
+        sleep();
     }
+    
+    // Reset the throttle
+    this->model->setThrottle(0);
+    CPPUNIT_ASSERT(this->model->getThrottle() == 0);
+    sleep();
+
+    for (int x = 0; x < 256; x=x+8)
+    {
+	this->model->setYaw(x);
+	CPPUNIT_ASSERT(this->model->getYaw() == x);
+        sleep();
+    }
+
+    // Reset the throttle
+    this->model->setThrottle(0);
+    CPPUNIT_ASSERT(this->model->getThrottle() == 0);
+    sleep();
 }
 
 /**
  * Test the pitch Trim
+ *
+ * For each trim value, test the 0-255 range and 255-0 range
+ * of the pitch. Also for each trim and each range we check to see
+ * the true/false parameter to setControl to ensure when asking for
+ * a getControl value with notrim set to true the value is returned 
+ * of the control surface without the trim compensation
  */
 void dashee::test::Model::testSetAndGetPitchTrim()
 {
+    CPPUNIT_ASSERT(this->model->getPitchTrim() == 0);
 
+    for (int x = -128; x < 128; x++)
+    {
+       this->model->setPitchTrim(x);
+
+       for (int y = 0; y < 256; y++)
+       {
+            this->model->setPitch(y);
+            CPPUNIT_ASSERT(
+                    this->model->getPitch() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getPitch(true) == y);
+            sleep();
+       }
+
+       for (int y = 255; y >= 0; y--)
+       {
+            this->model->setPitch(y);
+            CPPUNIT_ASSERT(
+                    this->model->getPitch() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getPitch(true) == y);
+            sleep();
+       }
+    }
+
+    this->model->setPitchTrim(0);
+    this->model->setPitch(0);
+    CPPUNIT_ASSERT(this->model->getPitchTrim() == 0);
+    CPPUNIT_ASSERT(this->model->getPitch() == 0);
 }
 
-void dashee::test::Model::testSetAndGetRollTrim(){}
-void dashee::test::Model::testSetAndGetYawTrim(){}
-void dashee::test::Model::testSetAndGetThrottleTrim(){}
+/**
+ * Test roll trim.
+ *
+ * @see testSetAndGetPitchTrim for description
+ */
+void dashee::test::Model::testSetAndGetRollTrim()
+{
+    CPPUNIT_ASSERT(this->model->getRollTrim() == 0);
 
-// Test the pitch and roll by it self
-void dashee::test::Model::testPitch(){}
-void dashee::test::Model::testRoll(){}
-void dashee::test::Model::testYaw(){}
-void dashee::test::Model::testThrottle(){}
+    for (int x = -128; x < 128; x++)
+    {
+       this->model->setRollTrim(x);
 
-// Test controls with trim enabled
-void dashee::test::Model::testPitchWithTrim(){}
-void dashee::test::Model::testRollWithTrim(){}
-void dashee::test::Model::testYawWithTrim(){}
-void dashee::test::Model::testThrottleWithTrim(){}
+       for (int y = 0; y < 256; y++)
+       {
+            this->model->setRoll(y);
+            CPPUNIT_ASSERT(
+                    this->model->getRoll() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getRoll(true) == y);
+            sleep();
+       }
+
+       for (int y = 255; y >= 0; y--)
+       {
+            this->model->setRoll(y);
+            CPPUNIT_ASSERT(
+                    this->model->getRoll() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getRoll(true) == y);
+            sleep();
+       }
+    }
+
+    this->model->setRollTrim(0);
+    this->model->setRoll(0);
+    CPPUNIT_ASSERT(this->model->getRollTrim() == 0);
+    CPPUNIT_ASSERT(this->model->getRoll() == 0);
+}
+
+/**
+ * Test yaw trim.
+ *
+ * @see testSetAndGetPitchTrim for description
+ */
+void dashee::test::Model::testSetAndGetYawTrim()
+{
+    CPPUNIT_ASSERT(this->model->getYawTrim() == 0);
+
+    for (int x = -128; x < 128; x++)
+    {
+       this->model->setYawTrim(x);
+
+       for (int y = 0; y < 256; y++)
+       {
+            this->model->setYaw(y);
+            CPPUNIT_ASSERT(
+                    this->model->getYaw() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getYaw(true) == y);
+            sleep();
+       }
+
+       for (int y = 255; y >= 0; y--)
+       {
+            this->model->setYaw(y);
+            CPPUNIT_ASSERT(
+                    this->model->getYaw() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getYaw(true) == y);
+            sleep();
+       }
+    }
+
+    this->model->setYawTrim(0);
+    this->model->setYaw(0);
+    CPPUNIT_ASSERT(this->model->getYawTrim() == 0);
+    CPPUNIT_ASSERT(this->model->getYaw() == 0);
+}
+
+/**
+ * Test throttle trim.
+ *
+ * @see testSetAndGetPitchTrim for description
+ */
+void dashee::test::Model::testSetAndGetThrottleTrim()
+{
+    CPPUNIT_ASSERT(this->model->getThrottleTrim() == 0);
+
+    for (int x = -128; x < 128; x++)
+    {
+       this->model->setThrottleTrim(x);
+
+       for (int y = 0; y < 256; y++)
+       {
+            this->model->setThrottle(y);
+            CPPUNIT_ASSERT(
+                    this->model->getThrottle() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getThrottle(true) == y);
+            sleep();
+       }
+
+       for (int y = 255; y >= 0; y--)
+       {
+            this->model->setThrottle(y);
+            CPPUNIT_ASSERT(
+                    this->model->getThrottle() == dashee::constrain(
+                        (y - x),
+                        0, 
+                        255
+                    ) 
+                );
+            CPPUNIT_ASSERT(this->model->getThrottle(true) == y);
+            sleep();
+       }
+    }
+
+    this->model->setThrottleTrim(0);
+    this->model->setThrottle(0);
+    CPPUNIT_ASSERT(this->model->getThrottleTrim() == 0);
+    CPPUNIT_ASSERT(this->model->getThrottle() == 0);
+}
 
 // Test fallback and revert modes
-void dashee::test::Model::testFallback(){}
-void dashee::test::Model::testRevert(){}
+void dashee::test::Model::testFallback()
+{
+    CPPUNIT_ASSERT(this->model->isFallback() == false);
+    this->model->fallback();
+    CPPUNIT_ASSERT(this->model->isFallback() == true);
+    this->model->revert();
+    CPPUNIT_ASSERT(this->model->isFallback() == false);
+
+    // Test default values
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getRollFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getYawFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getThrottleFallback() == 0);
+
+    this->model->setPitchFallback(0);
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+    
+    this->model->setRollFallback(0);
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+    
+    this->model->setYawFallback(0);
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+
+    this->model->setThrottleFallback(0);
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+
+    // TODO Test the pitch values after fallback
+    this->model->fallback();
+}
+
+void dashee::test::Model::testRevert()
+{
+
+}
 
 /**
  * Test the exceptions when setting NULL pointers
@@ -223,3 +558,4 @@ void dashee::test::Model::tearDown()
 
 dashee::ServoController * dashee::test::Model::servoController = NULL;
 dashee::Server * dashee::test::Model::server = NULL;
+unsigned int dashee::test::Model::MODEL_TIMEOUT = 1;

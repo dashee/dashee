@@ -6,7 +6,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ModelCar);
  * Load the correct values into static variables
  * and then run the test
  *
- * USAGE: $0 <ServoControllerType> <ServoControllerFile> <ServerType> <ServerPort>
+ * USAGE: $0 <ServoControllerType> <ServoControllerFile> <ServerType> 
+ * <ServerPort>
  *	Where ServoControllerType: dummy, UART
  *	Where ServoControllerFile: data/Servo.bin, 
  *	Where ServerType: UDP, TCP
@@ -16,7 +17,7 @@ int main(int argc, char ** argv)
 {
     try
     {
-	if (argc != 5)
+	if (argc != 6)
 	    throw dashee::Exception("Must provide 4 arguments");
 
 	// Load the appropriate servoController
@@ -38,6 +39,7 @@ int main(int argc, char ** argv)
 	else
 	    throw dashee::Exception("Invalid Server");
 
+        dashee::test::Model::MODEL_TIMEOUT = dashee::strtol(argv[5]);
 
 	// Run the test
 	int ec = dashee::test::run();

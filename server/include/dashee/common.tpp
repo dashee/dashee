@@ -110,4 +110,20 @@ template<class T> void dashee::constrain(T *value, T min, T max)
         *value = max;
 }
 
+/**
+ * Same as the void return version except returns the data rather
+ * than change the value pointer.
+ *
+ * @param value The value to check
+ * @param min return min if the value is less than min
+ * @param max return max if the value is greater than max
+ *
+ * @returns the number
+ */
+template<class T> T dashee::constrain(T value, T min, T max)
+{
+    dashee::constrain(&value, min, max);
+    return value;
+}
+
 #endif

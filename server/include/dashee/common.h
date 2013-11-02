@@ -60,6 +60,8 @@ namespace dashee
     // Constrain a given value between its min and max range
     template<class T>
         void constrain(T *value, T min, T max);
+    template<class T>
+        T constrain(T value, T min, T max);
 
 };
 

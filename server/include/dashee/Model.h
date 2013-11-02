@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -111,7 +111,11 @@ protected:
     bool fallbackMode;
     
     // Construct our model
-    Model(ServoController * servoController, Server * server, Config * conf = NULL);
+    Model(
+            ServoController * servoController, 
+            Server * server, 
+            Config * conf = NULL
+        );
     
     // Helpfull function for setYaw/setRoll/setPitch and setThrottle
     void setControl(unsigned short int & control, unsigned short int value);
@@ -137,10 +141,30 @@ public:
     virtual unsigned short int getThrottle(bool notrim = false);
 
     // Sets for trim values
-    void setPitchTrim(signed short int pitchTrim);
+    void setPitchTrim(signed short int pitchTriam);
+    signed short int getPitchTrim();
+
     void setRollTrim(signed short int rollTrim);
+    signed short int getRollTrim();
+
     void setYawTrim(signed short int yawTrim);
+    signed short int getYawTrim();
+
     void setThrottleTrim(signed short int throttleTrim);
+    signed short int getThrottleTrim();
+
+    // Sets form the fallbacks
+    void setPitchFallback(unsigned short int pitch);
+    unsigned short int getPitchFallback();
+
+    void setRollFallback(unsigned short int roll);
+    unsigned short int getRollFallback();
+
+    void setYawFallback(unsigned short int yaw);
+    unsigned short int getYawFallback();
+
+    void setThrottleFallback(unsigned short int throttle);
+    unsigned short int getThrottleFallback();
 
     // Set and get ServoController
     void setServoController(ServoController * servoController);
@@ -149,6 +173,9 @@ public:
     // Set and get Server
     void setServer(Server * server);
     Server * getServer();
+
+    // Simple function to return the value of fallbackMode
+    bool isFallback();
 
     // A function which transforms input to output
     // in other workds, transforms commands comming from the server

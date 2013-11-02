@@ -15,7 +15,7 @@ ModelCar::ModelCar(
     this->throttleChannel = 2;
 
     this->setYaw(this->yaw);
-    this->setThrottle(this->throttle);
+    this->setThrottle(128);
 }
 
 /**

@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -53,6 +53,7 @@ class dashee::test::ModelCar : public dashee::test::Model
 
 private:
 protected:
+    virtual void testSetAndGetThrottle();
 
 public:
     // Let the derived class deal with setting up the variables

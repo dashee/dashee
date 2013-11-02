@@ -105,11 +105,11 @@ runtests $TEST_GENERAL
 case "$RUN_TYPE" in 
     "pi")
         runtests $TEST_PI
-	runtest testModelCar UART /dev/ttyAMA0 UDP 2097
+	runtest testModelCar UART /dev/ttyAMA0 UDP 2097 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
-	runtest testModelCar dummy data/Servo.bin UDP 2097
+	runtest testModelCar dummy data/Servo.bin UDP 2097 0
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2
