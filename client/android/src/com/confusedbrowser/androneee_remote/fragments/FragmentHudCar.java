@@ -82,12 +82,15 @@ public class FragmentHudCar extends FragmentHud
     // Touch control to pass reverse numbers?
     private boolean Reverse = false;
 
+    RangeMapping visualPowerMapping;
+
     /**
      * Constructor. Required by Fragment type Objects,
      * and they have to be public
      */
     public FragmentHudCar()
     {
+        this.visualPowerMapping = new RangeMapping(0.0f,255.0f,-50.0f,50.0f);
     }
 
     /**
@@ -287,7 +290,8 @@ public class FragmentHudCar extends FragmentHud
         if (pitch < 0.0f || pitch > 100.0f)
             textViewHudPitchValue.setText(Html.fromHtml("<font color='#D93600'>---</font>"));
 
-        int pitchValue = Math.round(pitch) -128;
+        int pitchValue = Math.round(visualPowerMapping.remapValue(pitch));
+
 
         textViewHudPitchValue.setText(""+pitchValue);
 

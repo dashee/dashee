@@ -1,7 +1,5 @@
 package com.confusedbrowser.androneee_remote.models;
 
-import android.content.Context;
-import android.os.Vibrator;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -24,23 +22,19 @@ public class ModelVehicleCar implements ModelVehicle
      * The set of variables which hold steering information
      */
     private float steer = 128.0f; // Between 0 - 100
-    private float actualSteer = 128.0f;
-    private int prevSteer;
+    private float adjustedSteer = 128.0f;
     private int steerTrim = 0;
     private float steerMax = 255.0f;
     private float steerMin = 0.0f;
     private boolean steerInverted = false;
 
-    float tempSteer; // Used in get actual steer calculation
     float tempPower;
-    int steerInt;
-    int powerInt;
 
     /**
      * Set of variables which hold power information
      */
     private float power = 128.0f; // Between 0 - 100
-    private int prevPower;
+    private float adjustedPower;
     private int powerTrim = 0;
     private float powerMax = 255.0f;
     private float powerMin = 0.0f;
@@ -62,8 +56,6 @@ public class ModelVehicleCar implements ModelVehicle
      * for comparison before we can send another value.
      */
     private long timeValueSent = 0; // Time when last value was set
-    private long currentTime;
-    boolean somethingToSend = false;
 
     // Commands are sent as 2 byte packets, the first byte, is the type
     // of command the second is the value.
@@ -80,7 +72,7 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * The mapping objects for turning degrees into steer values
      */
-    private RangeMapping steerMapping;
+    private RangeMapping adjustedSteerMapping;
     private RangeMapping visualSteerMapping;
     
     /**
@@ -101,10 +93,34 @@ public class ModelVehicleCar implements ModelVehicle
      */
     public ModelVehicleCar()
     {
-        this.prevSteer = (int)this.steer;
-        this.prevPower = (int)this.power;
-        this.steerMapping = new RangeMapping(-0.5f,0.5f,this.steerMax,this.steerMin);
+        this.adjustedSteerMapping = new RangeMapping(-0.5f,0.5f,this.steerMax,this.steerMin);
         this.visualSteerMapping = new RangeMapping(-0.5f,0.5f,100.0f,0.0f);
+    }
+
+    /**
+     * @see com.confusedbrowser.androneee_remote.models.ModelVehicle:getCommand()
+     *
+     * @return ArrayList<byte> - A list of bytes which form the command to be sent to the server
+     */
+    @Override
+    public List<Byte> getCommands()
+    {
+        long currentTime = System.currentTimeMillis();
+        boolean timeToSend = (currentTime-this.timeValueSent > this.timeOut);
+
+        commands.clear();
+
+        if(timeToSend)
+        {
+            commands.add((byte)0);
+            commands.add((byte)(Math.round(this.adjustedSteer)));
+            commands.add((byte)(Math.round(this.adjustedPower)));
+        }
+
+        if(!commands.isEmpty())
+            this.timeValueSent = System.currentTimeMillis();
+
+        return commands;
     }
 
     /**
@@ -179,12 +195,9 @@ public class ModelVehicleCar implements ModelVehicle
     }
 
     /**
-     * return the power of the car
-     * internally this will be from 0 - 100 so need to compensate for min max and invert
-     *
-     * @return float - the power value
+     * Apply any constrains from settings such as max, min and trim.
      */
-    private float getActualPower()
+    private void setAdjustedPower()
     {
         float midVal = 128.0f;
         // Going from 50 - 100 is forward apply forward this.powerMax
@@ -198,46 +211,26 @@ public class ModelVehicleCar implements ModelVehicle
         if(this.powerInverted)
             tempPower =  255 - tempPower;
 
-        return tempPower;
+        this.adjustedPower = tempPower;
+
+        // Apply trim
+        this.adjustedPower = Math.max(this.powerMin, Math.min(this.powerMax, this.adjustedPower+this.powerTrim));
     }
 
     /**
-     * @see com.confusedbrowser.androneee_remote.models.ModelVehicle:getCommand()
+     * Set adjusted steer from phone roll.
+     * Apply any constrains from settings such as max, min and trim.
      *
-     * @return ArrayList<byte> - A list of bytes which form the command to be sent to the server
+     * @param roll - the roll value in radians
+     *
      */
-    @Override
-    public List<Byte> getCommands()
+    private void setAdjustedSteerFromRoll(float roll)
     {
-        this.currentTime = System.currentTimeMillis();
-        this.somethingToSend = (this.currentTime-this.timeValueSent > this.timeOut);
-
-        this.steerInt = Math.round(this.actualSteer);
-        this.powerInt = Math.round(this.getActualPower());
-
-        commands.clear();
-
-
-        if(this.somethingToSend)
-        {
-            commands.add((byte)0);
-
-            this.steerInt = this.steerInt+this.steerTrim;
-            commands.add((byte)(this.steerInt));
-            this.prevSteer = this.steerInt;
-        //}
-        
-        //if(this.powerInt != this.prevPower || this.somethingToSend)
-        //{
-            this.powerInt = this.powerInt+this.powerTrim;
-            commands.add((byte)(this.powerInt));
-            this.prevPower = this.powerInt;
-        }
-
-        if(!commands.isEmpty())
-            this.timeValueSent = System.currentTimeMillis();
-
-        return commands;
+        this.adjustedSteer = adjustedSteerMapping.remapValue(roll);
+        if(this.steerInverted)
+            this.adjustedSteer =  this.steerMax - this.adjustedSteer;
+        // Apply trim
+        this.adjustedSteer = Math.max(this.steerMin, Math.min(this.steerMax, this.adjustedSteer+this.steerTrim));
     }
 
     /**
@@ -250,7 +243,7 @@ public class ModelVehicleCar implements ModelVehicle
     {
         this.steer = visualSteerMapping.remapValue(position.getRoll());
 
-        this.setActualSteerFromRoll(position.getRoll());
+        this.setAdjustedSteerFromRoll(position.getRoll());
         if(!powerControlSlider)
         	this.power = this.getPowerFromPitch(position.getPitch());
     }
@@ -263,8 +256,10 @@ public class ModelVehicleCar implements ModelVehicle
     @Override
     public void setFromSlider(int sliderPos) 
     {
-        if(powerControlSlider)
+        if(powerControlSlider){
         	this.power = sliderPos;
+            this.setAdjustedPower();
+        }
     }
     
     /**
@@ -289,46 +284,6 @@ public class ModelVehicleCar implements ModelVehicle
         	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, 0.0f, 50.0f);
     	
     	return powerValue;
-    }
-
-    /**
-     * Return the steer value, given the roll of the phone.
-     * Steer being 50 is centre, 0 is full left and 100 is full right
-     *
-     * @param roll - the roll value in radians
-     *
-     * @return float - the steer value
-     */
-    private void setActualSteerFromRoll(float roll)
-    {
-
-        //float steerValue;
-        this.tempSteer = steerMapping.remapValue(roll);
-
-        //float sensitivity = 0.0f;
-        //float sensitivityRange = (float)((float)sensitivity*Math.pow(0.523, 3));
-
-        /*if (sensitivity != 0.0)
-        {
-
-            //roll = 0.01f*Math.pow(Double.parseDouble(roll,3);
-            //Log.d("Dashee", "Roll: " +roll+"");
-            //double steerValueTemp = RangeMapping.mapValue(roll, -0.523f, 0.523f, -5.0f, 5.0f);
-            //Log.d("Dashee", "First Map: " +steerValueTemp+"");
-            //double steerValueTemp = sensitivity*Math.pow(roll,3);
-            //Log.d("Dashee", "Function applyd: " +steerValueTemp+"");
-            //steerValue = RangeMapping.mapValue((float)steerValueTemp, -sensitivityRange, sensitivityRange, this.steerMax, this.steerMin);
-            //Log.d("Dashee", "2nd map: " +steerValue+"");
-        }
-        else
-        {
-            steerValue = steerMapping.remapValue(roll);
-        }*/
-
-
-    	if(this.steerInverted)
-            this.tempSteer =  this.steerMax - this.tempSteer;
-        this.actualSteer = this.tempSteer;
     }
 
     /**
@@ -378,7 +333,7 @@ public class ModelVehicleCar implements ModelVehicle
                     throw new InvalidValue("The Max value must be greater than Min.");
 
 				this.steerMax = value;
-				steerMapping.updateTargets(this.steerMax, this.steerMin);
+				this.adjustedSteerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
 
 			case 2:
@@ -421,7 +376,7 @@ public class ModelVehicleCar implements ModelVehicle
                     throw new InvalidValue("The Min value must not be greater than Max.");
 
 				this.steerMin = value;
-				steerMapping.updateTargets(this.steerMax, this.steerMin);
+                this.adjustedSteerMapping.updateTargets(this.steerMax, this.steerMin);
 				break;
 
 			case 2:
