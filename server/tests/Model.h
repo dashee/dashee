@@ -64,8 +64,7 @@ class dashee::test::Model : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetThrottleTrim);
 
     // Test fallback and revert modes
-    CPPUNIT_TEST(testFallback);
-    CPPUNIT_TEST(testRevert);
+    CPPUNIT_TEST(testFallbackAndRevert);
     
     // Test invalid NULL when trying to set the follwoing
     CPPUNIT_TEST_EXCEPTION(
@@ -141,8 +140,7 @@ protected:
     virtual void testSetAndGetThrottleTrim();
 
     // Test fallback and revert modes
-    virtual void testFallback();
-    virtual void testRevert();
+    virtual void testFallbackAndRevert();
 
     // Test invalid set values
     void testExceptionModelsetServerToNull();

@@ -433,8 +433,11 @@ void dashee::test::Model::testSetAndGetThrottleTrim()
 }
 
 // Test fallback and revert modes
-void dashee::test::Model::testFallback()
+void dashee::test::Model::testFallbackAndRevert()
 {
+
+    CPPUNIT_ASSERT(this->model->isFallback() == false);
+    this->model->revert();
     CPPUNIT_ASSERT(this->model->isFallback() == false);
     this->model->fallback();
     CPPUNIT_ASSERT(this->model->isFallback() == true);
@@ -447,25 +450,32 @@ void dashee::test::Model::testFallback()
     CPPUNIT_ASSERT(this->model->getYawFallback() == 128);
     CPPUNIT_ASSERT(this->model->getThrottleFallback() == 0);
 
-    this->model->setPitchFallback(0);
-    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
-    
-    this->model->setRollFallback(0);
-    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
-    
-    this->model->setYawFallback(0);
-    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+    for (int x = 0; x < 255; x++)
+    {
+        this->model->revert();
+        CPPUNIT_ASSERT(this->model->isFallback() == false);
+            
+        this->model->setPitchFallback(x);
+        CPPUNIT_ASSERT(this->model->getPitchFallback() == x);
+        
+        this->model->setRollFallback(x);
+        CPPUNIT_ASSERT(this->model->getPitchFallback() == x);
+        
+        this->model->setYawFallback(x);
+        CPPUNIT_ASSERT(this->model->getPitchFallback() == x);
 
-    this->model->setThrottleFallback(0);
-    CPPUNIT_ASSERT(this->model->getPitchFallback() == 0);
+        this->model->setThrottleFallback(x);
+        CPPUNIT_ASSERT(this->model->getPitchFallback() == x);
 
-    // TODO Test the pitch values after fallback
-    this->model->fallback();
-}
+        // TODO Test the pitch values after fallback
+        this->model->fallback();
+        CPPUNIT_ASSERT(this->model->getPitch() == x);
+        CPPUNIT_ASSERT(this->model->getRoll() == x);
+        CPPUNIT_ASSERT(this->model->getYaw() == x);
+        CPPUNIT_ASSERT(this->model->getThrottle() == x);
 
-void dashee::test::Model::testRevert()
-{
-
+        sleep();
+    }
 }
 
 /**

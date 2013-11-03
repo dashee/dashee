@@ -31,10 +31,10 @@ Model::Model(
     this->yawFallback = 128;
     this->throttleFallback = 0;
     
-    this->pitchFallbackEnabled = false;
-    this->rollFallbackEnabled = false;
-    this->yawFallbackEnabled = false;
-    this->throttleFallbackEnabled = false;
+    this->pitchFallbackEnabled = true;
+    this->rollFallbackEnabled = true;
+    this->yawFallbackEnabled = true;
+    this->throttleFallbackEnabled = true;
 
     this->setPitch(0);
     this->setRoll(128);
@@ -482,13 +482,13 @@ void Model::fallback()
         this->setPitch(this->pitchFallback);
 
     if (this->rollFallbackEnabled)
-        this->setRoll(this->pitchFallback);
+        this->setRoll(this->rollFallback);
 
     if (this->yawFallbackEnabled)
         this->setYaw(this->yawFallback);
 
     if (this->throttleFallbackEnabled)
-        this->setThrottle(this->throttle);
+        this->setThrottle(this->throttleFallback);
 }
 
 /**
