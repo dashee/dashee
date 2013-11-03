@@ -71,4 +71,11 @@ public interface ModelVehicle
      * @param value - Set it to use pitch or not
      */
     public void setPowerToUsePitch(boolean value);
+
+
+    /**
+     * Make sure setting are at safe value when resuming
+     * vehicle control, e.g. car should have no throttle applied.
+     */
+    public void onResume();
 }

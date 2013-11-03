@@ -268,7 +268,6 @@ public class MainActivity
             }
             else if (o instanceof ModelServerState)
             {
-                Log.d("Dashee", "ModelServer Change ");
                 switch ((ModelServerState.Notifier)arg)
                 {
                     case STATUS_CONTROLS:
@@ -324,6 +323,9 @@ public class MainActivity
         this.modelPosition.onResume();
         this.threadPassPositionControls.onResume();
         this.threadCheckServerStatus.onResume();
+
+        // Make sure car is stopped when coming back from settings.
+        this.modelVehicle.onResume();
     }
     
     /**

@@ -18,14 +18,19 @@ import com.confusedbrowser.androneee_remote.RangeMapping;
  */
 public class ModelVehicleCar implements ModelVehicle 
 {
+
+    public static final float START_RANGE = 0.0f;
+    public static final float MID_RANGE = 128.0f;
+    public static final float END_RANGE = 255.0f;
+
     /**
      * The set of variables which hold steering information
      */
-    private float steer = 128.0f; // Between 0 - 100
-    private float adjustedSteer = 128.0f;
+    private float steer = MID_RANGE; // Between 0 - 100
+    private float adjustedSteer = MID_RANGE;
     private int steerTrim = 0;
-    private float steerMax = 255.0f;
-    private float steerMin = 0.0f;
+    private float steerMin = START_RANGE;
+    private float steerMax = END_RANGE;
     private boolean steerInverted = false;
 
     float tempPower;
@@ -33,11 +38,11 @@ public class ModelVehicleCar implements ModelVehicle
     /**
      * Set of variables which hold power information
      */
-    private float power = 128.0f; // Between 0 - 100
+    private float power = MID_RANGE; // Between 0 - 100
     private float adjustedPower;
     private int powerTrim = 0;
-    private float powerMax = 255.0f;
-    private float powerMin = 0.0f;
+    private float powerMax = END_RANGE;
+    private float powerMin = START_RANGE;
     private boolean powerInverted = true;
 
     /**
@@ -199,17 +204,16 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private void setAdjustedPower()
     {
-        float midVal = 128.0f;
         // Going from 50 - 100 is forward apply forward this.powerMax
-        if(this.power >= midVal)
-            tempPower = RangeMapping.mapValue(this.power, midVal, 255.0f, midVal, this.powerMax);
+        if(this.power >= MID_RANGE)
+            tempPower = RangeMapping.mapValue(this.power, MID_RANGE, END_RANGE, MID_RANGE, this.powerMax);
         else{
             // Going from 0 - 50 is reverse apply this.powerMin
-            tempPower = RangeMapping.mapValue(this.power, 0.0f, midVal, this.powerMin, midVal);
+            tempPower = RangeMapping.mapValue(this.power, START_RANGE, MID_RANGE, this.powerMin, MID_RANGE);
         }
 
         if(this.powerInverted)
-            tempPower =  255 - tempPower;
+            tempPower =  END_RANGE - tempPower;
 
         this.adjustedPower = tempPower;
 
@@ -244,6 +248,7 @@ public class ModelVehicleCar implements ModelVehicle
         this.steer = visualSteerMapping.remapValue(position.getRoll());
 
         this.setAdjustedSteerFromRoll(position.getRoll());
+
         if(!powerControlSlider)
         	this.power = this.getPowerFromPitch(position.getPitch());
     }
@@ -274,14 +279,14 @@ public class ModelVehicleCar implements ModelVehicle
     private float getPowerFromPitch(float pitch)
     {
     	// 50 in case of power is stop
-    	float powerValue = 50.0f; 
+    	float powerValue = MID_RANGE;
     	
     	if(pitch >= -0.1f)
-    		powerValue = 50.0f;
+    		powerValue = MID_RANGE;
         else if(pitch >= -1.17f)
-        	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,50.0f, 100.0f); // TODO: invert option
+        	powerValue = RangeMapping.mapValue(pitch,-1.17f,-0.5f,MID_RANGE, END_RANGE);
         else if(pitch <=-1.70f) 
-        	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, 0.0f, 50.0f);
+        	powerValue = RangeMapping.mapValue(pitch, -2.1f, -1.70f, START_RANGE, MID_RANGE);
     	
     	return powerValue;
     }
@@ -425,5 +430,16 @@ public class ModelVehicleCar implements ModelVehicle
     public void setPowerToUsePitch(boolean value)
     {
         this.powerControlSlider = !value;
+    }
+
+
+    /**
+     * Stabilize car on activity resume, i.e. make sure there
+     * is no throttle applied.
+     */
+    @Override
+    public void onResume()
+    {
+        this.power = MID_RANGE;
     }
 }

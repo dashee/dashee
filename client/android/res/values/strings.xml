@@ -17,14 +17,14 @@
     <string name="pref_channel_title">Settings</string>
     <string name="pref_channel_summary">Configure your remote</string>
 
-    <string name="pref_channel">Channel Settings</string>
+    <string name="pref_channel">Vehicle Settings</string>
     <string name="pref_channel_default">Trim, Invert, Min and Max values</string>
 
-    <string name="pref_channel_channel01">Channel 01</string>
-    <string name="pref_channel_channel01_summary">Change phone Roll settings</string>
+    <string name="pref_channel_channel01">Steering</string>
+    <string name="pref_channel_channel01_summary">Invert, Max/Min and Trim Steering</string>
 
-    <string name="pref_channel_channel02">Channel 02</string>
-    <string name="pref_channel_channel02_summary">Change phone Pitch settings</string>
+    <string name="pref_channel_channel02">Throttle</string>
+    <string name="pref_channel_channel02_summary">Invert, Max/Min and Trim Throttle</string>
 
     <string name="pref_channel_channel03">Channel 03</string>
     <string name="pref_channel_channel03_summary">Change phone Yaw settings</string>

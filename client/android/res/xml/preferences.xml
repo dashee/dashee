@@ -75,32 +75,5 @@
                 android:title="Min"
                 android:numeric="decimal"/>
         </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_channel03"
-            android:summary="@string/pref_channel_channel03_summary"
-            android:title="@string/pref_channel_channel03" >
-        	<EditTextPreference
-                android:defaultValue="0"
-                android:key="pref_channel03_trim"
-                android:summary="0"
-                android:title="Trim" />
-            <SwitchPreference
-                android:defaultValue="0"
-                android:key="pref_channel03_invert"
-                android:summary="Reverse the controls"
-                android:title="Invert" />
-            <EditTextPreference
-                android:defaultValue="100"
-                android:key="pref_channel03_max"
-                android:summary="0"
-                android:title="Max"
-                android:numeric="decimal"/>
-            <EditTextPreference
-                android:defaultValue="0"
-                android:key="pref_channel03_min"
-                android:summary="0"
-                android:title="Min"
-                android:numeric="decimal"/>
-        </PreferenceScreen>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -27,9 +27,8 @@ public class MainFragment
 {
     SharedPreferences sharedPref;
     List<String> summaryToValue = java.util.Arrays.asList("pref_server_ip", "pref_server_port",
-        "pref_channel01_trim", "pref_channel02_trim", "pref_channel03_trim", "pref_channel01_max",
-        "pref_channel02_max", "pref_channel02_max", "pref_channel01_min", "pref_channel02_min",
-        "pref_channel03_min");
+        "pref_channel01_trim", "pref_channel02_trim", "pref_channel01_max",
+        "pref_channel02_max", "pref_channel02_max", "pref_channel01_min", "pref_channel02_min");
 
     @Override
     public void onCreate(Bundle savedInstanceState) 
