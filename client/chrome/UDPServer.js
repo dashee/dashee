@@ -42,49 +42,12 @@ window.addEventListener("load", function() {
 
   poll = function () {
     if (socketId) {
-      chrome.socket.recvFrom(socketId, 1048576, function (result) {
+      chrome.socket.recvFrom(socketId, 2048576, function (result) {
         if (result.resultCode >= 0) {
-          var view = arrayBufferToView(result.data);
-
-          // Bitwise AND with 00000001 (1 in decimal) to zero the other command bits and if this is 1 we have a
-          if((view[0] & 1) == 1){
-          	
-          	//console.log('Command '+view[0]);
-          	// Bitwise AND with 00001110 (14) to zero the channel number, shift 1 as the first bit just tells us this is a command
-              var command = (view[0] & 14) >> 1;
-
-              // Bitwise AND the command byte with 11110000 (240 in decimal) to zero the command number
-              // then shift 4 to find the channel number as that is the last 4 bits of the command.
-              var channel = (view[0] & 240) >> 4;
-              switch (command)
-              {
-                  case 0:
-                  {
-                      var target = (view[1] >> 1);
-
-                      if(channel == 1){
-                      		rotator.style.webkitTransform="rotate("+target+"deg)";
-                      }
-                      break;
-                  }
-                  case 1:
-                      //dashee::Log::info(2, "setSpeed(%d)", (unsigned short int)channel);
-                      break;
-                  case 2:
-                      //dashee::Log::info(2, "setAcceleration(%d)", (unsigned short int)channel);
-                      break;
-                  case 3:
-                      /*dashee::Log::info(3, "pong");
-                      if (!serverUDP.write("\x80"))
-                          throw Exception_ServoController("Pong write failed");*/
-                      break;
-                  default:
-                      //throw Exception_Servo("Invalid Command!");
-                      break;
-                      
-              }
-          }
-
+          var bytes = arrayBufferToView(result.data);
+          var target = (bytes[1]);
+          rotator.style.webkitTransform="rotate("+target+"deg)";
+  
           curTime = new Date().getTime();
           //Register a new packet
           if(curTime - prevTime < 1000){
@@ -97,7 +60,8 @@ window.addEventListener("load", function() {
             prevTime = curTime;
           }
           
-
+          chrome.socket.sendTo(socketId, stringToArrayBuffer('k'), result.address, result.port, function(){});
+          
           poll();
         } else {
           handleError("", result.resultCode);
