@@ -21,6 +21,8 @@ window.addEventListener("load", function() {
   var prevTime = new Date().getTime();
   var curTime = new Date().getTime(); 
   var packetsPerSec = document.getElementById('packets-per-sec');
+  var throttleLabel = document.getElementById('throttle-val');
+  var steerLabel = document.getElementById('steer-val');
   var rotator = document.getElementById('rotater');
 
   var c=document.getElementById("packetMonitor");
@@ -45,8 +47,11 @@ window.addEventListener("load", function() {
       chrome.socket.recvFrom(socketId, 2048576, function (result) {
         if (result.resultCode >= 0) {
           var bytes = arrayBufferToView(result.data);
-          var target = (bytes[1]);
-          rotator.style.webkitTransform="rotate("+target+"deg)";
+          var steeringValue = (bytes[1]);
+          steerLabel.innerHTML = steeringValue;
+          var throttleValue = (bytes[2]);
+          throttleLabel.innerHTML = throttleValue;
+          rotator.style.webkitTransform="rotate("+steeringValue+"deg)";
   
           curTime = new Date().getTime();
           //Register a new packet
