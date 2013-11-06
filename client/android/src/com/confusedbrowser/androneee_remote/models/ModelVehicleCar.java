@@ -39,7 +39,7 @@ public class ModelVehicleCar implements ModelVehicle
      * Set of variables which hold power information
      */
     private float power = MID_RANGE; // Between 0 - 100
-    private float adjustedPower;
+    private float adjustedPower = MID_RANGE;
     private int powerTrim = 0;
     private float powerMax = END_RANGE;
     private float powerMin = START_RANGE;
@@ -204,11 +204,11 @@ public class ModelVehicleCar implements ModelVehicle
      */
     private void setAdjustedPower()
     {
-        // Going from 50 - 100 is forward apply forward this.powerMax
-        if(this.power >= MID_RANGE)
+        // Going forward apply forward this.powerMax
+        if(this.power >= MID_RANGE){
             tempPower = RangeMapping.mapValue(this.power, MID_RANGE, END_RANGE, MID_RANGE, this.powerMax);
-        else{
-            // Going from 0 - 50 is reverse apply this.powerMin
+        }else{
+            // Going in reverse apply this.powerMin
             tempPower = RangeMapping.mapValue(this.power, START_RANGE, MID_RANGE, this.powerMin, MID_RANGE);
         }
 
