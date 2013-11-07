@@ -441,5 +441,6 @@ public class ModelVehicleCar implements ModelVehicle
     public void onResume()
     {
         this.power = MID_RANGE;
+        this.adjustedPower = MID_RANGE;
     }
 }
