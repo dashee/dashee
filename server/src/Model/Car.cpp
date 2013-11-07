@@ -16,6 +16,7 @@ ModelCar::ModelCar(
 
     this->setYaw(this->yaw);
     this->setThrottle(128);
+    this->throttleFallback = 128;
 }
 
 /**

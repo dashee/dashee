@@ -435,6 +435,11 @@ void dashee::test::Model::testSetAndGetThrottleTrim()
 // Test fallback and revert modes
 void dashee::test::Model::testFallbackAndRevert()
 {
+    // Test default values
+    CPPUNIT_ASSERT(this->model->getPitchFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getRollFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getYawFallback() == 128);
+    CPPUNIT_ASSERT(this->model->getThrottleFallback() == 128);
 
     CPPUNIT_ASSERT(this->model->isFallback() == false);
     this->model->revert();
@@ -443,12 +448,6 @@ void dashee::test::Model::testFallbackAndRevert()
     CPPUNIT_ASSERT(this->model->isFallback() == true);
     this->model->revert();
     CPPUNIT_ASSERT(this->model->isFallback() == false);
-
-    // Test default values
-    CPPUNIT_ASSERT(this->model->getPitchFallback() == 128);
-    CPPUNIT_ASSERT(this->model->getRollFallback() == 128);
-    CPPUNIT_ASSERT(this->model->getYawFallback() == 128);
-    CPPUNIT_ASSERT(this->model->getThrottleFallback() == 0);
 
     for (int x = 0; x < 255; x++)
     {
