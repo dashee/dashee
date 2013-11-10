@@ -91,7 +91,7 @@ $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 # Log shared object
 $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(call print,"Building","lib","$@")
-	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
+	$(CC) -g $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # The ServoController program
 $(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
@@ -116,6 +116,8 @@ $(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # Build and run all the tests
+test: CFLAGS+=-g -DDEBUG
+test: LFLAGS+=-g -DDEBUG
 test: testbuild binfile
 	@echo "\nRUNNING TESTS"
 	bin/runtest dummy 2> /dev/null
@@ -131,27 +133,27 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 $(TESTDIR)/testDummy: tests/testDummy.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testUART: tests/testUART.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testGPIO: tests/testGPIO.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testConfig: tests/testConfig.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testModelCar: tests/testModelCar.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 # Build our init scripts
 $(INITDIR)/dashee-servod: src/servod.init.sh | $(INITDIR)

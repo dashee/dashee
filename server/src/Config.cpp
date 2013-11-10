@@ -12,8 +12,9 @@ using namespace dashee;
  * @param rhs The right hand side to be compared against `lhs`
  *
  * @returns A boolean value depending on the weight of `lhs` vs `rhs`
- * @retval TRUE if the first character in `lhs` is less than the `rhs` counterpart
- * @retval FALSE false if the firstcharacter in `lhs` is not less than `rhs`
+ * @retval TRUE if the first character in `lhs` is less than the `rhs` 
+ *         counterpart
+ * @retval FALSE false if the first character in `lhs` is not less than `rhs`
  */
 bool Config::Comparitor::operator()(const char * lhs, const char * rhs) const
 {
@@ -61,23 +62,50 @@ bool Config::isValidKeyCharacter(const char * c)
 /**
  * Checks weather or not the give key is valid.
  *
+ * Check to ensuere:
+ *   The key is not empty,
+ *   starts with A-Za-z
+ *   Go through each character and ensure that the character is in the valid set
+ *    of characters allowed for a key
+ *   Also ensure the key does not have double dashes or hyphens or mixture of 
+ *    both
+ *   Ensure the key does not end with '-' or '_'
+ *
  * @param key The key c string
  *
  * @return boolean representing the validity
  * @retval FALSE is not a valid key
  * @retval TRUE is valid key
  */
-bool Config::isValidKey(const char * key)
+bool Config::isValidKey(const char * const key)
 {
     // Avoid empty to be the key
-    if(key[0] == 0) return false;
+    if(*key == 0) 
+        return false;
+    
+    // Ensure the key starts with A-Za-z
+    if ((*key < 'A' && *key > 'Z') || (*key < 'a' || *key > 'z'))
+        return false;
+
+    const char * c = NULL;
 
     // Loop through and test
-    for (const char * c = key; *c != 0; c++)
+    for (c = key; *c != 0; c++)
     {
         if (!isValidKeyCharacter(c))
             return false;
+
+        // Ensure we dont have '--' or '-_' or '__' in keys
+        if ((*c == '-' || *c == '_') && *(c+1) != 0)
+        {
+            if (*(c+1) == '-' || *(c+1) == '_')
+                return false;
+        }
     }
+
+    // Ensure the key does not end with dash
+    if (c != NULL && (*(c-1) == '-' || *(c-1) == '_'))
+        return false;
 
     return true;
 }
@@ -100,14 +128,10 @@ bool Config::isValidKey(const char * key)
 void Config::set(const char * key, const char * value, const bool overwrite)
 {
     if(!isValidKey(key))
-        throw ExceptionConfig(
-                "Key '" + 
-                (std::string)key + 
-                "' must only have characters like [A-Za-z0-9-_]"
-            );
+        throw ExceptionConfig("Key '" + (std::string)key + "' is invalid");
 
-    // A previous, key exists. and we should delete the char array from memory
-    // If threading, this requires locking. otherwise the world will blow up
+    // A previous, key exists and we should delete the char array from memory
+    // If threading, this requires locking. Otherwise the world will blow up
     std::map<const char *, char *>::iterator it = this->configs.find(key);
 
     // Override is not allowed, and the key was found, so dont set
@@ -162,7 +186,11 @@ void Config::set(const char * key, const int value, const bool overwrite)
  * @param value The integer to turn into a new char array
  * @param overwrite Weather or not to leave the variable alone if it is set
  */
-void Config::set(const char * key, const unsigned int value, const bool overwrite)
+void Config::set(
+        const char * key, 
+        const unsigned int value, 
+        const bool overwrite
+    )
 {
     // Create a new buf, and send to Config::set
     // Also create and add new key value
@@ -189,10 +217,27 @@ void Config::set(const char * key, const float value, const bool overwrite)
     set(key, buf, overwrite);
 }
 
+/**
+ * Check if a value is set in our config
+ *
+ * @param key The key to check
+ *
+ * @retval TRUE the key is set
+ * @retval FALSE the key is not set
+ */
+bool Config::isKeySet(const char * key)
+{
+    // A previous, key exists and we should delete the char array from memory
+    // If threading, this requires locking. Otherwise the world will blow up
+    std::map<const char *, char *>::iterator it = this->configs.find(key);
+
+    return (it != this->configs.end());
+}
+
 /** 
  * Get a config value.
  *
- * This will return a unsigne char * of the value from the Config::configs map 
+ * This will return a unsigned char * of the value from the Config::configs map 
  * in our class The default value set to @p NULL is returned if no key is found.
  * 
  * @param key The key to look for
@@ -293,10 +338,216 @@ float Config::getFloat(const char * key, const float defaultvalue)
 }
 
 /**
+ * Parse each line of the read configurations file
+ *
+ * @param fd The open file
+ * @param key The array where the key is stored
+ * @param value The array where the value is stored
+ *
+ * @returns boolean representing correct parsing
+ */
+bool Config::parseLine(FILE * fd, char * key, char * value)
+{
+    bool flag = false;
+
+    if (parseKey(fd, key))
+    {
+        if (parseValue(fd, value))
+        {
+            flag = true;
+        }
+    }
+            
+    fseek(fd, -1, SEEK_CUR);
+
+    // Check to see if the last value was next line, if not seek till it is
+    //
+    // We need to do this, because we don't know if the key was invalid or not, 
+    // if the key was invalid, then we didn't bother reading the value and 
+    // therefore our cursor is still left where it was to begin with. So we will
+    // now seek to end of line or EOF
+    for (char c = fgetc(fd); true; c = fgetc(fd))
+    {
+        if (c == '\n' || c == EOF)
+            break;
+    }
+
+    return flag;
+}
+
+/**
+ * Parse a key from file to the key param.
+ *
+ * @param fd The pointer to the open file
+ * @param key The array of characters which holds the key value
+ *
+ * @retval TRUE Parsing went OK and key was set
+ * @retval FALSE Parsing didn't go OK, so return fail
+ */
+bool Config::parseKey(FILE * fd, char * key)
+{
+    char c;
+    size_t x = 0;
+
+    while(true)
+    {
+        // No more room left for the key
+        if (x == SIZE_KEY)
+            return false;
+
+        // Get the next character
+        c = fgetc(fd);
+
+        // Break out as the equal sign was found
+        if (c == '=')
+            break;
+
+        // Handle left trim
+        if (x == 0 && c == ' ')
+            continue;
+        
+        // Dont do anything its a comment, or an empty line
+        if (x == 0 && (c == '#' || c == '\n'))
+            return false;
+
+        // Handle right trim, by breaking
+        // the loop further on will trim values
+        if (x > 0 && c == ' ')
+            break;
+
+        if (x > 0 && (c == '\n' || c == EOF))
+            return false;
+
+        key[x++] = c;
+    }
+
+    // Right trim space, seek till '='
+    if (x == 0)
+        return false;
+
+    // Loop through and seeking the character till we find a valid '=' 
+    // representing the current key to be valid, other wise we find EOF, '\n' or
+    // a non space, where non space suggests we have keys with spaces which is a
+    // no go
+    else if (x > 0 && c == ' ')
+    {
+        while(true)
+        {
+            c = fgetc(fd);
+
+            // If found '=' break to return 
+            if (c == '=')
+                return true;
+
+            // End of line found, this shoudnt be when we talk in context of 
+            // keys
+            else if (x == '\n' || x == EOF)
+                return false;
+
+            // We know the last character was a ' ' so if we are rtrimming we
+            // should only get spaces, if not, we found another character so our
+            // key is invalid and return false
+            else if (c != ' ')
+                return false;
+        }
+    }
+
+    // This is a good catch, return true looks like a good key to me
+    else if (x > 0 && c == '=')
+    {
+        return true;
+    }
+
+    // Invalid keys get to here, false because we want strict checking incase we
+    // miss a few aspects
+    return false;
+}
+
+/**
+ * Parse the value
+ * 
+ * @param fd The pointer to the open file
+ * @param value The array of characters which holds the value
+ *
+ * @retval TRUE Parsing went OK and key was set
+ * @retval FALSE Parsing didn't go OK, so return fail
+ */
+bool Config::parseValue(FILE * fd, char * value)
+{
+    char c;
+    size_t x = 0;
+    char quote = 0;
+    int lastCharacterPosition = 0;
+
+    while (true)
+    {
+        c = fgetc(fd);
+
+        // escape the next character by fetching the next character and only 
+        // checking if we have reached the end of line, if not use the 
+        // characters as is
+        if (c == '\\')
+        {
+            c = fgetc(fd);
+
+            if (c == EOF)
+                break;
+        }
+        else
+        {
+            // No more room to store characters
+            if (x == SIZE_VALUE)
+                return false;
+
+            if (c == '\n' || c == EOF)
+                break;
+
+            // Left Trim
+            if (x == 0 && c == ' ')
+                continue;
+
+            // The value starts with " or '
+            if (x == 0 && (c == '\"' || c == '\''))
+            {
+                quote = c;
+                continue;
+            }
+
+            // The value has ended with " or '
+            if (x > 0 && quote == c)
+                break;
+
+            // Store the position of the last space index value and keep the
+            // same position, usefull for when we want to right trim
+            if (c == ' ' && lastCharacterPosition == 0)
+                lastCharacterPosition = x;
+            else if (c != ' ')
+                lastCharacterPosition = 0;
+        }
+
+        value[x++] = c;
+    }
+
+    if (x == 0)
+        return false;
+
+    // Right trim
+    if (x > 0 && lastCharacterPosition != 0)
+        value[lastCharacterPosition] = 0;
+
+    // Make sure if we started with a quote we also ended with a quote, in the
+    // case of `value"` this condition will trigger a return of false
+    if (quote != 0 && c != quote)
+        return false;
+        
+    return true;
+}
+
+/**
  * Read configuration from a file. 
  *
  * Given a file name as a parameter, this function will read a config file
- * a config file holds key value pairs, seperated by the first space.
+ * a config file holds key value pairs, separated by the first space.
  * Each config line is broken by \n character and config files can have comments
  * these comments are defined by # character. Blank space are treated as empty.
  * Lines with only the key are treated as true
@@ -316,121 +567,61 @@ void Config::read(const char * file)
     FILE * fd;
     fd = fopen(file, "r");
 
-    // Problem with a file, not intrested, fall out gracefully
+    // Problem with a file, not interested, fall out gracefully
     if (fd == NULL) 
         return;
 
-    int c;
-    do
+    // Go through each line and parse it
+    for(int n = 1; true; n++)
     {
-        c = fgetc(fd);
-        //if (c == EOF) { break; }
-        
-        // The first character is a comment character;
-        // Read till the end of line, and reset
-        if (c == '#') 
-        {
-            // Keep going, till a next line is found
-            while(c != '\n')
-            {
-                c = fgetc(fd);
-                
-                //There maybecases, where the config file ends with a comment
-                // In this case break out
-                if (c == EOF) 
-                    break;
-            }
-        }
-        
-        // break out as we are at the end of file, no need to continue
-        // As the only reason why we got to this one is that we were reading a 
-        // comment, and it ended with the end of file
-        if (c == EOF) 
-            break; 
-        
-        // If we get a next line, continue, so the next iteration
-        // Will pick up the slack
-        if (c == '\n')
-            continue;
-        
-        // Create a dynamic key, see below for cleanup comments
-        char * key = new char[50];
-        memset(key, 0, sizeof(char)*25);
-        int keyN = 0;
-        
-        // Create a dynamic value, see below for cleanup comments
-        char * value = new char[80];
-        memset(value, 0, sizeof(char)*80);
-        int valueN = 0;
-        int valueTrim = 0;
-        
-        // A variable that tells us wheather we are reading, 
-        // a key or a value.
-        bool iskey = true;
+        char * key = new char[SIZE_KEY];
+        memset(key, 0, sizeof(char)*SIZE_KEY);
 
-        // OK all the saftey checks for empty or comment lines
-        // Are done, so we must be at a key value pair.
-        while (c != '\n')
-        {   
-            // If there is '=' character switch to value
-            if (iskey && c == '=') 
-                iskey = false;
-            
-            // If iskey but there is a space, NOT allowed
-            else if (iskey && c == ' ') 
-            { 
-                c = fgetc(fd); 
-                continue; 
-            }
-            
-            // If is key is not in the range of [a-zA-Z0-9]
-            else if (iskey) 
+        char * value = new char[SIZE_VALUE];
+        memset(value, 0, sizeof(char)*SIZE_VALUE);
+
+        try
+        {
+            if (parseLine(fd, key, value))
             {
-                if (isValidKeyCharacter((const char *)&c))
-                {
-                    key[keyN] = c;
-                    keyN++;
-                }
-                else
-                    throw ExceptionConfig("Invalid key character");
+                // Optamize the actual keys and set them to the size they 
+                // actually are in memory.
+                int keySize = strlen(key)+1;
+                char *setKey = new char[keySize];
+                memcpy(setKey, key, keySize);
+
+                int valueSize = strlen(value)+1;
+                char *setValue = new char[valueSize];
+                memcpy(setValue, value, valueSize);
+
+                set(setKey, setValue);
             }
-            
-            //Set our value
+
+            // This happens only when its a comment
+            else if (*key != 0);
+
             else
-            {   
-                // The starting value is garbage, overwrite it, by taking the 
-                // pointer back This will ensure left triming the string
-                if (value[0] == ' ' || value[0] == '=') { valueN--; }
-                value[valueN] = c;
-                valueN++;
-                
-                // valueTrim will hold the last position, which held
-                // a character other than ' ', This number + 1 should be
-                // set to 0 to rtrim the char array.
-                if (c != ' ') { valueTrim=valueN; }
-            }
-            
-            // Get the next character, Positioning of this
-            // Must be at the end of the loop as we already have a character 
-            // In our c value from the start of the read loop
-            c = fgetc(fd);
-        }
+                throw ExceptionConfig("Cannot parse");
 
-        // Only add the config, if the key is set, Note the clean up
-        // of the set varibles are done by the destructor, this also the reason
-        // Why we push our @key to our @dynamic_keys stack
-        // Otherwise do some cleanup as we didnt use any arrays
-        if (key[0] != 0)
+        }
+        catch (ExceptionConfig e)
         {
-            value[valueTrim] = 0; // Trim our value
-            set(key, value);
+            dashee::Log::warning(
+                    loglevel, 
+                    "Line %d: %s", n, e.what()
+                );
         }
         
-        //Delete the keys, as they are being set in the set function
-        delete [] key;
-        delete [] value;
-
-    } while (c != EOF);
+        delete []key;
+        delete []value;
+         
+        // Make sure that our loop breaks out when we have stopped reading the 
+        // file. Otherwise seek back so our parser does not get confused
+        if (fgetc(fd) == EOF)
+            break;
+        else
+            fseek(fd, -1, SEEK_CUR);
+    }
     
     fclose(fd);
 }
@@ -438,7 +629,7 @@ void Config::read(const char * file)
 /** 
  * Print a configuration.
  *
- * This is a helpfull print function, which iterates the config values
+ * This is a helpful print function, which iterates the config values
  * and logs them
  */
 void Config::print()
@@ -459,7 +650,7 @@ void Config::print()
  * A simple function which returns the size of the
  * current map
  *
- * @returns Number of config elemetns set
+ * @returns Number of config elements set
  */ 
 size_t Config::size()
 {
@@ -488,57 +679,9 @@ void Config::clear()
 }
 
 /**
- * @deprecated see set(const char * key, const int value, const bool overwrite);
- */
-void Config::set_int(const char * key, const int value, const bool overwrite)
-{
-    this->set(key, value, overwrite);
-}
-
-/**
- * @deprecated see set(const char * key, const unsigned int value, const bool overwrite);
- */
-void Config::set_uint(const char * key, const unsigned int value, const bool overwrite)
-{
-    this->set(key, value, overwrite);
-}
-
-/**
- * @deprecated see set(const char * key, const float value, const bool overwrite);
- */
-void Config::set_float(const char * key, const float value, const bool overwrite)
-{
-    this->set(key, value, overwrite);
-}
-
-/**
- * @deprecated see getInt
- */
-int Config::get_int(const char * key, const int defaultvalue)
-{
-    return this->getInt(key, defaultvalue);
-}
-
-/**
- * @deprecated see getUInt 
- */
-unsigned int Config::get_uint(const char * key, const unsigned int defaultvalue)
-{
-    return this->getUInt(key, defaultvalue);
-}
-
-/** 
- * @deprecated see getFloat()
- */
-float Config::get_float(const char * key, const float defaultvalue)
-{
-    return this->getFloat(key, defaultvalue);
-}
-
-/**
  * Destructor.
  *
- * Our destructor which only calls cleanup
+ * Our destructor which only calls clean-up
  */
 Config::~Config()
 {

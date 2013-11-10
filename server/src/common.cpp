@@ -45,6 +45,21 @@ std::string dashee::itostr(int value)
 }
 
 /**
+ * Convert a character to a string
+ *
+ * @param value The value to convert
+ *
+ * @returns the string value from the character
+ */
+std::string dashee::ctostr(char value)
+{
+    std::stringstream ss;
+    ss << value;
+    std::string s(ss.str());
+    return s;
+}
+
+/**
  * Check if file exists.
  *
  * This function will return true, if file exists.

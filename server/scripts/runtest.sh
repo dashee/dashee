@@ -16,13 +16,14 @@ RUN_TYPE=${1-dummy}
 # represent atleast one test failed
 RETURN_EC=0
 
+# The directory where all the tests are stored
+TESTDIR=./bin/tests
+TEMPDIR=$(mktemp -d)
+
 # List of all tests to run
 TEST_GENERAL=
 TEST_PI="testGPIO testUART"
-TEST_DUMMY="testDummy testConfig"
-
-# The directory where all the tests are stored
-TESTDIR=./bin/tests
+TEST_DUMMY="testDummy"
 
 ##
 # Prints the status in a colorfull format
@@ -49,6 +50,9 @@ printstatus()
     echo " '$2'"
 }
 
+##
+# Run an individual test
+#
 runtest()
 {
     # If the test does not exist skip
@@ -66,7 +70,6 @@ runtest()
     fi
 
     printstatus $TEST_EC $1
-
 }
 
 ##
@@ -96,9 +99,14 @@ runtests()
     done;
 }
 
+# Presteps required before we can start tests
+# Copy all test files
+cp files/test/* $TEMPDIR/.
+
 # Run the general test that are not
 # OS dependant
 runtests $TEST_GENERAL
+runtest testConfig $TEMPDIR
 
 # Run the tests represented by the parameter
 # $RUN_TYPE, default will exit out with fail
@@ -113,8 +121,11 @@ case "$RUN_TYPE" in
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2
-        exit 1
+        RETURN_EC=1
         ;;
 esac
+
+# Cleanups
+rm -Rf $TEMPDIR
 
 exit $RETURN_EC;

@@ -48,6 +48,9 @@ namespace dashee
     // int to string
     std::string itostr(int value);
 
+    // char to string
+    std::string ctostr(char value);
+
     // Check to see if a file exists given a path @param
     bool fexists(const char * filename);
 

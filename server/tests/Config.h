@@ -48,6 +48,7 @@ class dashee::test::Config : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetInt);
     CPPUNIT_TEST(testSetAndGetUnsignedInt);
     CPPUNIT_TEST(testSetAndGetFloat);
+    CPPUNIT_TEST(testIsKeySet);
     CPPUNIT_TEST(testReadConfig);
     CPPUNIT_TEST(testReadConfigWithErrors);
     CPPUNIT_TEST(testSize);
@@ -55,6 +56,11 @@ class dashee::test::Config : public CppUnit::TestFixture
 
     // Exceptions
     CPPUNIT_TEST_EXCEPTION(testInvalidKeyException, ExceptionConfig);
+    CPPUNIT_TEST_EXCEPTION(testInvalidKeyExceptionPreDash, ExceptionConfig);
+    CPPUNIT_TEST_EXCEPTION(testInvalidKeyExceptionPostDash, ExceptionConfig);
+    CPPUNIT_TEST_EXCEPTION(testInvalidKeyExceptionPreHyphen, ExceptionConfig);
+    CPPUNIT_TEST_EXCEPTION(testInvalidKeyExceptionPostHyphen, ExceptionConfig);
+    CPPUNIT_TEST_EXCEPTION(testInvalidKeyExceptionPreNumber, ExceptionConfig);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -67,14 +73,26 @@ protected:
     void testSetAndGetInt();
     void testSetAndGetUnsignedInt();
     void testSetAndGetFloat();
+    void testIsKeySet();
     void testReadConfig();
     void testReadConfigWithErrors();
     void testSize();
     void testCleanUp();
 
     void testInvalidKeyException();
+    void testInvalidKeyExceptionPreDash();
+    void testInvalidKeyExceptionPostDash();
+    void testInvalidKeyExceptionPreHyphen();
+    void testInvalidKeyExceptionPostHyphen();
+    void testInvalidKeyExceptionPreNumber();
 
 public:
+    /**
+     * Where the temp configuration files are stored
+     * for testing
+     */ 
+    static char * directoryPath;
+
     void setUp();
     void tearDown();
 };

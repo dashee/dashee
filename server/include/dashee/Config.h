@@ -64,29 +64,37 @@ class dashee::Config
 {
 private:
 
+    static const size_t SIZE_KEY = 50;
+    static const size_t SIZE_VALUE = 80;
+
+    // Encapsulate the parsing of values and keys in functions
+    bool parseLine(FILE * fd, char * key, char * value);
+    bool parseKey(FILE * fd, char * key);
+    bool parseValue(FILE * fd, char * value);
+
 protected:
     
     /**
-     * The Config Comaprison class.
+     * The Config Comparison class.
      *
-     *  This is our comparitor class override, that is used by the multimap
+     *  This is our comparator class override, that is used by the multi map
      * to actually compare the values of char *, rather than just pointers
      */
     class Comparitor
     {
     public:
 
-        //return true if 1st param matched character is less than its 2nd param
+        //return true if 1st parameter matched character is less than its 2nd 
+        //parameter
         bool operator()(const char * lhs, const char * rhs) const;
     };
-
  
     /** 
      * Map which holds all the configuration values.
      *
      * This will hold our, config values in key value pairs of characters.
      * All values are in character strings, so if a get is required
-     * to be in a format use getType, where Type is the value. each type has do
+     * to be in a format use getType, where Type is the value. Each type has do
      * defined in the function
      *
      * We choose a map as it gives us a quick an efficient way to get to our any
@@ -100,8 +108,8 @@ protected:
      * Configure the loglevel globally for configuration.
      *
      * This function is sent to all Log::info() and Log::warning(), It is a 
-     * handy way to turn the loging up, for just the config class, by default it
-     * should be set to 5
+     * handy way to turn the logging up, for just the config class, by default 
+     * it should be set to 5
      */
     int loglevel;
     
@@ -109,7 +117,7 @@ protected:
     bool isValidKeyCharacter(const char * c);
 
     // Check if the key is valid
-    bool isValidKey(const char * key);
+    bool isValidKey(const char * const key);
 
 public:
     
@@ -119,8 +127,15 @@ public:
     // Set a given value, as string, int or 
     void set(const char *, const char *, const bool overwrite = true);
     void set(const char * key, const int value, const bool overwrite = true);
-    void set(const char * key, const unsigned int value, const bool overwrite = true);
+    void set(
+            const char * key, 
+            const unsigned int value, 
+            const bool overwrite = true
+        );
     void set(const char * key, const float value, const bool overwrite = true);
+
+    // Check to see if the key is set
+    bool isKeySet(const char * key);
     
     // Get a given in the default format
     const char * get(const char * key, const char * defaultValue = NULL);
@@ -133,28 +148,14 @@ public:
     // Read values from a file
     void read(const char * filename);
     
-    // A helpfull print function
+    // A helpful print function
     void print();
 
     // Get the size of the config map
     size_t size();
     
-    // A helpfull print function
+    // A helpful print function
     void clear();
-
-    // Deprecated
-    void set_int(const char * key, const int value, const bool overwrite = true) 
-        __attribute__((deprecated("Use set() instead")));
-    void set_uint(const char * key, const unsigned int value, const bool overwrite = true) 
-        __attribute__((deprecated("Use set() instead")));
-    void set_float(const char * key, const float value, const bool overwrite = true) 
-        __attribute__((deprecated("Use set() instead")));
-    int get_int(const char * key, const int defaultValue = 0) 
-        __attribute__((deprecated("Use getInt() instead")));
-    unsigned int get_uint(const char * key, const unsigned int defaultValue = 0u) 
-        __attribute__((deprecated("Use getUInt() instead")));
-    float get_float(const char * key, const float defaultValue = 0.0f) 
-        __attribute__((deprecated("Use getFloat() instead")));
     
     // Cleanup
     virtual ~Config();
