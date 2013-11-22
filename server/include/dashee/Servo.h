@@ -55,18 +55,28 @@ protected:
      * The channel this Servo class represents
      */
     unsigned short int channel;
+
+    /**
+     * This function gets and stores the last value
+     * that the target was set to
+     */
+    unsigned short target;
     
     // Set the @dev
-    explicit Servo(const unsigned short int channel);
+    explicit Servo(
+            const unsigned short int channel,
+            unsigned short int target = 0
+        );
     
 public:
 
     const unsigned short int SERVO_LOW;
     const unsigned short int SERVO_HIGH;
 
-    // Set the target of a given channel
-    virtual void setTarget(unsigned short int target) = 0;
-    virtual unsigned short int getTarget() = 0;
+    // Set the target of a given channel, The cache does not query the actual 
+    // servo if it is set to true
+    virtual void setTarget(unsigned short int target);
+    virtual unsigned short int getTarget(const bool fromcache = false) = 0;
     
     // Destroy all internals, before cleanup
     virtual ~Servo(){};

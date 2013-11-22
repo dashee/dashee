@@ -27,6 +27,7 @@
  */
 #include <dashee/Servo/UART.h>
 #include "Servo.h"
+#include <termios.h>
 
 /**
  * Set the name space

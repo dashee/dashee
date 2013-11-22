@@ -55,13 +55,11 @@ protected:
     
 public:
     //Open our Servo Device
-    explicit ServoUART(int *, const unsigned short int);
-
-    //Get the target of a given channel
-    unsigned short int getTarget();
+    explicit ServoUART(int * fd, const unsigned short int channel);
 
     //Set the target of a given channel
-    void setTarget(unsigned short int);
+    void setTarget(unsigned short int target);
+    unsigned short int getTarget(const bool fromcache = false);
     
     //Close the device
     ~ServoUART();

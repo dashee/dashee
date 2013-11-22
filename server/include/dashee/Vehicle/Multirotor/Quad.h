@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Model/Car.h
+ * @file include/dashee/Vehicle/Multirotor/Quad.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -18,40 +18,50 @@
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
  */
-#ifndef DASHEE_MODEL_CAR_H_
-#define DASHEE_MODEL_CAR_H_
+#ifndef DASHEE_MODEL_MULTIROTOR_QUAD_H_
+#define DASHEE_MODEL_MULTIROTOR_QUAD_H_
 
-#include <dashee/Model.h>
+#include <dashee/Vehicle/Multirotor.h>
 
 namespace dashee
 {
-    class ModelCar;
+    class VehicleMultirotorQuad;
 }
 
 /**
- * Virtual Model class.
+ * Virtual Vehicle class.
  *
  * This is the car class, and holds only information
  * about Throttle and Steering
  */
-class dashee::ModelCar : public dashee::Model
+class dashee::VehicleMultirotorQuad : public dashee::VehicleMultirotor
 {
 protected:
-    unsigned short int throttleChannel;
-    unsigned short int yawChannel;
+
+    // Construct and pass through to parent
+    VehicleMultirotorQuad(
+            ServoController * servoController, 
+            Server * server, 
+            Config * conf = NULL
+        );
+
+    // Function that mixes our input from the user to the
+    // motor value
+    virtual void mix(
+            const unsigned short int pitch,
+            const unsigned short int roll,
+            const unsigned short int yaw,
+            const unsigned short int throttle
+        ) = 0;
 
 public:
 
-    // Construct and pass through to parent
-    ModelCar(ServoController * servoController, Server * server, Config * conf = NULL);
-
-    // Overwrite our basic
-    virtual void setThrottle(unsigned short int value);
-    virtual void setYaw(unsigned short int value);
-        
+    // Transform the user input into 
     virtual void transform();
 
-    virtual ~ModelCar();
+    virtual ~VehicleMultirotorQuad();
 };
 
 #endif
+
+

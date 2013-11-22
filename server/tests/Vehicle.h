@@ -1,5 +1,5 @@
 /**
- * @file tests/Model.h
+ * @file tests/Vehicle.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -23,7 +23,7 @@
 #define DASHEE_TEST_MODEL_H_
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <dashee/Model.h>
+#include <dashee/Vehicle.h>
 #include <dashee/ServoController.h>
 #include <dashee/Server/UDP.h>
 
@@ -34,7 +34,7 @@ namespace dashee
 {
     namespace test
     {
-        class Model;
+        class Vehicle;
     }
 }
 
@@ -42,10 +42,10 @@ namespace dashee
  * ServoController test class for
  * unit testing known components
  */
-class dashee::test::Model : public CppUnit::TestFixture
+class dashee::test::Vehicle : public CppUnit::TestFixture
 {
     // Register test
-    CPPUNIT_TEST_SUITE(dashee::test::Model);
+    CPPUNIT_TEST_SUITE(dashee::test::Vehicle);
     
     // test set and get model variables
     CPPUNIT_TEST(testSetAndGetServer);
@@ -62,54 +62,57 @@ class dashee::test::Model : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetRollTrim);
     CPPUNIT_TEST(testSetAndGetYawTrim);
     CPPUNIT_TEST(testSetAndGetThrottleTrim);
+    
+    // Test getting and setting from config
+    CPPUNIT_TEST(testSetAndGetFromConfig);
 
     // Test fallback and revert modes
     CPPUNIT_TEST(testFallbackAndRevert);
     
     // Test invalid NULL when trying to set the follwoing
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetServerToNull, 
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetServerToNull, 
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetServoControllerToNull, 
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetServoControllerToNull, 
+	    dashee::ExceptionVehicle
 	);
     
     // Test invalid range when trying to set controls
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetPitchNoRange, 
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetPitchNoRange, 
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetRollNoRange,
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetRollNoRange,
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetYawNoRange, 
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetYawNoRange, 
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetThrottleNoRange, 
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetThrottleNoRange, 
+	    dashee::ExceptionVehicle
 	);
 
     // Test invalid range when trying to set controls trim
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetPitchTrimNoRange,
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetPitchTrimNoRange,
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetRollTrimNoRange,
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetRollTrimNoRange,
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetYawTrimNoRange,
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetYawTrimNoRange,
+	    dashee::ExceptionVehicle
 	);
     CPPUNIT_TEST_EXCEPTION(
-	    testExceptionModelsetThrottleTrimNoRange,
-	    dashee::ExceptionModel
+	    testExceptionVehiclesetThrottleTrimNoRange,
+	    dashee::ExceptionVehicle
 	);
 
     // End
@@ -118,7 +121,7 @@ class dashee::test::Model : public CppUnit::TestFixture
 private:
 protected:
     
-    dashee::Model * model;
+    dashee::Vehicle * vehicle;
 
     // Sleep the servo
     void sleep();
@@ -138,32 +141,35 @@ protected:
     virtual void testSetAndGetRollTrim();
     virtual void testSetAndGetYawTrim();
     virtual void testSetAndGetThrottleTrim();
+    
+    // test set and get from Configuration variable
+    virtual void testSetAndGetFromConfig();
 
     // Test fallback and revert modes
     virtual void testFallbackAndRevert();
 
     // Test invalid set values
-    void testExceptionModelsetServerToNull();
-    void testExceptionModelsetServoControllerToNull();
+    void testExceptionVehiclesetServerToNull();
+    void testExceptionVehiclesetServoControllerToNull();
     
-    void testExceptionModelsetPitchNoRange();
-    void testExceptionModelsetRollNoRange();
-    void testExceptionModelsetYawNoRange();
-    void testExceptionModelsetThrottleNoRange();
+    void testExceptionVehiclesetPitchNoRange();
+    void testExceptionVehiclesetRollNoRange();
+    void testExceptionVehiclesetYawNoRange();
+    void testExceptionVehiclesetThrottleNoRange();
 
-    void testExceptionModelsetPitchTrimNoRange();
-    void testExceptionModelsetRollTrimNoRange();
-    void testExceptionModelsetYawTrimNoRange();
-    void testExceptionModelsetThrottleTrimNoRange();
+    void testExceptionVehiclesetPitchTrimNoRange();
+    void testExceptionVehiclesetRollTrimNoRange();
+    void testExceptionVehiclesetYawTrimNoRange();
+    void testExceptionVehiclesetThrottleTrimNoRange();
 
 public:
-    Model();
+    Vehicle();
 
     /**
      * Simple variable that controls how long to timeout
      * before every command
      */
-    static unsigned int MODEL_TIMEOUT;
+    static unsigned int VEHICLE_TIMEOUT;
 
     static dashee::ServoController * servoController;
     static dashee::Server * server;

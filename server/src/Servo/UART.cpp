@@ -43,7 +43,8 @@ void ServoUART::setTarget(unsigned short int target)
 {
     try
     {
-        map<unsigned short int>(&target, 0, 255, SERVO_LOW, SERVO_HIGH);
+        unsigned short int converted
+            = map<unsigned short int>(target, 0, 255, SERVO_LOW, SERVO_HIGH);
 
         unsigned char command[6];
         command[0] = 0xAA;
@@ -58,8 +59,8 @@ void ServoUART::setTarget(unsigned short int target)
         // Then shift the remaining bits and AND by 127
         //       (101010101 >> 7) & 011111111
         // Given us a 2 byte target number with there MSB cleared.
-        command[4] = target & 127;
-        command[5] = (target >> 7) & 127;
+        command[4] = converted & 127;
+        command[5] = (converted >> 7) & 127;
 
         if (write(*this->fd, command, sizeof(command)) == -1)
             throw ExceptionServo("ServoUART::setTarget write failed");
@@ -70,6 +71,8 @@ void ServoUART::setTarget(unsigned short int target)
             "Invalid setTarget(" + dashee::itostr(target) + ")"
         );
     }
+
+    Servo::setTarget(target);
 }
 
 /**
@@ -88,17 +91,22 @@ void ServoUART::setTarget(unsigned short int target)
  *  3rd byte - The command to set target it is 0x10
  *  4th byte - The channel
  *
+ * @param fromcache Return the model target value and dont query the Servo
+ *
  * @throws ExceptionServo If a read write error occurs
  *
  * @returns The Target value of a channel
  */
-unsigned short int ServoUART::getTarget()
+unsigned short int ServoUART::getTarget(const bool fromcache)
 {
+    if (fromcache)
+        return this->target;
+
     unsigned char command[4];
     command[0] = 0xAA;
     command[1] = 0xC;
     command[2] = 0x10;
-    command[3] = (char)this->channel;
+    command[3] = this->channel;
 
     if(write(*this->fd, command, sizeof(command)) == -1)
         throw ExceptionServo("ServoUART::getTarget write failed");
@@ -125,12 +133,16 @@ unsigned short int ServoUART::getTarget()
         n++;
     }
 
+    unsigned short int target = response[0] + 256*response[1];
+    if (target == 0)
+	target = SERVO_LOW;
+
     return map<unsigned short int>(
-        response[0] + 256*response[1], 
+	target,
         SERVO_LOW, 
         SERVO_HIGH,
         0, 
-        256
+        255
     );
 }
 

@@ -1,6 +1,11 @@
+#include <dashee/Server/UDP.h>
+#include <dashee/ServoController/UART.h>
+#include <dashee/ServoController/USB.h>
+#include <dashee/ServoController/Dummy.h>
+#include "Vehicle/Car.h"
 #include "dashee.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ModelCar);
+CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::VehicleCar);
 
 /**
  * Load the correct values into static variables
@@ -22,11 +27,11 @@ int main(int argc, char ** argv)
 
 	// Load the appropriate servoController
 	if (strcmp(argv[1], "dummy") == 0)
-	    dashee::test::Model::servoController
+	    dashee::test::Vehicle::servoController
 		= new dashee::ServoControllerDummy(argv[2], 6);
 
 	else if (strcmp(argv[1], "UART") == 0)
-	    dashee::test::Model::servoController
+	    dashee::test::Vehicle::servoController
 		= new dashee::ServoControllerUART(argv[2]);
 
 	else
@@ -34,19 +39,19 @@ int main(int argc, char ** argv)
 
 	// Load the appropriate server
 	if (strcmp(argv[3], "UDP") == 0)
-	    dashee::test::Model::server 
+	    dashee::test::Vehicle::server 
 		= new dashee::ServerUDP(dashee::strtol(argv[4]));
 	else
 	    throw dashee::Exception("Invalid Server");
 
-        dashee::test::Model::MODEL_TIMEOUT = dashee::strtol(argv[5]);
+        dashee::test::Vehicle::VEHICLE_TIMEOUT = dashee::strtol(argv[5]);
 
 	// Run the test
 	int ec = dashee::test::run();
 
 	// Clean up
-	delete dashee::test::Model::servoController;
-	delete dashee::test::Model::server;
+	delete dashee::test::Vehicle::servoController;
+	delete dashee::test::Vehicle::server;
 
 	// Return the correct error code
 	return ec;

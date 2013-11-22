@@ -112,7 +112,7 @@ void ServoControllerUART::reset()
  *
  * @returns The last error value
  */
-short int ServoControllerUART::getError()
+short int ServoControllerUART::getError() const
 {
     unsigned char command[] = { 0xAA, 0xC, 0x21 };
     unsigned char response[2];

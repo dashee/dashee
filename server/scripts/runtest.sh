@@ -95,6 +95,28 @@ runtest()
 }
 
 ##
+# Run an individual test
+#
+runtest()
+{
+    # If the test does not exist skip
+    if [ ! -f $TESTDIR/$1 ]; then
+	echo "Tests '$1' not found skipping..."
+	continue;
+    fi;
+
+    # Run the test
+    $TESTDIR/$@
+    TEST_EC=$?
+
+    if [ $TEST_EC -ne 0 ]; then
+	RETURN_EC=1
+    fi
+
+    printstatus $TEST_EC $1
+}
+
+##
 # Run the set of test given by $@
 #
 # The parameters represents the tests to be ran.
@@ -135,11 +157,11 @@ runtest testConfig $TEMPDIR
 case "$RUN_TYPE" in 
     "pi")
         runtests $TEST_PI
-	runtest testModelCar UART /dev/ttyAMA0 UDP 2097 10
+	runtest testVehicleCar UART /dev/ttyAMA0 UDP 2097 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
-	runtest testModelCar dummy data/Servo.bin UDP 2097 0
+	runtest testVehicleCar dummy data/Servo.bin UDP 2097 0
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2

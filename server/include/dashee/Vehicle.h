@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Model.h
+ * @file include/dashee/Vehicle.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -21,7 +21,7 @@
 #ifndef DASHEE_MODEL_H_
 #define DASHEE_MODEL_H_
 
-#include <dashee/Exception/Model.h>
+#include <dashee/Exception/Vehicle.h>
 
 #include <dashee/ServoController.h>
 #include <dashee/Server.h>
@@ -29,11 +29,11 @@
 
 namespace dashee
 {
-    class Model;
+    class Vehicle;
 }
 
 /**
- * Virtual Model class.
+ * Virtual Vehicle class.
  *
  * The model class allows to change the model type
  * of the current system, For example the way Plane's
@@ -49,7 +49,7 @@ namespace dashee
  *
  *
  */
-class dashee::Model
+class dashee::Vehicle
 {
 protected:
 
@@ -111,7 +111,7 @@ protected:
     bool fallbackMode;
     
     // Construct our model
-    Model(
+    Vehicle(
             ServoController * servoController, 
             Server * server, 
             Config * conf = NULL
@@ -185,11 +185,11 @@ public:
     // Function which initiate fallback mode
     virtual void fallback();
 
-    // Function which will revert the Model to its original state
+    // Function which will revert the Vehicle to its original state
     virtual void revert();
 
     // Destruct virtual so lower level can override
-    virtual ~Model();
+    virtual ~Vehicle();
 };
 
 #endif

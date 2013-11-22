@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -60,10 +60,13 @@ protected:
     
 public:
     // Open our Servo Device
-    explicit ServoControllerDummy(const char *, const unsigned short int channel);
+    explicit ServoControllerDummy(
+            const char * dev, 
+            const unsigned short int channel
+        );
     
     // Get the error from file
-    virtual short int getError();
+    virtual short int getError() const;
 
     // Close the device
     virtual ~ServoControllerDummy();

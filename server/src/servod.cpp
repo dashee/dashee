@@ -48,7 +48,7 @@
 #include <dashee/ServoController/USB.h>
 #include <dashee/ServoController/Dummy.h>
 #include <dashee/Server/UDP.h>
-#include <dashee/Model/Car.h>
+#include <dashee/Vehicle/Car.h>
 #include <dashee/Config.h>
 
 #include <dashee/daemon.h>
@@ -77,7 +77,7 @@ void reloadSystem(
         char ** argv,
         dashee::ServoController * servoController,
         dashee::Server * server,
-        dashee::Model * model
+        dashee::Vehicle * vehicle
     );
 
 /**
@@ -90,7 +90,7 @@ void reloadSystem(
  *
  * @returns 0 on successfull shutdown and any other number for error.
  * @retval 0 Successfull process
- * @retval -5 Failed on Model init
+ * @retval -5 Failed on Vehicle init
  * @retval -4 Failed on Configuration
  * @retval -3 Failed because an Exception occrred
  * @retval -2 Failed because runtime::error exception occurred
@@ -102,7 +102,7 @@ int main(int argc, char ** argv)
     // Initialising to NULL is important otherwise you will seg fault
     dashee::ServoController *servoController = NULL;
     dashee::Server *server = NULL;
-    dashee::Model * model = NULL;
+    dashee::Vehicle * vehicle = NULL;
     dashee::Config * config = NULL;
 
     // Program exit code
@@ -129,7 +129,7 @@ int main(int argc, char ** argv)
         // Create a UDP server
         servoController = loadServoController(config);
         server = loadServer(config);
-        model = new dashee::ModelCar(servoController, server, config);
+        vehicle = new dashee::VehicleCar(servoController, server, config);
 
         // Helpfull message to let the user know the service is configured
         // and will now try starting
@@ -149,7 +149,7 @@ int main(int argc, char ** argv)
         while (!dashee::EXIT)
         {
             if (dashee::RELOAD)
-                reloadSystem(argc, argv, servoController, server, model);
+                reloadSystem(argc, argv, servoController, server, vehicle);
 
             // Recieave from client and timeout after 4 seconds
             if (server->read())
@@ -159,23 +159,23 @@ int main(int argc, char ** argv)
                     dashee::Log::info(
                         4, 
                         "P:%3d R:%3d Y:%3d T:%3d", 
-                        model->getPitch(), 
-                        model->getRoll(), 
-                        model->getYaw(), 
-                        model->getThrottle()
+                        vehicle->getPitch(), 
+                        vehicle->getRoll(), 
+                        vehicle->getYaw(), 
+                        vehicle->getThrottle()
                     );
 
-                    model->transform();
+                    vehicle->transform();
                 }
-                catch (dashee::ExceptionModel e)
+                catch (dashee::ExceptionVehicle e)
                 {
                     dashee::Log::warning(1, "caught(ExceptionMode): %s", e.what());
-                    model->fallback();
+                    vehicle->fallback();
                 }
             }
             else
             {
-                model->fallback();
+                vehicle->fallback();
                 dashee::Log::info(1, "TIMEOUT");
             }
         }
@@ -183,7 +183,7 @@ int main(int argc, char ** argv)
         dashee::Log::info(2, "Performing cleanups.");
         delete servoController;
         delete server;
-        delete model;
+        delete vehicle;
     }
     catch (dashee::ExceptionConfig e)
     {
@@ -377,14 +377,14 @@ dashee::Server * loadServer(dashee::Config * config)
  * @param argv The array with all the parameters
  * @param servoController Pointer to our ServoController
  * @param server Pointer to our Server object
- * @param model Pointer to our model
+ * @param vehicle Pointer to our vehicle
  */
 void reloadSystem(
         int argc,
         char ** argv,
         dashee::ServoController * servoController,
         dashee::Server * server,
-        dashee::Model * model
+        dashee::Vehicle * vehicle
     )
 {
     // Remove previous values
@@ -400,9 +400,9 @@ void reloadSystem(
             config->getUInt("readtimeoutM", 0)
         );
 
-    // Change our model to reflect
-    model->setServoController(servoController);
-    model->setServer(server);
+    // Change our vehicle to reflect
+    vehicle->setServoController(servoController);
+    vehicle->setServer(server);
 
     // Delete as it is no longer required
     delete config;

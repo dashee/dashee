@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -43,8 +43,9 @@ namespace dashee
  *
  * This program presumes that there are SERVO_DUMMY_CHANNEL's in our file.
  *
- * This class represents one servo/channel at a time, The handel is held externally
- * usually in the ServoController class, or its ServoController<CounterPart> version
+ * This class represents one servo/channel at a time, The handel is held 
+ * externally usually in the ServoController class, or its 
+ * ServoController<CounterPart> version
  */
 class dashee::ServoDummy : public dashee::Servo
 {
@@ -83,20 +84,19 @@ protected:
     
     
     /**
-     * The controller needs to be able to access channelByteSize and headerByteSize
-     * for initialization checks, so we nee to create a friendship. 
+     * The controller needs to be able to access channelByteSize and 
+     * headerByteSize for initialization checks, so we nee to create a 
+     * friendship.
      */
     friend class ServoControllerDummy;
     
 public:
     //Open our Servo Device
-    explicit ServoDummy(FILE *, const unsigned short int);
-
-    //Get the target of a given channel
-    unsigned short int getTarget();
+    explicit ServoDummy(FILE * fd, const unsigned short int channel);
 
     //Set the target of a given channel
-    void setTarget(unsigned short int);
+    void setTarget(unsigned short int target);
+    unsigned short int getTarget(const bool fromcache = false);
     
     //Close the device
     ~ServoDummy();

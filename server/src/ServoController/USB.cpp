@@ -62,7 +62,7 @@ ServoControllerUSB::~ServoControllerUSB()
  *
  * @returns The error code
  */
-short int ServoControllerUSB::getError()
+short int ServoControllerUSB::getError() const
 {
     unsigned char command[] = { 0xA1 };
     unsigned char response[2];

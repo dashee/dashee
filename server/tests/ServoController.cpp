@@ -18,15 +18,30 @@ void dashee::test::ServoController::setUp()
  * @assert the values of the set servo's are the same
  */
 void dashee::test::ServoController::testSetAndGetTarget()
-{
-    for (unsigned short int servos = 0; servos < 6; servos++) 
+{   
+    unsigned int timeout = 15;
+    if (dynamic_cast<ServoControllerUART *>(this->servoController) == NULL)
+        timeout = 0;
+
+    for (
+            unsigned short int servos = 0; 
+            servos < this->servoController->size(); 
+            servos++
+        ) 
     {
         for (unsigned short int x = 0; x <= 255; x++)
         {
             this->servoController->setTarget(servos, x);
             CPPUNIT_ASSERT(this->servoController->getTarget(servos) == x);
-
+            sleep(timeout);
         }
+	for (unsigned short int x = 255; x > 0; --x)
+	{
+            this->servoController->setTarget(servos, x);
+            CPPUNIT_ASSERT(this->servoController->getTarget(servos) == x);
+
+	    dashee::test::sleep(timeout);
+	}
     }
 }
 

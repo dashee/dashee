@@ -20,24 +20,22 @@ ServoController::ServoController(const char * dev)
 /**
  * Set the target of a servo identified by channel.
  *
- * This sets the target of a channel given a servo. The target value is between
- * 0-100, the value is converted to the actual target using the calculateTarget()
- * function.
- *
- * Once we have a target value, we build the command. The command for the board is
- * represented in 4 bytes, where the first byte represent the set command, the second
- * represents the channel, and the 3rd and 4rth represent the value. Note that the 4th
- * and third byte have there Most significant byte set to 0.
- *
  * @param channel The channel number represented in one byte
  * @param target Our target to set represented in 2 byte, with a value of 0-100
  *
  * @throws ExceptionOutOfBounds If invalid servo is chosen
  */
-void ServoController::setTarget(const unsigned short int channel, unsigned short int target)
+void ServoController::setTarget(
+        const unsigned short int channel, 
+        unsigned short int target
+    )
 {
     if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to set.");
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to set."
+            );
 
     return this->servos[channel]->setTarget(target);
 }
@@ -45,29 +43,45 @@ void ServoController::setTarget(const unsigned short int channel, unsigned short
 /**
  * Get the target of a servo identified by channel.
  *
- * This command gets the target of a given channel.
- * To do this however we first need to write to the servo telling it that we want
- * the target value, of our given `channel`. We then read from the board, which returns
- * the value in a 2 bytes which in collation represent one number.
- * 
- * The value's returned can range from 992 - 8000
- * 
- * The command to tell the servo that we want channel number requires two bytes the first
- * tells is we are using getTarget from the board, and the second tells it which channel
- * The byte to get is 0x90 as set by Pololu
- *
  * @param channel The Channel to get
  * 
  * @throws ExceptionOutOfBounds If a read write error occurs
  *
  * @returns The target value of the channel 
  */
-unsigned short int ServoController::getTarget(const unsigned short int channel)
+unsigned short int ServoController::getTarget(
+        const unsigned short int channel
+    ) const
 {
     if (channel >= this->size())
-        throw ExceptionOutOfBounds("Invalid Channel Number when trying to get.");
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to set."
+            );
 
-    return servos[channel]->getTarget();
+    return this->servos[channel]->getTarget();
+}
+
+/**
+ * Return the pointer to the servo given by channel
+ * 
+ * @param channel The Channel of the servo to get
+ * 
+ * @throws ExceptionOutOfBounds If a read write error occurs
+ *
+ * @returns The pointer to the servo
+ */
+Servo * ServoController::getServo(const unsigned short int channel) const
+{
+    if (channel >= this->size())
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to set."
+            );
+
+    return this->servos[channel];
 }
 
 /** 
@@ -91,9 +105,9 @@ unsigned int ServoController::size() const
  */ 
 ServoController::~ServoController()
 {
-    while(!servos.empty())
+    while(!this->servos.empty())
     {
         delete servos.back();
-        servos.pop_back();
+        this->servos.pop_back();
     }
 }

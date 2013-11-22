@@ -366,7 +366,7 @@ bool Config::parseLine(FILE * fd, char * key, char * value)
     // if the key was invalid, then we didn't bother reading the value and 
     // therefore our cursor is still left where it was to begin with. So we will
     // now seek to end of line or EOF
-    for (char c = fgetc(fd); true; c = fgetc(fd))
+    for (signed char c = fgetc(fd); true; c = fgetc(fd))
     {
         if (c == '\n' || c == EOF)
             break;
@@ -386,7 +386,7 @@ bool Config::parseLine(FILE * fd, char * key, char * value)
  */
 bool Config::parseKey(FILE * fd, char * key)
 {
-    char c;
+    signed char c;
     size_t x = 0;
 
     while(true)
@@ -441,7 +441,7 @@ bool Config::parseKey(FILE * fd, char * key)
 
             // End of line found, this shoudnt be when we talk in context of 
             // keys
-            else if (x == '\n' || x == EOF)
+            else if (c == '\n' || c == EOF)
                 return false;
 
             // We know the last character was a ' ' so if we are rtrimming we
@@ -474,10 +474,10 @@ bool Config::parseKey(FILE * fd, char * key)
  */
 bool Config::parseValue(FILE * fd, char * value)
 {
-    char c;
+    signed char c;
     size_t x = 0;
-    char quote = 0;
-    int lastCharacterPosition = 0;
+    signed char quote = 0;
+    size_t lastCharacterPosition = 0;
 
     while (true)
     {

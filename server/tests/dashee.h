@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -30,26 +30,15 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/TestResultCollector.h>
 
-#include <dashee/common.h>
-#include <dashee/Exception/OutOfBounds.h>
-#include <dashee/Server/UDP.h>
-#include <dashee/ServoController/UART.h>
-#include <dashee/ServoController/USB.h>
-#include <dashee/ServoController/Dummy.h>
-
-#include "Config.h"
-#include "GPIO.h"
-#include "Model/Car.h"
-#include "ServoController/Dummy.h"
-#include "ServoController/UART.h"
-#include "Servo/Dummy.h"
-#include "Servo/UART.h"
+#include <unistd.h>
 
 namespace dashee
 {
     namespace test
     {
         int run();
+
+        void sleep(const unsigned int timeout);
     }
 }
 

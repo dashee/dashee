@@ -1,16 +1,16 @@
-#include <dashee/Model.h>
+#include <dashee/Vehicle.h>
 
 using namespace dashee;
 
 /**
- * Construct the Model with params.
+ * Construct the Vehicle with params.
  *
  * Set servoController and server variables
  *
  * @param servoController The pointer to the controller
  * @param server The pointer to the server
  */
-Model::Model(
+Vehicle::Vehicle(
 	ServoController * servoController, 
 	Server * server, 
 	Config * config
@@ -58,13 +58,13 @@ Model::Model(
  * @param control The control surface to set
  * @param target The target value of the control to set
  * 
- * @throws ExceptionModel if trim is less than 0 and greater than 255 as these
+ * @throws ExceptionVehicle if trim is less than 0 and greater than 255 as these
  *                        are invalid values
  */ 
-void Model::setControl(unsigned short int & control, unsigned short int target)
+void Vehicle::setControl(unsigned short int & control, unsigned short int target)
 {
     if (target < 0 || target > 255)
-        throw ExceptionModel("Control value cannot be out the range of 0-255");
+        throw ExceptionVehicle("Control value cannot be out the range of 0-255");
 
     control = target;
 }
@@ -79,16 +79,16 @@ void Model::setControl(unsigned short int & control, unsigned short int target)
  * @param controlTrim The control surface who's trim to set
  * @param value The trim value of the control to set
  *
- * @throws ExceptionModel if trim is less than -128 and greater than 128 as 
+ * @throws ExceptionVehicle if trim is less than -128 and greater than 128 as 
  *                        these are invalid values
  */
-void Model::setControlTrim(
+void Vehicle::setControlTrim(
         signed short int & controlTrim, 
         signed short int trim
     )
 {
     if (trim < -128 || trim > 128)
-        throw ExceptionModel(
+        throw ExceptionVehicle(
                 "Control trim value cannot be out the range of -128-128"
             );
 
@@ -100,12 +100,32 @@ void Model::setControlTrim(
  *
  * @param config Pointer to the configuration
  *
- * @throws ExceptionModel When config is invalid
+ * @throws ExceptionVehicle When config is invalid
  */
-void Model::loadFromConfig(Config * config)
+void Vehicle::loadFromConfig(Config * config)
 {
     if (config == NULL)
-        throw new ExceptionModel("Cannot load from model as config is null");
+        throw new ExceptionVehicle("Cannot load from model as config is null");
+
+    // Set the defaults
+    if  (config->isKeySet("pitch"))
+        this->setPitch(config->getUInt("pitch"));
+    if  (config->isKeySet("roll"))
+        this->setRoll(config->getUInt("roll"));
+    if  (config->isKeySet("yaw"))
+        this->setYaw(config->getUInt("yaw"));
+    if  (config->isKeySet("throttle"))
+        this->setThrottle(config->getUInt("throttle"));
+
+    // Set the fallbacks
+    if  (config->isKeySet("pitch-fallback"))
+        this->setPitchFallback(config->getUInt("pitch-fallback"));
+    if  (config->isKeySet("roll-fallback"))
+        this->setRollFallback(config->getUInt("roll-fallback"));
+    if  (config->isKeySet("yaw-fallback"))
+        this->setYawFallback(config->getUInt("yaw-fallback"));
+    if  (config->isKeySet("throttle-fallback"))
+        this->setThrottleFallback(config->getUInt("throttle-fallback"));
 }
 
 /**
@@ -113,7 +133,7 @@ void Model::loadFromConfig(Config * config)
  *
  * @param value The value of 0 to 255
  */
-void Model::setPitch(unsigned short int value)
+void Vehicle::setPitch(unsigned short int value)
 {
     this->setControl(this->pitch, value);
 }
@@ -125,7 +145,7 @@ void Model::setPitch(unsigned short int value)
  *
  * @returns the pitch value
  */ 
-unsigned short int Model::getPitch(bool notrim)
+unsigned short int Vehicle::getPitch(bool notrim)
 {
     if (notrim)
         return this->pitch;
@@ -142,7 +162,7 @@ unsigned short int Model::getPitch(bool notrim)
  *
  * @param value The value of 0 to 255
  */
-void Model::setRoll(unsigned short int value)
+void Vehicle::setRoll(unsigned short int value)
 {
     this->setControl(this->roll, value);
 }
@@ -154,7 +174,7 @@ void Model::setRoll(unsigned short int value)
  *
  * @returns the roll value
  */ 
-unsigned short int Model::getRoll(bool notrim)
+unsigned short int Vehicle::getRoll(bool notrim)
 {
     if (notrim)
         return this->roll;
@@ -171,7 +191,7 @@ unsigned short int Model::getRoll(bool notrim)
  *
  * @param value The value of 0 to 255
  */
-void Model::setYaw(unsigned short int value)
+void Vehicle::setYaw(unsigned short int value)
 {
     this->setControl(this->yaw, value);
 }
@@ -183,7 +203,7 @@ void Model::setYaw(unsigned short int value)
  *
  * @returns the yaw value
  */ 
-unsigned short int Model::getYaw(bool notrim)
+unsigned short int Vehicle::getYaw(bool notrim)
 {
     if (notrim)
         return this->yaw;
@@ -200,7 +220,7 @@ unsigned short int Model::getYaw(bool notrim)
  *
  * @param value The value of 0 to 255
  */
-void Model::setThrottle(unsigned short int value)
+void Vehicle::setThrottle(unsigned short int value)
 {
     this->setControl(this->throttle, value);
 }
@@ -212,7 +232,7 @@ void Model::setThrottle(unsigned short int value)
  *
  * @returns the throttle value
  */ 
-unsigned short int Model::getThrottle(bool notrim)
+unsigned short int Vehicle::getThrottle(bool notrim)
 {
     if (notrim)
         return this->throttle;
@@ -229,7 +249,7 @@ unsigned short int Model::getThrottle(bool notrim)
  * 
  * @param pitchTrim The trim value to set
  */
-void Model::setPitchTrim(signed short int pitchTrim)
+void Vehicle::setPitchTrim(signed short int pitchTrim)
 {
     this->setControlTrim(this->pitchTrim, pitchTrim);
 }
@@ -239,7 +259,7 @@ void Model::setPitchTrim(signed short int pitchTrim)
  *
  * @returns the pitch trim
  */
-signed short int Model::getPitchTrim()
+signed short int Vehicle::getPitchTrim()
 {
     return this->pitchTrim;
 }   
@@ -249,7 +269,7 @@ signed short int Model::getPitchTrim()
  * 
  * @param rollTrim The trim value to set
  */
-void Model::setRollTrim(signed short int rollTrim)
+void Vehicle::setRollTrim(signed short int rollTrim)
 {
     this->setControlTrim(this->rollTrim, rollTrim);
 }   
@@ -259,7 +279,7 @@ void Model::setRollTrim(signed short int rollTrim)
  *
  * @returns the roll trim
  */
-signed short int Model::getRollTrim()
+signed short int Vehicle::getRollTrim()
 {
     return this->rollTrim;
 }   
@@ -269,7 +289,7 @@ signed short int Model::getRollTrim()
  * 
  * @param yawTrim The trim value to set
  */
-void Model::setYawTrim(signed short int yawTrim)
+void Vehicle::setYawTrim(signed short int yawTrim)
 {
     this->setControlTrim(this->yawTrim, yawTrim);
 }   
@@ -279,7 +299,7 @@ void Model::setYawTrim(signed short int yawTrim)
  *
  * @returns the yaw trim
  */
-signed short int Model::getYawTrim()
+signed short int Vehicle::getYawTrim()
 {
     return this->yawTrim;
 }   
@@ -289,7 +309,7 @@ signed short int Model::getYawTrim()
  * 
  * @param thottleTrim The trim value to set
  */
-void Model::setThrottleTrim(signed short int throttleTrim)
+void Vehicle::setThrottleTrim(signed short int throttleTrim)
 {
     this->setControlTrim(this->throttleTrim, throttleTrim);
 }   
@@ -299,7 +319,7 @@ void Model::setThrottleTrim(signed short int throttleTrim)
  *
  * @returns the throttle trim
  */
-signed short int Model::getThrottleTrim()
+signed short int Vehicle::getThrottleTrim()
 {
     return this->throttleTrim;
 }   
@@ -309,7 +329,7 @@ signed short int Model::getThrottleTrim()
  *
  * @param value The value of the fallback 0-255
  */
-void Model::setPitchFallback(unsigned short int value)
+void Vehicle::setPitchFallback(unsigned short int value)
 {
     this->setControl(this->pitchFallback, value);
 }
@@ -319,7 +339,7 @@ void Model::setPitchFallback(unsigned short int value)
  *
  * @returns the pitch fallback
  */
-unsigned short int Model::getPitchFallback()
+unsigned short int Vehicle::getPitchFallback()
 {
     return this->pitchFallback;
 }   
@@ -329,7 +349,7 @@ unsigned short int Model::getPitchFallback()
  *
  * @param value The value of the fallback 0-255
  */
-void Model::setRollFallback(unsigned short int value)
+void Vehicle::setRollFallback(unsigned short int value)
 {
     this->setControl(this->rollFallback, value);
 }
@@ -339,7 +359,7 @@ void Model::setRollFallback(unsigned short int value)
  *
  * @returns the roll fallback
  */
-unsigned short int Model::getRollFallback()
+unsigned short int Vehicle::getRollFallback()
 {
     return this->rollFallback;
 }   
@@ -349,7 +369,7 @@ unsigned short int Model::getRollFallback()
  *
  * @param value The value of the fallback 0-255
  */
-void Model::setYawFallback(unsigned short int value)
+void Vehicle::setYawFallback(unsigned short int value)
 {
     this->setControl(this->yawFallback, value);
 }
@@ -359,7 +379,7 @@ void Model::setYawFallback(unsigned short int value)
  *
  * @returns the Yaw fallback
  */
-unsigned short int Model::getYawFallback()
+unsigned short int Vehicle::getYawFallback()
 {
     return this->yawFallback;
 }   
@@ -369,7 +389,7 @@ unsigned short int Model::getYawFallback()
  *
  * @param value The value of the fallback 0-255
  */
-void Model::setThrottleFallback(unsigned short int value)
+void Vehicle::setThrottleFallback(unsigned short int value)
 {
     this->setControl(this->throttleFallback, value);
 }
@@ -379,7 +399,7 @@ void Model::setThrottleFallback(unsigned short int value)
  *
  * @returns the Throttle fallback
  */
-unsigned short int Model::getThrottleFallback()
+unsigned short int Vehicle::getThrottleFallback()
 {
     return this->throttleFallback;
 }   
@@ -389,10 +409,10 @@ unsigned short int Model::getThrottleFallback()
  *
  * @param servoController The pointer to the servoController
  */
-void Model::setServoController(ServoController * servoController)
+void Vehicle::setServoController(ServoController * servoController)
 {
     if (servoController == NULL)
-        throw ExceptionModel("ServoController cannot be null");
+        throw ExceptionVehicle("ServoController cannot be null");
     this->servoController = servoController;
 }
 
@@ -401,7 +421,7 @@ void Model::setServoController(ServoController * servoController)
  *
  * @returns Pointer to the servoController object
  */
-ServoController * Model::getServoController()
+ServoController * Vehicle::getServoController()
 {
     return this->servoController;
 }
@@ -411,10 +431,10 @@ ServoController * Model::getServoController()
  *
  * @param server pointer to the server
  */
-void Model::setServer(Server * server)
+void Vehicle::setServer(Server * server)
 {
     if (server == NULL)
-        throw ExceptionModel("Server cannot be null");
+        throw ExceptionVehicle("Server cannot be null");
     this->server = server;
 }
 
@@ -423,7 +443,7 @@ void Model::setServer(Server * server)
  *
  * @returns Pointer to the server object
  */
-Server * Model::getServer()
+Server * Vehicle::getServer()
 {
     return this->server;
 }
@@ -434,7 +454,7 @@ Server * Model::getServer()
  * @retval TRUE the server is in fallback mode
  * @retval FALSE the server is not in fallback mode
  */ 
-bool Model::isFallback()
+bool Vehicle::isFallback()
 {
     return this->fallbackMode;
 }
@@ -446,14 +466,14 @@ bool Model::isFallback()
  * pointers server and servoController, if all is good
  * revert() before continuing
  */
-void Model::transform()
+void Vehicle::transform()
 {
     if (server == NULL)
-        throw ExceptionModel(
+        throw ExceptionVehicle(
                 "Cannot transform model as Server is not set"
             );
     if (servoController == NULL)
-        throw ExceptionModel(
+        throw ExceptionVehicle(
                 "Cannot transform model as ServoController is not set"
             );
 
@@ -466,7 +486,7 @@ void Model::transform()
  * If we are already in fallback mode return out
  * otherwise set the fallback.
  */
-void Model::fallback()
+void Vehicle::fallback()
 {
     if (this->fallbackMode)
         return;
@@ -497,7 +517,7 @@ void Model::fallback()
  * Note without fallback initiated this will
  * do nothing.
  */
-void Model::revert()
+void Vehicle::revert()
 {
     this->fallbackMode = false;
 }
@@ -505,7 +525,7 @@ void Model::revert()
 /**
  * Destruct
  */
-Model::~Model()
+Vehicle::~Vehicle()
 {
 
 }

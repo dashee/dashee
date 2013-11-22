@@ -31,15 +31,16 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     		Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o \
 		ServoController.o ServoController/Dummy.o ServoController/USB.o \
 		ServoController/UART.o Server/UDP.o common.o daemon.o signal.o \
-		Model.o Model/Car.o)
+		Vehicle.o Vehicle/Car.o Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o \
+		Vehicle/Multirotor/Quad/X.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
-    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o Config.o Model.o Model/Car.o)
+    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod telemetry telemetryd)
-TESTS := $(addprefix $(TESTDIR)/, testUART testGPIO testDummy testConfig testModelCar)
+TESTS := $(addprefix $(TESTDIR)/, testConfig testUART testGPIO testDummy testVehicleCar)
 
 # Compiler options
 WOPTIONS=-Wall -fPIC
@@ -52,16 +53,16 @@ RELEASEID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
 
 # Create all required binaries, but in debug mode
 # Use `make release`
-all: test debug
+all: debug
 libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
 release: $(BINARIES)
 
 # A helpfull function for debug configurations
-debug: CFLAGS+=-g -DDEBUG
-debug: LFLAGS+=-g -DDEBUG
-debug: $(BINARIES)
+debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
+debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
+debug: test $(BINARIES)
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
@@ -82,8 +83,7 @@ $(DIRECTORIES):
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
-$(OBJECTSTEST): CFLAGS+=-Wno-overflow
-$(OBJECTSTEST): INCLUDES+=-Itests
+$(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
 $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -91,7 +91,7 @@ $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 # Log shared object
 $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(call print,"Building","lib","$@")
-	$(CC) -g $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
+	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # The ServoController program
 $(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
@@ -116,14 +116,13 @@ $(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
 # Build and run all the tests
-test: CFLAGS+=-g -DDEBUG
-test: LFLAGS+=-g -DDEBUG
 test: testbuild binfile
 	@echo "\nRUNNING TESTS"
 	bin/runtest dummy 2> /dev/null
 	@echo ""
 
 # BUILD all the tests
+test: CFLAGS:=-g -DDEBUG $(CFLAGS) -Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
@@ -133,27 +132,27 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 $(TESTDIR)/testDummy: tests/testDummy.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testUART: tests/testUART.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testGPIO: tests/testGPIO.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testConfig: tests/testConfig.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
-$(TESTDIR)/testModelCar: tests/testModelCar.cpp \
+$(TESTDIR)/testVehicleCar: tests/testVehicleCar.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
-	$(CC) -g -DDEBUG $(CFLAGS) -Itests -Wno-overflow $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 # Build our init scripts
 $(INITDIR)/dashee-servod: src/servod.init.sh | $(INITDIR)

@@ -48,7 +48,7 @@ template<class T> void dashee::map(
 {
     if (*value < fromLow)
 	throw ExceptionInvalidValue(
-	    "The value in dashee::map was not within its low from range."
+	    "The value " + dashee::itostr(*value) + " in dashee::map was not within its low " + itostr(fromLow) + " from range."
 	);
     else if (*value > fromHigh)
 	throw ExceptionInvalidValue(

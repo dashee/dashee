@@ -24,6 +24,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Servo.h>
+#include <dashee/Servo/UART.h>
+#include "dashee.h"
 
 /**
  * Set the namespace

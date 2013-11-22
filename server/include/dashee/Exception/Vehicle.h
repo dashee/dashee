@@ -1,5 +1,5 @@
 /**
- * @file src/Config/Servod.h
+ * @file include/dashee/Exception/Vehicle.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,34 +19,28 @@
  * project site for more details
  */
 
-#ifndef CONFIG_SERVOD_H_
-#define CONFIG_SERVOD_H_
+#ifndef DASHEE_EXCEPTION_MODEL_H_
+#define DASHEE_EXCEPTION_MODEL_H_
 
-#include <dashee/Config.h>
-#include <dashee/ServoController.h>
+#include <dashee/Exception.h>
 
-/**
- * Configuration for the servod program.
- *
- * This is our build ontop of the Config class, This class is specific to the 
- * servod.cpp which holds our main function for the servo server, This will do special
- * config loading that is only specific to servod
- */
-class ConfigServod : public dashee::Config
+namespace dashee
 {
-protected:
-    
+    class ExceptionVehicle;
+}
+
+class dashee::ExceptionVehicle: public dashee::Exception
+{
 public:
-    
-    // Initialize using the 
-    ConfigServod();
-    
-    // Using our config, set the ServoControllers
-    void setServoController(dashee::ServoController *);
-    void setModel(dashee::Model *);
-        
-    // Virtually destruct
-    ~ConfigServod();
+    explicit ExceptionVehicle() : Exception()
+    {
+    }
+    explicit ExceptionVehicle(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionVehicle(std::string msg) : Exception(msg)
+    { 
+    }
 };
 
 #endif

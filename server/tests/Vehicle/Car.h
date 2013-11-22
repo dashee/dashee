@@ -1,5 +1,5 @@
 /**
- * @file tests/Model/Car.h
+ * @file tests/Vehicle/Car.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -22,8 +22,8 @@
 #ifndef DASHEE_TEST_MODEL_CAR_H_
 #define DASHEE_TEST_MODEL_CAR_H_
 
-#include <dashee/Model/Car.h>
-#include "Model.h"
+#include <dashee/Vehicle/Car.h>
+#include "Vehicle.h"
 
 /**
  * Set the namespace
@@ -32,20 +32,20 @@ namespace dashee
 {
     namespace test
     {
-        class ModelCar;
+        class VehicleCar;
     }
 }
 
 /**
- * ModelCar test class for
+ * VehicleCar test class for
  * unit testing known components
  */
-class dashee::test::ModelCar : public dashee::test::Model
+class dashee::test::VehicleCar : public dashee::test::Vehicle
 {
     // Register test
     CPPUNIT_TEST_SUB_SUITE(
-	    dashee::test::ModelCar,
-	    dashee::test::Model
+	    dashee::test::VehicleCar,
+	    dashee::test::Vehicle
 	);
     
     // End
@@ -54,6 +54,7 @@ class dashee::test::ModelCar : public dashee::test::Model
 private:
 protected:
     virtual void testSetAndGetThrottle();
+    virtual void testSetAndGetFromConfig();
 
 public:
     // Let the derived class deal with setting up the variables

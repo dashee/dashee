@@ -15,11 +15,27 @@ void dashee::test::Servo::testSetAndGetTarget()
 {
     if (this->servo == NULL)
 	CPPUNIT_FAIL("Servo is not defined in testSetAndGetTarget");
+        
+    unsigned int timeout = 15;
+    if (dynamic_cast<ServoUART *>(this->servo) == NULL)
+        timeout = 0;
 
-    for (unsigned short int x = 0; x <= 255; x++)
+    for (unsigned short int x = 0; x < 256; x++)
     {
         this->servo->setTarget(x);
-        CPPUNIT_ASSERT(this->servo->getTarget() == x);
+        CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
+        CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
+
+        dashee::test::sleep(timeout);
+    }
+
+    for (unsigned short int x = 255; x > 0; --x)
+    {
+        this->servo->setTarget(x);
+        CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
+        CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
+
+        dashee::test::sleep(timeout);
     }
 }
 

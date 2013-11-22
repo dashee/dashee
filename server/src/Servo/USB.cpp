@@ -38,7 +38,7 @@ void ServoUSB::setTarget(unsigned short int target)
 {
     try
     {
-        map<unsigned short int>(&target, 0, 255, SERVO_LOW, SERVO_HIGH);
+        map<unsigned short int>(target, 0, 255, SERVO_LOW, SERVO_HIGH);
      
         unsigned char command[4];
         command[0] = 0x84;
@@ -63,6 +63,8 @@ void ServoUSB::setTarget(unsigned short int target)
             "Invalid setTarget(" + dashee::itostr(target) + ")"
         );
     }
+    
+    Servo::setTarget(target);
 }
 
 /**
@@ -79,12 +81,18 @@ void ServoUSB::setTarget(unsigned short int target)
  * the first tells is we are using getTarget from the board, and the second 
  * tells it which channel The byte to get is 0x90 as set by Pololu
  *
+ * @param fromcache If set to true, returns the Class value rather than querying
+ *  the servo
+ *
  * @throws ExceptionServo If a read write error occurs
  *
  * @returns The Target value of a channel 
  */
-unsigned short int ServoUSB::getTarget()
+unsigned short int ServoUSB::getTarget(const bool fromcache)
 {
+    if (fromcache)
+        return this->target;
+
     unsigned char command[2];
     command[0] = 0x90;
     command[1] = (char)this->channel;

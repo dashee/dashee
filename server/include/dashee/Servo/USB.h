@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -32,11 +32,12 @@ namespace dashee
 /**
  * Servo USB.
  *
- * This is a class which handels communications with the Pololu board
- * it is a wrapper over the read and write commands sent to usually `/dev/ttyACM0`
+ * This is a class which handels communications with the Pololu board it is a 
+ * wrapper over the read and write commands sent to usually `/dev/ttyACM0`
  *
- * This class represents one servo/channel at a time, The handel is held externally
- * usually in the ServoController class, or its ServoController<CounterPart> version
+ * This class represents one servo/channel at a time, The handel is held 
+ * externally usually in the ServoController class, or its 
+ * ServoController<CounterPart> version
  */
 class dashee::ServoUSB : public dashee::Servo
 {
@@ -54,13 +55,12 @@ protected:
     
 public:
     //Open our Servo Device
-    explicit ServoUSB(int *, const unsigned short int);
-
-    //Get the target of a given channel
-    unsigned short int getTarget();
+    explicit ServoUSB(int * fd, const unsigned short int channel);
 
     //Set the target of a given channel
     void setTarget(unsigned short int);
+    unsigned short int getTarget(const bool fromcache = false);
+
     
     //Close the device
     ~ServoUSB();

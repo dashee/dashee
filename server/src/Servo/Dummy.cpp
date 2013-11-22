@@ -33,7 +33,8 @@ void ServoDummy::setTarget(unsigned short int target)
 {
     try
     {
-        map<unsigned short int>(&target, 0, 255, SERVO_LOW, SERVO_HIGH);
+        unsigned short int converted 
+            = map<unsigned short int>(target, 0, 255, SERVO_LOW, SERVO_HIGH);
             
         if (
             fseek(
@@ -45,8 +46,8 @@ void ServoDummy::setTarget(unsigned short int target)
             throw ExceptionServo("Seek failed in setTarget");
         
         //Create our buffer
-        buffer[0] = target;
-        buffer[1] = target >> 8;
+        buffer[0] = converted;
+        buffer[1] = converted >> 8;
         
         //Write to our servo
         fwrite((const char *)buffer, 2, sizeof(buffer), fd);
@@ -57,6 +58,8 @@ void ServoDummy::setTarget(unsigned short int target)
             "Invalid setTarget(" + dashee::itostr(target) + ")"
         );
     }
+
+    Servo::setTarget(target);
 }
 
 /**
@@ -66,12 +69,17 @@ void ServoDummy::setTarget(unsigned short int target)
  * which hold the target information. Make sure to flush any write data
  * left over otherwise things will start looking messy.
  *
+ * @param fromcache If set to true, then call the parent function
+ *
  * @throws ExceptionServo If a read write error occurs
  *
  * @returns The target value of the servo.
  */
-unsigned short int ServoDummy::getTarget()
+unsigned short int ServoDummy::getTarget(const bool fromcache)
 {
+    if (fromcache)
+        return this->target;
+
     if (
         fseek(
             fd, 

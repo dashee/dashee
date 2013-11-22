@@ -13,9 +13,13 @@ using namespace dashee;
  * @param dev The name of the device which will be open
  * @param channels The number of channels to set
  *
- * @throws ExceptionServoController If device opening fails, an exception will be thrown
+ * @throws ExceptionServoController If device opening fails, an exception will 
+ *          be thrown
  */
-ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned short int channels) : ServoController(dev)
+ServoControllerDummy::ServoControllerDummy(
+        const char * dev, 
+        const unsigned short int channels
+    ) : ServoController(dev)
 {
     fd = fopen(this->dev, "r+b");
 
@@ -28,23 +32,33 @@ ServoControllerDummy::ServoControllerDummy(const char * dev, const unsigned shor
     
     //Make sure the binary file is of correct size
     fseek(fd, 0, SEEK_END);
-    if (ftell(fd) != (ServoDummy::headerByteSize + (ServoDummy::channelByteSize * channels)))
-        throw ExceptionServoController("The binary file is of invalid size. Please create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=38'");
+    if (
+        ftell(fd) != 
+        (ServoDummy::headerByteSize + (ServoDummy::channelByteSize * channels))
+    )
+        throw ExceptionServoController(
+                "The binary file is of invalid size. Please "
+                "create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 "
+                "count=0 seek=38'"
+            );
 }
 
 /**
  * Get the last Error.
  *
- * The function gets the error from the file, The error is stored in the first two bytes
+ * The function gets the error from the file, The error is stored in the first 
+ * two bytes
  *
- * The response is returned in a two byte represented by char, Only one bit is always set in
- * these two bytes, The error number is represeted by the nth bit set, For example
+ * The response is returned in a two byte represented by char, Only one bit is 
+ * always set in these two bytes, The error number is represeted by the nth bit
+ * set, For example
  * 
- *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts from 0
+ *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts 
+ *      from 0
  * 
  * @returns The error int response
  */
-short int ServoControllerDummy::getError()
+short int ServoControllerDummy::getError() const
 {
     fseek(fd, 0, SEEK_SET);
     return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));

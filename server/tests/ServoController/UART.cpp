@@ -6,7 +6,7 @@
  */
 void dashee::test::ServoControllerUART::setUp()
 {
-    this->servoController = new dashee::ServoControllerUART("/dev/ttyAMA0", 6);
+    this->servoController = new dashee::ServoControllerUART("/dev/ttyAMA0", 12);
 }
 
 /**
@@ -14,7 +14,7 @@ void dashee::test::ServoControllerUART::setUp()
  */
 void dashee::test::ServoControllerUART::testSizeValue()
 {
-    CPPUNIT_ASSERT(this->servoController->size() == 6);
+    CPPUNIT_ASSERT(this->servoController->size() == 12);
 }
 
 /**
