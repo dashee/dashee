@@ -54,7 +54,8 @@ class Application_Model_Wiki
         $this->parser = Zend_Registry::get('wiki_parser');
 
         $this->httpClient = new Zend_Http_Client();
-        //$this->httpClient->setAdapter('Zend_Http_Client_Adapter_Curl');
+        $adapter = new Zend_Http_Client_Adapter_Curl();
+        $this->httpClient->setAdapter($adapter);
     }   
     
     /**
@@ -71,6 +72,8 @@ class Application_Model_Wiki
     private function fetch($url)
     {
         $this->httpClient->setUri($url);
+        $this->httpClient->setHeaders("Cache-Control: max-age=0");
+
         $response = $this->httpClient->request('GET');
         $status = $response->getStatus();
         
