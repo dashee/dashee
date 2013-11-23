@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/InvalidNumber.h
+ * @file include/dashee/Exception/Invalid.h
  * @author Shahmir Javaid
  *
  * @section LICENSE

@@ -64,10 +64,10 @@ dashee::Server * loadServer(dashee::Config * config);
  * and run a UDP server. The UDP server provides a interface to the outside world
  * which can communicate and request information from our server
  *
- * @param (int)argc - The number of arguments
- * @param (char **)argv - The arguments array
+ * @param argc The number of arguments
+ * @param argv The arguments array
  *
- * @return int - 0 on successfull shutdown and any other number for error.
+ * @return int 0 on successfull shutdown and any other number for error.
  */
 int main(int argc, char **argv)
 {
@@ -139,13 +139,12 @@ int main(int argc, char **argv)
 }
 
 /**
- * We need to be able to change the server behaviour using command line arguments.
- * do do that we use this function which takes in argc and argv amongst other arguments
- * other arguments are pointers so this function can modify there value
+ * We need to be able to change the server behaviour using command line 
+ * arguments. To do that we use this function which takes in argc and argv
+ * and return the new created configuration
  *
  * @param argc The number of cmdline arguments.
  * @param argv The array of cmdline arguments sent
- * @param conf Pointer to the Config object used to set/get
  *
  * @return pointer to the fresh new config object
  */

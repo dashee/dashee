@@ -1,7 +1,31 @@
+# Global binary variables
 CC=g++
 MKDIR=mkdir -p
 RM=rm -Rf
 
+# Helpful print function
 define print
-	printf "%s %-10s '\033[32;1m%s\033[0m'\n" $(1) $(2) $(3)
+	printf "%10s %-10s '\033[32;1m%s\033[0m'\n" $(1) $(2) $(3)
 endef
+
+# Set directories as variables
+BINDIR?=bin
+TESTDIR?=$(BINDIR)/tests
+LIBDIR?=lib
+SCRIPTSDIR=scripts
+DATADIR=data
+BIT=32bit
+
+# Change variables according to archtecture bit type
+ifeq ($(shell getconf LONG_BIT), 64)
+    LIBDIR=lib64
+    BIT=64bit
+endif
+
+# Compiler options
+WOPTIONS=-Wall -fPIC
+INCLUDES=-Iinclude -L$(LIBDIR)
+CFLAGS=$(WOPTIONS) $(INCLUDES)
+LFLAGS=-shared -fpic
+
+COMPRESSTYPE=gz

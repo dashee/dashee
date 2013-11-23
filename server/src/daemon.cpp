@@ -3,8 +3,11 @@
 /**
  * Start this program as daemon.
  *
- * @param conf The config which is used to get the values for
- *             the state to run the daemon in
+ * @param config The config which is used to get the values for
+ *  the state to run the daemon in
+ * @param logFile The log file default value
+ * @param workingDir The working directory default value
+ * @param pidFile The PID file default value
  */
 pid_t dashee::startDaemon(
 	Config * config, 
@@ -18,9 +21,13 @@ pid_t dashee::startDaemon(
     const char * pidfile = config->get("pidfile", pidFile);
 
     if (!dashee::fexists(logfile))
-        throw Exception("Cannot start, log file is invalid '" + (std::string)logfile + "' not found");
+        throw Exception(
+		"Cannot start, log file is invalid '" + 
+		(std::string)logfile + 
+		"' not found"
+	    );
 
-    // Change logging to go to stdout
+    // Change logging to go to STDOUT
     dashee::Log::openFile(logfile);
 
     pid_t pid;
@@ -47,10 +54,16 @@ pid_t dashee::startDaemon(
 
     // Change working directory
     if (chdir(workingdir) < 0)
-        throw Exception("Cannot change directory '" + (std::string)workingdir + "'");
+        throw Exception(
+		"Cannot change directory '" 
+		+ (std::string)workingdir + 
+		"'"
+	    );
 
     if (!dashee::createPID(pidfile, true))
-        throw Exception("PID '" + (std::string)pidfile + "' file already exists");
+        throw Exception(
+		"PID '" + (std::string)pidfile + "' file already exists"
+	    );
 
     // Close STDIN and STDOUT
     close(STDIN_FILENO);
@@ -60,13 +73,13 @@ pid_t dashee::startDaemon(
 }
 
 /**
- * Create a pid file give by filepath.
+ * Create a PID file give by filepath.
  *
- * @param Create a pid file
- * @param Overwrite an existing pidfile (default to false)
+ * @param filepath The path of the pidfile
+ * @param overwrite Overwrite an existing pidfile (default to false)
  *
  * @retval false If file exists
- * @retval true if pid file was created
+ * @retval true if PID file was created
  */
 bool dashee::createPID(const char * filepath, bool overwrite)
 {
@@ -76,7 +89,11 @@ bool dashee::createPID(const char * filepath, bool overwrite)
     FILE * fd = fopen(filepath, "w");
     
     if (fd == NULL)
-        throw Exception("PID file '" + (std::string)filepath + "' could not opened for writing");
+        throw Exception(
+		"PID file '" + 
+		(std::string)filepath + 
+		"' could not opened for writing"
+	    );
 
     // Write to file, close and return true;
     fprintf(fd, "%d\n", getpid());

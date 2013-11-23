@@ -9,6 +9,7 @@ using namespace dashee;
  *
  * @param servoController The pointer to the controller
  * @param server The pointer to the server
+ * @param config The pointer to the configuration file
  */
 Vehicle::Vehicle(
 	ServoController * servoController, 
@@ -61,7 +62,10 @@ Vehicle::Vehicle(
  * @throws ExceptionVehicle if trim is less than 0 and greater than 255 as these
  *                        are invalid values
  */ 
-void Vehicle::setControl(unsigned short int & control, unsigned short int target)
+void Vehicle::setControl(
+	unsigned short int & control, 
+	unsigned short int target
+    )
 {
     if (target < 0 || target > 255)
         throw ExceptionVehicle("Control value cannot be out the range of 0-255");
@@ -77,7 +81,7 @@ void Vehicle::setControl(unsigned short int & control, unsigned short int target
  * some space by combining it into one function
  * 
  * @param controlTrim The control surface who's trim to set
- * @param value The trim value of the control to set
+ * @param trim The trim value of the control to set
  *
  * @throws ExceptionVehicle if trim is less than -128 and greater than 128 as 
  *                        these are invalid values
@@ -305,9 +309,9 @@ signed short int Vehicle::getYawTrim()
 }   
 
 /**
- * Set the Throttle Trima
+ * Set the Throttle Trim
  * 
- * @param thottleTrim The trim value to set
+ * @param throttleTrim The trim value to set
  */
 void Vehicle::setThrottleTrim(signed short int throttleTrim)
 {

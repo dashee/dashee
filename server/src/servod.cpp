@@ -12,29 +12,30 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
  *
  * @section DESCRIPTION 
  *
- * This program is designed to connect to the servo controller using the COM port
- * which is usually defined by /dev/ttyACM0. It can then interface with this port 
- * by reading and writing to it. The read write protocol is defined by the POLOLU
- * board which we are using for this program
+ * This program is designed to connect to the servo controller using the COM 
+ * port which is usually defined by /dev/ttyACM0. It can then interface with 
+ * this port by reading and writing to it. The read write protocol is defined by
+ * the POLOLU board which we are using for this program
  *
- * The POLOLU Maestro board allows us to controll servo using the POLOLU protocol
- * This protocol is more clearly defined in Servo.h.
+ * The POLOLU Maestro board allows us to controll servo using the POLOLU 
+ * protocol. This protocol is more clearly defined in Servo.h.
  *
- * Given the control of the device this program also handels a UDP server which allows
- * forign programs to interface with it, and control the POLOLU board using a network
- * protocol
+ * Given the control of the device this program also handels a UDP server which 
+ * allows forign programs to interface with it, and control the POLOLU board 
+ * using a network protocol
  *
  * This server is not daemonized, as its mostly run in debug mode.
  *
- * This was developed for Linux and has never been tested in other operating systems
+ * This was developed for Linux and has never been tested in other operating 
+ * systems
  */
 
 #include <stdlib.h>
@@ -213,13 +214,12 @@ int main(int argc, char ** argv)
 }
 
 /**
- * We need to be able to change the server behaviour using command line arguments.
- * do do that we use this function which takes in argc and argv amongst other arguments
- * other arguments are pointers so this function can modify there value
+ * We need to be able to change the server behaviour using command line 
+ * arguments. To do that we use this function which takes in argc and argv
+ * and returns the added variables in our configuration
  *
  * @param argc The number of cmdline arguments.
  * @param argv The array of cmdline arguments sent
- * @param conf Pointer to the Config object used to set/get
  *
  * @return pointer to the fresh new config object
  */

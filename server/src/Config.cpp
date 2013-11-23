@@ -123,7 +123,7 @@ bool Config::isValidKey(const char * const key)
  * 
  * @param key The key to set
  * @param value The value to set the key
- * @param override Should the existing value be overwritten
+ * @param overwrite Should the existing value be overwritten
  */
 void Config::set(const char * key, const char * value, const bool overwrite)
 {

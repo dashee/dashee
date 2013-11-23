@@ -1,28 +1,12 @@
 ##
-# Make file which builds the following bin files located
-# in $(BINDIR):
-#
-#   - libdashee.so
-#   - servo
-#   - servod
-#   - runtest
-#   - test/testServo
-#   - test/testServoController
+# Build script
 #
 # @author Shahmir Javaid
 
 # Include a common set of options
 include makefile.common
 
-# Set directories as variables
-BINDIR=bin
-TESTDIR=$(BINDIR)/tests
-LIBDIR=lib
-ifeq ($(shell getconf LONG_BIT), 64)
-        LIBDIR=lib64
-endif
-SCRIPTSDIR=scripts/
-DATADIR=data
+# The directories to build
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built
@@ -34,7 +18,8 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
 		Vehicle.o Vehicle/Car.o Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o \
 		Vehicle/Multirotor/Quad/X.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
-    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
+    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o \
+		 Config.o Vehicle.o Vehicle/Car.o)
 
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
@@ -42,14 +27,10 @@ LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod telemetry telemetryd)
 TESTS := $(addprefix $(TESTDIR)/, testConfig testUART testGPIO testDummy testVehicleCar)
 
-# Compiler options
-WOPTIONS=-Wall -fPIC
-INCLUDES=-Iinclude -L$(LIBDIR)
-CFLAGS=$(WOPTIONS) $(INCLUDES)
-LFLAGS=-shared -fpic
-
-# Release ID
-RELEASEID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
+# Certain global variables used for packaging and installing
+REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
+BUILDID?=$(REVISIONID)
+INSTALLROOT?=./dashee-$(BUILDID)-$(BIT)
 
 # Create all required binaries, but in debug mode
 # Use `make release`
@@ -57,7 +38,7 @@ all: debug
 libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
-release: $(BINARIES)
+release: $(BINARIES) $(LIBRARIES)
 
 # A helpfull function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
@@ -66,13 +47,26 @@ debug: test $(BINARIES)
 
 # Create a compressed tar archive file, usefull for releases
 # and packaging
-tar:
-	if [ -f dashee-$(RELEASEID).tar.gz ]; then \
-	    echo "Tar file 'dashee-src-$(RELEASEID).tar.gz' already exist!";\
-	    exit 1;\
-	fi
-	tar -zcf dashee-src-$(RELEASEID).tar.gz --exclude='*.o' src makefile makefile.common include tests
-	$(call print,"Building","file","dashee-src-$(RELEASEID).tar.gz")
+#
+# Build a package of binaries
+package: INSTALLROOT=./dashee-$(BUILDID)-$(BIT)
+package: FILE=dashee-$(BUILDID)-$(BIT)
+package: clean test install release
+	$(call print,"Building","file","$(FILE).tar.$(COMPRESSTYPE)")
+	tar -acf $(FILE).tar.$(COMPRESSTYPE) $(INSTALLROOT)
+	$(RM) $(INSTALLROOT)
+
+# Build only the nightly build, it has no rev number just Revision id
+package-nightly: FILE=dashee-$(BUILDID)-$(BIT)
+package-nightly: package
+	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
+	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
+
+# Build a package used for the source
+package-src:
+	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
+	tar -acf dashee-src-$(BUILDID).tar.$(COMPRESSTYPE) --directory=dashee \
+	    --exclude='*.o' src makefile makefile.common include tests files
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -174,24 +168,46 @@ documentation:
 	$(call print,"Building","data","$@")
 	doxygen docs/doxygen.conf > /dev/null
 
-install: $(BINDIR)/servod $(LIBDIR)/libdashee.so
-	if [ "$(shell whoami)" != "root" ]; then echo "Need to be root to perform install"; exit 1; fi;
-	$(call print,"Installing","binary","dashee-servod")
-	install --owner=root --group=root --mode=755 $(LIBDIR)/libdashee.so /$(LIBDIR)/libdashee.so
-	$(call print,"Installing","library","libdashee.so")
-	install --owner=root --group=root --mode=755 $(BINDIR)/servod /usr/bin/dashee-servod
-	$(call print,"Installing","directory","/var/log/dashee")
-	[ -d /var/log/dashee ] || mkdir /var/log/dashee
-	$(call print,"Installing","file","/var/log/dashee/servod.log")
-	touch /var/log/dashee/servod.log
-	$(call print,"Installing","file","/etc/init.d/dashee-servod")
-	install --owner=root --group=root --mode=755 $(SCRIPTSDIR)/init.d/dashee-servod /etc/init.d/dashee-servod
-	$(call print,"Installing","directory","/etc/dashee")
-	[ -d /etc/dashee ] || mkdir /etc/dashee
-	$(call print,"Installing","file","/etc/dashee/servod.conf")
-	touch /etc/dashee/servod.conf
-	$(call print,"Installing","directory","/var/run/dashee")
-	[ -d /var/run/dashee ] || mkdir /var/run/dashee
+# Install the executables
+install: $(BINDIR)/servod $(LIBDIR)/libdashee.so documentation
+	$(call print,"Installing","library","$(INSTALLROOT)/$(LIBDIR)/libdashee.so")
+	[ -d $(INSTALLROOT)/$(LIBDIR) ] || $(MKDIR) $(INSTALLROOT)/$(LIBDIR)
+	install --mode=755 $(LIBDIR)/libdashee.so \
+	    $(INSTALLROOT)/$(LIBDIR)/libdashee.so
+	
+	$(call print,"Installing","binary","$(INSTALLROOT)/usr/bin/dashee-servod")
+	[ -d $(INSTALLROOT)/usr/bin/ ] || $(MKDIR) -p $(INSTALLROOT)/usr/bin
+	install --mode=755 $(BINDIR)/servod \
+	    $(INSTALLROOT)/usr/bin/dashee-servod
+	
+	$(call print,"Installing","file","$(INSTALLROOT)/var/log/dashee/servod.log")
+	[ -d $(INSTALLROOT)/var/log/dashee ] || $(MKDIR) -p $(INSTALLROOT)/var/log/dashee
+	touch $(INSTALLROOT)/var/log/dashee/servod.log
+	
+	$(call print,"Installing","file","$(INSTALLROOT)/etc/init.d/dashee-servod")
+	[ -d $(INSTALLROOT)/etc/init.d ] || $(MKDIR) -p $(INSTALLROOT)/etc/init.d
+	install --mode=755 \
+	    $(SCRIPTSDIR)/init.d/dashee-servod $(INSTALLROOT)/etc/init.d/dashee-servod
+	
+	$(call print,"Installing","file","$(INSTALLROOT)/etc/dashee/servod.conf")
+	[ -d $(INSTALLROOT)/etc/dashee ] || $(MKDIR) $(INSTALLROOT)/etc/dashee
+	touch $(INSTALLROOT)/etc/dashee/servod.conf
+	
+	$(call print,"Installing","directory","$(INSTALLROOT)/var/run/dashee")
+	[ -d $(INSTALLROOT)/var/run/dashee ] || $(MKDIR) -p $(INSTALLROOT)/var/run/dashee
+	
+	$(call print,"Installing","doc","$(INSTALLROOT)/usr/share/doc/libdashee/")
+	[ -d $(INSTALLROOT)/usr/share/doc/libdashee ] || $(MKDIR) \
+	    $(INSTALLROOT)/usr/share/doc/libdashee
+	cp -R docs/html $(INSTALLROOT)/usr/share/doc/libdashee/.
+	install --mode=644 files/LICENSE $(INSTALLROOT)/usr/share/doc/libdashee/.
+	echo "Date: $$(date)" > $(INSTALLROOT)/usr/share/doc/libdashee/VERSION
+	echo "Machine: $$(hostname -f)" >> $(INSTALLROOT)/usr/share/doc/libdashee/VERSION
+	svn info | grep "Last Changed Rev:" | awk '{print "Last Revision: " $$4}' >> \
+	    $(INSTALLROOT)/usr/share/doc/libdashee/VERSION
+	svn info | grep "Last Changed Date:" | \
+	    awk '{print "Last Revision Date: " $$4 " " $$5 " " $$6}' >> \
+	    $(INSTALLROOT)/usr/share/doc/libdashee/VERSION
 
 # Remove only the tests
 cleantest:
@@ -216,6 +232,10 @@ clean: cleanobjects cleantest
 	$(RM) $(LIBDIR)
 	$(call print,"Deleting","file","tags")
 	$(RM) tags
+	$(call print,"Deleting","directory","doc/html")
+	$(RM) docs/html
+	$(call print,"Deleting","directory","doc/xml")
+	$(RM) docs/xml
 
 cleanobjects:
 	for i in  $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST); do \
@@ -229,10 +249,6 @@ cleanall: clean
 	$(RM) $(DIRECTORIES)
 	$(call print,"Deleting","directory","etc")
 	$(RM) etc
-	$(call print,"Deleting","directory","doc/html")
-	$(RM) docs/html
-	$(call print,"Deleting","directory","doc/xml")
-	$(RM) docs/xml
 	$(call print,"Deleting","objects","find *.o")
 	find src/ -name "*.o" -type f -delete
 	find tests/ -name "*.o" -type f -delete
