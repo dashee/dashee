@@ -157,11 +157,11 @@ runtest testConfig $TEMPDIR
 case "$RUN_TYPE" in 
     "pi")
         runtests $TEST_PI
-	runtest testVehicleCar UART /dev/ttyAMA0 UDP 2097 10
+	runtest testVehicleCar UART /dev/ttyAMA0 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
-	runtest testVehicleCar dummy data/Servo.bin UDP 2097 0
+	runtest testVehicleCar dummy data/Servo.bin 0
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2

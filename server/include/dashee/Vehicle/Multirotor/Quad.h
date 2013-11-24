@@ -41,9 +41,11 @@ protected:
     // Construct and pass through to parent
     VehicleMultirotorQuad(
             ServoController * servoController, 
-            Server * server, 
             Config * conf = NULL
         );
+
+    // Overwrite the loadFromConfig and set the channel values
+    virtual void loadFromConfig(Config * config);
 
     // Function that mixes our input from the user to the
     // motor value
@@ -57,7 +59,7 @@ protected:
 public:
 
     // Transform the user input into 
-    virtual void transform();
+    virtual void transform(Server * server);
 
     virtual ~VehicleMultirotorQuad();
 };

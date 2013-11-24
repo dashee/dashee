@@ -13,14 +13,12 @@ using namespace dashee;
  */
 Vehicle::Vehicle(
 	ServoController * servoController, 
-	Server * server, 
 	Config * config
     )
 {
     this->fallbackMode = false;
 
     this->setServoController(servoController);
-    this->setServer(server);
 
     this->pitchTrim = 0;
     this->rollTrim = 0;
@@ -431,28 +429,6 @@ ServoController * Vehicle::getServoController()
 }
 
 /**
- * Set the server.
- *
- * @param server pointer to the server
- */
-void Vehicle::setServer(Server * server)
-{
-    if (server == NULL)
-        throw ExceptionVehicle("Server cannot be null");
-    this->server = server;
-}
-
-/**
- * Return the pointer to the server.
- *
- * @returns Pointer to the server object
- */
-Server * Vehicle::getServer()
-{
-    return this->server;
-}
-
-/**
  * Simple function to return the current fallbackMode.
  *
  * @retval TRUE the server is in fallback mode
@@ -469,14 +445,16 @@ bool Vehicle::isFallback()
  * Before transforming check the value of our 
  * pointers server and servoController, if all is good
  * revert() before continuing
+ *
+ * @param server The server to transform from
  */
-void Vehicle::transform()
+void Vehicle::transform(Server * server)
 {
     if (server == NULL)
         throw ExceptionVehicle(
                 "Cannot transform model as Server is not set"
             );
-    if (servoController == NULL)
+    if (this->servoController == NULL)
         throw ExceptionVehicle(
                 "Cannot transform model as ServoController is not set"
             );

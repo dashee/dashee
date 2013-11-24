@@ -21,6 +21,7 @@ GPIO::GPIO(unsigned short int pin, char direction)
 {
     this->setPin(pin);
     this->exportPin();
+    usleep(50000);
     this->setDirection(direction);
 }
 
@@ -68,6 +69,12 @@ unsigned short int GPIO::getPin()
  */
 void GPIO::exportPin(int pin)
 {
+    char pinfile[100];
+    ::snprintf(pinfile, 100, "/sys/class/gpio/gpio%d/direction", pin);
+
+    if (fexists(pinfile))
+        return;
+
     const char * file = "/sys/class/gpio/export";
 
     if (!fexists(file))

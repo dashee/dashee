@@ -45,7 +45,6 @@ public:
     // Construct and pass through to parent
     VehicleCar(
         ServoController * servoController, 
-        Server * server, 
         Config * conf = NULL
     );
 
@@ -62,7 +61,7 @@ public:
     void setThrottleChannel(const unsigned short int value);
     unsigned short int getThrottleChannel();
         
-    virtual void transform();
+    virtual void transform(Server * server);
 
     virtual ~VehicleCar();
 };

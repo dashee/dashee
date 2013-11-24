@@ -22,8 +22,8 @@ int main(int argc, char ** argv)
 {
     try
     {
-	if (argc != 6)
-	    throw dashee::Exception("Must provide 4 arguments");
+	if (argc != 4)
+	    throw dashee::Exception("Must provide 3 arguments");
 
 	// Load the appropriate servoController
 	if (strcmp(argv[1], "dummy") == 0)
@@ -37,21 +37,13 @@ int main(int argc, char ** argv)
 	else
 	    throw dashee::Exception("Invalid ServoController");
 
-	// Load the appropriate server
-	if (strcmp(argv[3], "UDP") == 0)
-	    dashee::test::Vehicle::server 
-		= new dashee::ServerUDP(dashee::strtol(argv[4]));
-	else
-	    throw dashee::Exception("Invalid Server");
-
-        dashee::test::Vehicle::VEHICLE_TIMEOUT = dashee::strtol(argv[5]);
+        dashee::test::Vehicle::VEHICLE_TIMEOUT = dashee::strtol(argv[3]);
 
 	// Run the test
 	int ec = dashee::test::run();
 
 	// Clean up
 	delete dashee::test::Vehicle::servoController;
-	delete dashee::test::Vehicle::server;
 
 	// Return the correct error code
 	return ec;

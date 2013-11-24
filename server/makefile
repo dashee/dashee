@@ -24,7 +24,7 @@ OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Du
 # All the binaries which will be built
 #SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
-BINARIES := $(addprefix $(BINDIR)/, servo servod telemetry telemetryd)
+BINARIES := $(addprefix $(BINDIR)/, servo servod)
 TESTS := $(addprefix $(TESTDIR)/, testConfig testUART testGPIO testDummy testVehicleCar)
 
 # Certain global variables used for packaging and installing
@@ -98,21 +98,10 @@ $(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
 	$(call print,"Building","binary","$@")
 	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
 
-# The ServoController program
-$(BINDIR)/telemetry: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
-	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
-
-# Our main program that uses the objects
-$(BINDIR)/telemetryd: CFLAGS+=-DDAEMON
-$(BINDIR)/telemetryd: src/telemetryd.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
-	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
-
 # Build and run all the tests
 test: testbuild binfile
 	@echo "\nRUNNING TESTS"
-	bin/runtest dummy 2> /dev/null
+	bin/runtest $(TYPE) 2> /dev/null
 	@echo ""
 
 # BUILD all the tests

@@ -47,7 +47,6 @@ protected:
     // Construct and pass through to parent
     VehicleMultirotor(
             ServoController * servoController, 
-            Server * server, 
             Config * conf = NULL
         );
 

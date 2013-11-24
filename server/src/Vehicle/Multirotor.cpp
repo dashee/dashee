@@ -9,9 +9,8 @@ using namespace dashee;
  */
 VehicleMultirotor::VehicleMultirotor(
         ServoController * servoController, 
-        Server * server, 
 	Config * config
-    ) : Vehicle(servoController, server, config)
+    ) : Vehicle(servoController, config)
 {
 }
 

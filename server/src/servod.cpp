@@ -50,6 +50,7 @@
 #include <dashee/ServoController/Dummy.h>
 #include <dashee/Server/UDP.h>
 #include <dashee/Vehicle/Car.h>
+#include <dashee/Vehicle/Multirotor/Quad/X.h>
 #include <dashee/Config.h>
 
 #include <dashee/daemon.h>
@@ -62,7 +63,9 @@
 
 #define SERVOD_DEVICE "/dev/ttyAMA0"
 #define SERVOD_DEVICETYPE 1
-#define SERVOD_DUMMY_CHANNELS 6
+#define SERVOD_CHANNELS 6
+
+#define VEHICLE_TYPE "Car"
 
 #define DASHEE_SERVER_PORT 2047u
 #define DASHEE_SERVER_TIMEOUT 2u
@@ -71,6 +74,10 @@
 dashee::Config * loadConfig(int argc, char ** argv);
 dashee::ServoController * loadServoController(dashee::Config * config);
 dashee::Server * loadServer(dashee::Config * config);
+dashee::Vehicle * loadVehicle(
+        dashee::Config * config,
+        dashee::ServoController * servoController
+    );
 
 // Reload Objects given we have recieved a signal
 void reloadSystem(
@@ -83,8 +90,8 @@ void reloadSystem(
 
 /**
  * Our main function is designed to take in arguments from the command line
- * and run a UDP server. The UDP server provides a interface to the outside world
- * which can communicate and send commands to our Servo controller.
+ * and run a UDP server. The UDP server provides a interface to the outside 
+ * world which can communicate and send commands to our Servo controller.
  *
  * @param argc The number of arguments
  * @param argv The arguments array
@@ -124,13 +131,18 @@ int main(int argc, char ** argv)
 // Start this program as a daemon so it
 // can be run in background
 #ifdef DAEMON
-	dashee::startDaemon(config, DASHEE_LOGFILE, DASHEE_WORKINGDIR, DASHEE_PIDFILE);
+	dashee::startDaemon(
+                config, 
+                DASHEE_LOGFILE, 
+                DASHEE_WORKINGDIR, 
+                DASHEE_PIDFILE
+            );
 #endif
         
         // Create a UDP server
         servoController = loadServoController(config);
         server = loadServer(config);
-        vehicle = new dashee::VehicleCar(servoController, server, config);
+        vehicle = loadVehicle(config, servoController);
 
         // Helpfull message to let the user know the service is configured
         // and will now try starting
@@ -140,7 +152,7 @@ int main(int argc, char ** argv)
                 argv[0], 
                 config->getUInt("port", DASHEE_SERVER_PORT),
                 getpid()
-                );
+            );
         
         // No point carrying around unused memory while
         // in operation.
@@ -166,7 +178,7 @@ int main(int argc, char ** argv)
                         vehicle->getThrottle()
                     );
 
-                    vehicle->transform();
+                    vehicle->transform(server);
                 }
                 catch (dashee::ExceptionVehicle e)
                 {
@@ -311,38 +323,51 @@ dashee::Config * loadConfig(int argc, char ** argv)
  *
  * @param config The pointer to the config object to load from
  *
- * @throws ExceptionServoController If load fails or if the controller has errors
+ * @throws ExceptionServoController If load fails or if the controller has 
+ *  errors
  */
 dashee::ServoController * loadServoController(dashee::Config * config)
 {
     dashee::ServoController * servoController = NULL;
 
     const char * servo = config->get("servo", SERVOD_DEVICE);
+    unsigned int servoChannels = config->getUInt("servo-channels", SERVOD_CHANNELS);
 
     // Create a different servotype depending on the variable
     switch (config->getUInt("servotype", SERVOD_DEVICETYPE))
     {
         case 1:
             dashee::Log::info(1, "Loading UART device '%s'.", servo);
-            servoController = new dashee::ServoControllerUART(servo);
+            servoController = new dashee::ServoControllerUART(servo, servoChannels);
             break;
         case 2:
             dashee::Log::info(1, "Loading USB device '%s'.", servo);
-            servoController = new dashee::ServoControllerUSB(servo);
+            servoController = new dashee::ServoControllerUSB(servo, servoChannels);
             break;
         case 3:
             dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
-            servoController = new dashee::ServoControllerDummy(servo, SERVOD_DUMMY_CHANNELS);
+            servoController = new dashee::ServoControllerDummy(
+                    servo, 
+                    SERVOD_CHANNELS
+                );
             break;
         default:
-            throw dashee::ExceptionServoController("Invalid servotype '" + dashee::itostr(config->getUInt("servotype", SERVOD_DEVICETYPE)) + "'");
+            throw dashee::ExceptionServoController(
+                    "Invalid servotype '" + 
+                    dashee::itostr(
+                        config->getUInt("servotype", SERVOD_DEVICETYPE)
+                        ) + 
+                    "'"
+                );
             break;
     }
 
     // Print and clear errors
     int error = servoController->getError();
     if (error > 0)
-        throw dashee::ExceptionServoController("ServoController failed with eccode " + dashee::itostr(error));
+        throw dashee::ExceptionServoController(
+                "ServoController failed with eccode " + dashee::itostr(error)
+            );
 
     return servoController;
 }
@@ -363,6 +388,34 @@ dashee::Server * loadServer(dashee::Config * config)
         );
 
     return server;
+}
+
+/**
+ * Funciton to load our vehicle
+ *
+ * @param config The config to read from
+ * @param servoController The controller which the model requires
+ */
+dashee::Vehicle * loadVehicle(
+        dashee::Config * config, 
+        dashee::ServoController * servoController
+    )
+{
+    const char * modelType = config->get("vehicle-type", VEHICLE_TYPE);
+    dashee::Vehicle * vehicle = NULL;
+
+    if (strcmp(modelType, "Car") == 0)
+        vehicle = new dashee::VehicleCar(servoController, config);
+    else if (strcmp(modelType, "MultirotorQuadX") == 0)
+        vehicle = new dashee::VehicleMultirotorQuadX(servoController, config);
+    else
+        throw new dashee::ExceptionVehicle(
+                "Invalid vehicle-type '" + 
+                std::string(modelType) + 
+                "'"
+            );
+
+    return vehicle;
 }
 
 /**
@@ -401,8 +454,7 @@ void reloadSystem(
         );
 
     // Change our vehicle to reflect
-    vehicle->setServoController(servoController);
-    vehicle->setServer(server);
+    vehicle = loadVehicle(config, servoController);
 
     // Delete as it is no longer required
     delete config;

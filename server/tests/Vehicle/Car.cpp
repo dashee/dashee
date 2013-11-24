@@ -8,11 +8,11 @@ void dashee::test::VehicleCar::setUp()
     dashee::test::Vehicle::setUp();
 
     this->vehicle = new dashee::VehicleCar(
-	    (dashee::ServoController *)dashee::test::Vehicle::servoController, 
-	    (dashee::Server *)dashee::test::Vehicle::server
+	    (dashee::ServoController *)dashee::test::Vehicle::servoController 
 	);
 
-    dashee::VehicleCar * temp = static_cast<dashee::VehicleCar *>(this->vehicle);
+    dashee::VehicleCar * temp 
+        = static_cast<dashee::VehicleCar *>(this->vehicle);
 
     temp->setThrottleChannel(2);
     temp->setYawChannel(4);
@@ -53,8 +53,7 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
 void dashee::test::VehicleCar::testSetAndGetFromConfig()
 {
     dashee::VehicleCar * vehicleCar = new dashee::VehicleCar(
-	    this->vehicle->getServoController(), 
-	    this->vehicle->getServer()
+	    this->vehicle->getServoController()
 	);
 
     dashee::Config * config = new Config();

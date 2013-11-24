@@ -57,12 +57,6 @@ protected:
      * The pointer to our servocontroller
      */ 
     dashee::ServoController * servoController;
-
-    /**
-     * The pointer to our server, which is used
-     * to read the bytes of the client and act upon it
-     */
-    dashee::Server * server;
     
     /**
      * The value that represent our 4 major
@@ -113,7 +107,6 @@ protected:
     // Construct our model
     Vehicle(
             ServoController * servoController, 
-            Server * server, 
             Config * conf = NULL
         );
     
@@ -169,10 +162,6 @@ public:
     // Set and get ServoController
     void setServoController(ServoController * servoController);
     ServoController * getServoController();
-    
-    // Set and get Server
-    void setServer(Server * server);
-    Server * getServer();
 
     // Simple function to return the value of fallbackMode
     bool isFallback();
@@ -180,7 +169,7 @@ public:
     // A function which transforms input to output
     // in other workds, transforms commands comming from the server
     // to thier appropriate servo
-    virtual void transform();
+    virtual void transform(Server * server);
 
     // Function which initiate fallback mode
     virtual void fallback();

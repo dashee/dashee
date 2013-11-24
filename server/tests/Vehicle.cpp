@@ -10,15 +10,13 @@ dashee::test::Vehicle::Vehicle()
 }
 
 /**
- * Start up, and check to ensure that our 
- * servocontrollers and server pointers are not null
+ * Start up, and check to ensure that our servocontrollers pointers should not 
+ * be null
  */ 
 void dashee::test::Vehicle::setUp()
 {
     if (dashee::test::Vehicle::servoController == NULL)
 	throw dashee::ExceptionVehicle("ServoController must not be null");
-    if (dashee::test::Vehicle::server == NULL)
-	throw dashee::ExceptionVehicle("Server must not be null");
 }
 
 /**
@@ -33,32 +31,6 @@ void dashee::test::Vehicle::sleep()
         return;
 
     usleep(VEHICLE_TIMEOUT);
-}
-
-/**
- * Set up a similar server with a port +1.
- *
- * Do some dynamic casting to set the new Server Vehicle,
- * Once created use set and get
- */
-void dashee::test::Vehicle::testSetAndGetServer()
-{
-    dashee::Server * oldServer = dashee::test::Vehicle::server;
-    dashee::Server * newServer = NULL;
-    int port = oldServer->getPort()+1;
-    
-    if (dynamic_cast<ServerUDP *>(oldServer) != NULL)
-	newServer = new dashee::ServerUDP(port);
-    else
-	throw dashee::Exception("dynamic cast failed.");
-
-    this->vehicle->setServer(newServer);
-    CPPUNIT_ASSERT(newServer == this->vehicle->getServer());
-
-    this->vehicle->setServer(oldServer);
-    CPPUNIT_ASSERT(oldServer == this->vehicle->getServer());
-
-    delete newServer;
 }
 
 /**
@@ -407,14 +379,6 @@ void dashee::test::Vehicle::testFallbackAndRevert()
 /**
  * Test the exceptions when setting NULL pointers
  */
-void dashee::test::Vehicle::testExceptionVehiclesetServerToNull()
-{
-    this->vehicle->setServer(NULL);
-}
-
-/**
- * Test the exceptions when setting NULL pointers
- */
 void dashee::test::Vehicle::testExceptionVehiclesetServoControllerToNull()
 {
     this->vehicle->setServoController(NULL);
@@ -493,5 +457,4 @@ void dashee::test::Vehicle::tearDown()
 }
 
 dashee::ServoController * dashee::test::Vehicle::servoController = NULL;
-dashee::Server * dashee::test::Vehicle::server = NULL;
 unsigned int dashee::test::Vehicle::VEHICLE_TIMEOUT = 1;

@@ -7,9 +7,8 @@ using namespace dashee;
  */ 
 VehicleCar::VehicleCar(
         ServoController * servoController, 
-        Server * server, 
 	Config * config
-    ) : Vehicle(servoController, server, config)
+    ) : Vehicle(servoController, config)
 {
     this->setYawChannel(1);
     this->setThrottleChannel(2);
@@ -130,10 +129,12 @@ void VehicleCar::setThrottle(unsigned short int value)
  * just reads the commands that come in and sets it to
  * the relevent motor, As its is only the car model, this
  * is really a pass through
+ *
+ * @param Server The commands to read from
  */
-void VehicleCar::transform()
+void VehicleCar::transform(Server * server)
 {
-    Vehicle::transform();
+    Vehicle::transform(server);
 
     for (size_t x = 0; x < server->size(); x++)
     {
@@ -146,12 +147,12 @@ void VehicleCar::transform()
 	    {
 		this->setYaw(
 			static_cast<unsigned short int>(
-			    this->server->getBufferByte(x+1)
+			    server->getBufferByte(x+1)
 			)
 		    );
 		this->setThrottle(
 			static_cast<unsigned short int>(
-			    this->server->getBufferByte(x+2)
+			    server->getBufferByte(x+2)
 			)
 		    );
 

@@ -48,7 +48,6 @@ class dashee::test::Vehicle : public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(dashee::test::Vehicle);
     
     // test set and get model variables
-    CPPUNIT_TEST(testSetAndGetServer);
     CPPUNIT_TEST(testSetAndGetServoController);
 
     // test set and get flight controls
@@ -70,10 +69,6 @@ class dashee::test::Vehicle : public CppUnit::TestFixture
     CPPUNIT_TEST(testFallbackAndRevert);
     
     // Test invalid NULL when trying to set the follwoing
-    CPPUNIT_TEST_EXCEPTION(
-	    testExceptionVehiclesetServerToNull, 
-	    dashee::ExceptionVehicle
-	);
     CPPUNIT_TEST_EXCEPTION(
 	    testExceptionVehiclesetServoControllerToNull, 
 	    dashee::ExceptionVehicle
@@ -127,7 +122,6 @@ protected:
     void sleep();
 
     // test set and get model variables
-    void testSetAndGetServer();
     void testSetAndGetServoController();
 
     // test set and get flight controls
@@ -149,7 +143,6 @@ protected:
     virtual void testFallbackAndRevert();
 
     // Test invalid set values
-    void testExceptionVehiclesetServerToNull();
     void testExceptionVehiclesetServoControllerToNull();
     
     void testExceptionVehiclesetPitchNoRange();
@@ -172,7 +165,6 @@ public:
     static unsigned int VEHICLE_TIMEOUT;
 
     static dashee::ServoController * servoController;
-    static dashee::Server * server;
 
     // Let the derived class deal with setting up the variables
     virtual void setUp();
