@@ -1,5 +1,11 @@
 ##
-# Build script
+# Build script, allows one step builds, to get started, try
+#
+# make all
+# make INSTALLDIR=$(mktemp -d) install
+# make clean
+# 
+# try the `-s` option to make for pretty print
 #
 # @author Shahmir Javaid
 
@@ -22,7 +28,6 @@ OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Du
 		 Config.o Vehicle.o Vehicle/Car.o)
 
 # All the binaries which will be built
-#SO := $(addprefix lib/,)
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
 TESTS := $(addprefix $(TESTDIR)/, testConfig testUART testGPIO testDummy testVehicleCar)
@@ -44,29 +49,6 @@ release: $(BINARIES) $(LIBRARIES)
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
 debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
 debug: test $(BINARIES)
-
-# Create a compressed tar archive file, usefull for releases
-# and packaging
-#
-# Build a package of binaries
-package: INSTALLROOT=./dashee-$(BUILDID)-$(BIT)
-package: FILE=dashee-$(BUILDID)-$(BIT)
-package: clean test install release
-	$(call print,"Building","file","$(FILE).tar.$(COMPRESSTYPE)")
-	tar -acf $(FILE).tar.$(COMPRESSTYPE) $(INSTALLROOT)
-	$(RM) $(INSTALLROOT)
-
-# Build only the nightly build, it has no rev number just Revision id
-package-nightly: FILE=dashee-$(BUILDID)-$(BIT)
-package-nightly: package
-	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
-	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
-
-# Build a package used for the source
-package-src:
-	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
-	tar -acf dashee-src-$(BUILDID).tar.$(COMPRESSTYPE) --directory=dashee \
-	    --exclude='*.o' src makefile makefile.common include tests files
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -198,6 +180,38 @@ install: $(BINDIR)/servod $(LIBDIR)/libdashee.so documentation
 	    awk '{print "Last Revision Date: " $$4 " " $$5 " " $$6}' >> \
 	    $(INSTALLROOT)/usr/share/doc/libdashee/VERSION
 
+# Create a compressed tar archive file, usefull for releases
+# and packaging
+#
+# Build a package of binaries
+package: INSTALLROOT=./dashee-$(BUILDID)-$(BIT)
+package: FILE=dashee-$(BUILDID)-$(BIT)
+package: clean test install release
+	$(call print,"Building","file","$(FILE).tar.$(COMPRESSTYPE)")
+	tar -acf $(FILE).tar.$(COMPRESSTYPE) $(INSTALLROOT)
+	$(RM) $(INSTALLROOT)
+
+# Build only the nightly build, it has no rev number just Revision id
+package-nightly: FILE=dashee-$(BUILDID)-$(BIT)
+package-nightly: package
+	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
+	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
+
+# Build a package with all source code, but add a subfolder using xform to encapsulate
+# the files so when extracted all files are held inside a folder
+package-src:
+	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
+	# Tar up temporarily, so it can be extracted to a folder
+	tar --xform='s%^%dashee-$(BUILDID)-src/%' --exclude='*.o' \
+	    -acf dashee-$(BUILDID)-src.tar.$(COMPRESSTYPE) \
+	   src makefile makefile.common include tests files docs scripts
+
+# Publish changes to a server given by .PUBLISH_HOST, if no .PUBLISH_HOST file
+# exists the build will fail
+publish: .PUBLISH_HOST package
+publish-nightly: .PUBLISH_HOST package-nightly
+publish-src: .PUBLISH_HOST package-src
+
 # Remove only the tests
 cleantest:
 	$(RM) $(BINDIR)/tests
@@ -228,10 +242,9 @@ clean: cleanobjects cleantest
 
 cleanobjects:
 	for i in  $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST); do \
-		$(call print,"Deleting","objects","$$i");\
-		$(RM) $$i;\
+	    $(call print,"Deleting","objects","$$i");\
+	    $(RM) $$i;\
 	done;
-
 
 cleanall: clean
 	$(call print,"Deleting","directory","$(DIRECTORIES)")

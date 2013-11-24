@@ -8,7 +8,6 @@ using namespace dashee;
  * Set servoController and server variables
  *
  * @param servoController The pointer to the controller
- * @param server The pointer to the server
  * @param config The pointer to the configuration file
  */
 Vehicle::Vehicle(

@@ -4,6 +4,9 @@ using namespace dashee;
 
 /**
  * Constructor
+ *
+ * @param servoController Object to control servoes
+ * @param config Load from configuration
  */ 
 VehicleCar::VehicleCar(
         ServoController * servoController, 
@@ -130,7 +133,7 @@ void VehicleCar::setThrottle(unsigned short int value)
  * the relevent motor, As its is only the car model, this
  * is really a pass through
  *
- * @param Server The commands to read from
+ * @param server The commands to read from
  */
 void VehicleCar::transform(Server * server)
 {
