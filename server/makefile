@@ -22,7 +22,7 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
 		ServoController.o ServoController/Dummy.o ServoController/USB.o \
 		ServoController/UART.o Server/UDP.o common.o daemon.o signal.o \
 		Vehicle.o Vehicle/Car.o Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o \
-		Vehicle/Multirotor/Quad/X.o)
+		Vehicle/Multirotor/Quad/X.o Thread.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
     		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o \
 		 Config.o Vehicle.o Vehicle/Car.o)
@@ -46,8 +46,8 @@ libraries: $(LIBRARIES)
 release: $(BINARIES) $(LIBRARIES)
 
 # A helpfull function for debug configurations
-debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
-debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
+debug: CFLAGS:=-g -DDEBUG $(CFLAGS) -pthread
+debug: LFLAGS:=-g -DDEBUG $(LFLAGS) -pthread
 debug: test $(BINARIES)
 
 # This is our main handler for created directories,

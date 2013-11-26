@@ -19,28 +19,29 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_CONFIG_H_
-#define DASHEE_EXCEPTION_CONFIG_H_
+#ifndef DASHEE_EXCEPTION_THREAD_H_
+#define DASHEE_EXCEPTION_THREAD_H_
 
 #include <dashee/Exception.h>
 
 namespace dashee
 {
-    class ExceptionConfig;
+    class ExceptionThread;
 }
 
-class dashee::ExceptionConfig: public dashee::Exception
+class dashee::ExceptionThread: public dashee::Exception
 {
 public:
-    explicit ExceptionConfig() : Exception()
+    explicit ExceptionThread() : Exception()
     {
     }
-    explicit ExceptionConfig(const int ec) : Exception(ec)
+    explicit ExceptionThread(const int ec) : Exception(ec)
     { 
     }
-    explicit ExceptionConfig(std::string msg) : Exception(msg)
+    explicit ExceptionThread(std::string msg) : Exception(msg)
     { 
     }
 };
 
 #endif
+

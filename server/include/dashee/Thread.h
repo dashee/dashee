@@ -24,6 +24,10 @@
 
 #include <pthread.h>
 
+#include <dashee/common.h>
+#include <dashee/Exception/Thread.h>
+#include <dashee/Exception/Thread/Norestart.h>
+
 namespace dashee
 {
     class Thread;
@@ -37,7 +41,7 @@ namespace dashee
  *
  * Main responsiblities include, starting a thread, and joining it.
  */ 
-class Thread
+class dashee::Thread
 {
 private:
     /**
@@ -68,19 +72,15 @@ public:
     Thread(void * (*thread_entry_function)(void *));
 
     // Start the thread, one time operation only
-    void start();
-
-    // Handle pausing the thread
-    void pause();
-
-    // Handle resuming a paused thread
-    void resume();
+    void start(void * parameter_to_entry_function);
 
     // Joining the thread
     void join();
 
     // Call exit on a thread, usefull for external calls
     void exit(int retval = 0);
+
+    ~Thread();
 };
 
 #endif

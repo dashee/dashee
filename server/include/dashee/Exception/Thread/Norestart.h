@@ -19,26 +19,26 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_CONFIG_H_
-#define DASHEE_EXCEPTION_CONFIG_H_
+#ifndef DASHEE_EXCEPTION_THREAD_NORESTART_H_
+#define DASHEE_EXCEPTION_THREAD_NORESTART_H_
 
-#include <dashee/Exception.h>
+#include <dashee/Exception/Thread.h>
 
 namespace dashee
 {
-    class ExceptionConfig;
+    class ExceptionThreadNoRestart;
 }
 
-class dashee::ExceptionConfig: public dashee::Exception
+class dashee::ExceptionThreadNoRestart: public dashee::ExceptionThread
 {
 public:
-    explicit ExceptionConfig() : Exception()
+    explicit ExceptionThreadNoRestart() : ExceptionThread()
     {
     }
-    explicit ExceptionConfig(const int ec) : Exception(ec)
+    explicit ExceptionThreadNoRestart(const int ec) : ExceptionThread(ec)
     { 
     }
-    explicit ExceptionConfig(std::string msg) : Exception(msg)
+    explicit ExceptionThreadNoRestart(std::string msg) : ExceptionThread(msg)
     { 
     }
 };

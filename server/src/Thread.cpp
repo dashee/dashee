@@ -28,7 +28,7 @@ dashee::Thread::Thread(void * (*thread_entry_function)(void *))
  *  it must be killed by calling exit() before it can be called again
  * @throws ExceptionThread When pthread_create fails
  */
-dashee::Thread::start(void * parameter_to_entry_function)
+void dashee::Thread::start(void * parameter_to_entry_function)
 {
     // Ensure it is not already running
     if (this->started)
@@ -80,16 +80,12 @@ dashee::Thread::start(void * parameter_to_entry_function)
     }
 }
 
-//TODO: Get this working
-void dashee::Thread::pause(){}
-void dashee::Thread::resume(){}
-
 /**
  * Caller to wait for the thread to finish.
  *
  * For more see pthread_join
  */
-void dashe::Thread::join()
+void dashee::Thread::join()
 {
     int retval = pthread_join(this->thread, NULL);
 
@@ -116,7 +112,7 @@ void dashe::Thread::join()
         default:
             throw ExceptionThread(
                     "Exit code came back with " + 
-                    dashee::iostr(retval)
+                    dashee::itostr(retval)
                 );
             break;
     }
@@ -129,7 +125,7 @@ void dashe::Thread::join()
  */
 void dashee::Thread::exit(int retval)
 {
-    pthread_exit(retval);
+    pthread_exit(&retval);
     this->started = false;
     this->paused = false;
 }
