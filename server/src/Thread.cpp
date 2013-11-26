@@ -7,6 +7,7 @@
  */
 dashee::Thread::Thread(void * (*thread_entry_function)(void *))
 {
+    this->thread = NULL;
     this->thread_entry_function = thread_entry_function;
     this->paused = true;
     this->started = false;
@@ -38,11 +39,14 @@ void dashee::Thread::start(void * parameter_to_entry_function)
             );
 
     int retval = pthread_create(
-                &this->thread, 
+                this->thread, 
                 NULL, 
                 this->thread_entry_function, 
                 reinterpret_cast<void *>(parameter_to_entry_function)
             );
+
+    // Insert into the pool
+    pool.insert(ThreadPair(*(this->thread), this));
 
     // Handle the return value of the function
     switch (retval)
@@ -87,7 +91,7 @@ void dashee::Thread::start(void * parameter_to_entry_function)
  */
 void dashee::Thread::join()
 {
-    int retval = pthread_join(this->thread, NULL);
+    int retval = pthread_join(*(this->thread), NULL);
 
     // Handle the return value of the function
     switch (retval)
@@ -119,6 +123,22 @@ void dashee::Thread::join()
 }
 
 /**
+ * This is a handy function which calls pthread_self, and looks in the running
+ * map to return the Thread pointer to the object this thread id belongs to.
+ *
+ * @returns Thread pointer to the object
+ */
+dashee::Thread * dashee::Thread::self()
+{
+    ThreadMap::iterator it = pool.find(pthread_self());
+
+    if (it != pool.end())
+        return it->second;
+        
+    return NULL;
+}
+
+/**
  * Exit our running thread
  *
  * @param retval Pass a parameter through to join
@@ -126,8 +146,10 @@ void dashee::Thread::join()
 void dashee::Thread::exit(int retval)
 {
     pthread_exit(&retval);
+    pool.erase(*(this->thread));
     this->started = false;
     this->paused = false;
+    this->thread = NULL;
 }
 
 /**
@@ -135,5 +157,9 @@ void dashee::Thread::exit(int retval)
  */
 dashee::Thread::~Thread()
 {
-    pthread_exit(0);
+    this->exit(0);
 }
+
+// Initilize our pool
+dashee::ThreadMap dashee::Thread::pool 
+    = dashee::ThreadMap();

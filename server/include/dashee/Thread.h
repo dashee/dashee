@@ -23,6 +23,7 @@
 #define DASHEE_THREAD_H_
 
 #include <pthread.h>
+#include <map>
 
 #include <dashee/common.h>
 #include <dashee/Exception/Thread.h>
@@ -31,6 +32,9 @@
 namespace dashee
 {
     class Thread;
+
+    typedef std::map<pthread_t, Thread *> ThreadMap;
+    typedef std::pair<pthread_t, Thread *> ThreadPair;
 }
 
 /**
@@ -44,6 +48,9 @@ namespace dashee
 class dashee::Thread
 {
 private:
+
+    static ThreadMap pool;
+
     /**
      * The pointer to the entry point function.
      */
@@ -53,7 +60,7 @@ private:
      * The instance of the thread that this
      * current object represents
      */
-    pthread_t thread;
+    pthread_t * thread;
 
     /**
      * Flag that holds the paused state
@@ -76,6 +83,9 @@ public:
 
     // Joining the thread
     void join();
+
+    // Static function to return the pointer to the self thread
+    static Thread * self();
 
     // Call exit on a thread, usefull for external calls
     void exit(int retval = 0);
