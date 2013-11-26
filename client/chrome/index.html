@@ -5,21 +5,27 @@
     <title>Hello World</title>
     <!--script src="SendCommands.js"></script>
     <script src="Load.js"></script-->
+    <script src="Vector2D.js"></script>
+    <script src="Vehicle.js"></script>
+    <script src="MainControl.js"></script>
     <script src="UDPServer.js"></script>
     
     <link href="styles/main.css" rel="stylesheet">
 </head>
 <body>
     <h1>Dashee Monitor</h1>
-    <label>Packets Per Second: <span id="packets-per-sec">0</span></label>
-    <label>Throttle Value: <span id="throttle-val">0</span></label>
-    <label>Steer Value: <span id="steer-val">0</span></label>
-
-    <div style="width:200px; height:200px; margin:0 auto">
-        <div id="rotater" style="width:100px; height:100px; background:#ccc; border:1px solid #555; margin:0 auto;">
+    <div class="page" id="conroller-test">
+        <label>Packets Per Second: <span id="packets-per-sec">0</span></label>
+        <label>Throttle Value: <span id="throttle-val">0</span></label>
+        <label>Steer Value: <span id="steer-val">0</span></label>
+        <div id="rotater" style="width:50px; height:100px; position:absolute; top:100px; left:100px; background:#ccc; border:1px solid #555; margin:0 auto;">
         </div>
-	</div>
-    <canvas id="packetMonitor" width="600" height="200" style="margin:0 auto;">
-    </canvas>
+
+        <canvas id="stage" width="600" height="200" style="margin:0 auto;">
+        </canvas>
+    </div>
+    <div class="page" id="contol-vehicle">
+        <p class="todo"></p>
+    </div>
 </body>
 </html>
