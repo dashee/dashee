@@ -18,19 +18,20 @@ DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 # All the objects that are built
 OBJECTS := $(addprefix src/,)
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
-    		Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o \
-		ServoController.o ServoController/Dummy.o ServoController/USB.o \
-		ServoController/UART.o Server/UDP.o common.o daemon.o signal.o \
-		Vehicle.o Vehicle/Car.o Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o \
-		Vehicle/Multirotor/Quad/X.o Thread.o)
-OBJECTSTEST := $(addprefix tests/, dashee.o ServoController.o ServoController/Dummy.o\
-    		 ServoController/UART.o GPIO.o Servo.o Servo/UART.o Servo/Dummy.o \
-		 Config.o Vehicle.o Vehicle/Car.o)
+    Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
+    ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
+    Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
+    Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
+    Thread.o)
+OBJECTSTEST := $(addprefix tests/, dashee.o Thread.o ServoController.o \
+    ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
+    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
 
 # All the binaries which will be built
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
-TESTS := $(addprefix $(TESTDIR)/, testConfig testUART testGPIO testDummy testVehicleCar)
+TESTS := $(addprefix $(TESTDIR)/, testThread testConfig testUART testGPIO \
+    testDummy testVehicleCar)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
@@ -93,6 +94,11 @@ testbuild: $(TESTS) $(BINDIR)/runtest
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	$(call print,"Building","script","$@")
 	install --mode=775 $< $@
+
+$(TESTDIR)/testThread: tests/testThread.cpp \
+    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
+	$(call print,"Building","tests","$@")
+	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
 
 $(TESTDIR)/testDummy: tests/testDummy.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)

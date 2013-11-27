@@ -1,5 +1,8 @@
 #include "Thread.h"
 
+volatile bool dashee::test::RUN = false;
+pthread_mutex_t dashee::test::mutexRUN = PTHREAD_MUTEX_INITIALIZER;
+
 /**
  * Dummy function which does nothing and returns
  *
@@ -8,7 +11,7 @@
 void * dashee::test::donothing(void * nothing)
 {
     CPPUNIT_ASSERT(true);
-    return;
+    return NULL;
 }
 
 /**
@@ -27,7 +30,7 @@ void * dashee::test::waitTillExit(void * nothing)
 	sleep(100);
     }
 
-    return;
+    return NULL;
 }
 
 /**
@@ -37,7 +40,7 @@ void * dashee::test::waitTillExit(void * nothing)
  */
 void * dashee::test::doN(void * N)
 {
-    for (int x = 0; x < *(reinterpret_cast<int *>N); x++)
+    for (int x = 0; x < *(reinterpret_cast<int *>(N)); x++)
     {
 	pthread_mutex_lock(&mutexRUN);
 	if (RUN == false) break;
@@ -46,7 +49,7 @@ void * dashee::test::doN(void * N)
 	sleep(100);
     }
 
-    return;
+    return NULL;
     
 }
 
@@ -58,9 +61,9 @@ void * dashee::test::doN(void * N)
  */ 
 void * dashee::test::callSelf(void * nothing)
 {
-    CPPUNIT_ASSERT(Thread::self() != NULL);
-    Thread::exit();
-    return;
+    CPPUNIT_ASSERT(dashee::Thread::self() > 0);
+    dashee::Thread::exit();
+    return NULL;
 }
 
 /**
@@ -70,9 +73,9 @@ void * dashee::test::callSelf(void * nothing)
  */
 void * dashee::test::callExit(void * nothing)
 {
-    Thread::exit();
+    dashee::Thread::exit();
     CPPUNIT_ASSERT(true);
-    return;
+    return NULL;
 }   
 
 /**
@@ -87,61 +90,19 @@ void dashee::test::Thread::setUp()
  */
 void dashee::test::Thread::testWorking()
 {
-    this->thread = new Thread(dashee::test::donothing);
-    this->thread.start((void *)NULL);
-    this->thread.join();
-
-    delete this->thread;
-}
-
-/**
- * Test pool size.
- *
- * Create threads, start them and join them and test the pool size value on 
- * every iteration
- */
-void dashee::test::Thread::testPoolSize()
-{
-    // No initilized threads hold the size of 0
-    CPPUNIT_ASSERT(Thread::size() == 0);
- 
-    this->thread = new Thread(dashee::test::donothing);
-    
-    // A thread must must must be started before the size value is set to +1
-    CPPUNIT_ASSERT(Thread::size() == 0);
-
-
+    this->thread = new dashee::Thread(dashee::test::donothing);
     this->thread->start((void *)NULL);
-    
-    // Calling a thread size is safe, after thread start because the adding of 1
-    // to the size is done in the main thread.
-    CPPUNIT_ASSERT(Thread::size() == 1);
-
-    // Join to ensure the end of thread, and the value of size must still be the
-    // same
     this->thread->join();
-    CPPUNIT_ASSERT(Thread::size() == 1);
-
-    // Adding another thread and starting it to test the size growth
-    Thread * temp = new Thread(donothing);
-    temp->start((void *)NULL);
-    CPPUNIT_ASSERT(Thread::size() == 2);
-
-    // Delete a thread is the only time the pool of threads must be deleted
-    temp->join();
-    delete temp;
-    CPPUNIT_ASSERT(Thread::size() == 1);
 
     delete this->thread;
-    CPPUNIT_ASSERT(Thread::size() == 0);
 }
 
 /**
  * You can't start a thread twice asynchronisly but you can do it synchronisly.
  */
-void dashee::test::Thread::testMultiStart()
+void dashee::test::Thread::testMultiStarts()
 {
-    this->thread = new Thread(donothing);
+    this->thread = new dashee::Thread(donothing);
     this->thread->start((void *)NULL);
     this->thread->join();
     CPPUNIT_ASSERT(true);
@@ -153,6 +114,8 @@ void dashee::test::Thread::testMultiStart()
     this->thread->start((void *)NULL);
     this->thread->join();
     CPPUNIT_ASSERT(true);
+
+    delete this->thread;
 }   
 
 /**
@@ -160,7 +123,7 @@ void dashee::test::Thread::testMultiStart()
  */
 void dashee::test::Thread::testSelfCall()
 {
-    this->thread = new Thread(callSelf);
+    this->thread = new dashee::Thread(callSelf);
     this->thread->start((void *)NULL);
     this->thread->join();
 }
@@ -170,7 +133,7 @@ void dashee::test::Thread::testSelfCall()
  */
 void dashee::test::Thread::testExits()
 {
-    this->thread = new Thread(callExit);
+    this->thread = new dashee::Thread(callExit);
     this->thread->start((void *)NULL);
     this->thread->join();
 }
@@ -181,18 +144,10 @@ void dashee::test::Thread::testExits()
  */
 void dashee::test::Thread::testCallingOneStartOnly()
 {
-    this->thread = new Thread(donothing);
+    this->thread = new dashee::Thread(donothing);
     this->thread->start((void *)NULL);
     this->thread->start((void *)NULL);
     this->thread->join();
-}
-
-/**
- * Calling exit on non threads is not allowed
- */
-void dashee::test::Thread::testCallingExitOnNotathread()
-{
-    Thread::exit();
 }
 
 /**
@@ -200,7 +155,7 @@ void dashee::test::Thread::testCallingExitOnNotathread()
  */
 void dashee::test::Thread::testCallingJoinOnAStopedThread()
 {
-    this->thread = new Thread(donothing);
+    this->thread = new dashee::Thread(donothing);
     this->thread->join();
 }
 

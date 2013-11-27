@@ -37,17 +37,17 @@ namespace dashee
 
 	// Variables to control global thread run state, usefull 
 	// to flag threads to stop
-	volatile bool RUN = false;
-	pthread_mutex_t mutexRUN = PTHREAD_MUTEX_INITIALIZER;
+	extern volatile bool RUN;
+	extern pthread_mutex_t mutexRUN;
 
 	// Some function usefull for testing
 	void * donothing(void *);
 	void * waitTillExit(void *);
 	void * doN(void * N);
-	void * callSelf();
+	void * callSelf(void *);
 	void * callExit(void *);
     }
-}   
+}
 
 /**
  * GPIO test class for
@@ -59,12 +59,12 @@ class dashee::test::Thread : public CppUnit::TestFixture
     
     // Test Joining as well as detached thread is sort of hard to test, 
     // thoughts an ideas please do all
-    CPPUNIT_TEST(testThread);
+    CPPUNIT_TEST(testWorking);
     
+    // Test to see multiple starts of the same thread work
     CPPUNIT_TEST(testMultiStarts);
 
     // Some generic functions to tests, see definition description
-    CPPUNIT_TEST(testPoolSize);
     CPPUNIT_TEST(testSelfCall);
     CPPUNIT_TEST(testExits);
 
@@ -72,12 +72,6 @@ class dashee::test::Thread : public CppUnit::TestFixture
     CPPUNIT_TEST_EXCEPTION(
 	    testCallingOneStartOnly, 
 	    ExceptionThreadNorestart
-	);
-
-    // Calling exit on main is bad
-    CPPUNIT_TEST_EXCEPTION(
-	    testCallingExitOnNotathread, 
-	    ExceptionThreadNotathread
 	);
     
     // Joining a thread that is not started, dont be a fool
@@ -93,12 +87,11 @@ private:
 
 protected:
     void testWorking();
-    void testPoolSize();
+    void testMultiStarts();
     void testSelfCall();
     void testExits();
 
     void testCallingOneStartOnly();
-    void testCallingExitOnNotathread();
     void testCallingJoinOnAStopedThread();
 
 public:

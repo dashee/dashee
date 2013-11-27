@@ -44,9 +44,6 @@ void dashee::Thread::start(void * parameter_to_entry_function)
                 (parameter_to_entry_function)
             );
 
-    // Insert into the pool, It will update this every time, if it already
-    pool.insert(Threads::pair(*(this->thread), this));
-
     // Handle the return value of the function
     switch (retval)
     {
@@ -130,64 +127,29 @@ void dashee::Thread::join()
 }
 
 /**
- * This is a handy function which calls pthread_self, and looks in the running
- * map to return the Thread pointer to the object this thread id belongs to.
+ * Calls a pthread_self
  *
- * @returns Thread pointer to the object, or NULL if not found
+ * @returns threadid
  */
-dashee::Thread * dashee::Thread::self()
+pthread_t dashee::Thread::self()
 {
-    Threads::map::iterator it = pool.find(pthread_self());
-
-    if (it == pool.end())
-        return NULL;
-
-    return it->second;
+    return pthread_self();
 }
 
 /**
- * Exit our running thread. But make sure the call is ran inside
- * its own called thread. you cannot call exit on a thread from another process
+ * Exit the current thread, by calling pthread_exit;
  *
  * @param retval Pass a parameter through to join
- *
- * @throws ExceptionThreadNotathread If called on a non thread, should not be 
- *  allowed
  */
 void dashee::Thread::exit(int retval)
 {
-    if (Thread::self() == NULL)
-        throw ExceptionThreadNotathread(
-                "You cannot call exit on an unknown thread"
-            );
-
     pthread_exit(&retval);
 }
 
 /**
- * Returns the size of the pool
- *
- * @returns The size of the current pool
- */
-size_t dashee::Thread::size()
-{
-    return pool.size();
-}   
-
-/**
- * Destruct our object cleanly, first remove it from the pool of threads
- * which is heald internally in a map variable, second delete the thread
- * variable
+ * Destroy new variables
  */
 dashee::Thread::~Thread()
 {
-    // If it was never started, the value here should be 0
-    if (this->thread != NULL)
-        pool.erase(*(this->thread));
-
     delete this->thread;
 }
-
-// Initilize our pool, Dont really need this but good practice
-dashee::Threads::map dashee::Thread::pool 
-    = dashee::Threads::map();

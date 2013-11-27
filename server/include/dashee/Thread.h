@@ -34,12 +34,6 @@
 namespace dashee
 {
     class Thread;
-
-    namespace Threads
-    {
-        typedef std::map<pthread_t, Thread *> map;
-        typedef std::pair<pthread_t, Thread *> pair;
-    }
 }
 
 /**
@@ -53,8 +47,6 @@ namespace dashee
 class dashee::Thread
 {
 private:
-
-    static Threads::map pool;
 
     /**
      * The pointer to the entry point function.
@@ -84,14 +76,10 @@ public:
     // Joining the thread
     void join();
 
-    // Static function to return the pointer to the self thread
-    static Thread * self();
+    static pthread_t self();
 
     // Call exit on a thread, usefull for external calls
     static void exit(int retval = 0);
-
-    // Return the size of the current pool
-    static size_t size();
 
     // Destruct the thread
     ~Thread();
