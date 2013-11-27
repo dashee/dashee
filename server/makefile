@@ -46,7 +46,7 @@ libraries: $(LIBRARIES)
 release: $(BINARIES) $(LIBRARIES)
 
 # A helpfull function for debug configurations
-debug: CFLAGS:=-g -DDEBUG $(CFLAGS) -pthread
+debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
 debug: LFLAGS:=-g -DDEBUG $(LFLAGS) -pthread
 debug: test $(BINARIES)
 

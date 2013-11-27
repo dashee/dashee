@@ -26,15 +26,20 @@
 #include <map>
 
 #include <dashee/common.h>
+#include <dashee/Log.h>
 #include <dashee/Exception/Thread.h>
 #include <dashee/Exception/Thread/Norestart.h>
+#include <dashee/Exception/Thread/Notathread.h>
 
 namespace dashee
 {
     class Thread;
 
-    typedef std::map<pthread_t, Thread *> ThreadMap;
-    typedef std::pair<pthread_t, Thread *> ThreadPair;
+    namespace Threads
+    {
+        typedef std::map<pthread_t, Thread *> map;
+        typedef std::pair<pthread_t, Thread *> pair;
+    }
 }
 
 /**
@@ -49,7 +54,7 @@ class dashee::Thread
 {
 private:
 
-    static ThreadMap pool;
+    static Threads::map pool;
 
     /**
      * The pointer to the entry point function.
@@ -61,11 +66,6 @@ private:
      * current object represents
      */
     pthread_t * thread;
-
-    /**
-     * Flag that holds the paused state
-     */
-    bool paused;
 
     /**
      * Boolean which holds start flag, we dont want to call pthread_create 
@@ -88,8 +88,12 @@ public:
     static Thread * self();
 
     // Call exit on a thread, usefull for external calls
-    void exit(int retval = 0);
+    static void exit(int retval = 0);
 
+    // Return the size of the current pool
+    static size_t size();
+
+    // Destruct the thread
     ~Thread();
 };
 

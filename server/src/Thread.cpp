@@ -7,9 +7,8 @@
  */
 dashee::Thread::Thread(void * (*thread_entry_function)(void *))
 {
-    this->thread = NULL;
     this->thread_entry_function = thread_entry_function;
-    this->paused = true;
+    this->thread = new pthread_t();
     this->started = false;
 }
 
@@ -25,7 +24,7 @@ dashee::Thread::Thread(void * (*thread_entry_function)(void *))
  * @param parameter_to_entry_function the pointer to the object that the entry
  *  function uses to perform its actions
  *
- * @throws ExceptionThreadNoRestart When the thread has already been started, 
+ * @throws ExceptionThreadNorestart When the thread has already been started, 
  *  it must be killed by calling exit() before it can be called again
  * @throws ExceptionThread When pthread_create fails
  */
@@ -33,7 +32,7 @@ void dashee::Thread::start(void * parameter_to_entry_function)
 {
     // Ensure it is not already running
     if (this->started)
-        throw ExceptionThreadNoRestart(
+        throw ExceptionThreadNorestart(
                 "Thread must be killed before restarting, "
                 "try Thread::exit() and Thread::start(void *)"
             );
@@ -41,12 +40,12 @@ void dashee::Thread::start(void * parameter_to_entry_function)
     int retval = pthread_create(
                 this->thread, 
                 NULL, 
-                this->thread_entry_function, 
-                reinterpret_cast<void *>(parameter_to_entry_function)
+                thread_entry_function, 
+                (parameter_to_entry_function)
             );
 
-    // Insert into the pool
-    pool.insert(ThreadPair(*(this->thread), this));
+    // Insert into the pool, It will update this every time, if it already
+    pool.insert(Threads::pair(*(this->thread), this));
 
     // Handle the return value of the function
     switch (retval)
@@ -88,15 +87,24 @@ void dashee::Thread::start(void * parameter_to_entry_function)
  * Caller to wait for the thread to finish.
  *
  * For more see pthread_join
+ *
+ * @returns int value of pthread_join return
+ *
+ * @throws ExceptionThread If a non 0 pthread value was returned
  */
 void dashee::Thread::join()
 {
-    int retval = pthread_join(*(this->thread), NULL);
+    if (!this->started)
+        throw ExceptionThread("Cannot join a stoped thread.");
+
+    int ec = pthread_join(*(this->thread), NULL);
+            
+    this->started = false;
 
     // Handle the return value of the function
-    switch (retval)
+    switch (ec)
     {
-        // All is well
+        // All is well, do some cleanup
         case 0:
             return;
             break;
@@ -115,8 +123,7 @@ void dashee::Thread::join()
         // This should not happen
         default:
             throw ExceptionThread(
-                    "Exit code came back with " + 
-                    dashee::itostr(retval)
+                    "Exit code came back with '" + dashee::itostr(ec) + "'."
                 );
             break;
     }
@@ -126,40 +133,61 @@ void dashee::Thread::join()
  * This is a handy function which calls pthread_self, and looks in the running
  * map to return the Thread pointer to the object this thread id belongs to.
  *
- * @returns Thread pointer to the object
+ * @returns Thread pointer to the object, or NULL if not found
  */
 dashee::Thread * dashee::Thread::self()
 {
-    ThreadMap::iterator it = pool.find(pthread_self());
+    Threads::map::iterator it = pool.find(pthread_self());
 
-    if (it != pool.end())
-        return it->second;
-        
-    return NULL;
+    if (it == pool.end())
+        return NULL;
+
+    return it->second;
 }
 
 /**
- * Exit our running thread
+ * Exit our running thread. But make sure the call is ran inside
+ * its own called thread. you cannot call exit on a thread from another process
  *
  * @param retval Pass a parameter through to join
+ *
+ * @throws ExceptionThreadNotathread If called on a non thread, should not be 
+ *  allowed
  */
 void dashee::Thread::exit(int retval)
 {
+    if (Thread::self() == NULL)
+        throw ExceptionThreadNotathread(
+                "You cannot call exit on an unknown thread"
+            );
+
     pthread_exit(&retval);
-    pool.erase(*(this->thread));
-    this->started = false;
-    this->paused = false;
-    this->thread = NULL;
 }
 
 /**
- * Destruct our object cleanly
+ * Returns the size of the pool
+ *
+ * @returns The size of the current pool
+ */
+size_t dashee::Thread::size()
+{
+    return pool.size();
+}   
+
+/**
+ * Destruct our object cleanly, first remove it from the pool of threads
+ * which is heald internally in a map variable, second delete the thread
+ * variable
  */
 dashee::Thread::~Thread()
 {
-    this->exit(0);
+    // If it was never started, the value here should be 0
+    if (this->thread != NULL)
+        pool.erase(*(this->thread));
+
+    delete this->thread;
 }
 
-// Initilize our pool
-dashee::ThreadMap dashee::Thread::pool 
-    = dashee::ThreadMap();
+// Initilize our pool, Dont really need this but good practice
+dashee::Threads::map dashee::Thread::pool 
+    = dashee::Threads::map();

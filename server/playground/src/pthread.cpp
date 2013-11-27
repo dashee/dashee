@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <dashee/Thread.h>
+
 pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
 
 int x = 0;
@@ -11,17 +13,18 @@ void * work(void * ptr);
 
 int main()
 {
-    pthread_t t1, t2;
+    dashee::Thread t1(work);
+    dashee::Thread t2(work);
     int returnt1, returnt2;
 
     std::string * t1name = new std::string("t1");
     std::string * t2name = new std::string("t2");
 
-    pthread_create(&t1, NULL, work, reinterpret_cast<void *>(t1name));
-    pthread_create(&t2, NULL, work, reinterpret_cast<void *>(t2name));
+    t1.start(reinterpret_cast<void *>(t1name));
+    t2.start(reinterpret_cast<void *>(t2name));
 
-    pthread_join(t1, NULL);
-    pthread_join(t2, NULL);
+    t1.join();
+    t2.join();
 
     delete t1name;
     delete t2name;
@@ -41,6 +44,6 @@ void * work(void * ptr)
             " changing x to " << x << std::endl;
 	pthread_mutex_unlock(&m1);
 
-	usleep(rand() % 1000000);
+	usleep(rand() % 10000);
     }
 }
