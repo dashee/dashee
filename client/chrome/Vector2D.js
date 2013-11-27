@@ -88,7 +88,6 @@
         *****/
         that.add = function(in_vector) {
             var newVector = Vector2D({x:that.x + in_vector.x, y:that.y + in_vector.y});
-            console.log(newVector);
             return newVector;
         };
 
