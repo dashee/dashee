@@ -16,24 +16,8 @@ int main()
     std::string * t1name = new std::string("t1");
     std::string * t2name = new std::string("t2");
 
-    pthread_t t1;
-    pthread_t t2;
-
-    pthread_create(&t1, NULL, work, reinterpret_cast<void *>(t1name));
-    pthread_create(&t2, NULL, work, reinterpret_cast<void *>(t1name));
-
-    pthread_join(t1, NULL);
-    pthread_join(t2, NULL);
-
-    std::cout << "Thread t1 id: " << t1 << std::endl;
-    std::cout << "Thread t2 id: " << t2 << std::endl;
-
-
-    /**
     dashee::Thread t1(work);
     dashee::Thread t2(work);
-    int returnt1, returnt2;
-
 
     t1.start(reinterpret_cast<void *>(t1name));
     t2.start(reinterpret_cast<void *>(t2name));
@@ -41,8 +25,6 @@ int main()
     t1.join();
     t2.join();
 
-    */
-    
     delete t1name;
     delete t2name;
 
