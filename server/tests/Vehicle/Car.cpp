@@ -30,20 +30,20 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
     {
 	this->vehicle->setThrottle(x);
 	CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
-	sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     for (int x = 255; x >= 0; x--)
     {
 	this->vehicle->setThrottle(x);
 	CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
-        sleep();
+        dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     // Reset the throttle
     this->vehicle->setThrottle(0);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 }
 
 /**

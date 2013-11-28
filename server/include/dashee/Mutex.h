@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Mutex.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,53 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_MUTEX_H_
+#define DASHEE_MUTEX_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <pthread.h>
+#include <dashee/Exception/Mutex.h>
+#include <dashee/common.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class Mutex;
 }
 
+/**
+ * Mutex class.
+ *
+ * This class is designed to create locks and release locks on mutex variables.
+ * This mainly encapsulates the pthread_mutex_ API calls
+ */ 
+class dashee::Mutex
+{
+private:
+
+    /**
+     * The mutex handler.
+     */
+    pthread_mutex_t * mutex;
+
+    /**
+     * The mutex attributes
+     */
+    pthread_mutexattr_t * attr;
+
+
+public:
+
+    // New instance of the thread
+    Mutex();
+    
+    void lock();
+    void unlock();
+
+    // If you are feeling board, do implement
+    bool trylock(int ntimes = 0, int npause = 0);
+    
+    // Destruct the thread
+    ~Mutex();
+};
+
 #endif
+

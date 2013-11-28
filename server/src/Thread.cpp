@@ -37,7 +37,7 @@ void dashee::Thread::start(void * parameter_to_entry_function)
                 "try Thread::exit() and Thread::start(void *)"
             );
 
-    int retval = pthread_create(
+    int ec = pthread_create(
                 this->thread, 
                 NULL, 
                 thread_entry_function, 
@@ -45,7 +45,7 @@ void dashee::Thread::start(void * parameter_to_entry_function)
             );
 
     // Handle the return value of the function
-    switch (retval)
+    switch (ec)
     {
         // All is well
         case 0:
@@ -73,8 +73,8 @@ void dashee::Thread::start(void * parameter_to_entry_function)
         // This should not happen
         default:
             throw ExceptionThread(
-                    "Unknown error in Thread::start post pthread_create, "
-                    "This should not happen!"
+                    "Unknown error in Thread::start ec='" + 
+                    dashee::itostr(ec) + "'. This should not happen!"
                 );
             break;
     }

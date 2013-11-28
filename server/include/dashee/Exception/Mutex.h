@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Exception/Mutex.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,29 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_EXCEPTION_MUTEX_H_
+#define DASHEE_EXCEPTION_MUTEX_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class ExceptionMutex;
 }
 
+class dashee::ExceptionMutex: public dashee::Exception
+{
+public:
+    explicit ExceptionMutex() : Exception()
+    {
+    }
+    explicit ExceptionMutex(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionMutex(std::string msg) : Exception(msg)
+    { 
+    }
+};
+
 #endif
+

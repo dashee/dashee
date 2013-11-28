@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/Config.h
+ * @file include/dashee/Exception/Thread.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -44,4 +44,3 @@ public:
 };
 
 #endif
-

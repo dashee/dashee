@@ -75,3 +75,17 @@ bool dashee::fexists(const char * filename)
     struct stat buffer;   
     return (stat (filename, &buffer) == 0); 
 }
+
+/**
+ * Call usleep only if timeout is greater than 0
+ *
+ * @param timeout the Number of microseconds to timeoutfor
+ */
+void dashee::sleep(const unsigned int timeout)
+{
+    if (timeout == 0)
+        return;
+
+    usleep(timeout);
+}
+

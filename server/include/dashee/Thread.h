@@ -23,10 +23,8 @@
 #define DASHEE_THREAD_H_
 
 #include <pthread.h>
-#include <map>
 
 #include <dashee/common.h>
-#include <dashee/Log.h>
 #include <dashee/Exception/Thread.h>
 #include <dashee/Exception/Thread/Norestart.h>
 #include <dashee/Exception/Thread/Notathread.h>

@@ -33,14 +33,14 @@ void dashee::test::ServoController::testSetAndGetTarget()
         {
             this->servoController->setTarget(servos, x);
             CPPUNIT_ASSERT(this->servoController->getTarget(servos) == x);
-            sleep(timeout);
+	    dashee::sleep(timeout);
         }
 	for (unsigned short int x = 255; x > 0; --x)
 	{
             this->servoController->setTarget(servos, x);
             CPPUNIT_ASSERT(this->servoController->getTarget(servos) == x);
 
-	    dashee::test::sleep(timeout);
+	    dashee::sleep(timeout);
 	}
     }
 }

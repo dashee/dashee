@@ -4,8 +4,10 @@
 #include <unistd.h>
 
 #include <dashee/Thread.h>
+#include <dashee/Mutex.h>
 
-pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
+dashee::Mutex m1;
+dashee::Mutex m2;
 
 int x = 0;
 
@@ -35,14 +37,16 @@ int main()
 
 void * work(void * ptr)
 {
-    for (int c = 0; c < 100 && x < 100; c++)
+    for (int c = 0; c < 1000 && x < 1000; c++)
     {
-	pthread_mutex_lock(&m1);
+        m1.lock();
         x++;
-	std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
+        m2.lock();
+        std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
             " changing x to " << x << std::endl;
-	pthread_mutex_unlock(&m1);
+        m2.unlock();
+        m1.unlock();
 
-	usleep(rand() % 10000);
+	usleep(rand() % 1000);
     }
 }

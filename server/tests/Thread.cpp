@@ -1,7 +1,7 @@
 #include "Thread.h"
 
 volatile bool dashee::test::RUN = false;
-pthread_mutex_t dashee::test::mutexRUN = PTHREAD_MUTEX_INITIALIZER;
+dashee::Mutex dashee::test::mutexRUN = Mutex();
 
 /**
  * Dummy function which does nothing and returns
@@ -23,9 +23,10 @@ void * dashee::test::waitTillExit(void * nothing)
 {
     while (true)
     {
-	pthread_mutex_lock(&mutexRUN);
-	if (RUN == false) break;
-	pthread_mutex_unlock(&mutexRUN);
+	mutexRUN.lock();
+	if (RUN == false) 
+	    break;
+	mutexRUN.unlock();
 
 	sleep(100);
     }
@@ -42,9 +43,9 @@ void * dashee::test::doN(void * N)
 {
     for (int x = 0; x < *(reinterpret_cast<int *>(N)); x++)
     {
-	pthread_mutex_lock(&mutexRUN);
+	mutexRUN.lock();
 	if (RUN == false) break;
-	pthread_mutex_unlock(&mutexRUN);
+	mutexRUN.lock();
 
 	sleep(100);
     }
@@ -167,7 +168,7 @@ void dashee::test::Thread::testCallingJoinOnAStopedThread()
  */ 
 void dashee::test::Thread::tearDown()
 {
-    pthread_mutex_lock(&mutexRUN);
+    mutexRUN.lock();
     RUN = false;
-    pthread_mutex_unlock(&mutexRUN);
+    mutexRUN.unlock();
 }

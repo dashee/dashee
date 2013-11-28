@@ -30,7 +30,7 @@ $(BINDIR)/ps3HexDump: src/ps3HexDump.sh | $(BINDIR)
 	install --mode=770 $< $@
 
 $(BINDIR)/pthread: src/pthread.cpp | $(BINDIR) $(LIBDIR)
-	$(CC) -g -I../include -L$(LIBDIR) -pthread $< -o $@ -ldashee
+	$(CC) -g -I../include -L$(LIBDIR) $< -o $@ -ldashee
 
 clean:
 	@$(RM) $(BINDIR)
