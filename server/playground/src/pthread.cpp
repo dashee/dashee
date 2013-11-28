@@ -4,10 +4,10 @@
 #include <unistd.h>
 
 #include <dashee/Thread.h>
-#include <dashee/Mutex.h>
+#include <dashee/Lock/Mutex.h>
 
-dashee::Mutex m1;
-dashee::Mutex m2;
+dashee::LockMutex m1;
+dashee::LockMutex m2;
 
 int x = 0;
 

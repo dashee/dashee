@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Mutex.h
+ * @file include/dashee/Lock/Mutex.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,16 +19,14 @@
  * project site for more details
  */
 
-#ifndef DASHEE_MUTEX_H_
-#define DASHEE_MUTEX_H_
+#ifndef DASHEE_LOCK_MUTEX_H_
+#define DASHEE_LOCK_MUTEX_H_
 
-#include <pthread.h>
-#include <dashee/Exception/Mutex.h>
-#include <dashee/common.h>
+#include <dashee/Lock.h>
 
 namespace dashee
 {
-    class Mutex;
+    class LockMutex;
 }
 
 /**
@@ -37,7 +35,7 @@ namespace dashee
  * This class is designed to create locks and release locks on mutex variables.
  * This mainly encapsulates the pthread_mutex_ API calls
  */ 
-class dashee::Mutex
+class dashee::LockMutex : public dashee::Lock
 {
 private:
 
@@ -55,7 +53,7 @@ private:
 public:
 
     // New instance of the thread
-    Mutex();
+    LockMutex();
     
     void lock();
     void unlock();
@@ -64,7 +62,7 @@ public:
     bool trylock(int ntimes = 0, int npause = 0);
     
     // Destruct the thread
-    ~Mutex();
+    ~LockMutex();
 };
 
 #endif

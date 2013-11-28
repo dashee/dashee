@@ -1,9 +1,9 @@
-#include <dashee/Mutex.h>
+#include <dashee/Lock/Mutex.h>
 
 /**
  * Contruct our Mutex
  */
-dashee::Mutex::Mutex()
+dashee::LockMutex::LockMutex()
 {
     this->mutex = new pthread_mutex_t();
     this->attr = NULL;
@@ -12,7 +12,7 @@ dashee::Mutex::Mutex()
     // absolutly die die die
     int ec = pthread_mutex_init(this->mutex, this->attr);
     if (ec != 0)
-	throw ExceptionMutex(
+	throw ExceptionLock(
 		"Error Initilizing Mutex, ec='" + 
 		dashee::itostr(ec) + "'. This should not happen!"
 	    );
@@ -21,9 +21,9 @@ dashee::Mutex::Mutex()
 /**
  * Lock our mutex.
  *
- * @throws ExceptionMutex If exit code is not 0
+ * @throws ExceptionLock If exit code is not 0
  */
-void dashee::Mutex::lock()
+void dashee::LockMutex::lock()
 {
     int ec = pthread_mutex_lock(this->mutex);
 
@@ -33,20 +33,20 @@ void dashee::Mutex::lock()
 	    return;
 	    break;
 	case EINVAL:
-	    throw ExceptionMutex(
+	    throw ExceptionLock(
 		    "EINVAL thrown when locking, see man page for details."
 		);
 	    break;
 	case EAGAIN:
-	    throw ExceptionMutex("Max number of Mutex locks reached.");
+	    throw ExceptionLock("Max number of Mutex locks reached.");
 	    break;
 	case EDEADLK:
-	    throw ExceptionMutex(
+	    throw ExceptionLock(
 		    "Cannot double lock the same mutex in one thread."
 		);
 	    break;
 	default:
-            throw ExceptionMutex(
+            throw ExceptionLock(
                     "Unknown error in Mutex::lock, ec='" + 
 		    dashee::itostr(ec) + "'. This should not happen!"
                 );
@@ -63,7 +63,7 @@ void dashee::Mutex::lock()
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
-bool dashee::Mutex::trylock(int ntimes, int npause)
+bool dashee::LockMutex::trylock(int ntimes, int npause)
 {
     int n = 0;
     int ec;
@@ -91,16 +91,16 @@ bool dashee::Mutex::trylock(int ntimes, int npause)
 	switch (ec)
 	{
 	    case EINVAL:
-		throw ExceptionMutex(
+		throw ExceptionLock(
 			"EINVAL thrown when trying lock, see man page for "
 			"details."
 		    );
 		break;
 	    case EAGAIN:
-		throw ExceptionMutex("Max number of Mutex locks reached.");
+		throw ExceptionLock("Max number of Mutex locks reached.");
 		break;
 	    default:
-		throw ExceptionMutex(
+		throw ExceptionLock(
 			"Unknown error in Mutex::trylock, ec='" + 
 			dashee::itostr(ec) + "'. This should not happen!"
 		    );
@@ -114,9 +114,9 @@ bool dashee::Mutex::trylock(int ntimes, int npause)
 /**
  * Unlock our mutex.
  *
- * @throws ExceptionMutex If exit code is not 0
+ * @throws ExceptionLock If exit code is not 0
  */
-void dashee::Mutex::unlock()
+void dashee::LockMutex::unlock()
 {
     int ec = pthread_mutex_unlock(this->mutex);
 
@@ -126,22 +126,22 @@ void dashee::Mutex::unlock()
 	    return;
 	    break;
 	case EINVAL:
-	    throw ExceptionMutex(
+	    throw ExceptionLock(
 		    "EINVAL thrown when locking, see man page for details."
 		);
 	    break;
 	case EAGAIN:
-	    throw ExceptionMutex("Max number of Mutex locks reached.");
+	    throw ExceptionLock("Max number of Mutex locks reached.");
 	    break;
 	case EPERM:
-	    throw ExceptionMutex(
+	    throw ExceptionLock(
 		    "Cannot unlock neighbours mutex, Mutex must be owned by "
 		    "this thread by using Mutex::lock before Mutex::unlock can "
 		    "be called"
 		);
 	    break;
 	default:
-            throw ExceptionMutex(
+            throw ExceptionLock(
                     "Unknown error in Mutex::unlock, ec='" + 
 		    dashee::itostr(ec) + "'. This should not happen!"
                 );
@@ -153,7 +153,7 @@ void dashee::Mutex::unlock()
 /**
  * Delete our mutex
  */
-dashee::Mutex::~Mutex()
+dashee::LockMutex::~LockMutex()
 {
     pthread_mutex_destroy(this->mutex);
     delete this->mutex;

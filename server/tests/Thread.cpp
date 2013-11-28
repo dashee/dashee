@@ -1,7 +1,7 @@
 #include "Thread.h"
 
 volatile bool dashee::test::RUN = false;
-dashee::Mutex dashee::test::mutexRUN = Mutex();
+dashee::LockMutex dashee::test::mutexRUN = LockMutex();
 
 /**
  * Dummy function which does nothing and returns

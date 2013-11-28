@@ -24,7 +24,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Thread.h>
-#include <dashee/Mutex.h>
+#include <dashee/Lock/Mutex.h>
 #include "dashee.h"
 
 /*
@@ -39,7 +39,7 @@ namespace dashee
 	// Variables to control global thread run state, usefull 
 	// to flag threads to stop
 	extern volatile bool RUN;
-	extern dashee::Mutex mutexRUN;
+	extern dashee::LockMutex mutexRUN;
 
 	// Some function usefull for testing
 	void * donothing(void *);
