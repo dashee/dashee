@@ -14,6 +14,7 @@
 
         var server;
         var vehicle;
+        var curAutomation = automationForward();
 
         window.addEventListener("load", function() {
             console.log(" --- Create UDP Server");
@@ -40,9 +41,15 @@
             var secondsPassed = Math.round((curTime - startTime) / 1000);
             
             //Get current server commands
-            var serverCommands = server.getCommands();
+            var serverBuffer = server.getBufferBytes();
 
-            vehicle.update(serverCommands);
+            /*var commandsServer = {};
+            commandsServer.steering = (serverBuffer[1]);
+            commandsServer.throttle = (serverBuffer[2]);*/
+
+            var commandsServer = curAutomation.update();         
+
+            vehicle.update(commandsServer);
         }
 
         function animloop(){
@@ -53,6 +60,6 @@
         return that;
       };
       
-      mainControl = mainControl();
+      controller = mainControl();
 
 })();
