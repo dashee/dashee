@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+<<<<<<< HEAD
 #include <dashee/Thread.h>
 #include <dashee/Lock/Mutex.h>
 #include <dashee/Lock/ReadWrite.h>
@@ -12,11 +13,17 @@ dashee::LockReadWrite writeLock
     = dashee::LockReadWrite(dashee::LockReadWrite::LOCKTYPE_WRITE);
 
 int x = 0;
+=======
+pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
+
+int * x = new int(1);
+>>>>>>> master
 
 void * work(void * ptr);
 
 int main()
 {
+<<<<<<< HEAD
     std::string * t1name = new std::string("t1");
     std::string * t2name = new std::string("t2");
 
@@ -34,11 +41,26 @@ int main()
 
     std::cout << "Finishing things" << std::endl;
 
+=======
+    pthread_t t1, t2;
+    int returnt1, returnt2;
+
+    pthread_create(&t1, NULL, work, reinterpret_cast<void *>(x));
+    pthread_create(&t2, NULL, work, reinterpret_cast<void *>(x));
+
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    std::cout << "Finishing things" << std::endl;
+
+    delete x;
+>>>>>>> master
     return 0;
 }
 
 void * work(void * ptr)
 {
+<<<<<<< HEAD
     readLock.lock();
 
     for (int c = 0; c < 1000 && x < 1000; c++)
@@ -53,4 +75,17 @@ void * work(void * ptr)
     }
 
     readLock.unlock();
+=======
+    for (int c = 0; c < 10000; c++)
+    {
+	pthread_mutex_lock(&m1);
+	int * x = reinterpret_cast<int *>(ptr);
+
+	std::cout << "Value of x is " << *x << std::endl;
+	(*x)++;
+	pthread_mutex_unlock(&m1);
+
+	usleep(rand() % 100000);
+    }
+>>>>>>> master
 }

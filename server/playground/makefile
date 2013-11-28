@@ -29,8 +29,13 @@ $(BINDIR)/GPIO: src/GPIO.cpp | $(BINDIR)
 $(BINDIR)/ps3HexDump: src/ps3HexDump.sh | $(BINDIR)
 	install --mode=770 $< $@
 
+<<<<<<< HEAD
 $(BINDIR)/pthread: src/pthread.cpp | $(BINDIR) $(LIBDIR)
 	$(CC) -g -I../include -L$(LIBDIR) $< -o $@ -ldashee
+=======
+$(BINDIR)/pthread: src/pthread.cpp | $(BINDIR)
+	$(CC) -g -pthread $< -o $@
+>>>>>>> master
 
 clean:
 	@$(RM) $(BINDIR)
