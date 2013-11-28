@@ -6,12 +6,13 @@ body{
 }
 
 h1 {
-  width: 100%;
   line-height: 20px;
   padding: 20px 0;
   font-family: Arial, sans-serif;
   color: #fff;
   letter-spacing: -0.05em;
+  float: right;
+  display: block;
 }
 
 label{
@@ -19,37 +20,56 @@ label{
 	font-size: 14px;
 }
 
+
+#logo{
+  width:61px;
+  height:63px; 
+  position:absolute; 
+  top:20px; left:26px;
+  background:transparent url(dashee_options_pressed.png) no-repeat 0 0;
+}
+
 #car{
-  width:50px; 
-  height:85px; 
+  width:70px;
+  height:109px; 
   position:absolute; 
   top:100px; left:100px; 
-  background:#ccc; 
-  border:1px solid #555;
+}
+
+#car-img{
+  background:transparent url(car.png) no-repeat 0 0;
+  width:70px;
+  height:109px;
+  position: absolute;
+  top:0;
+  left:0;
+  z-index: 1;
 }
 
 #wheel-1, #wheel-2, #wheel-3, #wheel-4{
   width:8px; 
   height:20px; 
   position:absolute; 
-  top:2px; 
-  left:-1px; 
+  top: 9px;
+  left: 5px; 
   background:#444;
 }
 
 #wheel-2{
   left:auto;
-  right:-2px;
+  right:5px;
 }
 
 #wheel-3{
   top:auto;
-  bottom:2px;
+  left:auto;
+  left:6px;
+  bottom:7px;
 }
 
 #wheel-4{
   left:auto;
   top:auto;
-  right:-2px;
-  bottom: 2px;
+  right:6px;
+  bottom: 7px;
 }

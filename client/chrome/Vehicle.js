@@ -16,8 +16,8 @@
         var vehicleElement = document.getElementById('car');
         // Map between dashee steer values realistic wheel turns
         var steerMapping = rangeMapping(0,255,0,60);
-        var steerRightMapping = rangeMapping(128,255,0,1.0);
-        var steerLeftMapping = rangeMapping(0,128,-1.0,0);
+        var steerRightMapping = rangeMapping(128,255,0,.8);
+        var steerLeftMapping = rangeMapping(0,128,-.8,0);
         var powerMapping = rangeMapping(0,255,-3.5,3.5);
 
         //given commands update your position
@@ -46,10 +46,12 @@
 
         // Rotate the steering wheels to desired steer direction.
         function turnWheels(commands){
-            //console.log(commands.steering-128);
-            if(speed && commands.steering>136) carOrientation = carOrientation + steerRightMapping(commands.steering);
-            if(speed && commands.steering<120) carOrientation = carOrientation + steerLeftMapping(commands.steering);
-            
+            var changeOfOrientation = 0;
+            if(speed && commands.steering>136) changeOfOrientation = steerRightMapping(commands.steering);
+            if(speed && commands.steering<120) changeOfOrientation = steerLeftMapping(commands.steering);
+            if(speed<0) changeOfOrientation = changeOfOrientation * -1;
+            carOrientation = carOrientation + changeOfOrientation;
+
             vehicleElement.style.webkitTransform="rotate("+(carOrientation-90)+"deg)";
             
             var rotateWheelsBy = steerMapping(commands.steering)-30;
