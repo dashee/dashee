@@ -22,7 +22,7 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
     Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Thread.o Mutex.o)
+    Thread.o Lock/Mutex.o Lock/ReadWrite.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o Thread.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
     Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)

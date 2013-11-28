@@ -5,9 +5,11 @@
 
 #include <dashee/Thread.h>
 #include <dashee/Lock/Mutex.h>
+#include <dashee/Lock/ReadWrite.h>
 
-dashee::LockMutex m1;
-dashee::LockMutex m2;
+dashee::LockReadWrite readLock = dashee::LockReadWrite();
+dashee::LockReadWrite writeLock 
+    = dashee::LockReadWrite(dashee::LockReadWrite::LOCKTYPE_WRITE);
 
 int x = 0;
 
@@ -37,16 +39,18 @@ int main()
 
 void * work(void * ptr)
 {
+    readLock.lock();
+
     for (int c = 0; c < 1000 && x < 1000; c++)
     {
-        m1.lock();
+        writeLock.lock();
         x++;
-        m2.lock();
         std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
             " changing x to " << x << std::endl;
-        m2.unlock();
-        m1.unlock();
+        writeLock.unlock();
 
 	usleep(rand() % 1000);
     }
+
+    readLock.unlock();
 }

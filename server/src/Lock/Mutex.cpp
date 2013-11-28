@@ -13,7 +13,7 @@ dashee::LockMutex::LockMutex()
     int ec = pthread_mutex_init(this->mutex, this->attr);
     if (ec != 0)
 	throw ExceptionLock(
-		"Error Initilizing Mutex, ec='" + 
+		"Error Initilizing LockMutex, ec='" + 
 		dashee::itostr(ec) + "'. This should not happen!"
 	    );
 }
@@ -47,7 +47,7 @@ void dashee::LockMutex::lock()
 	    break;
 	default:
             throw ExceptionLock(
-                    "Unknown error in Mutex::lock, ec='" + 
+                    "Unknown error in LockMutex::lock, ec='" + 
 		    dashee::itostr(ec) + "'. This should not happen!"
                 );
             break;
@@ -101,7 +101,7 @@ bool dashee::LockMutex::trylock(int ntimes, int npause)
 		break;
 	    default:
 		throw ExceptionLock(
-			"Unknown error in Mutex::trylock, ec='" + 
+			"Unknown error in LockMutex::trylock, ec='" + 
 			dashee::itostr(ec) + "'. This should not happen!"
 		    );
 		break;
@@ -142,7 +142,7 @@ void dashee::LockMutex::unlock()
 	    break;
 	default:
             throw ExceptionLock(
-                    "Unknown error in Mutex::unlock, ec='" + 
+                    "Unknown error in LockMutex::unlock, ec='" + 
 		    dashee::itostr(ec) + "'. This should not happen!"
                 );
             break;
