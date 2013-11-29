@@ -2,16 +2,13 @@
 
 .download
 {
-    margin-bottom:37px;
-
-    &:last-child
-    {
-        margin-bottom:0px;
-    }
+    display:inline-block;
 
     .releases
     {
-        margin-bottom:50px;
+        width:894px;
+        width:400px;
+        float:left;
 
         .release
         {
@@ -27,8 +24,6 @@
             {
                 .tag
                 {
-                    font-family:Arial;
-                    font-weight:bold;
                 }
             }       
 
@@ -46,6 +41,11 @@
                 }
             }
         }
-
     }
+
+    .body
+    {
+        float:left;
+        width:494px;
+    }   
 }

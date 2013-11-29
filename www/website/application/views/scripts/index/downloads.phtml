@@ -7,14 +7,13 @@
 
 <div class='download'>
     <div class='releases'>
-
         <?php for ($x = 0; $x < count($this->releases); $x++): ?>
             <?php $release = $this->releases[$x]; ?>
 
             <div class='release'>
                 <h1 class='name'>
-                    <span class='tag'><?php print $release->tag_name; ?></span> 
                     <span class='name'><?php print $release->name; ?></span>
+                    <span class='tag'>(<?php print $release->tag_name; ?>)</span> 
                 </h1>
                 <ul class='small-text'>
                     <li><a href="<?php print $release->tarball_url ?>">.tar.gz</a></li>
@@ -33,5 +32,14 @@
             -->
 
         <?php endfor; ?>
+    </div>
+    <div class='body'>
+        <p>
+            <u>Relese Notes for 
+                <strong><?php print $this->releases[0]->name ?></strong>
+                <strong><?php print $this->releases[0]->tag_name ?></strong>
+            </u>
+        </p>
+        <div class='formatted'><?php print Markdown($this->releases[0]->body); ?></div>
     </div>
 </div>
