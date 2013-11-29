@@ -1,0 +1,36 @@
+@import "default";
+
+.issues
+{
+    .issue
+    {
+
+        margin-bottom:15px;
+
+        ul
+        {
+            margin-top:4px;
+            display:inline-block;
+            list-style:none;
+                    
+            font-size:0.9em;
+            font-family:Arial;
+
+            li
+            {
+                float:left;
+
+                margin-right:3px;
+
+                &.label
+                {
+                    padding: 0px 4px 0px 4px;
+                    border-radius:1px;
+                    font-size:0.9em;
+                    color:#FFF;
+                    text-shadow:1px 1px 0px rgba(0,0,0,0.1);
+                }
+            }
+        }       
+    }
+}

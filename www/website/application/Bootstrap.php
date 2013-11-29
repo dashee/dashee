@@ -134,6 +134,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 )
             ),
 
+            'issues' => new Zend_Controller_Router_Route_Regex(
+                '^(issues|issue|bugs|broken|help)$',
+                array(
+                    'controller' => 'index',
+                    'action' => 'issues'
+                )
+            ),
+
             'videos' => new Zend_Controller_Router_Route_Regex(
                 '^(videos|media)$',
                 array(

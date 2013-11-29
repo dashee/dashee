@@ -1,4 +1,5 @@
 @import "default";
+@import "formatted";
 
 .download
 {
@@ -6,19 +7,14 @@
 
     .releases
     {
-        width:894px;
         width:400px;
         float:left;
 
         .release
         {
-            &:first-child
-            {
-                h1.tag:after
-                {
-                    content:"(latest)";
-                }
-            }
+            width:100%;
+
+            text-align:right;
 
             h1
             {
@@ -36,14 +32,14 @@
 
                 li
                 {
-                    float:left;
-                    margin-right:15px;
+                    float:right;
+                    margin-left:15px;
                 }
             }
         }
     }
 
-    .body
+    > .info
     {
         float:left;
         width:494px;

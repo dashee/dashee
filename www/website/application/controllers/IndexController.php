@@ -72,4 +72,16 @@ class IndexController extends Zend_Controller_Action
     	$this->view->headTitle()->append("About");
     	$this->view->headLink()->appendStylesheet("/css/about.css");
     }
+
+    /**
+     * List of issues
+     */
+    public function issuesAction()
+    {
+    	$this->view->headTitle()->append("Issue tracking");
+    	$this->view->headLink()->appendStylesheet("/css/issues.css");
+        
+        $issues = new Application_Model_Git_Repos_Issues();
+        $this->view->issues = $issues->getAll();
+    }
 }

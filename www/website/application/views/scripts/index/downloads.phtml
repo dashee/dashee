@@ -1,11 +1,12 @@
-<!--
-<div id="download-latest" class="download">
-    <h3>Download latest working build.</h3>
-    <p>ARM Build X.X.XXX</p>
-</div>
--->
-
 <div class='download'>
+    <div class='info'>
+        <h2>
+            Relese notes for 
+                <strong><?php print $this->releases[0]->name ?></strong>
+                (<strong><?php print $this->releases[0]->tag_name ?></strong>)
+        </h2>
+        <div class='formatted'><?php print Markdown($this->releases[0]->body); ?></div>
+    </div>
     <div class='releases'>
         <?php for ($x = 0; $x < count($this->releases); $x++): ?>
             <?php $release = $this->releases[$x]; ?>
@@ -32,14 +33,5 @@
             -->
 
         <?php endfor; ?>
-    </div>
-    <div class='body'>
-        <p>
-            <u>Relese Notes for 
-                <strong><?php print $this->releases[0]->name ?></strong>
-                <strong><?php print $this->releases[0]->tag_name ?></strong>
-            </u>
-        </p>
-        <div class='formatted'><?php print Markdown($this->releases[0]->body); ?></div>
     </div>
 </div>

@@ -1,0 +1,27 @@
+<div class='issues'>
+
+<?php foreach ($this->issues as $issue): ?>
+    
+<div class='issue'>
+    <h3 >
+        <?php print $issue->title ?>
+    </h3>
+    <ul>
+        <?php foreach ($issue->labels as $label): ?>
+            <li class='label' style="background-color:#<?php print $label->color ?>">
+                <?php print $label->name ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+
+<?php endforeach; ?>
+
+    <!--
+    <pre>
+    <?php 
+        print_r($this->issues);  
+    ?>
+    </pre>
+    -->
+</div>
