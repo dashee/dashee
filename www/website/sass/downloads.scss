@@ -8,4 +8,44 @@
     {
         margin-bottom:0px;
     }
+
+    .releases
+    {
+        margin-bottom:50px;
+
+        .release
+        {
+            &:first-child
+            {
+                h1.tag:after
+                {
+                    content:"(latest)";
+                }
+            }
+
+            h1
+            {
+                .tag
+                {
+                    font-family:Arial;
+                    font-weight:bold;
+                }
+            }       
+
+            display:inline-block;
+
+            ul.small-text
+            {
+                display:inline-block;
+                list-style:none;
+
+                li
+                {
+                    float:left;
+                    margin-right:15px;
+                }
+            }
+        }
+
+    }
 }

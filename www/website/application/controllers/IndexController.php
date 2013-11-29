@@ -31,9 +31,7 @@ class IndexController extends Zend_Controller_Action
     	$this->view->headTitle()->append("Wiki");
         $this->view->headLink()->appendStylesheet("/css/wiki.css");
 
-        $ModelWiki = new Application_Model_Wiki();
-        $this->view->toc = $ModelWiki->getToc();
-        $this->view->page = $ModelWiki->getPage($this->_getParam('page', null));
+        throw new Local_Exception_Http_NotFound('Working on it, be back soon');
     }
 
     /** 
@@ -43,6 +41,9 @@ class IndexController extends Zend_Controller_Action
     {
     	$this->view->headTitle()->append("Downloads");
         $this->view->headLink()->appendStylesheet("/css/downloads.css");
+
+        $releases = new Application_Model_Git_Repos_Releases();
+        $this->view->releases = $releases->getAll();
     }
 
     /**

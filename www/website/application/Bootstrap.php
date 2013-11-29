@@ -14,7 +14,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->headMeta()->setName('KEYWORDS', 'Robots RC Linux Architecture');
         $view->headMeta()->setName('AUTHOR', 'Shahmir Javaid, David Buttar');
         $view->headMeta()->setName('RATING', 'General');      
-        $view->headMeta()->setName('viewport', 'width=device-width, initial-scale=1');
+        $view->headMeta()->setName(
+            'viewport', 
+            'width=device-width, initial-scale=1'
+        );
     }
 
     protected function _initNamespace()
@@ -25,23 +28,48 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
     protected function _initRegistry()
     {
-        Zend_Registry::set('wiki_extension', 'md');
-        Zend_Registry::set('wiki_toc', 'TableOfContent');
-        Zend_Registry::set('wiki_index', 'Index');
-        Zend_Registry::set('wiki_parser', 'Markdown');
+        $gitsettings = $this->getOptions();
+        if (!isset($gitsettings["gitsettings"]))
+            die(
+                "gitsettings variables not defined, " .
+                "see your `application.ini`."
+            );
+        $gitsettings = $gitsettings["gitsettings"];
 
-        $appsettings = $this->getOptions();
-        if (!isset($appsettings["appsettings"]))
-            die("appsettings variables not defined, see your `application.ini`.");
-        $appsettings = $appsettings["appsettings"];
+        if (!isset($gitsettings['owner']))
+            die(
+                "gitsetting.owner is not defined," . 
+                " see your `application.ini`."
+            );
 
-        if (!isset($appsettings["wiki_url"]))
-            die("appsettings.wiki_url is not defined, see your `application.ini`.");
-
-        foreach($appsettings as $key=>$value)
+        foreach($gitsettings as $key=>$value)
         {
-            Zend_Registry::set($key, $value);
+            Zend_Registry::set("gitsettings.$key", $value);
         }
+    }
+
+    /**
+     * Set the Zend_Cache
+     */ 
+    protected function _initCaching()
+    {
+        $frontend= array(
+            'lifetime' => 240,
+            'automatic_seralization' => true
+        );
+
+        $backend= array(
+            'cache_dir' => '/tmp/',
+        );
+
+        $cache = Zend_Cache::factory(
+            'core',
+            'File',
+            $frontend,
+            $backend
+        );
+
+        Zend_Registry::set('cache',$cache);
     }
     
     protected function _initRouter()
@@ -53,11 +81,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $route = array(
 
             /**
-             * This will ensure, that any unknown controllers are sent to the default controller
-             * which can deal with special requests accordingly, and reroute to the appropriate
-             * action. Dont use this as a fucking router, create a route for any actions,
-             * This action is responsible for throwing exceptions, and given the url it may throw 
-             * different exceptions
+             * This will ensure, that any unknown controllers are sent to the 
+             * default controller which can deal with special requests 
+             * accordingly, and reroute to the appropriate action. Dont use this
+             * as a fucking router, create a route for any actions, This action 
+             * is responsible for throwing exceptions, and given the url it may 
+             * throw different exceptions
              */
             'noroute' => new Zend_Controller_Router_Route(
                 '*',

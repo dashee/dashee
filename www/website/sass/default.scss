@@ -28,7 +28,11 @@ footer, header, nav, section, audio, video
     display: block;
 }
 
-a { text-decoration:none; }
+a 
+{ 
+    color:#000099;
+    text-decoration:none; 
+}
 
 a img {border: 0;}
 
@@ -168,12 +172,56 @@ nav
 
 #credits
 {
+
+    display:inline-block;
+
+    .git
+    {
+        display:inline-block;
+        float:left;
+        width:300px;
+        
+        .logo
+        {
+            float:left;
+            width:32px;
+            margin-right:5px;
+        }
+
+        .text
+        {
+            line-height:14px;
+            text-align:left;
+            float:left;
+
+            .info
+            {
+                padding-top:4px;
+                font-size:1.0em;
+                font-weight:bold;
+            }
+            .link
+            {
+                font-size:0.8em;
+            }
+        }
+    }
+
+    .copyright
+    {
+        width:596px;
+        float:right;
+
+        font-weight:bold;
+        padding-top:7px;
+
+        text-align:right;
+    }
+
     margin-top:100px;
     margin-bottom:20px;
 
     font-size:12px;
-
-    text-align:right;
 }
 
 
