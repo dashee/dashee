@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Exception/Thread.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,28 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_EXCEPTION_THREAD_H_
+#define DASHEE_EXCEPTION_THREAD_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class ExceptionThread;
 }
+
+class dashee::ExceptionThread: public dashee::Exception
+{
+public:
+    explicit ExceptionThread() : Exception()
+    {
+    }
+    explicit ExceptionThread(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionThread(std::string msg) : Exception(msg)
+    { 
+    }
+};
 
 #endif

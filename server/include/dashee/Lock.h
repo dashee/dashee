@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Lock.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,28 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_LOCK_H_
+#define DASHEE_LOCK_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <pthread.h>
+#include <dashee/common.h>
+#include <dashee/Exception/Lock.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class Lock;
 }
 
+/**
+ * Interface for Locking objects
+ */ 
+class dashee::Lock
+{
+public:
+    virtual void lock() = 0;
+    virtual void unlock() = 0;
+    virtual bool trylock(int ntimes = 0, int npause = 0) = 0;
+};
+
 #endif
+

@@ -47,16 +47,3 @@ int dashee::test::run()
     
     return collectedresults.wasSuccessful() ? 0 : 1;
 }
-
-/**
- * Call usleep only if timeout is greater than 0
- *
- * @param timeout the Number of microseconds to timeoutfor
- */
-void dashee::test::sleep(const unsigned int timeout)
-{
-    if (timeout == 0)
-        return;
-
-    usleep(timeout);
-}

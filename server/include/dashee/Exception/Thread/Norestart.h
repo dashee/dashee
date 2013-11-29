@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Exception/Thread/Norestart.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,28 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_EXCEPTION_THREAD_NORESTART_H_
+#define DASHEE_EXCEPTION_THREAD_NORESTART_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <dashee/Exception/Thread.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class ExceptionThreadNorestart;
 }
+
+class dashee::ExceptionThreadNorestart: public dashee::ExceptionThread
+{
+public:
+    explicit ExceptionThreadNorestart() : ExceptionThread()
+    {
+    }
+    explicit ExceptionThreadNorestart(const int ec) : ExceptionThread(ec)
+    { 
+    }
+    explicit ExceptionThreadNorestart(std::string msg) : ExceptionThread(msg)
+    { 
+    }
+};
 
 #endif

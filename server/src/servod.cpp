@@ -182,7 +182,11 @@ int main(int argc, char ** argv)
                 }
                 catch (dashee::ExceptionVehicle e)
                 {
-                    dashee::Log::warning(1, "caught(ExceptionMode): %s", e.what());
+                    dashee::Log::warning(
+                            1, 
+                            "caught(ExceptionMode): %s", 
+                            e.what()
+                        );
                     vehicle->fallback();
                 }
             }
@@ -252,7 +256,10 @@ dashee::Config * loadConfig(int argc, char ** argv)
     };
     int long_index = 0;
     
-    while((c = getopt_long(argc, argv, "c:p:v", long_options, &long_index)) != -1)
+    while(
+            (c = getopt_long(argc, argv, "c:p:v", long_options, &long_index)) 
+            != -1
+        )
     {
         // switch our c, if it is 0 then it uses the long options
         switch (c)
@@ -266,7 +273,10 @@ dashee::Config * loadConfig(int argc, char ** argv)
                 {
                     // Type of Servo
                     case 0:
-                        config->set("servotype", static_cast<int>(dashee::strtol(optarg)));
+                        config->set(
+                                "servotype", 
+                                static_cast<int>(dashee::strtol(optarg))
+                            );
                         break;
                     // Servo file path
                     case 1:
@@ -291,7 +301,9 @@ dashee::Config * loadConfig(int argc, char ** argv)
             // from its previous state
             case 'v':
                 if (optarg)
-                    dashee::Log::verbosity = dashee::strtol(optarg) == 0 ? 1 : dashee::strtol(optarg);
+                    dashee::Log::verbosity 
+                        = dashee::strtol(optarg) == 0 
+                            ? 1 : dashee::strtol(optarg);
                 else
                     dashee::Log::verbosity++;
                 break;
@@ -331,18 +343,21 @@ dashee::ServoController * loadServoController(dashee::Config * config)
     dashee::ServoController * servoController = NULL;
 
     const char * servo = config->get("servo", SERVOD_DEVICE);
-    unsigned int servoChannels = config->getUInt("servo-channels", SERVOD_CHANNELS);
+    unsigned int servoChannels 
+        = config->getUInt("servo-channels", SERVOD_CHANNELS);
 
     // Create a different servotype depending on the variable
     switch (config->getUInt("servotype", SERVOD_DEVICETYPE))
     {
         case 1:
             dashee::Log::info(1, "Loading UART device '%s'.", servo);
-            servoController = new dashee::ServoControllerUART(servo, servoChannels);
+            servoController 
+                = new dashee::ServoControllerUART(servo, servoChannels);
             break;
         case 2:
             dashee::Log::info(1, "Loading USB device '%s'.", servo);
-            servoController = new dashee::ServoControllerUSB(servo, servoChannels);
+            servoController 
+                = new dashee::ServoControllerUSB(servo, servoChannels);
             break;
         case 3:
             dashee::Log::info(1, "Loading Dummy device '%s'.", servo);

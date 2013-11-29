@@ -1,5 +1,5 @@
 /**
- * @file tests/ServoController.h
+ * @file include/dashee/Exception/Lock.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,25 +19,29 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_DASHEE_H_
-#define DASHEE_TEST_DASHEE_H_
+#ifndef DASHEE_EXCEPTION_LOCK_H_
+#define DASHEE_EXCEPTION_LOCK_H_
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestCase.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestResultCollector.h>
-
-#include <unistd.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    namespace test
-    {
-        int run();
-    }
+    class ExceptionLock;
 }
 
+class dashee::ExceptionLock: public dashee::Exception
+{
+public:
+    explicit ExceptionLock() : Exception()
+    {
+    }
+    explicit ExceptionLock(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionLock(std::string msg) : Exception(msg)
+    { 
+    }
+};
+
 #endif
+

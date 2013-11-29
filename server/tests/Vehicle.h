@@ -118,9 +118,6 @@ protected:
     
     dashee::Vehicle * vehicle;
 
-    // Sleep the servo
-    void sleep();
-
     // test set and get model variables
     void testSetAndGetServoController();
 

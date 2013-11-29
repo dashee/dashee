@@ -26,7 +26,7 @@ void dashee::test::Servo::testSetAndGetTarget()
         CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
         CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
 
-        dashee::test::sleep(timeout);
+        dashee::sleep(timeout);
     }
 
     for (unsigned short int x = 255; x > 0; --x)
@@ -35,7 +35,7 @@ void dashee::test::Servo::testSetAndGetTarget()
         CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
         CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
 
-        dashee::test::sleep(timeout);
+        dashee::sleep(timeout);
     }
 }
 

@@ -20,20 +20,6 @@ void dashee::test::Vehicle::setUp()
 }
 
 /**
- * Run a sleep. 
- *
- * Because usleep(0) seems to be slow regardless, so we
- * overwrite this functio
- */
-void dashee::test::Vehicle::sleep()
-{
-    if (VEHICLE_TIMEOUT == 0)
-        return;
-
-    usleep(VEHICLE_TIMEOUT);
-}
-
-/**
  * We can't really test this accuratly as only one handle
  * can be open to a servocontroller.
  *
@@ -61,19 +47,19 @@ void dashee::test::Vehicle::testSetAndGetPitch()
     {
 	this->vehicle->setPitch(x);
 	CPPUNIT_ASSERT(this->vehicle->getPitch() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     for (int x = 255; x >= 0; x--)
     {
 	this->vehicle->setPitch(x);
 	CPPUNIT_ASSERT(this->vehicle->getPitch() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     this->vehicle->setPitch(128);
     CPPUNIT_ASSERT(this->vehicle->getPitch() == 128);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 }
 
 /**
@@ -90,19 +76,19 @@ void dashee::test::Vehicle::testSetAndGetRoll()
     {
 	this->vehicle->setRoll(x);
 	CPPUNIT_ASSERT(this->vehicle->getRoll() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     for (int x = 255; x >= 0; x--)
     {
 	this->vehicle->setRoll(x);
 	CPPUNIT_ASSERT(this->vehicle->getRoll() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     this->vehicle->setRoll(128);
     CPPUNIT_ASSERT(this->vehicle->getRoll() == 128);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 }
 
 /**
@@ -119,19 +105,19 @@ void dashee::test::Vehicle::testSetAndGetYaw()
     {
 	this->vehicle->setYaw(x);
 	CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
 
     for (int x = 255; x >= 0; x--)
     {
 	this->vehicle->setYaw(x);
 	CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
 
     this->vehicle->setYaw(128);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 128);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 }
 
 /**
@@ -145,18 +131,18 @@ void dashee::test::Vehicle::testSetAndGetThrottle()
     {
 	this->vehicle->setThrottle(x);
 	CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
-        sleep();
+	dashee::sleep(VEHICLE_TIMEOUT);
     }
     
     // Reset the throttle
     this->vehicle->setThrottle(0);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 
     // Reset the throttle
     this->vehicle->setThrottle(0);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
-    sleep();
+    dashee::sleep(VEHICLE_TIMEOUT);
 }
 
 /**
@@ -185,7 +171,7 @@ void dashee::test::Vehicle::testSetAndGetPitchTrim()
 		    ) 
 		);
 	    CPPUNIT_ASSERT(this->vehicle->getPitch(true) == y);
-	    sleep();
+	    dashee::sleep(VEHICLE_TIMEOUT);
 	}
     }
 
@@ -219,7 +205,7 @@ void dashee::test::Vehicle::testSetAndGetRollTrim()
                     ) 
                 );
             CPPUNIT_ASSERT(this->vehicle->getRoll(true) == y);
-            sleep();
+            dashee::sleep(VEHICLE_TIMEOUT);
        }
     }
 
@@ -253,7 +239,7 @@ void dashee::test::Vehicle::testSetAndGetYawTrim()
                     ) 
                 );
             CPPUNIT_ASSERT(this->vehicle->getYaw(true) == y);
-            sleep();
+            dashee::sleep(VEHICLE_TIMEOUT);
        }
     }
 
@@ -287,7 +273,7 @@ void dashee::test::Vehicle::testSetAndGetThrottleTrim()
                     ) 
                 );
             CPPUNIT_ASSERT(this->vehicle->getThrottle(true) == y);
-            sleep();
+            dashee::sleep(VEHICLE_TIMEOUT);
        }
     }
 
@@ -372,7 +358,7 @@ void dashee::test::Vehicle::testFallbackAndRevert()
         CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
         CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
 
-        sleep();
+        dashee::sleep(VEHICLE_TIMEOUT);
     }
 }
 
