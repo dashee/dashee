@@ -17,8 +17,7 @@ class IndexController extends Zend_Controller_Action
     
     public function indexAction()
     {
-        $this->getResponse()->setRedirect("/wiki/");
-        return;
+    	$this->view->headTitle()->append("Autonomous remote control system");
         $this->view->headLink()->appendStylesheet("/css/index.css");
     }
 
@@ -30,8 +29,6 @@ class IndexController extends Zend_Controller_Action
     {
     	$this->view->headTitle()->append("Wiki");
         $this->view->headLink()->appendStylesheet("/css/wiki.css");
-
-        throw new Local_Exception_Http_NotFound('Working on it, be back soon');
     }
 
     /** 

@@ -127,7 +127,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             ),
 
             'downloads' => new Zend_Controller_Router_Route_Regex(
-                '^(code|svn|download|downloads)$',
+                '^(code|svn|git|download|downloads)$',
                 array(
                     'controller' => 'index',
                     'action' => 'downloads'
