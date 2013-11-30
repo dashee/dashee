@@ -22,7 +22,7 @@
 #ifndef DASHEE_THREADS_EXCEPTION_LOCK_H_
 #define DASHEE_THREADS_EXCEPTION_LOCK_H_
 
-#include <dashee/Exception.h>
+#include <dashee/Threads/Exception.h>
 
 namespace dashee
 {
@@ -32,7 +32,7 @@ namespace dashee
     }
 }
 
-class dashee::Threads::ExceptionLock: public dashee::Exception
+class dashee::Threads::ExceptionLock: public dashee::Threads::Exception
 {
 public:
     explicit ExceptionLock() : Exception()

@@ -41,18 +41,26 @@ int main()
 
 void * work(void * ptr)
 {
-    readLock.lock();
-
-    for (int c = 0; c < 1000 && x < 1000; c++)
+    try
     {
-        writeLock.lock();
-        x++;
-        std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
-            " changing x to " << x << std::endl;
-        writeLock.unlock();
+        readLock.lock();
 
-	usleep(rand() % 1000);
+        for (int c = 0; c < 1000 && x < 1000; c++)
+        {
+            writeLock.lock();
+            x++;
+            std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
+                " changing x to " << x << std::endl;
+            writeLock.unlock();
+
+            usleep(rand() % 1000);
+        }
+
+        readLock.unlock();
+
     }
-
-    readLock.unlock();
+    catch(dashee::Threads::Exception ex)
+    {
+        writeLock.unlock();
+    }
 }
