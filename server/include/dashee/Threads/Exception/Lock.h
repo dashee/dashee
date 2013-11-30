@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/Lock.h
+ * @file include/dashee/Threads/Exception/Lock.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,17 +19,20 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_LOCK_H_
-#define DASHEE_EXCEPTION_LOCK_H_
+#ifndef DASHEE_THREADS_EXCEPTION_LOCK_H_
+#define DASHEE_THREADS_EXCEPTION_LOCK_H_
 
-#include <dashee/Exception.h>
+#include <dashee/Threads/Exception.h>
 
 namespace dashee
 {
-    class ExceptionLock;
+    namespace Threads
+    {
+        class ExceptionLock;
+    }
 }
 
-class dashee::ExceptionLock: public dashee::Exception
+class dashee::Threads::ExceptionLock: public dashee::Threads::Exception
 {
 public:
     explicit ExceptionLock() : Exception()

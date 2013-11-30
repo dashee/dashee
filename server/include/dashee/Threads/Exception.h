@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Lock.h
+ * @file include/dashee/Threads/Exception.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,28 +19,31 @@
  * project site for more details
  */
 
-#ifndef DASHEE_LOCK_H_
-#define DASHEE_LOCK_H_
+#ifndef DASHEE_THREADS_EXCEPTION_H_
+#define DASHEE_THREADS_EXCEPTION_H_
 
-#include <pthread.h>
-#include <dashee/common.h>
-#include <dashee/Exception/Lock.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    class Lock;
+    namespace Threads
+    {
+        class Exception;
+    }
 }
 
-/**
- * Interface for Locking objects
- */ 
-class dashee::Lock
+class dashee::Threads::Exception: public dashee::Exception
 {
 public:
-    virtual void lock() = 0;
-    virtual void unlock() = 0;
-    virtual bool trylock(int ntimes = 0, int npause = 0) = 0;
+    explicit Exception() : dashee::Exception()
+    {
+    }
+    explicit Exception(const int ec) : dashee::Exception(ec)
+    { 
+    }
+    explicit Exception(std::string msg) : dashee::Exception(msg)
+    { 
+    }
 };
 
 #endif
-

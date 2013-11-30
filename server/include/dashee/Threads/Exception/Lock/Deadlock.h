@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/Thread.h
+ * @file include/dashee/Threads/Exception/Lock/Deadlock.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,28 +19,33 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_THREAD_H_
-#define DASHEE_EXCEPTION_THREAD_H_
+#ifndef DASHEE_THREADS_EXCEPTION_LOCK_DEADLOCK_H_
+#define DASHEE_THREADS_EXCEPTION_LOCK_DEADLOCK_H_
 
-#include <dashee/Exception.h>
+#include <dashee/Threads/Exception/Lock.h>
 
 namespace dashee
 {
-    class ExceptionThread;
+    namespace Threads
+    {
+        class ExceptionLockDeadlock;
+    }
 }
 
-class dashee::ExceptionThread: public dashee::Exception
+class dashee::Threads::ExceptionLockDeadlock 
+    : public dashee::Threads::ExceptionLock
 {
 public:
-    explicit ExceptionThread() : Exception()
+    explicit ExceptionLockDeadlock() : ExceptionLock()
     {
     }
-    explicit ExceptionThread(const int ec) : Exception(ec)
+    explicit ExceptionLockDeadlock(const int ec) : ExceptionLock(ec)
     { 
     }
-    explicit ExceptionThread(std::string msg) : Exception(msg)
+    explicit ExceptionLockDeadlock(std::string msg) : ExceptionLock(msg)
     { 
     }
 };
 
 #endif
+
