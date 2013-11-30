@@ -26,9 +26,8 @@ class IndexController extends Zend_Controller_Action
      * and display then here, no DB required :D
      */   
     public function wikiAction()
-    {
-    	$this->view->headTitle()->append("Wiki");
-        $this->view->headLink()->appendStylesheet("/css/wiki.css");
+    {   
+        $this->_redirect('https://github.com/dashee-bot/dashee/wiki');
     }
 
     /** 
