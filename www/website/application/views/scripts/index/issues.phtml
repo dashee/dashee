@@ -11,7 +11,11 @@
                 <?php endif; ?>
             </div>
             <div class='info'>
-                <h3><?php print $issue->title ?></h3>
+                <h3>
+                    <a href="<?php print $issue->html_url ?>" target="_blank">
+                        <?php print $issue->title ?>
+                    </a>
+                </h3>
                 <ul>
                     <?php foreach ($issue->labels as $label): ?>
                         <li class='label' style="background-color:#<?php print $label->color ?>">
