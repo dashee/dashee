@@ -41,7 +41,7 @@ void dashee::Threads::LockMutex::lock()
 	    throw ExceptionLock("Max number of Mutex locks reached.");
 	    break;
 	case EDEADLK:
-	    throw ExceptionLock(
+	    throw ExceptionLockDeadlock(
 		    "Cannot double lock the same mutex in one thread."
 		);
 	    break;

@@ -7,6 +7,8 @@
 #include <dashee/Threads/Lock/Mutex.h>
 #include <dashee/Threads/Lock/ReadWrite.h>
 
+
+dashee::Threads::LockMutex mutexLock = dashee::Threads::LockMutex();
 dashee::Threads::LockReadWrite readLock = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite writeLock 
     = dashee::Threads::LockReadWrite(
@@ -56,11 +58,18 @@ void * work(void * ptr)
             usleep(rand() % 1000);
         }
 
+        mutexLock.unlock();
         readLock.unlock();
 
     }
-    catch(dashee::Threads::Exception ex)
+    catch(dashee::Threads::ExceptionLock ex)
     {
-        writeLock.unlock();
+        std::cout << ex.what() << std::endl;
     }
+        
+    mutexLock.unlock();
+    writeLock.unlock();
+    readLock.unlock();
+
+    dashee::Threads::Thread::exit();
 }

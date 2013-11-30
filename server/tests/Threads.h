@@ -40,6 +40,11 @@ namespace dashee
 	// to flag threads to stop
 	extern volatile bool RUN;
 	extern dashee::Threads::LockMutex mutexRUN;
+	
+        // Create a set of locks
+        //extern dashee::Threads::LockMutex lockMutex;
+        //extern dashee::Threads::LockReadWrite lockRead;
+        //extern dashee::Threads::LockReadWrite lockWrite;
 
 	// Some function usefull for testing
 	void * donothing(void *);
@@ -47,6 +52,10 @@ namespace dashee
 	void * doN(void * N);
 	void * callSelf(void *);
 	void * callExit(void *);
+
+        // Function which takes in a mutex, and tries to
+        // double lock it
+        void * doubleLock(void *);
     }
 }
 
@@ -91,6 +100,10 @@ protected:
     void testMultiStarts();
     void testSelfCall();
     void testExits();
+    
+    void testDoubleLockMutex();
+    void testDoubleLockRead();
+    void testDoubleLockWrite();
 
     void testCallingOneStartOnly();
     void testCallingJoinOnAStopedThread();
