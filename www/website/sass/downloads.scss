@@ -4,15 +4,44 @@
 .download
 {
     display:inline-block;
+    
+    > .release-notes
+    {
+        float:left;
+        width:494px;
 
-    .releases
+        .formatted
+        {
+            margin-top:10px;
+        }
+    }   
+
+    > .releases
     {
         width:400px;
         float:left;
+        display:inline-block;
 
         .release
         {
+            &:first-child
+            {
+                h1:after
+                {
+                    content:"latest";
+                    font-size:12px;
+                    background:#000;
+                    color:#FFF;
+                    padding:2px 4px 2px 4px;
+                    border-radius:2px;
+                    font-family:Arial;
+
+                    font-weight:bold;
+                }
+            }
+            
             width:100%;
+            margin-bottom:15px;
 
             text-align:right;
 
@@ -39,9 +68,4 @@
         }
     }
 
-    > .info
-    {
-        float:left;
-        width:494px;
-    }   
 }

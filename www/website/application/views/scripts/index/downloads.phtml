@@ -1,5 +1,5 @@
 <div class='download'>
-    <div class='info'>
+    <div class='release-notes'>
         <h2>
             Relese notes for 
                 <strong><?php print $this->releases[0]->name ?></strong>
@@ -17,10 +17,9 @@
                     <span class='tag'>(<?php print $release->tag_name; ?>)</span> 
                 </h1>
                 <ul class='small-text'>
-                    <li><a href="<?php print $release->tarball_url ?>">.tar.gz</a></li>
+                    <li><a href="<?php print $release->html_url ?>" target="_blank">github</a></li>
                     <li><a href="<?php print $release->zipball_url ?>">.zip</a></li>
-                    <li><a href="<?php print $release->html_url ?>" target="_blank">Git link</a></li>
-                    <li>Released <?php print $release->published_at; ?></li>
+                    <li><a href="<?php print $release->tarball_url ?>">.tar.gz</a></li>
                 </ul>
             </div>
 
