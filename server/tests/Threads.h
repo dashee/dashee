@@ -24,6 +24,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Threads/Thread.h>
+#include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/Threads/Lock/Mutex.h>
 #include "dashee.h"
 
@@ -41,10 +42,14 @@ namespace dashee
 	extern volatile bool RUN;
 	extern dashee::Threads::LockMutex mutexRUN;
 	
+        // Variable to change in accordance to threads
+        // to test thier value
+        extern volatile int sharedVariable;
+	
         // Create a set of locks
-        //extern dashee::Threads::LockMutex lockMutex;
-        //extern dashee::Threads::LockReadWrite lockRead;
-        //extern dashee::Threads::LockReadWrite lockWrite;
+        extern dashee::Threads::LockMutex lockMutex;
+        extern dashee::Threads::LockReadWrite lockRead;
+        extern dashee::Threads::LockReadWrite lockWrite;
 
 	// Some function usefull for testing
 	void * donothing(void *);
@@ -52,10 +57,12 @@ namespace dashee
 	void * doN(void * N);
 	void * callSelf(void *);
 	void * callExit(void *);
+	void * addNTimes(void * l);
 
         // Function which takes in a mutex, and tries to
         // double lock it
-        void * doubleLock(void *);
+        void * doubleLockRead(void * l);
+        void * doubleLockWrite(void * l);
     }
 }
 
@@ -77,6 +84,9 @@ class dashee::test::Threads : public CppUnit::TestFixture
     // Some generic functions to tests, see definition description
     CPPUNIT_TEST(testSelfCall);
     CPPUNIT_TEST(testExits);
+    
+    CPPUNIT_TEST(testLock);
+    CPPUNIT_TEST(testDoubleLock);
 
     // Calling start twice should
     CPPUNIT_TEST_EXCEPTION(
@@ -101,9 +111,8 @@ protected:
     void testSelfCall();
     void testExits();
     
-    void testDoubleLockMutex();
-    void testDoubleLockRead();
-    void testDoubleLockWrite();
+    void testLock();
+    void testDoubleLock();
 
     void testCallingOneStartOnly();
     void testCallingJoinOnAStopedThread();
