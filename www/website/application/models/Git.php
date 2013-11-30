@@ -87,4 +87,24 @@ class Application_Model_Git
                 throw new Zend_Exception("URL '$url' return $status");
         }
     }
+
+    /**
+     * Helpfull function to format the given date
+     *
+     * @param date The date to format
+     * @param format the Format to set by default
+     *
+     * @returns a string of formatted date
+     */
+    static public function formatDate($date, $format = 'd M Y')
+    {
+        $convert = strtotime($date);
+
+        if ($convert === false)
+            throw new Zend_Exception(
+                "Converting formatDate '$date' using strtotime failed"
+            );
+
+        return date($format, $convert);
+    }
 }

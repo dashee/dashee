@@ -49,7 +49,9 @@
                                 <?php print "Unassigned" ?>
                             <?php endif; ?>
                         </div>
-                        <div class='posted-on'><?php print $issue->created_at ?></div>
+                        <div class='posted-on'>
+                            <?php print Application_Model_Git::formatDate($issue->created_at); ?>
+                        </div>
                     </div>  
             </div>
         </div>
