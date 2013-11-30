@@ -17,6 +17,7 @@
                     <span class='tag'>(<?php print $release->tag_name; ?>)</span> 
                 </h1>
                 <ul class='small-text'>
+                    <li><?php print Application_Model_Git::formatDate($release->published_at) ?></li>
                     <li><a href="<?php print $release->html_url ?>" target="_blank">github</a></li>
                     <li><a href="<?php print $release->zipball_url ?>">.zip</a></li>
                     <li><a href="<?php print $release->tarball_url ?>">.tar.gz</a></li>
