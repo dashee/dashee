@@ -1,9 +1,9 @@
-#include <dashee/Lock/Mutex.h>
+#include <dashee/Threads/Lock/Mutex.h>
 
 /**
  * Contruct our Mutex
  */
-dashee::LockMutex::LockMutex()
+dashee::Threads::LockMutex::LockMutex()
 {
     this->mutex = new pthread_mutex_t();
     this->attr = NULL;
@@ -23,7 +23,7 @@ dashee::LockMutex::LockMutex()
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::LockMutex::lock()
+void dashee::Threads::LockMutex::lock()
 {
     int ec = pthread_mutex_lock(this->mutex);
 
@@ -63,7 +63,7 @@ void dashee::LockMutex::lock()
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
-bool dashee::LockMutex::trylock(int ntimes, int npause)
+bool dashee::Threads::LockMutex::trylock(int ntimes, int npause)
 {
     int n = 0;
     int ec;
@@ -116,7 +116,7 @@ bool dashee::LockMutex::trylock(int ntimes, int npause)
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::LockMutex::unlock()
+void dashee::Threads::LockMutex::unlock()
 {
     int ec = pthread_mutex_unlock(this->mutex);
 
@@ -153,7 +153,7 @@ void dashee::LockMutex::unlock()
 /**
  * Delete our mutex
  */
-dashee::LockMutex::~LockMutex()
+dashee::Threads::LockMutex::~LockMutex()
 {
     pthread_mutex_destroy(this->mutex);
     delete this->mutex;

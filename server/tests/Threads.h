@@ -1,5 +1,5 @@
 /**
- * @file tests/Thread.h
+ * @file tests/Threads.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,12 +19,12 @@
  * project site for more details
  */
 
-#ifndef DASHEE_TEST_THREAD_H_
-#define DASHEE_TEST_THREAD_H_
+#ifndef DASHEE_TEST_THREADS_H_
+#define DASHEE_TEST_THREADS_H_
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <dashee/Thread.h>
-#include <dashee/Lock/Mutex.h>
+#include <dashee/Threads/Thread.h>
+#include <dashee/Threads/Lock/Mutex.h>
 #include "dashee.h"
 
 /*
@@ -34,12 +34,12 @@ namespace dashee
 {
     namespace test
     {
-        class Thread;
+        class Threads;
 
 	// Variables to control global thread run state, usefull 
 	// to flag threads to stop
 	extern volatile bool RUN;
-	extern dashee::LockMutex mutexRUN;
+	extern dashee::Threads::LockMutex mutexRUN;
 
 	// Some function usefull for testing
 	void * donothing(void *);
@@ -54,9 +54,9 @@ namespace dashee
  * GPIO test class for
  * unit testing known components
  */
-class dashee::test::Thread : public CppUnit::TestFixture
+class dashee::test::Threads : public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(dashee::test::Thread);
+    CPPUNIT_TEST_SUITE(dashee::test::Threads);
     
     // Test Joining as well as detached thread is sort of hard to test, 
     // thoughts an ideas please do all
@@ -72,19 +72,19 @@ class dashee::test::Thread : public CppUnit::TestFixture
     // Calling start twice should
     CPPUNIT_TEST_EXCEPTION(
 	    testCallingOneStartOnly, 
-	    ExceptionThreadNorestart
+	    dashee::Threads::ExceptionThreadNorestart
 	);
     
     // Joining a thread that is not started, dont be a fool
     CPPUNIT_TEST_EXCEPTION(
 	    testCallingJoinOnAStopedThread, 
-	    ExceptionThread
+	    dashee::Threads::ExceptionThread
 	);
     
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    dashee::Thread * thread;
+    dashee::Threads::Thread * thread;
 
 protected:
     void testWorking();

@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Thread.h
+ * @file include/dashee/Threads/Thread.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,19 +19,22 @@
  * project site for more details
  */
 
-#ifndef DASHEE_THREAD_H_
-#define DASHEE_THREAD_H_
+#ifndef DASHEE_THREADS_THREAD_H_
+#define DASHEE_THREADS_THREAD_H_
 
 #include <pthread.h>
 
 #include <dashee/common.h>
-#include <dashee/Exception/Thread.h>
-#include <dashee/Exception/Thread/Norestart.h>
-#include <dashee/Exception/Thread/Notathread.h>
+#include <dashee/Threads/Exception/Thread.h>
+#include <dashee/Threads/Exception/Thread/Norestart.h>
+#include <dashee/Threads/Exception/Thread/Notathread.h>
 
 namespace dashee
 {
-    class Thread;
+    namespace Threads
+    {
+        class Thread;
+    }
 }
 
 /**
@@ -42,7 +45,7 @@ namespace dashee
  *
  * Main responsiblities include, starting a thread, and joining it.
  */ 
-class dashee::Thread
+class dashee::Threads::Thread
 {
 private:
 

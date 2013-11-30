@@ -1,11 +1,11 @@
-#include <dashee/Lock/ReadWrite.h>
+#include <dashee//Threads/Lock/ReadWrite.h>
 
 /**
  * Contruct our Lock
  *
  * @param type Read or write?
  */
-dashee::LockReadWrite::LockReadWrite(lockType type)
+dashee::Threads::LockReadWrite::LockReadWrite(lockType type)
 {
     this->setLockType(type);
 
@@ -27,7 +27,7 @@ dashee::LockReadWrite::LockReadWrite(lockType type)
  *
  * @param type The type that this lock represents
  */
-void dashee::LockReadWrite::setLockType(lockType type)
+void dashee::Threads::LockReadWrite::setLockType(lockType type)
 {
     switch (type)
     {
@@ -47,7 +47,7 @@ void dashee::LockReadWrite::setLockType(lockType type)
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::LockReadWrite::lock()
+void dashee::Threads::LockReadWrite::lock()
 {
     
     int ec;
@@ -92,7 +92,7 @@ void dashee::LockReadWrite::lock()
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
-bool dashee::LockReadWrite::trylock(int ntimes, int npause)
+bool dashee::Threads::LockReadWrite::trylock(int ntimes, int npause)
 {
     int n = 0;
     int ec;
@@ -148,7 +148,7 @@ bool dashee::LockReadWrite::trylock(int ntimes, int npause)
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::LockReadWrite::unlock()
+void dashee::Threads::LockReadWrite::unlock()
 {
     int ec = pthread_rwlock_unlock(this->rwlock);
 
@@ -185,7 +185,7 @@ void dashee::LockReadWrite::unlock()
 /**
  * Delete our mutex
  */
-dashee::LockReadWrite::~LockReadWrite()
+dashee::Threads::LockReadWrite::~LockReadWrite()
 {
     pthread_rwlock_destroy(this->rwlock);
     delete this->rwlock;

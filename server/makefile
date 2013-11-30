@@ -22,15 +22,15 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
     Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Thread.o Lock/Mutex.o Lock/ReadWrite.o)
-OBJECTSTEST := $(addprefix tests/, dashee.o Thread.o ServoController.o \
+    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o)
+OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
     Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
 
 # All the binaries which will be built
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
-TESTS := $(addprefix $(TESTDIR)/, testThread testConfig testUART testGPIO \
+TESTS := $(addprefix $(TESTDIR)/, testThreads testConfig testUART testGPIO \
     testDummy testVehicleCar)
 
 # Certain global variables used for packaging and installing
@@ -95,7 +95,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	$(call print,"Building","script","$@")
 	install --mode=775 $< $@
 
-$(TESTDIR)/testThread: tests/testThread.cpp \
+$(TESTDIR)/testThreads: tests/testThreads.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
 	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@

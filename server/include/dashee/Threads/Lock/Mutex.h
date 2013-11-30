@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Lock/ReadWrite.h
+ * @file include/dashee/Threads/Lock/Mutex.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,54 +19,44 @@
  * project site for more details
  */
 
-#ifndef DASHEE_LOCK_READWRITE_H_
-#define DASHEE_LOCK_READWRITE_H_
+#ifndef DASHEE_THREADS_LOCK_MUTEX_H_
+#define DASHEE_THREADS_LOCK_MUTEX_H_
 
-#include <dashee/Lock.h>
+#include <dashee/Threads/Lock.h>
 
 namespace dashee
 {
-    class LockReadWrite;
+    namespace Threads
+    {
+        class LockMutex;
+    }
 }
 
 /**
- * Lock Read only.
+ * Mutex class.
  *
- * Class that implements the read lock
+ * This class is designed to create locks and release locks on mutex variables.
+ * This mainly encapsulates the pthread_mutex_ API calls
  */ 
-class dashee::LockReadWrite : public dashee::Lock
+class dashee::Threads::LockMutex : public dashee::Threads::Lock
 {
-public:
-    /**
-     * Enumurator which represents the type of locks
-     */
-    enum lockType { LOCKTYPE_READ, LOCKTYPE_WRITE };
-
-
-
 private:
 
     /**
-     * The rwlock handler.
+     * The mutex handler.
      */
-    pthread_rwlock_t * rwlock;
+    pthread_mutex_t * mutex;
 
     /**
-     * The rwlock attributes
+     * The mutex attributes
      */
-    pthread_rwlockattr_t * attr;
+    pthread_mutexattr_t * attr;
 
-    /**
-     * The type of lock to set
-     */
-    lockType type;
 
 public:
 
     // New instance of the thread
-    LockReadWrite(lockType type = LOCKTYPE_READ);
-
-    void setLockType(lockType type);
+    LockMutex();
     
     void lock();
     void unlock();
@@ -75,7 +65,8 @@ public:
     bool trylock(int ntimes = 0, int npause = 0);
     
     // Destruct the thread
-    ~LockReadWrite();
+    ~LockMutex();
 };
 
 #endif
+

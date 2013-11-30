@@ -1,7 +1,8 @@
-#include "Thread.h"
+#include "Threads.h"
 
 volatile bool dashee::test::RUN = false;
-dashee::LockMutex dashee::test::mutexRUN = LockMutex();
+dashee::Threads::LockMutex dashee::test::mutexRUN 
+    = dashee::Threads::LockMutex();
 
 /**
  * Dummy function which does nothing and returns
@@ -62,8 +63,8 @@ void * dashee::test::doN(void * N)
  */ 
 void * dashee::test::callSelf(void * nothing)
 {
-    CPPUNIT_ASSERT(dashee::Thread::self() > 0);
-    dashee::Thread::exit();
+    CPPUNIT_ASSERT(dashee::Threads::Thread::self() > 0);
+    dashee::Threads::Thread::exit();
     return NULL;
 }
 
@@ -74,7 +75,7 @@ void * dashee::test::callSelf(void * nothing)
  */
 void * dashee::test::callExit(void * nothing)
 {
-    dashee::Thread::exit();
+    dashee::Threads::Thread::exit();
     CPPUNIT_ASSERT(true);
     return NULL;
 }   
@@ -82,16 +83,16 @@ void * dashee::test::callExit(void * nothing)
 /**
  * Do nothing
  */
-void dashee::test::Thread::setUp()
+void dashee::test::Threads::setUp()
 {
 }
 
 /**
  * Test a simple 
  */
-void dashee::test::Thread::testWorking()
+void dashee::test::Threads::testWorking()
 {
-    this->thread = new dashee::Thread(dashee::test::donothing);
+    this->thread = new dashee::Threads::Thread(dashee::test::donothing);
     this->thread->start((void *)NULL);
     this->thread->join();
 
@@ -101,9 +102,9 @@ void dashee::test::Thread::testWorking()
 /**
  * You can't start a thread twice asynchronisly but you can do it synchronisly.
  */
-void dashee::test::Thread::testMultiStarts()
+void dashee::test::Threads::testMultiStarts()
 {
-    this->thread = new dashee::Thread(donothing);
+    this->thread = new dashee::Threads::Thread(donothing);
     this->thread->start((void *)NULL);
     this->thread->join();
     CPPUNIT_ASSERT(true);
@@ -122,9 +123,9 @@ void dashee::test::Thread::testMultiStarts()
 /**
  * Simple thread just runs callSelf, which is asserted
  */
-void dashee::test::Thread::testSelfCall()
+void dashee::test::Threads::testSelfCall()
 {
-    this->thread = new dashee::Thread(callSelf);
+    this->thread = new dashee::Threads::Thread(callSelf);
     this->thread->start((void *)NULL);
     this->thread->join();
 }
@@ -132,9 +133,9 @@ void dashee::test::Thread::testSelfCall()
 /**
  * Simple thread just runs callSelf, which is asserted
  */
-void dashee::test::Thread::testExits()
+void dashee::test::Threads::testExits()
 {
-    this->thread = new dashee::Thread(callExit);
+    this->thread = new dashee::Threads::Thread(callExit);
     this->thread->start((void *)NULL);
     this->thread->join();
 }
@@ -143,9 +144,9 @@ void dashee::test::Thread::testExits()
  * This function should throw an exception because a thread must only be 
  * started once
  */
-void dashee::test::Thread::testCallingOneStartOnly()
+void dashee::test::Threads::testCallingOneStartOnly()
 {
-    this->thread = new dashee::Thread(donothing);
+    this->thread = new dashee::Threads::Thread(donothing);
     this->thread->start((void *)NULL);
     this->thread->start((void *)NULL);
     this->thread->join();
@@ -154,9 +155,9 @@ void dashee::test::Thread::testCallingOneStartOnly()
 /**
  * Join must only be initiated on started threads
  */
-void dashee::test::Thread::testCallingJoinOnAStopedThread()
+void dashee::test::Threads::testCallingJoinOnAStopedThread()
 {
-    this->thread = new dashee::Thread(donothing);
+    this->thread = new dashee::Threads::Thread(donothing);
     this->thread->join();
 }
 
@@ -166,7 +167,7 @@ void dashee::test::Thread::testCallingJoinOnAStopedThread()
  * may only run a set of threads and must also close any threads. If not
  * teardown should manage to change RUN where all threads should respond
  */ 
-void dashee::test::Thread::tearDown()
+void dashee::test::Threads::tearDown()
 {
     mutexRUN.lock();
     RUN = false;

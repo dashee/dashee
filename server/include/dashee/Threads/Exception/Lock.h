@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Lock/Mutex.h
+ * @file include/dashee/Threads/Exception/Lock.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,50 +19,31 @@
  * project site for more details
  */
 
-#ifndef DASHEE_LOCK_MUTEX_H_
-#define DASHEE_LOCK_MUTEX_H_
+#ifndef DASHEE_THREADS_EXCEPTION_LOCK_H_
+#define DASHEE_THREADS_EXCEPTION_LOCK_H_
 
-#include <dashee/Lock.h>
+#include <dashee/Exception.h>
 
 namespace dashee
 {
-    class LockMutex;
+    namespace Threads
+    {
+        class ExceptionLock;
+    }
 }
 
-/**
- * Mutex class.
- *
- * This class is designed to create locks and release locks on mutex variables.
- * This mainly encapsulates the pthread_mutex_ API calls
- */ 
-class dashee::LockMutex : public dashee::Lock
+class dashee::Threads::ExceptionLock: public dashee::Exception
 {
-private:
-
-    /**
-     * The mutex handler.
-     */
-    pthread_mutex_t * mutex;
-
-    /**
-     * The mutex attributes
-     */
-    pthread_mutexattr_t * attr;
-
-
 public:
-
-    // New instance of the thread
-    LockMutex();
-    
-    void lock();
-    void unlock();
-
-    // If you are feeling board, do implement
-    bool trylock(int ntimes = 0, int npause = 0);
-    
-    // Destruct the thread
-    ~LockMutex();
+    explicit ExceptionLock() : Exception()
+    {
+    }
+    explicit ExceptionLock(const int ec) : Exception(ec)
+    { 
+    }
+    explicit ExceptionLock(std::string msg) : Exception(msg)
+    { 
+    }
 };
 
 #endif

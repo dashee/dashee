@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/Thread.h
+ * @file include/dashee/Threads/Exception/Thread/Norestart.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -19,26 +19,30 @@
  * project site for more details
  */
 
-#ifndef DASHEE_EXCEPTION_THREAD_H_
-#define DASHEE_EXCEPTION_THREAD_H_
+#ifndef DASHEE_THREADS_EXCEPTION_THREAD_NORESTART_H_
+#define DASHEE_THREADS_EXCEPTION_THREAD_NORESTART_H_
 
-#include <dashee/Exception.h>
+#include <dashee/Threads/Exception/Thread.h>
 
 namespace dashee
 {
-    class ExceptionThread;
+    namespace Threads
+    {
+        class ExceptionThreadNorestart;
+    }
 }
 
-class dashee::ExceptionThread: public dashee::Exception
+class dashee::Threads::ExceptionThreadNorestart : 
+    public dashee::Threads::ExceptionThread
 {
 public:
-    explicit ExceptionThread() : Exception()
+    explicit ExceptionThreadNorestart() : ExceptionThread()
     {
     }
-    explicit ExceptionThread(const int ec) : Exception(ec)
+    explicit ExceptionThreadNorestart(const int ec) : ExceptionThread(ec)
     { 
     }
-    explicit ExceptionThread(std::string msg) : Exception(msg)
+    explicit ExceptionThreadNorestart(std::string msg) : ExceptionThread(msg)
     { 
     }
 };

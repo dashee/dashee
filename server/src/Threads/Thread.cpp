@@ -1,11 +1,11 @@
-#include <dashee/Thread.h>
+#include <dashee/Threads/Thread.h>
 
 /**
  * Construct our thread, and initilize our variables
  *
  * @param thread_entry_function The function to perform magic on
  */
-dashee::Thread::Thread(void * (*thread_entry_function)(void *))
+dashee::Threads::Thread::Thread(void * (*thread_entry_function)(void *))
 {
     this->thread_entry_function = thread_entry_function;
     this->thread = new pthread_t();
@@ -28,7 +28,7 @@ dashee::Thread::Thread(void * (*thread_entry_function)(void *))
  *  it must be killed by calling exit() before it can be called again
  * @throws ExceptionThread When pthread_create fails
  */
-void dashee::Thread::start(void * parameter_to_entry_function)
+void dashee::Threads::Thread::start(void * parameter_to_entry_function)
 {
     // Ensure it is not already running
     if (this->started)
@@ -89,7 +89,7 @@ void dashee::Thread::start(void * parameter_to_entry_function)
  *
  * @throws ExceptionThread If a non 0 pthread value was returned
  */
-void dashee::Thread::join()
+void dashee::Threads::Thread::join()
 {
     if (!this->started)
         throw ExceptionThread("Cannot join a stoped thread.");
@@ -131,7 +131,7 @@ void dashee::Thread::join()
  *
  * @returns threadid
  */
-pthread_t dashee::Thread::self()
+pthread_t dashee::Threads::Thread::self()
 {
     return pthread_self();
 }
@@ -141,7 +141,7 @@ pthread_t dashee::Thread::self()
  *
  * @param retval Pass a parameter through to join
  */
-void dashee::Thread::exit(int retval)
+void dashee::Threads::Thread::exit(int retval)
 {
     pthread_exit(&retval);
 }
@@ -149,7 +149,7 @@ void dashee::Thread::exit(int retval)
 /**
  * Destroy new variables
  */
-dashee::Thread::~Thread()
+dashee::Threads::Thread::~Thread()
 {
     delete this->thread;
 }
