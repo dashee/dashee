@@ -9,12 +9,8 @@ volatile int dashee::test::sharedVariable = 0;
 // Initilize the different lock types
 dashee::Threads::LockMutex dashee::test::lockMutex
     = dashee::Threads::LockMutex();
-dashee::Threads::LockReadWrite dashee::test::lockRead
+dashee::Threads::LockReadWrite dashee::test::lockReadWrite
     = dashee::Threads::LockReadWrite();
-dashee::Threads::LockReadWrite dashee::test::lockWrite
-    = dashee::Threads::LockReadWrite(
-            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
-        );
 
 /**
  * Dummy function which does nothing and returns
@@ -89,7 +85,7 @@ void * dashee::test::addNTimes(void * l)
     // try to fight for locks
     for (int x = 0; x < 100; x++)
     {
-        lock->lock();
+        lock->lock(dashee::Threads::Lock::LOCKTYPE_WRITE);
         
         dashee::test::sharedVariable++;
         sleep(100);
@@ -144,7 +140,7 @@ void * dashee::test::callExit(void * nothing)
  *
  * @returns Nothing
  */ 
-void * dashee::test::doubleLockWrite(void * l)
+void * dashee::test::doubleLock(void * l)
 {
     dashee::Threads::Lock * lock 
         = reinterpret_cast<dashee::Threads::Lock *>(l);
@@ -155,37 +151,11 @@ void * dashee::test::doubleLockWrite(void * l)
         // try to fight for locks
         for (int x = 0; x < 100; x++)
         {
-            lock->lock();
-            lock->lock();
+            lock->lock(dashee::Threads::Lock::LOCKTYPE_WRITE);
+            lock->lock(dashee::Threads::Lock::LOCKTYPE_WRITE);
             
             dashee::test::sharedVariable++;
             sleep(100);
-
-            lock->unlock();
-        }
-    }
-    catch (dashee::Threads::Exception ex)
-    {
-        lock->unlock();
-    }
-    
-    return NULL;
-}
-
-void * dashee::test::doubleLockRead(void * l)
-{
-    dashee::Threads::Lock * lock 
-        = reinterpret_cast<dashee::Threads::Lock *>(l);
-
-    try
-    {
-        // Do nothing for a while, so other threads can 
-        // try to fight for locks
-        for (int x = 0; x < 100; x++)
-        {
-            lock->lock();
-            lock->lock();
-            sleep(1000);
 
             lock->unlock();
         }
@@ -263,15 +233,17 @@ void dashee::test::Threads::testExits()
  */
 void dashee::test::Threads::testLock()
 {
+    CPPUNIT_ASSERT(sharedVariable == 0);
+
     dashee::Threads::Thread * t1 = new dashee::Threads::Thread(addNTimes);
     dashee::Threads::Thread * t2 = new dashee::Threads::Thread(addNTimes);
     dashee::Threads::Thread * t3 = new dashee::Threads::Thread(addNTimes);
     dashee::Threads::Thread * t4 = new dashee::Threads::Thread(addNTimes);
 
-    t1->start(&lockWrite);
-    t2->start(&lockWrite);
-    t3->start(&lockWrite);
-    t4->start(&lockWrite);
+    t1->start(&lockReadWrite);
+    t2->start(&lockReadWrite);
+    t3->start(&lockReadWrite);
+    t4->start(&lockReadWrite);
 
     t1->join();
     t2->join();
@@ -292,9 +264,9 @@ void dashee::test::Threads::testLock()
 
     CPPUNIT_ASSERT(sharedVariable == 800);
 
-    t1->start(&lockWrite);
+    t1->start(&lockMutex);
     t2->start(&lockMutex);
-    t3->start(&lockWrite);
+    t3->start(&lockMutex);
     t4->start(&lockMutex);
     
     t1->join();
@@ -319,13 +291,13 @@ void dashee::test::Threads::testDoubleLock()
 {
     sharedVariable = 0;
 
-    dashee::Threads::Thread * t1 = new dashee::Threads::Thread(doubleLockWrite);
-    dashee::Threads::Thread * t2 = new dashee::Threads::Thread(doubleLockWrite);
-    dashee::Threads::Thread * t3 = new dashee::Threads::Thread(doubleLockWrite);
+    dashee::Threads::Thread * t1 = new dashee::Threads::Thread(doubleLock);
+    dashee::Threads::Thread * t2 = new dashee::Threads::Thread(doubleLock);
+    dashee::Threads::Thread * t3 = new dashee::Threads::Thread(doubleLock);
 
-    t1->start(&lockWrite);
-    t2->start(&lockWrite);
-    t3->start(&lockWrite);
+    t1->start(&lockReadWrite);
+    t2->start(&lockReadWrite);
+    t3->start(&lockReadWrite);
     
     t1->join();
     t2->join();
@@ -333,32 +305,9 @@ void dashee::test::Threads::testDoubleLock()
     
     CPPUNIT_ASSERT(sharedVariable == 0);
     
-    dashee::Threads::Thread * t4 = new dashee::Threads::Thread(doubleLockRead);
-    dashee::Threads::Thread * t5 = new dashee::Threads::Thread(doubleLockRead);
-    dashee::Threads::Thread * t6 = new dashee::Threads::Thread(doubleLockRead);
-    
-    t1->start(&lockWrite);
-    t2->start(&lockWrite);
-    t3->start(&lockWrite);
-    t4->start(&lockRead);
-    t5->start(&lockRead);
-    t6->start(&lockRead);
-    
-    t1->join();
-    t2->join();
-    t3->join();
-    t4->join();
-    t5->join();
-    t6->join();
-    
-    CPPUNIT_ASSERT(sharedVariable == 0);
-
     delete t1;
     delete t2;
     delete t3;
-    delete t4;
-    delete t5;
-    delete t6;
 }
 
 /**

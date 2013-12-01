@@ -40,10 +40,6 @@ namespace dashee
 class dashee::Threads::LockReadWrite : public dashee::Threads::Lock
 {
 public:
-    /**
-     * Enumurator which represents the type of locks
-     */
-    enum lockType { LOCKTYPE_READ, LOCKTYPE_WRITE };
 
 private:
 
@@ -65,15 +61,17 @@ private:
 public:
 
     // New instance of the thread
-    LockReadWrite(lockType type = LOCKTYPE_READ);
-
-    void setLockType(lockType type);
+    LockReadWrite();
     
-    void lock();
+    void lock(lockType type = LOCKTYPE_WRITE);
     void unlock();
 
     // If you are feeling board, do implement
-    bool trylock(int ntimes = 0, int npause = 0);
+    bool trylock(
+	    int ntimes = 0, 
+	    int npause = 0,
+	    lockType type = LOCKTYPE_WRITE
+	);
     
     // Destruct the thread
     ~LockReadWrite();

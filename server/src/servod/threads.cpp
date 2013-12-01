@@ -3,24 +3,12 @@
 /**
  * Lock our sensor when reading.
  */
-dashee::Threads::LockReadWrite lockReadSensor 
-    = dashee::Threads::LockReadWrite();
-
-/**
- * Lock our sensor when writing.
- */
-dashee::Threads::LockReadWrite lockWriteSensor 
-    = dashee::Threads::LockReadWrite(
-            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
-        );
+dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 
 /**
  * Lock our vehicle for updating
  */
-dashee::Threads::LockReadWrite lockWriteVehicle 
-    = dashee::Threads::LockReadWrite(
-            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
-        );
+dashee::Threads::LockReadWrite lockVehicle = dashee::Threads::LockReadWrite();
 
 /**
  * Loop through calling read and reading from the server.

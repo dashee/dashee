@@ -48,8 +48,7 @@ namespace dashee
 	
         // Create a set of locks
         extern dashee::Threads::LockMutex lockMutex;
-        extern dashee::Threads::LockReadWrite lockRead;
-        extern dashee::Threads::LockReadWrite lockWrite;
+        extern dashee::Threads::LockReadWrite lockReadWrite;
 
 	// Some function usefull for testing
 	void * donothing(void *);
@@ -61,8 +60,7 @@ namespace dashee
 
         // Function which takes in a mutex, and tries to
         // double lock it
-        void * doubleLockRead(void * l);
-        void * doubleLockWrite(void * l);
+        void * doubleLock(void * l);
     }
 }
 

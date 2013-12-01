@@ -6,7 +6,13 @@
 dashee::Threads::LockMutex::LockMutex()
 {
     this->mutex = new pthread_mutex_t();
-    this->attr = NULL;
+    this->attr = new pthread_mutexattr_t();
+    
+    if (pthread_mutexattr_init(this->attr) != 0)
+	throw ExceptionLock("Thread attribute init failed");
+
+    if (pthread_mutexattr_settype(this->attr, PTHREAD_MUTEX_ERRORCHECK) != 0)
+	throw ExceptionLock("Thread attribute set failed");
     
     // Make sure that initilization comes out as good, otherwise we should
     // absolutly die die die
@@ -16,6 +22,9 @@ dashee::Threads::LockMutex::LockMutex()
 		"Error Initilizing LockMutex, ec='" + 
 		dashee::itostr(ec) + "'. This should not happen!"
 	    );
+
+    pthread_mutexattr_destroy(this->attr);
+    this->attr = NULL;
 }
 
 /**
@@ -23,7 +32,7 @@ dashee::Threads::LockMutex::LockMutex()
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::Threads::LockMutex::lock()
+void dashee::Threads::LockMutex::lock(lockType type)
 {
     int ec = pthread_mutex_lock(this->mutex);
 
@@ -63,7 +72,7 @@ void dashee::Threads::LockMutex::lock()
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
-bool dashee::Threads::LockMutex::trylock(int ntimes, int npause)
+bool dashee::Threads::LockMutex::trylock(int ntimes, int npause, lockType type)
 {
     int n = 0;
     int ec;

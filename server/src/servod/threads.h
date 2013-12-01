@@ -37,17 +37,12 @@
 /**
  * Lock our sensor when reading.
  */
-extern dashee::Threads::LockReadWrite lockReadSensor;
-
-/**
- * Lock our sensor when writing.
- */
-extern dashee::Threads::LockReadWrite lockWriteSensor;
+extern dashee::Threads::LockReadWrite lockSensor;
 
 /**
  * Lock our vehicle for updating
  */
-extern dashee::Threads::LockReadWrite lockWriteVehicle;
+extern dashee::Threads::LockReadWrite lockVehicle;
 
 // Thread to wait for a data, and update the controller
 void * threadReadFromServer(void *);

@@ -5,12 +5,16 @@
  *
  * @param type Read or write?
  */
-dashee::Threads::LockReadWrite::LockReadWrite(lockType type)
+dashee::Threads::LockReadWrite::LockReadWrite()
 {
-    this->setLockType(type);
-
     this->rwlock = new pthread_rwlock_t();
-    this->attr = NULL;
+    this->attr = new pthread_rwlockattr_t();
+
+    if (pthread_rwlockattr_init(this->attr) != 0)
+	throw ExceptionLock("Thread attribute init failed");
+
+    if (pthread_rwlockattr_setpshared(this->attr, PTHREAD_PROCESS_SHARED) != 0)
+	throw ExceptionLock("Thread attribute set failed");
     
     // Make sure that initilization comes out as good, otherwise we should
     // absolutly die die die
@@ -20,26 +24,11 @@ dashee::Threads::LockReadWrite::LockReadWrite(lockType type)
 		"Error Initilizing LockRead, ec='" + 
 		dashee::itostr(ec) + "'. This should not happen!"
 	    );
-}
 
-/**
- * Set the current class Lock type
- *
- * @param type The type that this lock represents
- */
-void dashee::Threads::LockReadWrite::setLockType(lockType type)
-{
-    switch (type)
-    {
-	case LOCKTYPE_WRITE:
-	case LOCKTYPE_READ:
-	    this->type = type;
-	    break;
-	default:
-	    throw ExceptionLock("Invalid lock type in setLockType");
-	    break;
-    }
+    if (pthread_rwlockattr_destroy(this->attr) != 0)
+	throw ExceptionLock("Thread attribute destroy failed");
 
+    this->attr = NULL;
 }
 
 /**
@@ -47,14 +36,15 @@ void dashee::Threads::LockReadWrite::setLockType(lockType type)
  *
  * @throws ExceptionLock If exit code is not 0
  */
-void dashee::Threads::LockReadWrite::lock()
+void dashee::Threads::LockReadWrite::lock(lockType type)
 {
-    
     int ec;
-    if (this->type == LOCKTYPE_READ) 
+    if (type == LOCKTYPE_READ) 
 	ec = pthread_rwlock_rdlock(this->rwlock);
-    else
+    else if (type == LOCKTYPE_WRITE)
 	ec = pthread_rwlock_wrlock(this->rwlock);
+    else
+	throw ExceptionLock("Invalid Lock type");
 
     switch (ec)
     {
@@ -92,16 +82,22 @@ void dashee::Threads::LockReadWrite::lock()
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
-bool dashee::Threads::LockReadWrite::trylock(int ntimes, int npause)
+bool dashee::Threads::LockReadWrite::trylock(
+	int ntimes, 
+	int npause,
+	lockType type
+    )
 {
     int n = 0;
     int ec;
     while (true)
     {
-	if (this->type == LOCKTYPE_READ) 
+	if (type == LOCKTYPE_READ) 
 	    ec = pthread_rwlock_tryrdlock(this->rwlock);
-	else
+	else if (type == LOCKTYPE_WRITE)
 	    ec = pthread_rwlock_trywrlock(this->rwlock);
+	else
+	    throw ExceptionLock("Invalid Lock type");
 
 	// Handle errors
 	switch (ec)
