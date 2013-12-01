@@ -45,6 +45,10 @@
 
 #include <dashee/common.h>
 #include <dashee/Log.h>
+#include <dashee/Threads/Thread.h>
+#include <dashee/Threads/Lock.h>
+#include <dashee/Threads/Lock/Mutex.h>
+#include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/ServoController/UART.h>
 #include <dashee/ServoController/USB.h>
 #include <dashee/ServoController/Dummy.h>
@@ -88,6 +92,32 @@ void reloadSystem(
         dashee::Vehicle * vehicle
     );
 
+// System wide globals, used by different processes
+// Create the pointers which will be initiated later
+// Initialising to NULL is important otherwise you will seg fault
+dashee::ServoController *servoController = NULL;
+#include <dashee/Threads/Lock.h>
+dashee::Server *server = NULL;
+dashee::Vehicle * vehicle = NULL;
+dashee::Config * config = NULL;
+
+// Set of usefull locks
+dashee::Threads::LockReadWrite lockReadSensor 
+    = dashee::Threads::LockReadWrite();
+dashee::Threads::LockReadWrite lockWriteSensor 
+    = dashee::Threads::LockReadWrite(
+            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
+        );
+dashee::Threads::LockReadWrite lockWriteServoController 
+    = dashee::Threads::LockReadWrite(
+            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
+        );
+
+// Our thread entry points
+void * threadReadFromServer(void *);
+void * threadUpdateSensors(void *);
+void * threadStepController(void *);
+
 /**
  * Our main function is designed to take in arguments from the command line
  * and run a UDP server. The UDP server provides a interface to the outside 
@@ -106,12 +136,6 @@ void reloadSystem(
  */
 int main(int argc, char ** argv)
 {    
-    // Create the pointers which will be initiated later
-    // Initialising to NULL is important otherwise you will seg fault
-    dashee::ServoController *servoController = NULL;
-    dashee::Server *server = NULL;
-    dashee::Vehicle * vehicle = NULL;
-    dashee::Config * config = NULL;
 
     // Program exit code
     int volatile RETVAL = 0;
@@ -196,11 +220,6 @@ int main(int argc, char ** argv)
                 dashee::Log::info(1, "TIMEOUT");
             }
         }
-        
-        dashee::Log::info(2, "Performing cleanups.");
-        delete servoController;
-        delete server;
-        delete vehicle;
     }
     catch (dashee::ExceptionConfig e)
     {
@@ -217,6 +236,11 @@ int main(int argc, char ** argv)
         dashee::Log::error("caught(runtime_error): %s.", e.what());
         RETVAL = -1;
     }
+    
+    dashee::Log::info(2, "Performing cleanups.");
+    delete servoController;
+    delete server;
+    delete vehicle;
     
     dashee::Log::info(1, "Exiting with '%d'.", RETVAL);
 
@@ -245,8 +269,8 @@ dashee::Config * loadConfig(int argc, char ** argv)
 
     int c;
     static struct option long_options[] = {
-        { "servotype", 1, 0, 0 },
-        { "servo", 1, 0, 0 },
+        { "servo-type", 1, 0, 0 },
+        { "servo-name", 1, 0, 0 },
         { "port", 1, 0, 'p' },
         { "config", 1, 0, 'c' },
         { "verbosity", 1, 0, 'v' },
@@ -274,13 +298,13 @@ dashee::Config * loadConfig(int argc, char ** argv)
                     // Type of Servo
                     case 0:
                         config->set(
-                                "servotype", 
+                                "servo-type", 
                                 static_cast<int>(dashee::strtol(optarg))
                             );
                         break;
                     // Servo file path
                     case 1:
-                        config->set("servo", optarg);
+                        config->set("servo-name", optarg);
                         break;
                     // PID file
                     case 7:
@@ -342,35 +366,35 @@ dashee::ServoController * loadServoController(dashee::Config * config)
 {
     dashee::ServoController * servoController = NULL;
 
-    const char * servo = config->get("servo", SERVOD_DEVICE);
+    const char * servoName = config->get("servo-name", SERVOD_DEVICE);
     unsigned int servoChannels 
         = config->getUInt("servo-channels", SERVOD_CHANNELS);
 
-    // Create a different servotype depending on the variable
-    switch (config->getUInt("servotype", SERVOD_DEVICETYPE))
+    // Create a different servo-type depending on the variable
+    switch (config->getUInt("servo-type", SERVOD_DEVICETYPE))
     {
         case 1:
-            dashee::Log::info(1, "Loading UART device '%s'.", servo);
+            dashee::Log::info(1, "Loading UART device '%s'.", servoName);
             servoController 
-                = new dashee::ServoControllerUART(servo, servoChannels);
+                = new dashee::ServoControllerUART(servoName, servoChannels);
             break;
         case 2:
-            dashee::Log::info(1, "Loading USB device '%s'.", servo);
+            dashee::Log::info(1, "Loading USB device '%s'.", servoName);
             servoController 
-                = new dashee::ServoControllerUSB(servo, servoChannels);
+                = new dashee::ServoControllerUSB(servoName, servoChannels);
             break;
         case 3:
-            dashee::Log::info(1, "Loading Dummy device '%s'.", servo);
+            dashee::Log::info(1, "Loading Dummy device '%s'.", servoName);
             servoController = new dashee::ServoControllerDummy(
-                    servo, 
+                    servoName, 
                     SERVOD_CHANNELS
                 );
             break;
         default:
             throw dashee::ExceptionServoController(
-                    "Invalid servotype '" + 
+                    "Invalid servo-type '" + 
                     dashee::itostr(
-                        config->getUInt("servotype", SERVOD_DEVICETYPE)
+                        config->getUInt("servo-type", SERVOD_DEVICETYPE)
                         ) + 
                     "'"
                 );
