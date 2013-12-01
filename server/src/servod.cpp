@@ -54,7 +54,7 @@
 #include <dashee/daemon.h>
 #include <dashee/signal.h>
 
-//#include "src/servod/threads.h"
+#include "servod/threads.h"
 #include "servod/loads.h"
 
 /**
@@ -87,6 +87,14 @@ int main(int argc, char ** argv)
         dashee::Server *server = NULL;
         dashee::Vehicle * vehicle = NULL;
         dashee::Config * config = NULL;
+
+        // Create handlers to our threads
+        dashee::Threads::Thread threadServer 
+            = dashee::Threads::Thread(threadReadFromServer);
+        dashee::Threads::Thread threadSensor 
+            = dashee::Threads::Thread(threadUpdateSensors);
+        dashee::Threads::Thread threadController
+            = dashee::Threads::Thread(threadStepController);
 
 
 // Open to syslog if it is set as a daemon
@@ -127,6 +135,11 @@ int main(int argc, char ** argv)
         // No point carrying around unused memory while
         // in operation.
         delete config;
+
+        // Start our threads
+        threadServer.start(reinterpret_cast<void *>(server));
+        threadSensor.start((void *)NULL);
+        threadController.start((void *)NULL);
         
         // Loop through read and write our server
         while (!dashee::EXIT)
@@ -166,7 +179,13 @@ int main(int argc, char ** argv)
                 dashee::Log::info(1, "TIMEOUT");
             }
         }
+
+        // Wait for threads to gracefully stop
+        threadServer.join();
+        threadSensor.join();
+        threadController.join();
         
+        // Cleanup our refrences
         dashee::Log::info(2, "Performing cleanups.");
         delete servoController;
         delete server;
