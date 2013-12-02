@@ -62,6 +62,7 @@ public:
     unsigned short int getThrottleChannel();
         
     virtual void transform(Server * server);
+    virtual void transform(std::queue<unsigned char> * q);
 
     virtual ~VehicleCar();
 };

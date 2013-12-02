@@ -60,6 +60,7 @@ public:
 
     // Transform the user input into 
     virtual void transform(Server * server);
+    virtual void transform(std::queue<unsigned char> * q);
 
     virtual ~VehicleMultirotorQuad();
 };

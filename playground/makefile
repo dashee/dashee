@@ -2,7 +2,8 @@ include ../server/makefile.common
 
 BINDIR=bin
 
-BINARIES := $(addprefix $(BINDIR)/, servoUSB servoUART udpserver GPIO ps3HexDump pthread)
+BINARIES := $(addprefix $(BINDIR)/, servoUSB servoUART udpserver GPIO \
+    ps3HexDump pthread queue)
 
 all: $(BINARIES)
 
@@ -24,6 +25,9 @@ $(BINDIR)/udpserver: src/udpserver.cpp | $(BINDIR)
 	$(CC) -g $< -o $@
 
 $(BINDIR)/GPIO: src/GPIO.cpp | $(BINDIR)
+	$(CC) -g $< -o $@
+
+$(BINDIR)/queue: src/queue.cpp | $(BINDIR)
 	$(CC) -g $< -o $@
 
 $(BINDIR)/ps3HexDump: src/ps3HexDump.sh | $(BINDIR)

@@ -16,6 +16,7 @@ ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel)
     : Servo(channel)
 {
     this->fd = fd;
+    memset(this->buffer, 0, sizeof(unsigned char)*2);
 }
 
 /**

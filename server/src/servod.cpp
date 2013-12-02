@@ -78,16 +78,16 @@ int main(int argc, char ** argv)
 
     // Program exit code
     int volatile RETVAL = 0;
+        
+    // Create the pointers which will be initiated later
+    // Initialising to NULL is important otherwise you will seg fault
+    dashee::ServoController *servoController = NULL;
+    dashee::Server *server = NULL;
+    dashee::Vehicle * vehicle = NULL;
+    dashee::Config * config = NULL;
 
     try
     {
-        // Create the pointers which will be initiated later
-        // Initialising to NULL is important otherwise you will seg fault
-        dashee::ServoController *servoController = NULL;
-        dashee::Server *server = NULL;
-        dashee::Vehicle * vehicle = NULL;
-        dashee::Config * config = NULL;
-
         // Create handlers to our threads
         dashee::Threads::Thread threadServer 
             = dashee::Threads::Thread(threadReadFromServer);
@@ -139,8 +139,9 @@ int main(int argc, char ** argv)
         // Start our threads
         threadServer.start(reinterpret_cast<void *>(server));
         threadSensor.start((void *)NULL);
-        threadController.start((void *)NULL);
+        threadController.start(reinterpret_cast<void *>(vehicle));
         
+        /**
         // Loop through read and write our server
         while (!dashee::EXIT)
         {
@@ -179,17 +180,12 @@ int main(int argc, char ** argv)
                 dashee::Log::info(1, "TIMEOUT");
             }
         }
+        */
 
         // Wait for threads to gracefully stop
         threadServer.join();
         threadSensor.join();
         threadController.join();
-        
-        // Cleanup our refrences
-        dashee::Log::info(2, "Performing cleanups.");
-        delete servoController;
-        delete server;
-        delete vehicle;
     }
     catch (dashee::ExceptionConfig e)
     {
@@ -208,6 +204,12 @@ int main(int argc, char ** argv)
     }
     
     dashee::Log::info(1, "Exiting with '%d'.", RETVAL);
+    
+    // Cleanup our refrences
+    dashee::Log::info(2, "Performing cleanups.");
+    delete servoController;
+    delete server;
+    delete vehicle;
 
 // Close the daemon_stream if the program
 // was compiled as a daemon

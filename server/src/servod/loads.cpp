@@ -195,7 +195,7 @@ dashee::Vehicle * loadVehicle(
     else if (strcmp(modelType, "MultirotorQuadX") == 0)
         vehicle = new dashee::VehicleMultirotorQuadX(servoController, config);
     else
-        throw new dashee::ExceptionVehicle(
+        throw dashee::ExceptionVehicle(
                 "Invalid vehicle-type '" + 
                 std::string(modelType) + 
                 "'"
