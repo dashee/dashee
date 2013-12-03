@@ -52,17 +52,20 @@ private:
      */
     pthread_mutexattr_t * attr;
 
-
 public:
 
     // New instance of the thread
     LockMutex();
     
-    void lock();
+    void lock(lockType type = LOCKTYPE_WRITE);
     void unlock();
 
     // If you are feeling board, do implement
-    bool trylock(int ntimes = 0, int npause = 0);
+    bool trylock(
+	    int ntimes = 0,
+	    int npause = 0,
+	    lockType type = LOCKTYPE_WRITE
+	);
     
     // Destruct the thread
     ~LockMutex();

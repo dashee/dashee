@@ -75,12 +75,12 @@ public:
     void start(void * parameter_to_entry_function);
 
     // Joining the thread
-    void join();
+    void * join();
 
     static pthread_t self();
 
     // Call exit on a thread, usefull for external calls
-    static void exit(int retval = 0);
+    static void exit(void * retval = NULL);
 
     // Destruct the thread
     ~Thread();

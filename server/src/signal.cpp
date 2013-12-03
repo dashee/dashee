@@ -1,5 +1,8 @@
 #include <dashee/signal.h>
 
+int volatile dashee::EXIT = 0;
+int volatile dashee::RELOAD = 0;
+
 /**
  * Handle reload behavior.
  *

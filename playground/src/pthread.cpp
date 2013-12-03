@@ -9,11 +9,7 @@
 
 
 dashee::Threads::LockMutex mutexLock = dashee::Threads::LockMutex();
-dashee::Threads::LockReadWrite readLock = dashee::Threads::LockReadWrite();
-dashee::Threads::LockReadWrite writeLock 
-    = dashee::Threads::LockReadWrite(
-            dashee::Threads::LockReadWrite::LOCKTYPE_WRITE
-        );
+dashee::Threads::LockReadWrite rwLock = dashee::Threads::LockReadWrite();
 
 int x = 0;
 
@@ -45,31 +41,27 @@ void * work(void * ptr)
 {
     try
     {
-        readLock.lock();
+        rwLock.lock();
 
         for (int c = 0; c < 1000 && x < 1000; c++)
         {
-            writeLock.lock();
+            rwLock.lock();
             x++;
             std::cout << *(reinterpret_cast<std::string *>(ptr)) << 
                 " changing x to " << x << std::endl;
-            writeLock.unlock();
+            rwLock.unlock();
 
             usleep(rand() % 1000);
         }
-
-        mutexLock.unlock();
-        readLock.unlock();
-
+            
+        rwLock.unlock();
     }
     catch(dashee::Threads::ExceptionLock ex)
     {
         std::cout << ex.what() << std::endl;
     }
-        
-    mutexLock.unlock();
-    writeLock.unlock();
-    readLock.unlock();
+
+    rwLock.unlock();
 
     dashee::Threads::Thread::exit();
 }

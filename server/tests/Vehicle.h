@@ -62,6 +62,9 @@ class dashee::test::Vehicle : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetYawTrim);
     CPPUNIT_TEST(testSetAndGetThrottleTrim);
     
+    // Test the transform queue value
+    CPPUNIT_TEST(testTransforQueue);
+
     // Test getting and setting from config
     CPPUNIT_TEST(testSetAndGetFromConfig);
 
@@ -132,6 +135,9 @@ protected:
     virtual void testSetAndGetRollTrim();
     virtual void testSetAndGetYawTrim();
     virtual void testSetAndGetThrottleTrim();
+    
+    // test running the transform function
+    virtual void testTransforQueue();
     
     // test set and get from Configuration variable
     virtual void testSetAndGetFromConfig();

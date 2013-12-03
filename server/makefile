@@ -61,7 +61,8 @@ $(DIRECTORIES):
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
 $(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
-$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
+$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST) src/servod/threads.o \
+    src/servod/loads.o: %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -71,15 +72,19 @@ $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # The ServoController program
-$(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
+$(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
+    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
+	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	    -o $@ -ldashee
 
 # Our main program that uses the objects
 $(BINDIR)/servod: CFLAGS+=-DDAEMON
-$(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) | $(BINDIR)
+$(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
+    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< -o $@ -ldashee
+	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	    -o $@ -ldashee
 
 # Build and run all the tests
 test: testbuild binfile

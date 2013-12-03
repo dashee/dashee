@@ -56,8 +56,9 @@ void VehicleMultirotorQuad::loadFromConfig(Config * config)
  */
 void VehicleMultirotorQuad::transform(Server * server)
 {
-    VehicleMultirotor::transform(server);
-
+    if (server == NULL)
+        throw ExceptionVehicle("transform requires an initilized pointer");
+    
     for (size_t x = 0; x < server->size(); x++)
     {
 	// Control Command
@@ -79,6 +80,55 @@ void VehicleMultirotorQuad::transform(Server * server)
             else 
 		throw ExceptionVehicle("Invalid Command when transforaming");
         }
+    }
+}
+
+/**
+ * This function transforms the vehicle values reading it from
+ * a queue, This replaces the direct pass through of the server and you can now 
+ * use queues to achieve the same task
+ *
+ * @param q The std::queue that is cleared of commands once read
+ * 
+ * @throws ExceptionVehicle If the param q is NULL
+ */
+void VehicleMultirotorQuad::transform(std::queue<unsigned char> * q)
+{
+    if (q == NULL)
+        throw ExceptionVehicle("transform requires an initilized pointer");
+    
+    // Go through the queue and keep settings the value as long as there are 
+    // any left
+    while (!q->empty())
+    {
+	// Found a command byte
+	if (q->front() == 0)
+	{
+	    // Remove the last element
+	    q->pop();
+
+	    // Ensure the size is still sufficent to do the next two commands
+	    if (q->size() < 4)
+		break;
+
+	    unsigned short int pitch = q->front();
+	    q->pop();
+	    unsigned short int roll = q->front();
+	    q->pop();
+	    unsigned short int yaw = q->front();
+	    q->pop();
+	    unsigned short int throttle = q->front();
+	    q->pop();
+
+	    this->mix(pitch, roll, yaw, throttle);
+	}
+
+	// Invalid byte, continue
+	else
+	{
+	    dashee::Log::warning(1, "Invalid command %d", q->front());
+	    q->pop();
+	}
     }
 }
 

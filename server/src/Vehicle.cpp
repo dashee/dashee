@@ -439,29 +439,6 @@ bool Vehicle::isFallback()
 }
 
 /**
- * Transform the physical model.
- *
- * Before transforming check the value of our 
- * pointers server and servoController, if all is good
- * revert() before continuing
- *
- * @param server The server to transform from
- */
-void Vehicle::transform(Server * server)
-{
-    if (server == NULL)
-        throw ExceptionVehicle(
-                "Cannot transform model as Server is not set"
-            );
-    if (this->servoController == NULL)
-        throw ExceptionVehicle(
-                "Cannot transform model as ServoController is not set"
-            );
-
-    this->revert();
-}
-
-/**
  * Initiate fallback.
  *
  * If we are already in fallback mode return out

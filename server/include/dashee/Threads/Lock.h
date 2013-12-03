@@ -40,9 +40,19 @@ namespace dashee
 class dashee::Threads::Lock
 {
 public:
-    virtual void lock() = 0;
+
+    /**
+     * Enumurator which represents the type of locks
+     */
+    enum lockType { LOCKTYPE_READ, LOCKTYPE_WRITE };
+
+    virtual void lock(lockType type = LOCKTYPE_WRITE) = 0;
     virtual void unlock() = 0;
-    virtual bool trylock(int ntimes = 0, int npause = 0) = 0;
+    virtual bool trylock(
+	    int ntimes = 0, 
+	    int npause = 0,
+	    lockType type = LOCKTYPE_WRITE
+	) = 0;
 };
 
 #endif

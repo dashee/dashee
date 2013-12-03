@@ -21,6 +21,8 @@
 #ifndef DASHEE_MODEL_H_
 #define DASHEE_MODEL_H_
 
+#include <queue>
+
 #include <dashee/Exception/Vehicle.h>
 
 #include <dashee/ServoController.h>
@@ -169,7 +171,12 @@ public:
     // A function which transforms input to output
     // in other workds, transforms commands comming from the server
     // to thier appropriate servo
-    virtual void transform(Server * server);
+    virtual void transform(Server * server) = 0;
+    
+    // A function which transforms input to output
+    // in other workds, transforms commands comming from the server
+    // to thier appropriate servo
+    virtual void transform(std::queue<unsigned char> * q) = 0;
 
     // Function which initiate fallback mode
     virtual void fallback();
