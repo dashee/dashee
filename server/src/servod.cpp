@@ -141,47 +141,6 @@ int main(int argc, char ** argv)
         threadSensor.start((void *)NULL);
         threadController.start(static_cast<void *>(vehicle));
         
-        /**
-        // Loop through read and write our server
-        while (!dashee::EXIT)
-        {
-            if (dashee::RELOAD)
-                reloadSystem(argc, argv, servoController, server, vehicle);
-
-            // Recieave from client and timeout after 4 seconds
-            if (server->read())
-            {
-                try
-                {
-                    dashee::Log::info(
-                        4, 
-                        "P:%3d R:%3d Y:%3d T:%3d", 
-                        vehicle->getPitch(), 
-                        vehicle->getRoll(), 
-                        vehicle->getYaw(), 
-                        vehicle->getThrottle()
-                    );
-
-                    vehicle->transform(server);
-                }
-                catch (dashee::ExceptionVehicle e)
-                {
-                    dashee::Log::warning(
-                            1, 
-                            "caught(ExceptionMode): %s", 
-                            e.what()
-                        );
-                    vehicle->fallback();
-                }
-            }
-            else
-            {
-                vehicle->fallback();
-                dashee::Log::info(1, "TIMEOUT");
-            }
-        }
-        */
-
         // Wait for threads to gracefully stop
         threadServer.join();
         threadSensor.join();
