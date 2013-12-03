@@ -56,7 +56,7 @@ void * dashee::test::waitTillExit(void * nothing)
  */
 void * dashee::test::doN(void * N)
 {
-    for (int x = 0; x < *(reinterpret_cast<int *>(N)); x++)
+    for (int x = 0; x < *(static_cast<int *>(N)); x++)
     {
 	mutexRUN.lock();
 	if (RUN == false) break;
@@ -79,7 +79,7 @@ void * dashee::test::doN(void * N)
 void * dashee::test::addNTimes(void * l)
 {
     dashee::Threads::Lock * lock 
-        = reinterpret_cast<dashee::Threads::Lock *>(l);
+        = static_cast<dashee::Threads::Lock *>(l);
 
     // Do nothing for a while, so other threads can 
     // try to fight for locks
@@ -125,6 +125,18 @@ void * dashee::test::callExit(void * nothing)
     return NULL;
 }
 
+/** 
+ * This function will take in a v, and run a a loop n times
+ * This loop adds an internally defined variable, which is used
+ * 
+ */ 
+void * dashee::test::exitValue(void * v)
+{
+    dashee::Threads::Thread::exit(v);
+
+    return v;
+}
+
 /**
  * Try double locking threads, and try to recover.
  *
@@ -143,7 +155,7 @@ void * dashee::test::callExit(void * nothing)
 void * dashee::test::doubleLock(void * l)
 {
     dashee::Threads::Lock * lock 
-        = reinterpret_cast<dashee::Threads::Lock *>(l);
+        = static_cast<dashee::Threads::Lock *>(l);
 
     try
     {
@@ -216,6 +228,8 @@ void dashee::test::Threads::testSelfCall()
     this->thread = new dashee::Threads::Thread(callSelf);
     this->thread->start((void *)NULL);
     this->thread->join();
+
+    delete this->thread;
 }
 
 /**
@@ -223,9 +237,31 @@ void dashee::test::Threads::testSelfCall()
  */
 void dashee::test::Threads::testExits()
 {
+    // A simple exit call
     this->thread = new dashee::Threads::Thread(callExit);
     this->thread->start((void *)NULL);
     this->thread->join();
+    delete this->thread;
+
+    // Call exit within the thread and read the value that join returns
+    int * x = new int(20);
+    int * retval;
+
+    // Ensure our x is set correctly
+    CPPUNIT_ASSERT(*x == 20);
+
+    // Run our thread, and pass x
+    this->thread = new dashee::Threads::Thread(exitValue);
+    this->thread->start(static_cast<void *>(x));
+
+    // Call join and set retval to take the returned value
+    // ensure the value is good, and retval points to x
+    retval = static_cast<int *>(this->thread->join());
+    CPPUNIT_ASSERT(*retval == 20);
+    CPPUNIT_ASSERT(retval == x);
+
+    delete x;
+    delete this->thread;
 }
 
 /**

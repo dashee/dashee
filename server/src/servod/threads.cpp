@@ -20,7 +20,7 @@ std::queue<unsigned char> buffer = std::queue<unsigned char>();
 void * threadReadFromServer(void * s)
 {
     // Cast our pointer
-    dashee::Server * server = reinterpret_cast<dashee::Server *>(s);
+    dashee::Server * server = static_cast<dashee::Server *>(s);
 
     try
     {
@@ -105,7 +105,7 @@ void * threadUpdateSensors(void * sensor)
  */
 void * threadStepController(void * v)
 {
-    dashee::Vehicle * vehicle = reinterpret_cast<dashee::Vehicle *>(v);
+    dashee::Vehicle * vehicle = static_cast<dashee::Vehicle *>(v);
 
     try
     {

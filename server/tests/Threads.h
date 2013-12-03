@@ -57,6 +57,7 @@ namespace dashee
 	void * callSelf(void *);
 	void * callExit(void *);
 	void * addNTimes(void * l);
+	void * exitValue(void * v);
 
         // Function which takes in a mutex, and tries to
         // double lock it

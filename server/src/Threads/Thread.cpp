@@ -89,12 +89,13 @@ void dashee::Threads::Thread::start(void * parameter_to_entry_function)
  *
  * @throws ExceptionThread If a non 0 pthread value was returned
  */
-void dashee::Threads::Thread::join()
+void * dashee::Threads::Thread::join()
 {
     if (!this->started)
         throw ExceptionThread("Cannot join a stoped thread.");
 
-    int ec = pthread_join(*(this->thread), NULL);
+    void * retval = NULL;
+    int ec = pthread_join(*(this->thread), &retval);
             
     this->started = false;
 
@@ -103,7 +104,7 @@ void dashee::Threads::Thread::join()
     {
         // All is well, do some cleanup
         case 0:
-            return;
+            return retval;
             break;
 
         // Errors see `man pthread_create`
@@ -124,6 +125,8 @@ void dashee::Threads::Thread::join()
                 );
             break;
     }
+
+    return NULL;
 }
 
 /**
@@ -139,11 +142,11 @@ pthread_t dashee::Threads::Thread::self()
 /**
  * Exit the current thread, by calling pthread_exit;
  *
- * @param retval Pass a parameter through to join
+ * @param retval The pointer
  */
-void dashee::Threads::Thread::exit(int retval)
+void dashee::Threads::Thread::exit(void * retval)
 {
-    pthread_exit(&retval);
+    pthread_exit(retval);
 }
 
 /**

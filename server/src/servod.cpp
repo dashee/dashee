@@ -137,9 +137,9 @@ int main(int argc, char ** argv)
         delete config;
 
         // Start our threads
-        threadServer.start(reinterpret_cast<void *>(server));
+        threadServer.start(static_cast<void *>(server));
         threadSensor.start((void *)NULL);
-        threadController.start(reinterpret_cast<void *>(vehicle));
+        threadController.start(static_cast<void *>(vehicle));
         
         /**
         // Loop through read and write our server
