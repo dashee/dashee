@@ -54,6 +54,7 @@ class dashee::test::VehicleCar : public dashee::test::Vehicle
 private:
 protected:
     virtual void testSetAndGetThrottle();
+    virtual void testTransforQueue();
     virtual void testSetAndGetFromConfig();
 
 public:

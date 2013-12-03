@@ -1,19 +1,17 @@
 #include <dashee/Server.h>
 
-using namespace dashee;
-
 /**
  * Constructor.
  *
- * This function will initialize the @p port value which is passed as a parameter
- * it will also set the Server::client_in_length value to be the sizeof Server::client_in 
- * and set the server_in to have all 0's as its value.
+ * This function will initialize the port value which is passed as a 
+ * parameter it will also set the Server::client_in_length value to be the 
+ * sizeof Server::client_in and set the server_in to have all 0's as its value.
  *
  * @param port The value of the port
  *
  * @throws ExceptionServer
  */
-Server::Server(unsigned int port)
+dashee::Server::Server(unsigned int port)
 {
     this->port = port;
     this->numberOfBytesInBuffer = 0;
@@ -38,7 +36,7 @@ Server::Server(unsigned int port)
  *
  * @returns The Server::socketfd protected variable
  */
-int Server::getSocketfd()
+int dashee::Server::getSocketfd()
 {
     return socketfd;
 }
@@ -56,7 +54,7 @@ int Server::getSocketfd()
  *
  * @returns The character which is set in the buffer
  */
-unsigned char Server::getBufferByte(const unsigned int index) const
+unsigned char dashee::Server::getBufferByte(const unsigned int index) const
 {
     if (index >= numberOfBytesInBuffer)
         throw ExceptionOutOfBounds("Trying to access an unset buffer");
@@ -71,7 +69,7 @@ unsigned char Server::getBufferByte(const unsigned int index) const
  *
  * @returns The character
  */
-unsigned char Server::operator[](const unsigned int index) const
+unsigned char dashee::Server::operator[](const unsigned int index) const
 {
     return this->getBufferByte(index);
 }
@@ -81,7 +79,7 @@ unsigned char Server::operator[](const unsigned int index) const
  *
  * @returns The port number
  */
-unsigned int Server::getPort()
+unsigned int dashee::Server::getPort()
 {
     return this->port;
 }
@@ -91,12 +89,12 @@ unsigned int Server::getPort()
  * 
  * The value should always be greater or equall to 0
  *
- * @param numberOfBytesInBuffer The number of bytes which are returned from recvfrom
- *                in read() function
+ * @param numberOfBytesInBuffer The number of bytes which are returned from 
+ * recvfrom in read() function
  *
  * @throws Exception if parameter value is not valid
  */
-void Server::setNumberOfBytesInBuffer(size_t numberOfBytesInBuffer)
+void dashee::Server::setNumberOfBytesInBuffer(size_t numberOfBytesInBuffer)
 {
     if (numberOfBytesInBuffer < 0)
         throw Exception("The number of bytes must be positive");
@@ -112,7 +110,7 @@ void Server::setNumberOfBytesInBuffer(size_t numberOfBytesInBuffer)
  *
  * @returns Number representing the size of bytes
  */ 
-size_t Server::size()
+size_t dashee::Server::size()
 {
     return numberOfBytesInBuffer;
 }
@@ -128,13 +126,40 @@ size_t Server::size()
  *
  * @throws ExceptionServer If the timeout value was more than 999
  */
-void Server::setTimeout(const unsigned int seconds, const unsigned int miliseconds)
+void dashee::Server::setTimeout(
+	const unsigned int seconds, 
+	const unsigned int miliseconds
+    )
 {
     if (miliseconds > 999)
-        throw ExceptionServer("SetTimeout set to value that is not between 0-999");
+        throw ExceptionServer(
+		"SetTimeout set to value that is not between 0-999"
+	    );
         
     pselect_timeout.tv_sec = seconds;
     pselect_timeout.tv_nsec = miliseconds * 1000000l;
+}
+
+/**
+ * Add from our buffer to our addTo parameter queue. Some times its nice
+ * to pass the value that came in the server around the program safely and 
+ * without modifiying our server (Helpfull for threading). For this we create
+ * a function which simply takes in a pointer to an initilized queue (check that
+ * it is initilized) and add from our buffer to it.
+ *
+ * @param q The queue pointer
+ *
+ * @throws ExceptionServer if the pointer q is NULL
+ */
+void dashee::Server::appendBufferTo(std::queue<unsigned char> * q)
+{
+    if (q == NULL)
+	throw ExceptionServer("Pointer to queue must be initilized");
+
+    for (size_t x = 0; x < this->size(); x++)
+    {
+	q->push(this->getBufferByte(x));
+    }
 }
 
 /**
@@ -146,18 +171,25 @@ void Server::setTimeout(const unsigned int seconds, const unsigned int milisecon
  *
  * @returns The value returned by @p pselect
  */
-int Server::wait()
+int dashee::Server::wait()
 {   
     FD_ZERO(&select_read);
     FD_SET(socketfd, &select_read);
     
-    return pselect(socketfd+1, &select_read, NULL, NULL, &pselect_timeout, &origmask);
+    return pselect(
+	    socketfd+1, 
+	    &select_read, 
+	    NULL, 
+	    NULL, 
+	    &pselect_timeout, 
+	    &origmask
+	);
 }
 
 /**
  * An empty destructor designed to be virtual
  */
-Server::~Server()
+dashee::Server::~Server()
 {
 
 }

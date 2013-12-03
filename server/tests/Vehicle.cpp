@@ -284,6 +284,16 @@ void dashee::test::Vehicle::testSetAndGetThrottleTrim()
 }
 
 /**
+ * This function is deisnged to call transform and test the throttle values.
+ *
+ * It must be implemented in child classes
+ */
+void dashee::test::Vehicle::testTransforQueue()
+{
+    throw dashee::Exception("This must be implemented by a child function");
+}
+
+/**
  * Create a dummy configuration file, and let our vehicle set the state from the
  * read configuration
  */

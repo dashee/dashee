@@ -29,16 +29,13 @@ void * threadReadFromServer(void * s)
             if (server->read())
             {
                 lockBuffer.lock();
+ 
+                // Take the buffer   
+                server->appendBufferTo(&buffer);
 
-                // Only add to our buffer, if we have less than 100
-                // commands to deal with, 
-                if (buffer.size() < 100)
-                {
-                    for (size_t x = 0; x < server->size(); x++)
-                    {
-                        buffer.push(server->getBufferByte(x));
-                    }
-                }
+                // Remove any excess values, good to clean up incase this 
+                // just keeps growing till the cows come home
+                while (buffer.size() > 30) buffer.pop();
                 
                 lockBuffer.unlock();
             }

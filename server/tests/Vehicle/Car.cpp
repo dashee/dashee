@@ -47,6 +47,70 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
 }
 
 /**
+ * Call transform on a static queue
+ */ 
+void dashee::test::VehicleCar::testTransforQueue()
+{
+    std::queue<unsigned char> q;
+    
+    // Push one command and see the status
+    q.push(0);
+    q.push(0);
+    q.push(0);
+    this->vehicle->transform(&q);
+    CPPUNIT_ASSERT(this->vehicle->getYaw() == 0);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
+    CPPUNIT_ASSERT(q.empty() == true);
+
+    // Push another command and see the changed
+    q.push(0);
+    q.push(10);
+    q.push(10);
+    this->vehicle->transform(&q);
+    CPPUNIT_ASSERT(this->vehicle->getYaw() == 10);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() == 10);
+    CPPUNIT_ASSERT(q.empty() == true);
+
+    // Push two commands and check that the values are set to the
+    // last known value
+    q.push(0);
+    q.push(20);
+    q.push(20);
+    q.push(0);
+    q.push(30);
+    q.push(30);
+    this->vehicle->transform(&q);
+    CPPUNIT_ASSERT(this->vehicle->getYaw() == 30);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() == 30);
+    CPPUNIT_ASSERT(q.empty() == true);
+
+    // Test invalid set of commands
+    q.push(10);
+    q.push(11);
+    q.push(12);
+    this->vehicle->transform(&q);
+    CPPUNIT_ASSERT(this->vehicle->getYaw() == 30);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() == 30);
+    CPPUNIT_ASSERT(q.empty() == true);
+
+    // Test invalid set of commands
+    q.push(10);
+    q.push(11);
+    q.push(12);
+    q.push(0);
+    q.push(40);
+    q.push(40);
+    q.push(10);
+    this->vehicle->transform(&q);
+    CPPUNIT_ASSERT(this->vehicle->getYaw() == 40);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() == 40);
+    CPPUNIT_ASSERT(q.empty() == true);
+    
+    CPPUNIT_ASSERT(this->vehicle->getYaw() != 255);
+    CPPUNIT_ASSERT(this->vehicle->getThrottle() != 255);
+}
+
+/**
  * Create a dummy configuration file, and let our vehicle set the state from the
  * read configuration
  */

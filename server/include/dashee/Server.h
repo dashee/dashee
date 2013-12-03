@@ -12,8 +12,8 @@
  *  - Non-Commercial - You may not use this dashee for commercial 
  *                     purposes without permission.
  *  - Share Alike    — If you alter, transform, or build upon this work, 
- *                     you may distribute the resulting work only under a licence 
- *                     identical to this one.
+ *                     you may distribute the resulting work only under a 
+ *                     licence identical to this one.
  *
  * The terms and conditions are updated at http://dashee.co.uk/license. View the
  * project site for more details
@@ -31,6 +31,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <signal.h>
+#include <queue>
 
 #include <dashee/Log.h>
 #include <dashee/Exception/Server.h>
@@ -170,7 +171,13 @@ public:
     size_t size();
     
     // Set our timeout value
-    void setTimeout(const unsigned int seconds, const unsigned int miliseconds = 0);
+    void setTimeout(
+	    const unsigned int seconds, 
+	    const unsigned int miliseconds = 0
+	);
+
+    // addTo a queue variable
+    void appendBufferTo(std::queue<unsigned char> * q);
     
     // Read from the client
     virtual void process() = 0;
