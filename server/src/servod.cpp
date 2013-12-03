@@ -132,15 +132,11 @@ int main(int argc, char ** argv)
                 getpid()
             );
         
-        // No point carrying around unused memory while
-        // in operation.
-        delete config;
-
         // Start our threads
         threadServer.start(static_cast<void *>(server));
         threadSensor.start((void *)NULL);
         threadController.start(static_cast<void *>(vehicle));
-        
+
         // Wait for threads to gracefully stop
         threadServer.join();
         threadSensor.join();
@@ -166,6 +162,7 @@ int main(int argc, char ** argv)
     
     // Cleanup our refrences
     dashee::Log::info(2, "Performing cleanups.");
+    delete config;
     delete servoController;
     delete server;
     delete vehicle;
