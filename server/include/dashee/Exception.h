@@ -1,3 +1,11 @@
+/**
+ * @file include/dashee/Exception.h
+ *
+ * @section LICENSE
+ *
+ * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. 
+ */
 
 #ifndef DASHEE_EXCEPTION_H_
 #define DASHEE_EXCEPTION_H_
