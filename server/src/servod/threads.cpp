@@ -13,7 +13,7 @@ std::queue<unsigned char> buffer = std::queue<unsigned char>();
  *
  * The read should handle SIGTERM so no timeout should be required.
  *
- * @param server The pointer to the Server object
+ * @param s The pointer to the Server object
  *
  * @returns Nothing
  */

@@ -2,8 +2,6 @@
 
 /**
  * Contruct our Lock
- *
- * @param type Read or write?
  */
 dashee::Threads::LockReadWrite::LockReadWrite()
 {
@@ -33,6 +31,8 @@ dashee::Threads::LockReadWrite::LockReadWrite()
 
 /**
  * Lock our mutex.
+ *
+ * @param type Read or write?
  *
  * @throws ExceptionLock If exit code is not 0
  */
@@ -79,6 +79,7 @@ void dashee::Threads::LockReadWrite::lock(lockType type)
  *
  * @param ntimes The number of times to try locking, 0 is unlimited
  * @param npause The number of seconds to sleep in the case of failed try
+ * @param type Read or write?
  *
  * @return TRUE if locked, FALSE if failed to lock given contraints
  */
