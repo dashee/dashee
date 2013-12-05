@@ -27,6 +27,7 @@
 #include <dashee/signal.h>
 #include <dashee/Vehicle.h>
 
+#include "Container.h"
 #include "Controller.h"
 
 /**
@@ -69,7 +70,7 @@ extern dashee::Threads::LockMutex lockBuffer;
 extern std::queue<unsigned char> buffer;
 
 // Thread to wait for a data, and update the controller
-void threadInitilizeController(Controller * c);
+void threadInitilizeContainer(Container * c);
 
 // Thread to wait for a data, and update the controller
 void * threadReadFromServer(void *);

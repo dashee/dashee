@@ -16,7 +16,8 @@ include makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built
-OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o)
+OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o \
+    servod/Container.o)
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \

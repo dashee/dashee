@@ -17,21 +17,21 @@ std::queue<unsigned char> buffer = std::queue<unsigned char>();
  *
  * @param controller The controller to set the locks to
  */
-void threadInitilizeController(Controller * controller)
+void threadInitilizeContainer(Container * container)
 {
-    if (controller == NULL)
-        throw dashee::Exception("Controller passed as NULL");
+    if (container == NULL)
+        throw dashee::Exception("container passed as NULL");
 
-    controller->setLockConfig(
+    container->setLockConfig(
             static_cast<dashee::Threads::Lock *>(&lockConfig)
         );
-    controller->setLockServer(
+    container->setLockServer(
             static_cast<dashee::Threads::Lock *>(&lockServer)
         );
-    controller->setLockServoController(
+    container->setLockServoController(
             static_cast<dashee::Threads::Lock *>(&lockServoController)
         );
-    controller->setLockVehicle(
+    container->setLockVehicle(
             static_cast<dashee::Threads::Lock *>(&lockVehicle)
         );
 }

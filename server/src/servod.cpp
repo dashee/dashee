@@ -67,6 +67,7 @@ int main(int argc, char ** argv)
         
     // Create the pointers which will be initiated later
     // Initialising to NULL is important otherwise you will seg fault
+    Container * container;
     Controller * controller;
 
     try
@@ -85,9 +86,12 @@ int main(int argc, char ** argv)
         dashee::Log::openSyslog(argv[0], LOG_DAEMON);
 #endif
         
-        // Initilize our controller
-        controller = new Controller(argc, argv);
-        threadInitilizeController(controller);
+        // Initilize our Container
+        container = new Container(argc, argv);
+        threadInitilizeContainer(container);
+
+        // Initlize our Controller
+        controller = new Controller(container);
  
         // Load sighandler and set the config
         dashee::initSignalHandler();
@@ -96,7 +100,7 @@ int main(int argc, char ** argv)
 // can be run in background
 #ifdef DAEMON
 	dashee::startDaemon(
-                controller->getConfig(), 
+                container->getConfig(), 
                 DASHEE_LOGFILE, 
                 DASHEE_WORKINGDIR, 
                 DASHEE_PIDFILE
@@ -109,17 +113,17 @@ int main(int argc, char ** argv)
                 1, 
                 "Started '%s' on port %d as %d.", 
                 argv[0], 
-                controller->getConfig()->getUInt(
+                container->getConfig()->getUInt(
                     "port", 
-                    Controller::SERVER_PORT
+                    Container::SERVER_PORT
                 ),
                 getpid()
             );
         
         // Start our threads
-        threadServer.start(static_cast<void *>(controller->getServer()));
+        threadServer.start(static_cast<void *>(container->getServer()));
         threadSensor.start((void *)NULL);
-        threadController.start(static_cast<void *>(controller->getVehicle()));
+        threadController.start(static_cast<void *>(container->getVehicle()));
 
         // Wait for threads to gracefully stop
         threadServer.join();
@@ -129,6 +133,8 @@ int main(int argc, char ** argv)
         // Cleanup our refrences
         dashee::Log::info(2, "Performing cleanups.");
         delete controller;
+        delete container;
+
     }
     catch (dashee::ExceptionConfig e)
     {

@@ -26,85 +26,35 @@
 #include <dashee/Vehicle/Car.h>
 #include <dashee/Vehicle/Multirotor/Quad/X.h>
 
+#include "Container.h"
+
 /**
- * This is the main controller class for the programs which holds pointers to 
- * all oired by the main brain of the program
+ * Our main controller designed to perform actions on input, do automation
+ * if no input and finally do some balancing
  */
 class Controller
 {
 private:
-    int argc;
-    char ** argv;
 
 protected:
 
     /**
-     * List of generic variables the Controller is responsible for, Such as:
-     *
-     *  - Config - The loaded configuration
-     *  - Server - The loaded server
-     *  - ServoController - The loaded ServoController
+     * Pointer to our container object
      */
-    dashee::Config * config;
-    dashee::Server * server;
-    dashee::ServoController * servoController;
-    dashee::Vehicle * vehicle;
-
-    /**
-     * Locks which help exclusively do operation so the outside
-     * world does not interfear.
-     */
-    dashee::Threads::Lock * lockConfig;
-    dashee::Threads::Lock * lockServer;
-    dashee::Threads::Lock * lockServoController;
-    dashee::Threads::Lock * lockVehicle;
-    
-    void loadConfig();
-    void loadServer();
-    void loadServoController();
-    void loadVehicle();
-
-    // The functions used to reload the values
-    void reloadConfig();
-    void reloadServer();
-    void reloadServoController();
-    void reloadVehicle();
+    Container * container;
 
 public:
 
-    // Public static constant variables used for defaults
-    static const char * SERVOCONTROLLER_DEVICE;
-    static const unsigned int SERVOCONTROLLER_TYPE;
-    static const unsigned int SERVOCONTROLLER_CHANNELS;
-    static const char * CONFIG;
-    static const unsigned int SERVER_PORT;
-    static const unsigned int SERVER_TIMEOUT;
-    static const char * VEHICLE_TYPE;
-
     // Construct
-    Controller(int argc, char ** argv);
+    Controller(Container * container);
 
-    // Set lockas
-    void setLockConfig(dashee::Threads::Lock * lock);
-    void setLockServer(dashee::Threads::Lock * lock);
-    void setLockServoController(dashee::Threads::Lock * lock);
-    void setLockVehicle(dashee::Threads::Lock * locl);
+    void setContainer(Container * container);
+    Container * getContainer();
 
-    void setConfig(dashee::Config * config);
-    dashee::Config * getConfig();
-
-    void setServer(dashee::Server * server);
-    dashee::Server * getServer();
-
-    void setServoController(dashee::ServoController * servoController);
-    dashee::ServoController * getServoController();
+    //void readInput();
+    //void doAutomation();
+    //void doFallbacks();
     
-    void setVehicle(dashee::Vehicle * vehicle);
-    dashee::Vehicle * getVehicle();
-
-    // Reload from configuration
-    void reloadConfiguration();
-
     // Function which steps 
     void step();
 
