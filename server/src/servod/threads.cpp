@@ -1,12 +1,40 @@
 #include "threads.h"
 
 // Define our locks
+dashee::Threads::LockReadWrite lockConfig = dashee::Threads::LockReadWrite();
+dashee::Threads::LockReadWrite lockServer = dashee::Threads::LockReadWrite();
+dashee::Threads::LockReadWrite lockServoController 
+    = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockVehicle = dashee::Threads::LockReadWrite();
 dashee::Threads::LockMutex lockBuffer = dashee::Threads::LockMutex();
 
 // Define our thread shared globals
 std::queue<unsigned char> buffer = std::queue<unsigned char>();
+
+/**
+ * This is a simple thread that is run to initilize the controller
+ *
+ * @param controller The controller to set the locks to
+ */
+void threadInitilizeController(Controller * controller)
+{
+    if (controller == NULL)
+        throw dashee::Exception("Controller passed as NULL");
+
+    controller->setLockConfig(
+            static_cast<dashee::Threads::Lock *>(&lockConfig)
+        );
+    controller->setLockServer(
+            static_cast<dashee::Threads::Lock *>(&lockServer)
+        );
+    controller->setLockServoController(
+            static_cast<dashee::Threads::Lock *>(&lockServoController)
+        );
+    controller->setLockVehicle(
+            static_cast<dashee::Threads::Lock *>(&lockVehicle)
+        );
+}
 
 /**
  * Loop through calling read and reading from the server.
@@ -28,7 +56,7 @@ void * threadReadFromServer(void * s)
         {
             if (server->read())
             {
-                lockBuffer.lock();
+                dashee::Threads::Scope scope(&lockBuffer);
  
                 // Take the buffer   
                 server->appendBufferTo(&buffer);
@@ -36,8 +64,6 @@ void * threadReadFromServer(void * s)
                 // Remove any excess values, good to clean up incase this 
                 // just keeps growing till the cows come home
                 while (buffer.size() > 30) buffer.pop();
-                
-                lockBuffer.unlock();
             }
 
             //dashee::Log::info(3, "Server Step");
@@ -46,16 +72,12 @@ void * threadReadFromServer(void * s)
     }
     catch (dashee::Exception ex)
     {
-
         dashee::Log::error(
                 "threadReadFromServer failed as Exception thrown: %s", 
                 ex.what()
             );
 
         dashee::EXIT = 1;
-
-        // Just incase! an exception is thrown
-        lockBuffer.unlock();
     }
 
     dashee::Threads::Thread::exit();
@@ -111,20 +133,20 @@ void * threadStepController(void * v)
     {
         while(!dashee::EXIT)
         {
-            lockBuffer.lock();
+            {
+                dashee::Threads::Scope scope(&lockBuffer);
 
-            vehicle->transform(&buffer);
+                vehicle->transform(&buffer);
 
-            dashee::Log::info(
-                4, 
-                "P:%3d R:%3d Y:%3d T:%3d", 
-                vehicle->getPitch(), 
-                vehicle->getRoll(), 
-                vehicle->getYaw(), 
-                vehicle->getThrottle()
-            );
-
-            lockBuffer.unlock();
+                dashee::Log::info(
+                    4, 
+                    "P:%3d R:%3d Y:%3d T:%3d", 
+                    vehicle->getPitch(), 
+                    vehicle->getRoll(), 
+                    vehicle->getYaw(), 
+                    vehicle->getThrottle()
+                );
+            }
 
             dashee::sleep(20000);
         }
@@ -138,9 +160,6 @@ void * threadStepController(void * v)
             );
 
         dashee::EXIT = 1;
-        
-        // Just incase the value is not good
-        lockBuffer.unlock();
     }
 
     dashee::Threads::Thread::exit();

@@ -32,18 +32,16 @@
 
 #include <dashee/common.h>
 #include <dashee/Log.h>
-#include <dashee/ServoController/UART.h>
-#include <dashee/ServoController/USB.h>
-#include <dashee/ServoController/Dummy.h>
-#include <dashee/Server/UDP.h>
-#include <dashee/Vehicle/Car.h>
-#include <dashee/Vehicle/Multirotor/Quad/X.h>
 #include <dashee/Config.h>
 #include <dashee/daemon.h>
 #include <dashee/signal.h>
 
 #include "servod/threads.h"
-#include "servod/loads.h"
+#include "servod/Controller.h"
+
+#define DASHEE_PIDFILE "./var/run/dashee/servod.pid"
+#define DASHEE_LOGFILE "./var/log/dashee/servod.log"
+#define DASHEE_WORKINGDIR "."
 
 /**
  * Our main function is designed to take in arguments from the command line
@@ -69,10 +67,7 @@ int main(int argc, char ** argv)
         
     // Create the pointers which will be initiated later
     // Initialising to NULL is important otherwise you will seg fault
-    dashee::ServoController *servoController = NULL;
-    dashee::Server *server = NULL;
-    dashee::Vehicle * vehicle = NULL;
-    dashee::Config * config = NULL;
+    Controller * controller;
 
     try
     {
@@ -89,26 +84,24 @@ int main(int argc, char ** argv)
 #ifdef DAEMON
         dashee::Log::openSyslog(argv[0], LOG_DAEMON);
 #endif
+        
+        // Initilize our controller
+        controller = new Controller(argc, argv);
+        threadInitilizeController(controller);
  
         // Load sighandler and set the config
         dashee::initSignalHandler();
-        config = loadConfig(argc, argv);
 
 // Start this program as a daemon so it
 // can be run in background
 #ifdef DAEMON
 	dashee::startDaemon(
-                config, 
+                controller->getConfig(), 
                 DASHEE_LOGFILE, 
                 DASHEE_WORKINGDIR, 
                 DASHEE_PIDFILE
             );
 #endif
-        
-        // Create a UDP server
-        servoController = loadServoController(config);
-        server = loadServer(config);
-        vehicle = loadVehicle(config, servoController);
 
         // Helpfull message to let the user know the service is configured
         // and will now try starting
@@ -116,19 +109,26 @@ int main(int argc, char ** argv)
                 1, 
                 "Started '%s' on port %d as %d.", 
                 argv[0], 
-                config->getUInt("port", DASHEE_SERVER_PORT),
+                controller->getConfig()->getUInt(
+                    "port", 
+                    Controller::SERVER_PORT
+                ),
                 getpid()
             );
         
         // Start our threads
-        threadServer.start(static_cast<void *>(server));
+        threadServer.start(static_cast<void *>(controller->getServer()));
         threadSensor.start((void *)NULL);
-        threadController.start(static_cast<void *>(vehicle));
+        threadController.start(static_cast<void *>(controller->getVehicle()));
 
         // Wait for threads to gracefully stop
         threadServer.join();
         threadSensor.join();
         threadController.join();
+    
+        // Cleanup our refrences
+        dashee::Log::info(2, "Performing cleanups.");
+        delete controller;
     }
     catch (dashee::ExceptionConfig e)
     {
@@ -147,13 +147,6 @@ int main(int argc, char ** argv)
     }
     
     dashee::Log::info(1, "Exiting with '%d'.", RETVAL);
-    
-    // Cleanup our refrences
-    dashee::Log::info(2, "Performing cleanups.");
-    delete config;
-    delete servoController;
-    delete server;
-    delete vehicle;
 
 // Close the daemon_stream if the program
 // was compiled as a daemon

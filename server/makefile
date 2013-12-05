@@ -16,13 +16,14 @@ include makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built
-OBJECTS := $(addprefix src/,)
+OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o)
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
     Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o)
+    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
+    Threads/Scope.o)
 OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
     Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
@@ -61,8 +62,7 @@ $(DIRECTORIES):
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
 $(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
-$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST) src/servod/threads.o \
-    src/servod/loads.o: %.o: %.cpp
+$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -72,18 +72,16 @@ $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # The ServoController program
-$(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
-    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
+$(BINDIR)/servo: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	$(CC) $(CFLAGS) $^ \
 	    -o $@ -ldashee
 
 # Our main program that uses the objects
 $(BINDIR)/servod: CFLAGS+=-DDAEMON
-$(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
-    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
+$(BINDIR)/servod: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	$(CC) $(CFLAGS) $^ \
 	    -o $@ -ldashee
 
 # Build and run all the tests

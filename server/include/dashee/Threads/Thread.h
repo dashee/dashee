@@ -4,6 +4,7 @@
  * @section LICENSE
  *
  * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. 
  */
 
 #ifndef DASHEE_THREADS_THREAD_H_

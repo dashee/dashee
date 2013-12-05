@@ -19,6 +19,7 @@
 #include <queue>
 
 #include <dashee/Threads/Thread.h>
+#include <dashee/Threads/Scope.h>
 #include <dashee/Threads/Lock.h>
 #include <dashee/Threads/Lock/Mutex.h>
 #include <dashee/Threads/Lock/ReadWrite.h>
@@ -26,10 +27,30 @@
 #include <dashee/signal.h>
 #include <dashee/Vehicle.h>
 
+#include "Controller.h"
+
 /**
  * Lock our sensor when reading.
  */
 extern dashee::Threads::LockReadWrite lockSensor;
+
+/**
+ * Lock our configuration, usefull for reloading configuration
+ * during runtime
+ */
+extern dashee::Threads::LockReadWrite lockConfig;
+
+/**
+ * Lock our server variables, usefull when operating on the global
+ * server scope
+ */
+extern dashee::Threads::LockReadWrite lockSever;
+
+/**
+ * Lock our servoController Usefull for operating on the servoController
+ * scope
+ */
+extern dashee::Threads::LockReadWrite lockServoController;
 
 /**
  * Lock our vehicle for updating
@@ -46,6 +67,9 @@ extern dashee::Threads::LockMutex lockBuffer;
  * controller
  */
 extern std::queue<unsigned char> buffer;
+
+// Thread to wait for a data, and update the controller
+void threadInitilizeController(Controller * c);
 
 // Thread to wait for a data, and update the controller
 void * threadReadFromServer(void *);
