@@ -51,9 +51,9 @@ public:
     void setContainer(Container * container);
     Container * getContainer();
 
-    //void readInput();
-    //void doAutomation();
-    //void doFallbacks();
+    //void actionReadinput();
+    //void actionAutomate();
+    //void actionFallback();
     
     // Function which steps 
     void step();
