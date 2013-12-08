@@ -14,3 +14,6 @@ client/ps3/bin
 playground/lib64
 playground/bin
 playground/lib
+
+www/website/application/config
+www/website/sass/css
