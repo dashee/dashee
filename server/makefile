@@ -10,7 +10,7 @@
 # @author Shahmir Javaid
 
 # Include a common set of options
-include makefile.common
+include ../makefile.common
 
 # The directories to build
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)

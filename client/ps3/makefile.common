@@ -1,7 +1,0 @@
-CC=g++
-MKDIR=mkdir -p
-RM=rm -Rf
-
-define print
-	printf "%s %-10s '\033[32;1m%s\033[0m'\n" $(1) $(2) $(3)
-endef

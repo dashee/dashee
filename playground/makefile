@@ -1,4 +1,4 @@
-include ../server/makefile.common
+include ../makefile.common
 
 BINDIR=bin
 
