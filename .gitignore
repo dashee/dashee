@@ -1,0 +1,16 @@
+*.o
+
+server/bin
+server/lib64
+server/lib
+server/data
+server/etc
+server/docs/html
+server/docs/xml
+server/tags
+
+client/ps3/bin
+
+playground/lib64
+playground/bin
+playground/lib

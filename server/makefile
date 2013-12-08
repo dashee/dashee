@@ -15,9 +15,10 @@ include makefile.common
 # The directories to build
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
-# All the objects that are built
+# All the objects that are built for binaries
 OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o \
     servod/Container.o)
+# All the objects that are built for libraries
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
@@ -25,6 +26,7 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
     Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
     Threads/Scope.o)
+# All the objects that are built for tests
 OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
     Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
@@ -99,40 +101,11 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	$(call print,"Building","script","$@")
 	install --mode=775 $< $@
 
-$(TESTDIR)/testThreads: tests/testThreads.cpp \
+# Build our tests, binaries
+$(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
 	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testDummy: tests/testDummy.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testUART: tests/testUART.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testGPIO: tests/testGPIO.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testConfig: tests/testConfig.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testVehicleCar: tests/testVehicleCar.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-# Build our init scripts
-$(INITDIR)/dashee-servod: src/servod.init.sh | $(INITDIR)
-	$(call print,"Building","init-script","$@")
-	install --mode=755 $< $@
 
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
@@ -232,7 +205,7 @@ cleandata:
 
 # Will generate ctags for vim
 tags:
-	@ctags-exuberant -R .
+	@ctags -R .
     
 # Cleans all the .o files from our src directory
 # And finally cleans all directories.
