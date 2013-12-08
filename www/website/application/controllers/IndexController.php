@@ -47,7 +47,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function licenceAction()
     {
-    	$this->view->headTitle()->append("Licence, the common deed.");
+    	$this->view->headTitle()->append("Licence, GPL v3 Opensource.");
     	$this->view->headLink()->appendStylesheet("/css/licence.css");
     }
     
