@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>Box2dWeb Demo</title>
+</head>
+<body onload="init();" style="margin:0">
+<canvas id="canvas" width="1600" height="960" style="background-color:#333333;" ></canvas>
+</body>
+<script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>
+<script type="text/javascript" src="car.js"></script>
+<script type="text/javascript" src="tire.js"></script>
+<script type="text/javascript">
+
+// Set some global variables
+var keys = {};
+var keypresses = {
+    '38':'DRIVE',
+    '87':'DRIVE',
+    '40':'REVERSE',
+    '83':'REVERSE',
+    '39':'RIGHT',
+    '68':'RIGHT',
+    '37':'LEFT',
+    '65':'LEFT'
+};
+var keypressed;
+var DEGTORAD = 0.0174532925199432957;
+var RADTODEG = 57.295779513082320876;
+var scale = 100.0;
+
+var b2Vec2 = Box2D.Common.Math.b2Vec2
+, b2AABB = Box2D.Collision.b2AABB
+, b2BodyDef = Box2D.Dynamics.b2BodyDef
+, b2Body = Box2D.Dynamics.b2Body
+, b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+, b2Fixture = Box2D.Dynamics.b2Fixture
+, b2World = Box2D.Dynamics.b2World
+, b2MassData = Box2D.Collision.Shapes.b2MassData
+, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+, b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+, b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+, b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+, b2Math = Box2D.Common.Math.b2Math
+, b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
+;
+
+function init() {
+    var gravity = new b2Vec2(0, 0);
+    var world = new b2World(
+    gravity
+    ,  true                 //allow sleep
+    );
+
+    var fixDef = new b2FixtureDef;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.2;
+
+    var bodyDef = new b2BodyDef;
+
+    // Create walls, all measurements are in meters.
+    // Trying to create a room 16ft by 12ft, 4.87 by 3.65 in meters
+    
+    fixDef.shape = new b2PolygonShape;
+    // Set as box measurments are half the desired measurements.
+    fixDef.shape.SetAsBox(1.82, 0.01);
+
+    // positoned from mid point, so a 0 means half is off screen.
+    
+    bodyDef.position.Set(1.82, 0);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+    bodyDef.position.Set(1.82, 4.87);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+    fixDef.shape.SetAsBox(0.01, 2.435);
+
+    bodyDef.position.Set(0, 2.435);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+    bodyDef.position.Set(3.65, 2.435);
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+
+    //create some objects, hang over from original demo
+    /*bodyDef.type = b2Body.b2_dynamicBody;
+    for(var i = 0; i < 10; ++i) {
+    if(Math.random() > 0.5) {
+
+    } else {
+    fixDef.shape = new b2CircleShape(
+    Math.random() + 0.1 //radius
+    );
+    }
+    bodyDef.position.x = Math.random() * 10;
+    bodyDef.position.y = Math.random() * 10;
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    }*/
+
+    /*bodyDef.type = b2Body.b2_dynamicBody;
+    fixDef.shape = new b2PolygonShape;
+    fixDef.shape.SetAsBox(
+    1 //half width
+    ,  1 //half height
+    );
+
+    world.CreateBody(bodyDef).CreateFixture(fixDef);*/
+
+    var car1 = car(world);
+
+    //setup debug draw
+    var debugDraw = new b2DebugDraw();
+    var context = document.getElementById("canvas").getContext("2d");
+    debugDraw.SetSprite(context);
+    debugDraw.SetDrawScale(scale);
+    debugDraw.SetFillAlpha(0.5);
+    debugDraw.SetLineThickness(1.0);
+    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+    world.SetDebugDraw(debugDraw);
+
+    window.setInterval(update, 1000 / 60);
+
+    //mouse
+
+    var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
+    var canvasPosition = getElementPosition(document.getElementById("canvas"));
+
+    document.addEventListener("mousedown", function(e) {
+        isMouseDown = true;
+        handleMouseMove(e);
+        document.addEventListener("mousemove", handleMouseMove, true);
+    }, true);
+
+    document.addEventListener("mouseup", function() {
+    document.removeEventListener("mousemove", handleMouseMove, true);
+        isMouseDown = false;
+        mouseX = undefined;
+        mouseY = undefined;
+    }, true);
+
+    document.addEventListener("keydown", function(e) {
+        keys[e.which] = true;
+        if(keypresses[e.keyCode])
+        keypressed = keypresses[e.keyCode];
+    }, true);
+
+    document.addEventListener("keyup", function(e) {
+        delete keys[e.which];
+        keypressed = false;
+    }, true);
+
+    function handleMouseMove(e) {
+        mouseX = (e.clientX - canvasPosition.x) / 30;
+        mouseY = (e.clientY - canvasPosition.y) / 30;
+    };
+
+    function getBodyAtMouse() {
+        mousePVec = new b2Vec2(mouseX, mouseY);
+        var aabb = new b2AABB();
+        aabb.lowerBound.Set(mouseX - 0.001, mouseY - 0.001);
+        aabb.upperBound.Set(mouseX + 0.001, mouseY + 0.001);
+
+        // Query the world for overlapping shapes.
+
+        selectedBody = null;
+        world.QueryAABB(getBodyCB, aabb);
+        return selectedBody;
+    }
+
+    function getBodyCB(fixture) {
+        if(fixture.GetBody().GetType() != b2Body.b2_staticBody) {
+            if(fixture.GetShape().TestPoint(fixture.GetBody().GetTransform(), mousePVec)) {
+                selectedBody = fixture.GetBody();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var carImg = document.getElementById('car-img');
+    /*if(carImg && carImg.style) {
+    carImg.style.height = '340px';
+    carImg.style.width = '210px';
+    }*/
+
+    var carRotation = document.getElementById('car-rotation');
+
+    //update
+
+    function update() {
+
+        // update object friction;
+        car1.update();
+
+        if(isMouseDown && (!mouseJoint)) {
+            var body = getBodyAtMouse();
+            if(body) {
+                var md = new b2MouseJointDef();
+                md.bodyA = world.GetGroundBody();
+                md.bodyB = body;
+                md.target.Set(mouseX, mouseY);
+                md.collideConnected = true;
+                md.maxForce = 300.0 * body.GetMass();
+                mouseJoint = world.CreateJoint(md);
+                body.SetAwake(true);
+            }
+        }
+
+        if(mouseJoint) {
+            if(isMouseDown) {
+                mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
+            } else {
+                world.DestroyJoint(mouseJoint);
+                mouseJoint = null;
+            }
+        }
+
+        world.Step(1 / 60, 10, 10);
+        world.DrawDebugData();
+        /*var carX = car1.m_body.GetPosition().x*scale;
+        var carY = car1.m_body.GetPosition().y*scale; 
+        var angle = car1.m_body.GetAngle();
+        /*context.save();
+        context.translate(carX, carY);
+        context.rotate(angle);
+        context.drawImage(carImg, 0, 0);
+        context.restore();*/
+        world.ClearForces();
+    };
+
+    //helpers
+
+    //http://js-tut.aardon.de/js-tut/tutorial/position.html
+    function getElementPosition(element) {
+        var elem=element, tagname="", x=0, y=0;
+
+        while((typeof(elem) == "object") && (typeof(elem.tagName) != "undefined")) {
+            y += elem.offsetTop;
+            x += elem.offsetLeft;
+            tagname = elem.tagName.toUpperCase();
+
+            if(tagname == "BODY")
+                elem=0;
+
+            if(typeof(elem) == "object") {
+                if(typeof(elem.offsetParent) == "object")
+                    elem = elem.offsetParent;
+            }
+        }
+        return {x: x, y: y};
+    }
+
+
+};
+
+</script>
+<div id="car-rotation"></div>
+<img id="car-img" src="car.png" style="position:absolute; left:0; top:0; border:1px solid white; display:none"/>
+</html>

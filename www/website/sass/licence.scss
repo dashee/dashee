@@ -1,50 +1,52 @@
 @import "default";
 
-.deed
+#license
 {
-    $_m_bottom:37px;
-    margin-bottom:$_m_bottom;
-
-    &:last-child
+    .header
     {
-        margin-bottom:0px;
-    }
+        display:inline-block;
+        margin-bottom:30px;
 
-    ul
-    {
-        margin-left:50px;
-        margin-top:10px;
-        margin-bottom:10px;
-
-        li
+        .logo
         {
-            margin-bottom:5px;
+            img
+            {
+                width:80%;
+                height:auto; 
+                margin-top:10px;   
+            }
+            float:left;
+            width:100px;
         }
-    }   
 
-    .help
-    {
-        margin-top:($_m_bottom - 10);
-    }
-}
+        .text
+        {
+            float:left;
+            width:794px;
 
-#deed-disclaimer
-{
-    font-size:0.8em;
-    line-height:1.7em;
-}   
+            .authors
+            {
+                a
+                { 
+                    font-weight:bold;
+                }
+            }
 
-#deed-header
-{
-    width:100%;
-
-    .logo
-    {
-        width:(88 + 10px);
-        height:(31 + 14px);
-        float:left;
-        padding-top:14px;
-        padding-right:10px;
+            .notice
+            {
+                font-style:italic;
+            }
+        }
     }
 
+    .body
+    {
+        padding:20px;
+        background:#DDD;
+        font-size:12px;
+        line-height:14px;
+
+        white-space: pre-wrap;
+        word-wrap:break-word;
+    }
 }

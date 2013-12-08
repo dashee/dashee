@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <canvas id="canvas" width="1024" height="700" />
+
+    <!-- Get this from the box2dweb project site -->
+    <script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>
+
+    <script type="text/javascript">
+    var CANVAS_WIDTH = 1024, CANVAS_HEIGHT = 700, SCALE = 30;
+
+    var b2Vec2 = Box2D.Common.Math.b2Vec2
+            , b2BodyDef = Box2D.Dynamics.b2BodyDef
+            , b2Body = Box2D.Dynamics.b2Body
+            , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+            , b2Fixture = Box2D.Dynamics.b2Fixture
+            , b2World = Box2D.Dynamics.b2World
+            , b2MassData = Box2D.Collision.Shapes.b2MassData
+            , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+            , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+            , b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+
+    var world = new b2World(new b2Vec2(0, 2), true);
+
+    // Create some objects in the world
+    var fixDef = new b2FixtureDef();
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 1;
+    var bodyDef = new b2BodyDef();
+
+    for (var i = 0; i < 40; i++) {
+        bodyDef.type = b2Body.b2_dynamicBody;
+        bodyDef.position.Set((Math.random() * 400) / SCALE, (Math.random() * 400) / SCALE);
+        bodyDef.linearVelocity.Set((Math.random() * 12) + 2, (Math.random() * 12) + 2);
+
+        fixDef.shape = new b2PolygonShape();
+        fixDef.shape.SetAsBox(25 / SCALE, 25 / SCALE);
+        world.CreateBody(bodyDef).CreateFixture(fixDef);
+    }
+
+    // This is where you load the image data - make it a 50px x 50px image
+    // You should use some sort of pre-loader to make sure the image is loaded prior to 
+    // using it.
+    var image = new Image();
+    image.src = "car.png";
+
+    // Set up the game loop - you might want to look into using window.requestAnimationFrame
+    // or some variation of that.
+    window.setInterval(gameLoop, 1000 / 60);
+
+    function gameLoop() {
+        // Update the box2d world
+        world.Step(1 / 60, 8, 3);
+        world.ClearForces();
+
+        context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        for (b = world.GetBodyList() ; b; b = b.GetNext()) {
+            if (b.GetType() == b2Body.b2_dynamicBody) {
+                var pos = b.GetPosition();
+
+                context.save();
+                context.translate(pos.x * SCALE, pos.y * SCALE);
+                context.rotate(b.GetAngle());
+                context.drawImage(image, -25, -25);
+                context.restore();
+            }
+        }
+    }
+
+    </script>
+</body>
+</html>
