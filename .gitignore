@@ -15,5 +15,6 @@ playground/lib64
 playground/bin
 playground/lib
 
-www/website/application/config
+www/website/application/configs
 www/website/sass/css
+www/website/public/download
