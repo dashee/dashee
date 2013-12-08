@@ -123,7 +123,7 @@ int main(int argc, char ** argv)
         // Start our threads
         threadServer.start(static_cast<void *>(container->getServer()));
         threadSensor.start((void *)NULL);
-        threadController.start(static_cast<void *>(container->getVehicle()));
+        threadController.start(static_cast<void *>(controller));
 
         // Wait for threads to gracefully stop
         threadServer.join();

@@ -49,7 +49,6 @@ namespace dashee
 	void * exitValue(void * v);
 	void * scopeLocks(void * l);
 
-
         // Function which takes in a mutex, and tries to
         // double lock it
         void * doubleLock(void * l);

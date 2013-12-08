@@ -79,6 +79,6 @@ void * threadReadFromServer(void *);
 void * threadUpdateSensors(void *);
 
 // Thread to loop through the controller
-void * threadStepController(void *);
+void * threadStepController(void * c);
 
 #endif

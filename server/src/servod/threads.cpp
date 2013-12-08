@@ -98,7 +98,7 @@ void * threadUpdateSensors(void * sensor)
         while(!dashee::EXIT)
         {
             //dashee::Log::info(3, "Sensor Step");
-            dashee::sleep(100000);
+            dashee::sleep(20000);
         }
     }
     catch (dashee::Exception ex)
@@ -121,18 +121,30 @@ void * threadUpdateSensors(void * sensor)
  * the known pointer to different aspec of the systems and should
  * internally worry about locking different objects.
  *
- * @param v The pointer to the SensorIMU
+ * @param c The pointer to the Controller
  *
  * @returns Nothing
  */
-void * threadStepController(void * v)
+void * threadStepController(void * c)
 {
-    dashee::Vehicle * vehicle = static_cast<dashee::Vehicle *>(v);
+    Controller * controller = static_cast<Controller *>(c);
+    Container * container = controller->getContainer();
+    dashee::Vehicle * vehicle = container->getVehicle();
 
     try
     {
         while(!dashee::EXIT)
         {
+            // Reload from configuration and reset the value of our vehicle, 
+            // because the pointer vehicle will no longer exist after the reload
+            if (dashee::RELOAD)
+            {
+                controller->getContainer()->reloadConfiguration();
+                vehicle = container->getVehicle();
+                dashee::RELOAD = 0;
+            }
+
+            // Scope lock the buffer
             {
                 dashee::Threads::Scope scope(&lockBuffer);
 
@@ -153,7 +165,6 @@ void * threadStepController(void * v)
     }
     catch (dashee::Exception ex)
     {
-
         dashee::Log::error(
                 "threadStepController failed as Exception thrown: %s", 
                 ex.what()
