@@ -34,6 +34,10 @@ extern int volatile RELOAD;
 // Signal handlers
 void signalTerminateHandler(int sig);
 void signalReloadHandler(int sig);
+void signalNothingHandler(int sig);
+
+// Loop through signalThreads and call signal
+void signalAllThreads(int sig);
 
 // initialize our Signal handlers
 void initSignal();

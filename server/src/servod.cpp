@@ -81,6 +81,12 @@ int main(int argc, char ** argv)
         dashee::Threads::Thread threadController
             = dashee::Threads::Thread(threadStepController);
 
+        // Add to our signalThread vector, so signal can be called on these 
+        // threads, incase a signal is sent to the main program
+        signalThreads.push_back(&threadServer);
+        signalThreads.push_back(&threadSensor);
+        signalThreads.push_back(&threadController);
+
 
 // Open to syslog if it is set as a daemon
 #ifdef DAEMON

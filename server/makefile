@@ -204,6 +204,7 @@ cleandata:
 	$(RM) $(DATADIR)/Servo.bin
 
 # Will generate ctags for vim
+.PHONY: tags
 tags:
 	@ctags -R .
     
