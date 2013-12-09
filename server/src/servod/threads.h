@@ -30,6 +30,13 @@
 #include "Container.h"
 #include "Controller.h"
 
+
+
+// The ammount of time to sleep on each tick of the threads main loop
+#define DASHEE_SERVOD_THREADS_TICK_CONTROLLER 20000
+#define DASHEE_SERVOD_THREADS_TICK_SERVER 20000
+#define DASHEE_SERVOD_THREADS_TICK_SENSOR 20000
+
 extern dashee::Threads::LockReadWrite lockSensor;
 extern dashee::Threads::LockReadWrite lockConfig;
 extern dashee::Threads::LockReadWrite lockSever;
@@ -40,13 +47,18 @@ extern dashee::Threads::LockReadWrite lockEXIT;
 extern dashee::Threads::LockReadWrite lockRELOAD;
 
 /**
- * Buffer which is passed from the server to the
- * controller
+ * Buffer which is passed from the server to the controller, The max size is 
+ * represented by the defined variable
  */
+#define DASHEE_SERVOD_THREADS_BUFFERSIZE 30
 extern std::queue<unsigned char> buffer;
 
 // Thread to wait for a data, and update the controller
 void threadInitilizeContainer(Container * c);
+
+// Locks the EXIT variable and returns true or false determining shall we keep 
+// going
+bool threadKeepGoing();
 
 // Thread to wait for a data, and update the controller
 void * threadReadFromServer(void *);

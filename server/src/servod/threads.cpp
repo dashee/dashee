@@ -39,6 +39,24 @@ void threadInitilizeContainer(Container * container)
 }
 
 /**
+ * Check the value of EXIT and returns true or false telling the thread
+ * of its status to keep going or not
+ *
+ * @retval true Keep Going
+ * @retval false Stop
+ */
+bool threadKeepGoing()
+{
+    dashee::Threads::Scope scope(
+            &lockEXIT, 
+            dashee::Threads::Lock::LOCKTYPE_READ
+        );
+    if (EXIT) return false;
+
+    return true;
+}
+
+/**
  * Loop through calling read and reading from the server.
  *
  * The read should handle SIGTERM so no timeout should be required.
@@ -54,7 +72,7 @@ void * threadReadFromServer(void * s)
 
     try
     {
-        while(!EXIT)
+        while(threadKeepGoing())
         {
             if (server->read())
             {
@@ -65,11 +83,12 @@ void * threadReadFromServer(void * s)
 
                 // Remove any excess values, good to clean up incase this 
                 // just keeps growing till the cows come home
-                while (buffer.size() > 30) buffer.pop();
+                while (buffer.size() > DASHEE_SERVOD_THREADS_BUFFERSIZE) 
+                    buffer.pop();
             }
 
             //dashee::Log::info(3, "Server Step");
-            //dashee::sleep(100000);
+            //dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SERVER);
         }
     }
     catch (dashee::Exception ex)
@@ -79,6 +98,7 @@ void * threadReadFromServer(void * s)
                 ex.what()
             );
 
+        dashee::Threads::Scope scope(&lockEXIT);
         EXIT = 1;
     }
 
@@ -97,10 +117,10 @@ void * threadUpdateSensors(void * sensor)
 {
     try
     {
-        while(!EXIT)
+        while(threadKeepGoing())
         {
             //dashee::Log::info(3, "Sensor Step");
-            dashee::sleep(20000);
+            dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SENSOR);
         }
     }
     catch (dashee::Exception ex)
@@ -110,6 +130,7 @@ void * threadUpdateSensors(void * sensor)
                 ex.what()
             );
         
+        dashee::Threads::Scope scope(&lockEXIT);
         EXIT = 1;
     }
 
@@ -135,18 +156,24 @@ void * threadStepController(void * c)
 
     try
     {
-        while(!EXIT)
+        while(threadKeepGoing())
         {
-            // Reload from configuration and reset the value of our vehicle, 
-            // because the pointer vehicle will no longer exist after the reload
-            if (RELOAD)
             {
-                controller->getContainer()->reloadConfiguration();
-                vehicle = container->getVehicle();
-                RELOAD = 0;
+                dashee::Threads::Scope scope(
+                        &lockRELOAD
+                    );
+
+                // Reload from configuration and reset the value of our vehicle,
+                // because the pointer vehicle will no longer exist after the 
+                // reload
+                if (RELOAD)
+                {
+                    controller->getContainer()->reloadConfiguration();
+                    vehicle = container->getVehicle();
+                    RELOAD = 0;
+                }
             }
 
-            // Scope lock the buffer
             {
                 dashee::Threads::Scope scope(&lockBuffer);
 
@@ -162,7 +189,7 @@ void * threadStepController(void * c)
                 );
             }
 
-            dashee::sleep(20000);
+            dashee::sleep(DASHEE_SERVOD_THREADS_TICK_CONTROLLER);
         }
     }
     catch (dashee::Exception ex)
@@ -172,6 +199,7 @@ void * threadStepController(void * c)
                 ex.what()
             );
 
+        dashee::Threads::Scope scope(&lockEXIT);
         EXIT = 1;
     }
 
