@@ -17,7 +17,11 @@ void signalReloadHandler(int sig)
     dashee::Threads::Scope scope(&lockRELOAD);
     
     RELOAD = 1;
-    signalAllThreads(sig);
+    
+    // Only do this if the sig is different to the sent signal
+    // otherwise you will go into a recursive loop
+    if (sig != SIGALRM)
+	signalAllThreads(SIGALRM);
     
     dashee::Log::info(3, "Reload signal %d called.", sig);
 }
@@ -34,7 +38,11 @@ void signalTerminateHandler(int sig)
     dashee::Threads::Scope scope(&lockEXIT);
 
     EXIT = 1;
-    signalAllThreads(sig);
+    
+    // Only do this if the sig is different to the sent signal
+    // otherwise you will go into a recursive loop
+    if (sig != SIGALRM)
+	signalAllThreads(SIGALRM);
 
     dashee::Log::info(3, "Terminate signal %d called.", sig);
 }
@@ -60,7 +68,7 @@ void signalAllThreads(int sig)
     for (size_t x = 0; x < signalThreads.size(); x++)
     {
 	if (signalThreads[x] != NULL)
-	    signalThreads[x]->signal(SIGALRM);
+	    signalThreads[x]->signal(sig);
     }
 }
 
