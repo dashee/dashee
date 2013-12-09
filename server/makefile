@@ -48,12 +48,12 @@ all: debug
 libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
-release: $(BINARIES) $(LIBRARIES)
+release: clean test $(BINARIES) $(LIBRARIES)
 
 # A helpfull function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
-debug: LFLAGS:=-g -DDEBUG $(LFLAGS) -pthread
-debug: test $(BINARIES)
+debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
+debug: test $(BINARIES) tags
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -70,6 +70,7 @@ $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Log shared object
+$(LIBDIR)/libdashee.so: LFLAGS+=-pthread
 $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(call print,"Building","lib","$@")
 	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
@@ -94,7 +95,7 @@ test: testbuild binfile
 	@echo ""
 
 # BUILD all the tests
-test: CFLAGS:=-g -DDEBUG $(CFLAGS) -Itests
+test: CFLAGS+=-Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
