@@ -15,8 +15,8 @@ Controller::Controller(Container * container)
  */
 void Controller::setContainer(Container * container)
 {
-    if (this->container == NULL)
-        throw new dashee::Exception("Cannot set container to NULL");
+    if (container == NULL)
+        throw dashee::Exception("Cannot set container to NULL");
 
     this->container = container;
 }

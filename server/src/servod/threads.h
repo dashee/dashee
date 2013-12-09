@@ -24,44 +24,20 @@
 #include <dashee/Threads/Lock/Mutex.h>
 #include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/Server.h>
-#include <dashee/signal.h>
 #include <dashee/Vehicle.h>
 
+#include "signals.h"
 #include "Container.h"
 #include "Controller.h"
 
-/**
- * Lock our sensor when reading.
- */
 extern dashee::Threads::LockReadWrite lockSensor;
-
-/**
- * Lock our configuration, usefull for reloading configuration
- * during runtime
- */
 extern dashee::Threads::LockReadWrite lockConfig;
-
-/**
- * Lock our server variables, usefull when operating on the global
- * server scope
- */
 extern dashee::Threads::LockReadWrite lockSever;
-
-/**
- * Lock our servoController Usefull for operating on the servoController
- * scope
- */
 extern dashee::Threads::LockReadWrite lockServoController;
-
-/**
- * Lock our vehicle for updating
- */
 extern dashee::Threads::LockReadWrite lockVehicle;
-
-/**
- * Lock our buffer
- */ 
 extern dashee::Threads::LockMutex lockBuffer;
+extern dashee::Threads::LockReadWrite lockEXIT;
+extern dashee::Threads::LockReadWrite lockRELOAD;
 
 /**
  * Buffer which is passed from the server to the

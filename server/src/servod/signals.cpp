@@ -1,7 +1,7 @@
-#include <dashee/signal.h>
+#include "signals.h"
 
-int volatile dashee::EXIT = 0;
-int volatile dashee::RELOAD = 0;
+int volatile EXIT = 0;
+int volatile RELOAD = 0;
 
 /**
  * Handle reload behavior.
@@ -10,8 +10,10 @@ int volatile dashee::RELOAD = 0;
  *
  * @param sig The signal number
  */
-void dashee::handleReloadSignal(int sig)
+void signalReloadHandler(int sig)
 {
+    dashee::Threads::Scope scope(&lockRELOAD);
+    
     RELOAD = 1;
     dashee::Log::info(3, "Reload signal %d called.", sig);
 }
@@ -23,8 +25,10 @@ void dashee::handleReloadSignal(int sig)
  *
  * @param sig The signal thrown
  */
-void dashee::handleTerminateSignal(int sig)
+void signalTerminateHandler(int sig)
 {
+    dashee::Threads::Scope scope(&lockEXIT);
+
     EXIT = 1;
     dashee::Log::info(3, "Terminate signal %d called.", sig);
 }
@@ -36,7 +40,7 @@ void dashee::handleTerminateSignal(int sig)
  *
  * @throws std::runtime_error when something does nto work
  */ 
-void dashee::initSignalHandler()
+void initSignal()
 {
     // Set our sigaction
     struct sigaction terminateAction;
@@ -45,8 +49,8 @@ void dashee::initSignalHandler()
     memset(&terminateAction, 0, sizeof(terminateAction));
     memset(&reloadAction, 0, sizeof(reloadAction));
 
-    terminateAction.sa_handler = handleTerminateSignal;
-    reloadAction.sa_handler = handleReloadSignal;
+    terminateAction.sa_handler = signalTerminateHandler;
+    reloadAction.sa_handler = signalReloadHandler;
 
     if (sigaction(SIGINT, &terminateAction, 0))
         throw new std::runtime_error("Sigaction SIGINT failed");

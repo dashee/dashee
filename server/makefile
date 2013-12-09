@@ -17,12 +17,12 @@ DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built for binaries
 OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o \
-    servod/Container.o)
+    servod/Container.o servod/signals.o)
 # All the objects that are built for libraries
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
-    Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
+    Server/UDP.o common.o daemon.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
     Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
     Threads/Scope.o)

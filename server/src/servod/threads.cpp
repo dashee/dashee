@@ -8,6 +8,8 @@ dashee::Threads::LockReadWrite lockServoController
 dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockVehicle = dashee::Threads::LockReadWrite();
 dashee::Threads::LockMutex lockBuffer = dashee::Threads::LockMutex();
+dashee::Threads::LockReadWrite lockEXIT = dashee::Threads::LockReadWrite();
+dashee::Threads::LockReadWrite lockRELOAD = dashee::Threads::LockReadWrite();
 
 // Define our thread shared globals
 std::queue<unsigned char> buffer = std::queue<unsigned char>();
@@ -52,7 +54,7 @@ void * threadReadFromServer(void * s)
 
     try
     {
-        while(!dashee::EXIT)
+        while(!EXIT)
         {
             if (server->read())
             {
@@ -77,7 +79,7 @@ void * threadReadFromServer(void * s)
                 ex.what()
             );
 
-        dashee::EXIT = 1;
+        EXIT = 1;
     }
 
     dashee::Threads::Thread::exit();
@@ -95,7 +97,7 @@ void * threadUpdateSensors(void * sensor)
 {
     try
     {
-        while(!dashee::EXIT)
+        while(!EXIT)
         {
             //dashee::Log::info(3, "Sensor Step");
             dashee::sleep(20000);
@@ -108,7 +110,7 @@ void * threadUpdateSensors(void * sensor)
                 ex.what()
             );
         
-        dashee::EXIT = 1;
+        EXIT = 1;
     }
 
     dashee::Threads::Thread::exit();
@@ -133,15 +135,15 @@ void * threadStepController(void * c)
 
     try
     {
-        while(!dashee::EXIT)
+        while(!EXIT)
         {
             // Reload from configuration and reset the value of our vehicle, 
             // because the pointer vehicle will no longer exist after the reload
-            if (dashee::RELOAD)
+            if (RELOAD)
             {
                 controller->getContainer()->reloadConfiguration();
                 vehicle = container->getVehicle();
-                dashee::RELOAD = 0;
+                RELOAD = 0;
             }
 
             // Scope lock the buffer
@@ -170,7 +172,7 @@ void * threadStepController(void * c)
                 ex.what()
             );
 
-        dashee::EXIT = 1;
+        EXIT = 1;
     }
 
     dashee::Threads::Thread::exit();

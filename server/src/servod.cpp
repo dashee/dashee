@@ -34,10 +34,11 @@
 #include <dashee/Log.h>
 #include <dashee/Config.h>
 #include <dashee/daemon.h>
-#include <dashee/signal.h>
 
+#include "servod/signals.h"
 #include "servod/threads.h"
 #include "servod/Controller.h"
+#include "servod/Container.h"
 
 #define DASHEE_PIDFILE "./var/run/dashee/servod.pid"
 #define DASHEE_LOGFILE "./var/log/dashee/servod.log"
@@ -86,15 +87,14 @@ int main(int argc, char ** argv)
         dashee::Log::openSyslog(argv[0], LOG_DAEMON);
 #endif
         
-        // Initilize our Container
         container = new Container(argc, argv);
-        threadInitilizeContainer(container);
-
-        // Initlize our Controller
         controller = new Controller(container);
+        
+        // Initilize the container
+        threadInitilizeContainer(container);
  
         // Load sighandler and set the config
-        dashee::initSignalHandler();
+        initSignal();
 
 // Start this program as a daemon so it
 // can be run in background
