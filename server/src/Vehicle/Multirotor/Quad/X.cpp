@@ -74,12 +74,22 @@ void VehicleMultirotorQuadX::mix(
     else if (m4 > 255)
 	m4 = 255;
 
+    float m1perc = m1 / 256.0f;
+    float m2perc = m2 / 256.0f;
+    float m3perc = m3 / 256.0f;
+    float m4perc = m4 / 256.0f;
+
     this->motors[0]->setTarget(m1);
     this->motors[1]->setTarget(m2);
     this->motors[2]->setTarget(m3);
     this->motors[3]->setTarget(m4);
 
-    Log::info(4, "Motors: %d %d %d %d", m1, m2, m3, m4);
+    Log::info(4, "Motors: %f %f %f %f", 
+	    floor(m1perc * this->getThrottle()), 
+	    floor(m2perc * this->getThrottle()), 
+	    floor(m3perc * this->getThrottle()), 
+	    floor(m4perc * this->getThrottle())
+	);
 }
 
 /**
