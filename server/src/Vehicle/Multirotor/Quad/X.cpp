@@ -84,17 +84,22 @@ void VehicleMultirotorQuadX::mix(
     float m3perc = m3 / 255.0f;
     float m4perc = m4 / 255.0f;
 
-    this->motors[0]->setTarget(m1);
-    this->motors[1]->setTarget(m2);
-    this->motors[2]->setTarget(m3);
-    this->motors[3]->setTarget(m4);
+    int translatem1 = (int)floor(m1perc * this->getThrottle());
+    int translatem2 = (int)floor(m2perc * this->getThrottle());
+    int translatem3 = (int)floor(m3perc * this->getThrottle());
+    int translatem4 = (int)floor(m4perc * this->getThrottle());
+
+    this->motors[0]->setTarget(translatem1);
+    this->motors[1]->setTarget(translatem2);
+    this->motors[2]->setTarget(translatem3);
+    this->motors[3]->setTarget(translatem4);
 
     Log::info(4, "T %3d    M %3d %3d %3d %3d    P %f %f %f %f", 
 	    this->getThrottle(),
-	    (int)floor(m1perc * this->getThrottle()), 
-	    (int)floor(m2perc * this->getThrottle()), 
-	    (int)floor(m3perc * this->getThrottle()), 
-	    (int)floor(m4perc * this->getThrottle()),
+	    translatem1, 
+	    translatem2,
+	    translatem3,
+	    translatem4,
 	    m1perc, m2perc, m3perc, m4perc
 	);
 }
