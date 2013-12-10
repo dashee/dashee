@@ -60,7 +60,7 @@ while True:
 
         # Great for debugging
         print "{0:-3d}".format(bufferCommand[7]), "{0:-3d}".format(bufferCommand[6]), "{0:-3d}".format(bufferCommand[8]),\
-                "{0:-3d}".format(bufferCommand[9]), ((bufferCommand[19]+bufferCommand[18]))
+                "{0:-3d}".format(255 - bufferCommand[9]), ((bufferCommand[19]+bufferCommand[18]))
 
         bufferServer[0] = 0
 
@@ -73,7 +73,7 @@ while True:
             bufferServer[1] = bufferCommand[7]
             bufferServer[2] = bufferCommand[6]
             bufferServer[3] = bufferCommand[8]
-            bufferServer[4] = bufferCommand[9]
+            bufferServer[4] = 255 - bufferCommand[9]
             #bufferServer[4] = 50
 	else:
 	    continue

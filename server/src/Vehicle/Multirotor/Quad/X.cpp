@@ -32,32 +32,24 @@ void VehicleMultirotorQuadX::mix(
     this->setYaw(yaw);
     this->setThrottle(throttle);
 
-    short int m1 = 128;
-    short int m2 = 128;
-    short int m3 = 128;
-    short int m4 = 128;
+    short int m1 = this->getThrottle();
+    short int m2 = this->getThrottle();
+    short int m3 = this->getThrottle();
+    short int m4 = this->getThrottle();
 
-    // In a quad if there is no throttle, no point continuing
-    if (this->getThrottle() == 0)
-    {
-	/*
-        this->motors[0]->setTarget(0);
-        this->motors[1]->setTarget(0);
-        this->motors[2]->setTarget(0);
-        this->motors[3]->setTarget(0);
-        return;
-	*/
-    }
-
-    m1 -= this->getPitch()-128;
-    m2 -= this->getPitch()-128;
-    m3 += this->getPitch()-128;
-    m4 += this->getPitch()-128;
+    // {1, 1, -1, -1}
+    short int pitchTranslate = (short int)(this->getPitch()-128);
+    m1 += pitchTranslate;
+    m2 += pitchTranslate;
+    m3 -= pitchTranslate;
+    m4 -= pitchTranslate;
     
-    m1 += this->getRoll()-128;
-    m2 -= this->getRoll()-128;
-    m3 -= this->getRoll()-128;
-    m4 += this->getRoll()-128;
+    // {1, -1, -1, 1}
+    short int rollTranslate = (short int)(this->getRoll()-128);
+    m1 += rollTranslate;
+    m2 -= rollTranslate;
+    m3 -= rollTranslate;
+    m4 += rollTranslate;
 
     if (m1 < 0)
 	m1 = 0;
@@ -79,28 +71,15 @@ void VehicleMultirotorQuadX::mix(
     else if (m4 > 255)
 	m4 = 255;
 
-    float m1perc = m1 / 255.0f;
-    float m2perc = m2 / 255.0f;
-    float m3perc = m3 / 255.0f;
-    float m4perc = m4 / 255.0f;
+    this->motors[0]->setTarget(m1);
+    this->motors[1]->setTarget(m2);
+    this->motors[2]->setTarget(m3);
+    this->motors[3]->setTarget(m4);
 
-    int translatem1 = (int)floor(m1perc * this->getThrottle());
-    int translatem2 = (int)floor(m2perc * this->getThrottle());
-    int translatem3 = (int)floor(m3perc * this->getThrottle());
-    int translatem4 = (int)floor(m4perc * this->getThrottle());
-
-    this->motors[0]->setTarget(translatem1);
-    this->motors[1]->setTarget(translatem2);
-    this->motors[2]->setTarget(translatem3);
-    this->motors[3]->setTarget(translatem4);
-
-    Log::info(4, "T %3d    M %3d %3d %3d %3d    P %f %f %f %f", 
-	    this->getThrottle(),
-	    translatem1, 
-	    translatem2,
-	    translatem3,
-	    translatem4,
-	    m1perc, m2perc, m3perc, m4perc
+    Log::info(
+	    4, 
+	    "T %3d    M %3d %3d %3d %3d    P %f %f %f %f",
+	    this->getThrottle(), m1, m2, m3, m4
 	);
 }
 
