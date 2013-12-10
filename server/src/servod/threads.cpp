@@ -180,7 +180,7 @@ void * threadStepController(void * c)
                 vehicle->transform(&buffer);
 
                 dashee::Log::info(
-                    4, 
+                    6, 
                     "P:%3d R:%3d Y:%3d T:%3d", 
                     vehicle->getPitch(), 
                     vehicle->getRoll(), 
