@@ -49,10 +49,10 @@ void VehicleMultirotorQuadX::mix(
 	*/
     }
 
-    m1 -= this->getPitch();
-    m2 -= this->getPitch();
-    m3 += this->getPitch() + m1;
-    m4 += this->getPitch() + m2;
+    m1 -= this->getPitch()-128;
+    m2 -= this->getPitch()-128;
+    m3 += this->getPitch()-128;
+    m4 += this->getPitch()-128;
 
     if (m1 < 0)
 	m1 = 0;
