@@ -37,7 +37,6 @@
 
 #include "servod/signals.h"
 #include "servod/threads.h"
-#include "servod/Controller.h"
 #include "servod/Container.h"
 
 #define DASHEE_PIDFILE "./var/run/dashee/servod.pid"
@@ -69,7 +68,6 @@ int main(int argc, char ** argv)
     // Create the pointers which will be initiated later
     // Initialising to NULL is important otherwise you will seg fault
     Container * container;
-    Controller * controller;
 
     try
     {
@@ -94,7 +92,6 @@ int main(int argc, char ** argv)
 #endif
         
         container = new Container(argc, argv);
-        controller = new Controller(container);
         
         // Initilize the container
         threadInitilizeContainer(container);
@@ -129,7 +126,7 @@ int main(int argc, char ** argv)
         // Start our threads
         threadServer.start(static_cast<void *>(container->getServer()));
         threadSensor.start((void *)NULL);
-        threadController.start(static_cast<void *>(controller));
+        threadController.start(static_cast<void *>(container));
 
         // Wait for threads to gracefully stop
         threadServer.join();
@@ -138,7 +135,6 @@ int main(int argc, char ** argv)
     
         // Cleanup our refrences
         dashee::Log::info(2, "Performing cleanups.");
-        delete controller;
         delete container;
 
     }

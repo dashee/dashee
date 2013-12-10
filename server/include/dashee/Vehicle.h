@@ -156,15 +156,11 @@ public:
     // Simple function to return the value of fallbackMode
     bool isFallback();
 
-    // A function which transforms input to output
-    // in other workds, transforms commands comming from the server
-    // to thier appropriate servo
-    virtual void transform(Server * server) = 0;
-    
-    // A function which transforms input to output
-    // in other workds, transforms commands comming from the server
-    // to thier appropriate servo
-    virtual void transform(std::queue<unsigned char> * q) = 0;
+    // Update our model from a buffer stored in queue
+    virtual void read(std::queue<unsigned char> * buffer) = 0;
+
+    // Update our physical model
+    virtual void update() = 0;
 
     // Function which initiate fallback mode
     virtual void fallback();
