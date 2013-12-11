@@ -26,15 +26,6 @@ class dashee::VehicleMultirotorQuadX : public dashee::VehicleMultirotorQuad
 {
 protected:
 
-    // Function that mixes our input from the user to the
-    // motor value
-    virtual void mix(
-            const unsigned short int pitch,
-            const unsigned short int roll,
-            const unsigned short int yaw,
-            const unsigned short int throttle
-        );
-
 public:
     // Construct and pass through to parent
     VehicleMultirotorQuadX(
@@ -42,6 +33,8 @@ public:
             Config * conf = NULL
         );
 
+    // Update our physical model
+    virtual void update();
 
     virtual ~VehicleMultirotorQuadX();
 };

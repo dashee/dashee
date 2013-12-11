@@ -39,16 +39,10 @@ protected:
             Config * conf = NULL
         );
 
-    // Function that mixes our input from the user to the
-    // motor value
-    virtual void mix(
-            const unsigned short int pitch,
-            const unsigned short int roll,
-            const unsigned short int yaw,
-            const unsigned short int throttle
-        ) = 0;
-
 public:
+
+    // Read from input
+    virtual void read(std::queue<unsigned char> * buffer);
 
     // Helpfull for Changing the motor to represent a different
     // servo
@@ -61,4 +55,3 @@ public:
 };
 
 #endif
-

@@ -16,7 +16,7 @@ include ../makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built for binaries
-OBJECTS := $(addprefix src/, servod/threads.o servod/Controller.o \
+OBJECTS := $(addprefix src/, servod/threads.o \
     servod/Container.o servod/signals.o)
 # All the objects that are built for libraries
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \

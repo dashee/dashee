@@ -35,20 +35,7 @@ protected:
     // Overwrite the loadFromConfig and set the channel values
     virtual void loadFromConfig(Config * config);
 
-    // Function that mixes our input from the user to the
-    // motor value
-    virtual void mix(
-            const unsigned short int pitch,
-            const unsigned short int roll,
-            const unsigned short int yaw,
-            const unsigned short int throttle
-        ) = 0;
-
 public:
-
-    // Transform the user input into 
-    virtual void transform(Server * server);
-    virtual void transform(std::queue<unsigned char> * q);
 
     virtual ~VehicleMultirotorQuad();
 };

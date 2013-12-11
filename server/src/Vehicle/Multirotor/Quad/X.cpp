@@ -13,25 +13,11 @@ VehicleMultirotorQuadX::VehicleMultirotorQuadX(
 }
 
 /**
- * Do some mixing for the Quadcopter
- *
- * @param pitch The pitch value
- * @param roll The roll value
- * @param yaw The yaw value
- * @param throttle The throttle value
+ * Do some mixing for the Quadcopter, and then send the output
+ * to our physical model
  */
-void VehicleMultirotorQuadX::mix(
-        const unsigned short int pitch,
-        const unsigned short int roll,
-        const unsigned short int yaw,
-        const unsigned short int throttle
-    )
+void VehicleMultirotorQuadX::update()
 {
-    this->setPitch(pitch);
-    this->setRoll(roll);
-    this->setYaw(yaw);
-    this->setThrottle(throttle);
-
     short int m1 = this->getThrottle();
     short int m2 = this->getThrottle();
     short int m3 = this->getThrottle();
@@ -77,8 +63,8 @@ void VehicleMultirotorQuadX::mix(
     this->motors[3]->setTarget(m4);
 
     Log::info(
-	    4, 
-	    "T %3d    M %3d %3d %3d %3d    P %f %f %f %f",
+	    10, 
+	    "T %3d - M %3d %3d %3d %3d",
 	    this->getThrottle(), m1, m2, m3, m4
 	);
 }

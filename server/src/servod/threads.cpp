@@ -150,9 +150,9 @@ void * threadUpdateSensors(void * sensor)
  */
 void * threadStepController(void * c)
 {
-    Controller * controller = static_cast<Controller *>(c);
-    Container * container = controller->getContainer();
+    Container * container = static_cast<Container *>(c);
     dashee::Vehicle * vehicle = container->getVehicle();
+    //dashee::Sensor * sensor = contianer->getSensor();
 
     try
     {
@@ -168,25 +168,20 @@ void * threadStepController(void * c)
                 // reload
                 if (RELOAD)
                 {
-                    controller->getContainer()->reloadConfiguration();
+                    container->reloadConfiguration();
                     vehicle = container->getVehicle();
                     RELOAD = 0;
                 }
             }
 
+            // Do to main things
             {
                 dashee::Threads::Scope scope(&lockBuffer);
+                dashee::Threads::Scope scopeVehicle(&lockVehicle);
 
-                vehicle->transform(&buffer);
-
-                dashee::Log::info(
-                    6, 
-                    "P:%3d R:%3d Y:%3d T:%3d", 
-                    vehicle->getPitch(), 
-                    vehicle->getRoll(), 
-                    vehicle->getYaw(), 
-                    vehicle->getThrottle()
-                );
+                vehicle->read(&buffer);
+                //vehicle->read(&sensor);
+                vehicle->update();
             }
 
             dashee::sleep(DASHEE_SERVOD_THREADS_TICK_CONTROLLER);

@@ -32,6 +32,44 @@ void VehicleMultirotor::changeServoMotor(
 }
 
 /**
+ * Read from the input, and change the model
+ *
+ * @param buffer The queue from which to read and clear as read
+ */
+void VehicleMultirotor::read(std::queue<unsigned char> * buffer)
+{
+    while (!buffer->empty())
+    {
+	// Found a command byte
+	if (buffer->front() == 0)
+	{
+	    // Remove the last element
+	    buffer->pop();
+
+	    // Ensure the size is still sufficent to do the next two commands
+	    if (buffer->size() < 4)
+		break;
+
+	    this->setPitch(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
+	    this->setRoll(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
+	    this->setYaw(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
+	    this->setThrottle(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
+	}
+
+	// Invalid byte, continue
+	else
+	{
+	    dashee::Log::warning(1, "Invalid command %d", buffer->front());
+	    buffer->pop();
+	}
+    }
+}
+
+/**
  * Nothing to do
  */
 VehicleMultirotor::~VehicleMultirotor()
