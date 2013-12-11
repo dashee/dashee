@@ -97,126 +97,54 @@ unsigned short int VehicleCar::getThrottleChannel()
     return this->throttleChannel;
 }
 
- /**
-  * Set the value of yaw.
-  *
-  * This will set the value that represents the yaw and will also set the value 
-  * on the servo.
-  *
-  * @param value The value to set it to.
-  */
-void VehicleCar::setYaw(unsigned short int value)
-{
-    Vehicle::setYaw(value);
-    this->servoController->setTarget(this->yawChannel, value);
-}
-
 /**
- * Set the value of the throttle.
+ * Read from the queue and update our model
  *
- * This will set the value that represents the throttle
- * and also set it on the servos.
- *
- * @param value The value to set it to.
- */ 
-void VehicleCar::setThrottle(unsigned short int value)
-{
-    Vehicle::setThrottle(value);
-    this->servoController->setTarget(this->throttleChannel, value);
-}
-
-
-/**
- * Transform server signals to servo signals.
- *
- * A simple transformer, nothing special for the car,
- * just reads the commands that come in and sets it to
- * the relevent motor, As its is only the car model, this
- * is really a pass through
- *
- * @param server The commands to read from
+ * @param buffer The std::queue holding our values.
  */
-void VehicleCar::transform(Server * server)
+void VehicleCar::read(std::queue<unsigned char> * buffer)
 {
-    if (server == NULL)
-        throw ExceptionVehicle(
-                "Cannot transform model as Server is not set"
-            );
-
-    this->revert();
-
-    for (size_t x = 0; x < server->size(); x++)
-    {
-	// Control Command
-	if (server->getBufferByte(x) == 0)
-	{
-	    // Ensure we have the correct number of bytes
-	    // make sure atleast two more bytes exist
-	    if (x + 2 < server->size())
-	    {
-		this->setYaw(
-			static_cast<unsigned short int>(
-			    server->getBufferByte(x+1)
-			)
-		    );
-		this->setThrottle(
-			static_cast<unsigned short int>(
-			    server->getBufferByte(x+2)
-			)
-		    );
-
-		// Add to our x value as we have delt with these bytes
-		x += 2;
-	    }
-
-	    // Command that came in were wrong
-	    else
-		throw ExceptionVehicle("Invalid Command when transforaming");
-	}
-    }
-}
-
-/**
- * This function transforms the vehicle values reading it from
- * a queue, This replaces the direct pass through of the server and you can now 
- * use queues to achieve the same task
- *
- * @param q The std::queue that is cleared of commands once read
- */
-void VehicleCar::transform(std::queue<unsigned char> * q)
-{
-    if (q == NULL)
-        throw ExceptionVehicle("transform requires an initilized pointer");
-
-    this->revert();
-
-    // Go through the queue and keep settings the value as long as there are 
-    // any left
-    while (!q->empty())
+    while (!buffer->empty())
     {
 	// Found a command byte
-	if (q->front() == 0)
+	if (buffer->front() == 0)
 	{
 	    // Remove the last element
-	    q->pop();
+	    buffer->pop();
 
 	    // Ensure the size is still sufficent to do the next two commands
-	    if (q->size() < 2)
+	    if (buffer->size() < 2)
 		break;
 
 	    // Set the yaw, and remove the element
-	    this->setYaw(static_cast<unsigned short int>(q->front()));
-	    q->pop();
+	    this->setYaw(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
 
 	    // Set the throttle and remove the element
-	    this->setThrottle(static_cast<unsigned short int>(q->front()));
-	    q->pop();
+	    this->setThrottle(static_cast<unsigned short int>(buffer->front()));
+	    buffer->pop();
 	}
 
 	// Invalid byte, continue
 	else
-	    q->pop();
+	    buffer->pop();
     }
+}
+
+/**
+ * This function sends its current state to the physical model
+ */
+void VehicleCar::update()
+{
+    this->servoController->setTarget(
+	    this->getYawChannel(),
+	    this->getYaw()
+	);
+
+    this->servoController->setTarget(
+	    this->getThrottleChannel(), 
+	    this->getThrottle()
+	);
 }
 
 /**

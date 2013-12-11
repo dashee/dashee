@@ -57,7 +57,7 @@ void dashee::test::VehicleCar::testTransforQueue()
     q.push(0);
     q.push(0);
     q.push(0);
-    this->vehicle->transform(&q);
+    this->vehicle->read(&q);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 0);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
     CPPUNIT_ASSERT(q.empty() == true);
@@ -66,7 +66,7 @@ void dashee::test::VehicleCar::testTransforQueue()
     q.push(0);
     q.push(10);
     q.push(10);
-    this->vehicle->transform(&q);
+    this->vehicle->read(&q);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 10);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 10);
     CPPUNIT_ASSERT(q.empty() == true);
@@ -79,7 +79,7 @@ void dashee::test::VehicleCar::testTransforQueue()
     q.push(0);
     q.push(30);
     q.push(30);
-    this->vehicle->transform(&q);
+    this->vehicle->read(&q);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 30);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 30);
     CPPUNIT_ASSERT(q.empty() == true);
@@ -88,7 +88,7 @@ void dashee::test::VehicleCar::testTransforQueue()
     q.push(10);
     q.push(11);
     q.push(12);
-    this->vehicle->transform(&q);
+    this->vehicle->read(&q);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 30);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 30);
     CPPUNIT_ASSERT(q.empty() == true);
@@ -101,7 +101,7 @@ void dashee::test::VehicleCar::testTransforQueue()
     q.push(40);
     q.push(40);
     q.push(10);
-    this->vehicle->transform(&q);
+    this->vehicle->read(&q);
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 40);
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 40);
     CPPUNIT_ASSERT(q.empty() == true);
