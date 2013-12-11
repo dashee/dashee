@@ -24,7 +24,7 @@ time.sleep(0.01)
 
 while True:
 
-    bus.write_byte(address, 0x06)
+    bus.write_byte(address, 0x03)
 
     # Get the values from the server
     valX = (bus.read_byte_data(address, 0x03) << 8) | bus.read_byte_data(address, 0x04)
@@ -37,12 +37,13 @@ while True:
     valZ = twosToInt(valZ, 16);
 
     # Change valX and valY to radians
-    radians = math.atan2(valX, valY)
+    radians = math.atan2(valY, valX)
+    radians += -0.0197
 
     # Compensate for errors
     if radians < 0:
         radians += 2*math.pi
-    elif radians > 2*math.pi:
+    if radians > 2*math.pi:
         radians -= 2*math.pi
 
     # Print the value to the output
