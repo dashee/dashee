@@ -24,8 +24,6 @@ time.sleep(0.01)
 
 while True:
 
-    bus.write_byte(address, 0x03)
-
     # Get the values from the server
     valX = (bus.read_byte_data(address, 0x03) << 8) | bus.read_byte_data(address, 0x04)
     valY = (bus.read_byte_data(address, 0x05) << 8) | bus.read_byte_data(address, 0x06)
@@ -48,5 +46,8 @@ while True:
 
     # Print the value to the output
     print "{0:-3f}".format(radians), "{0:-3f}".format(math.floor(radians * 180 / math.pi))
+    
+    bus.write_byte(address, 0x03)
+
     
     time.sleep(0.02)
