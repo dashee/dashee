@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# This program is designed to read the HMC5883L stick and try to conver the values
+# into degrees
+
+
 import smbus
 import time
 import math
