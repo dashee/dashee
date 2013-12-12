@@ -38,19 +38,18 @@ public:
 
     // Overwrite the loadFromConfig and set the channel values
     virtual void loadFromConfig(Config * config);
-
-    // Overwrite our basic
-    virtual void setThrottle(unsigned short int value);
-    virtual void setYaw(unsigned short int value);
     
     // Overwrite our basic
     void setYawChannel(const unsigned short int value);
     unsigned short int getYawChannel();
     void setThrottleChannel(const unsigned short int value);
     unsigned short int getThrottleChannel();
-        
-    virtual void transform(Server * server);
-    virtual void transform(std::queue<unsigned char> * q);
+    
+    // Update our model from a buffer
+    virtual void read(std::queue<unsigned char> * buffer);
+
+    // Update our physical model    
+    virtual void update();
 
     virtual ~VehicleCar();
 };

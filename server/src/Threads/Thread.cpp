@@ -130,6 +130,43 @@ void * dashee::Threads::Thread::join()
 }
 
 /**
+ * Send this calling thread the signal represented by sig.
+ *
+ * @param sig The signal
+ *
+ * @throws ExceptionThread if the return code is non 0
+ */
+void dashee::Threads::Thread::signal(int sig)
+{
+    int ec = pthread_kill(*(this->thread), sig);
+    
+    // Handle the return value of the function
+    switch (ec)
+    {
+        // All is well, do some cleanup
+        case 0:
+	    return;
+            break;
+
+        // Errors see `man pthread_create`
+        case EINVAL:
+            throw ExceptionThread("Invalid Signal");
+            break;
+        case ESRCH:
+            throw ExceptionThread(
+		    "Thread does not exist, ESRCH returned from pthread_signal"
+		);
+            break;
+        // This should not happen
+        default:
+            throw ExceptionThread(
+                    "Exit code came back with '" + dashee::itostr(ec) + "'."
+                );
+            break;
+    }
+}
+
+/**
  * Calls a pthread_self
  *
  * @returns threadid

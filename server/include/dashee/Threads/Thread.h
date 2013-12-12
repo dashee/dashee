@@ -4,12 +4,14 @@
  * @section LICENSE
  *
  * This file is licensed under the terms and condition
+ * mentioned at http://dashee.co.uk/license. 
  */
 
 #ifndef DASHEE_THREADS_THREAD_H_
 #define DASHEE_THREADS_THREAD_H_
 
 #include <pthread.h>
+#include <signal.h>
 
 #include <dashee/common.h>
 #include <dashee/Threads/Exception/Thread.h>
@@ -64,6 +66,10 @@ public:
     // Joining the thread
     void * join();
 
+    // Send this thread the signal of sig
+    void signal(int sig);
+
+    // call self and return the Id' of the thread
     static pthread_t self();
 
     // Call exit on a thread, usefull for external calls

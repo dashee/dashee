@@ -10,19 +10,23 @@
 # @author Shahmir Javaid
 
 # Include a common set of options
-include makefile.common
+include ../makefile.common
 
 # The directories to build
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
-# All the objects that are built
-OBJECTS := $(addprefix src/,)
+# All the objects that are built for binaries
+OBJECTS := $(addprefix src/, servod/threads.o \
+    servod/Container.o servod/signals.o)
+# All the objects that are built for libraries
 OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
     ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
-    Server/UDP.o common.o daemon.o signal.o Vehicle.o Vehicle/Car.o \
+    Server/UDP.o common.o daemon.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o)
+    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
+    Threads/Scope.o)
+# All the objects that are built for tests
 OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
     Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
@@ -44,12 +48,12 @@ all: debug
 libraries: $(LIBRARIES)
 
 # Creates the binaries, in non debug mode
-release: $(BINARIES) $(LIBRARIES)
+release: clean test $(BINARIES) $(LIBRARIES)
 
 # A helpfull function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
-debug: LFLAGS:=-g -DDEBUG $(LFLAGS) -pthread
-debug: test $(BINARIES)
+debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
+debug: test $(BINARIES) tags
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -61,29 +65,27 @@ $(DIRECTORIES):
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
 $(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
-$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST) src/servod/threads.o \
-    src/servod/loads.o: %.o: %.cpp
+$(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Log shared object
+$(LIBDIR)/libdashee.so: LFLAGS+=-pthread
 $(LIBDIR)/libdashee.so: $(LIBDIR) $(OBJECTSLIB) | $(LIBDIR)
 	$(call print,"Building","lib","$@")
 	$(CC) $(LFLAGS) -Wl,-soname,$@ -o $@ $(OBJECTSLIB)
 
 # The ServoController program
-$(BINDIR)/servo: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
-    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
+$(BINDIR)/servo: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	$(CC) $(CFLAGS) $^ \
 	    -o $@ -ldashee
 
 # Our main program that uses the objects
 $(BINDIR)/servod: CFLAGS+=-DDAEMON
-$(BINDIR)/servod: src/servod.cpp $(LIBRARIES) $(OBJECTS) \
-    src/servod/threads.o src/servod/loads.o  | $(BINDIR)
+$(BINDIR)/servod: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 	$(call print,"Building","binary","$@")
-	$(CC) $(CFLAGS) $(OBJECTS) $< src/servod/threads.o src/servod/loads.o \
+	$(CC) $(CFLAGS) $^ \
 	    -o $@ -ldashee
 
 # Build and run all the tests
@@ -93,47 +95,18 @@ test: testbuild binfile
 	@echo ""
 
 # BUILD all the tests
-test: CFLAGS:=-g -DDEBUG $(CFLAGS) -Itests
+test: CFLAGS+=-Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	$(call print,"Building","script","$@")
 	install --mode=775 $< $@
 
-$(TESTDIR)/testThreads: tests/testThreads.cpp \
+# Build our tests, binaries
+$(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
 	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testDummy: tests/testDummy.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testUART: tests/testUART.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testGPIO: tests/testGPIO.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testConfig: tests/testConfig.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-$(TESTDIR)/testVehicleCar: tests/testVehicleCar.cpp \
-    $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
-	$(call print,"Building","tests","$@")
-	$(CC) $(CFLAGS) $< $(OBJECTS) $(OBJECTSTEST) -ldashee -lcppunit -o $@
-
-# Build our init scripts
-$(INITDIR)/dashee-servod: src/servod.init.sh | $(INITDIR)
-	$(call print,"Building","init-script","$@")
-	install --mode=755 $< $@
 
 # Our test build, builds the dummy bin file, called Servo.bin
 # Inside our bin directory
@@ -232,8 +205,9 @@ cleandata:
 	$(RM) $(DATADIR)/Servo.bin
 
 # Will generate ctags for vim
+.PHONY: tags
 tags:
-	@ctags-exuberant -R .
+	@ctags -R .
     
 # Cleans all the .o files from our src directory
 # And finally cleans all directories.

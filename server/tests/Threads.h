@@ -12,6 +12,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Threads/Thread.h>
+#include <dashee/Threads/Scope.h>
 #include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/Threads/Lock/Mutex.h>
 #include "dashee.h"
@@ -46,6 +47,7 @@ namespace dashee
 	void * callExit(void *);
 	void * addNTimes(void * l);
 	void * exitValue(void * v);
+	void * scopeLocks(void * l);
 
         // Function which takes in a mutex, and tries to
         // double lock it
@@ -73,6 +75,7 @@ class dashee::test::Threads : public CppUnit::TestFixture
     CPPUNIT_TEST(testExits);
     
     CPPUNIT_TEST(testLock);
+    CPPUNIT_TEST(testScopeLock);
     CPPUNIT_TEST(testDoubleLock);
 
     // Calling start twice should
@@ -100,6 +103,7 @@ protected:
     
     void testLock();
     void testDoubleLock();
+    void testScopeLock();
 
     void testCallingOneStartOnly();
     void testCallingJoinOnAStopedThread();

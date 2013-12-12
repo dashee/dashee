@@ -1,9 +1,9 @@
-include ../server/makefile.common
+include ../makefile.common
 
 BINDIR=bin
 
 BINARIES := $(addprefix $(BINDIR)/, servoUSB servoUART udpserver GPIO \
-    ps3HexDump pthread queue)
+    ps3HexDump pthread queue 9DOF-HMC5883L)
 
 all: $(BINARIES)
 
@@ -15,22 +15,13 @@ $(LIBDIR):
 	@echo "Directory '$@' linked."
 	ln -snf ../server/$(LIBDIR)
 
-$(BINDIR)/servoUSB: src/servoUSB.cpp | $(BINDIR)
+$(BINDIR)/%: src/%.cpp | $(BINDIR)
 	$(CC) -g $< -o $@
 
-$(BINDIR)/servoUART: src/servoUART.cpp | $(BINDIR)
-	$(CC) $< -o $@
+$(BINDIR)/%: src/%.py | $(BINDIR)
+	install --mode=770 $< $@
 
-$(BINDIR)/udpserver: src/udpserver.cpp | $(BINDIR)
-	$(CC) -g $< -o $@
-
-$(BINDIR)/GPIO: src/GPIO.cpp | $(BINDIR)
-	$(CC) -g $< -o $@
-
-$(BINDIR)/queue: src/queue.cpp | $(BINDIR)
-	$(CC) -g $< -o $@
-
-$(BINDIR)/ps3HexDump: src/ps3HexDump.sh | $(BINDIR)
+$(BINDIR)/%: src/%.sh | $(BINDIR)
 	install --mode=770 $< $@
 
 $(BINDIR)/pthread: src/pthread.cpp | $(BINDIR) $(LIBDIR)

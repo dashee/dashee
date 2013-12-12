@@ -129,12 +129,37 @@ void * dashee::test::callExit(void * nothing)
  * This function will take in a v, and run a a loop n times
  * This loop adds an internally defined variable, which is used
  * 
+ * @param v the value to call exit with
+ *
+ * @returns a pointer of the value that came in
  */ 
 void * dashee::test::exitValue(void * v)
 {
     dashee::Threads::Thread::exit(v);
 
     return v;
+}
+
+/**
+ * This will test our scope locks using the RAII strategy
+ *
+ * @param v The lock value to scope lock
+ *
+ * @return NULL
+ */
+void * dashee::test::scopeLocks(void * v)
+{
+    dashee::Threads::Scope(static_cast<dashee::Threads::Lock *>(v));
+
+    // Do nothing for a while, so other threads can 
+    // try to fight for locks
+    for (int x = 0; x < 100; x++)
+    {
+	dashee::test::sharedVariable++;
+	sleep(100);
+    }
+
+    return NULL;
 }
 
 /**
@@ -346,6 +371,62 @@ void dashee::test::Threads::testDoubleLock()
     delete t3;
 }
 
+/**
+ * This will call the scope Locks function which adds 100 to the value of 
+ * shared variable
+ */
+void dashee::test::Threads::testScopeLock()
+{
+    sharedVariable = 0;
+    CPPUNIT_ASSERT(sharedVariable == 0);
+
+    dashee::Threads::Thread * t1 = new dashee::Threads::Thread(addNTimes);
+    dashee::Threads::Thread * t2 = new dashee::Threads::Thread(addNTimes);
+    dashee::Threads::Thread * t3 = new dashee::Threads::Thread(addNTimes);
+    dashee::Threads::Thread * t4 = new dashee::Threads::Thread(addNTimes);
+
+    t1->start(&lockReadWrite);
+    t2->start(&lockReadWrite);
+    t3->start(&lockReadWrite);
+    t4->start(&lockReadWrite);
+
+    t1->join();
+    t2->join();
+    t3->join();
+    t4->join();
+    
+    CPPUNIT_ASSERT(sharedVariable == 400);
+    
+    t1->start(&lockMutex);
+    t2->start(&lockMutex);
+    t3->start(&lockMutex);
+    t4->start(&lockMutex);
+    
+    t1->join();
+    t2->join();
+    t3->join();
+    t4->join();
+
+    CPPUNIT_ASSERT(sharedVariable == 800);
+
+    t1->start(&lockMutex);
+    t2->start(&lockMutex);
+    t3->start(&lockMutex);
+    t4->start(&lockMutex);
+    
+    t1->join();
+    t2->join();
+    t3->join();
+    t4->join();
+    
+    CPPUNIT_ASSERT(sharedVariable == 1200);
+    sharedVariable = 0;
+
+    delete t1;
+    delete t2;
+    delete t3;
+    delete t4;
+}
 /**
  * This function should throw an exception because a thread must only be 
  * started once
