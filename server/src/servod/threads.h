@@ -25,6 +25,7 @@
 #include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/Server.h>
 #include <dashee/Vehicle.h>
+#include <dashee/Buffer.h>
 
 #include "signals.h"
 #include "Container.h"
