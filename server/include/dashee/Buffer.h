@@ -10,7 +10,7 @@
 #define DASHEE_BUFFER_H_
 
 #include <queue>
-#include <dashee/Exception.h>
+#include <dashee/Exception/OutOfBounds.h>
 
 namespace dashee
 {

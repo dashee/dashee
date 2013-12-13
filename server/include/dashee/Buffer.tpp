@@ -19,7 +19,9 @@
 template <class T> T dashee::Buffer<T>::next()
 {
     if (this->empty())
-	throw dashee::Exception("Trying to call next on an empty Buffer");
+	throw dashee::ExceptionOutOfBounds(
+                "Trying to call next on an empty Buffer"
+            );
 
     T temp = this->front();
     this->pop();
