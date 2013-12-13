@@ -16,6 +16,7 @@
 #include <dashee/ServoController.h>
 #include <dashee/Server.h>
 #include <dashee/Config.h>
+#include <dashee/Buffer.h>
 
 namespace dashee
 {
@@ -157,7 +158,7 @@ public:
     bool isFallback();
 
     // Update our model from a buffer stored in queue
-    virtual void read(std::queue<unsigned char> * buffer) = 0;
+    virtual void read(Buffer<unsigned char> * buffer) = 0;
 
     // Update our physical model
     virtual void update() = 0;
