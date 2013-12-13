@@ -81,13 +81,20 @@ void ServoControllerUART::init()
  * The Pololu board will only run once successfully, so
  * for the second iteration either the board must be hard reset or
  * the reset pin must be driven low. Once the pin is driven low, the board is
- * back to its original state
+ * back to its original state.
+ *
+ * Original states requirs a few seconds to reboot and get to correct running 
+ * operation becuase of this ensure to sleep a little after reset, to give the 
+ * board a chance to fully catch up
  */
 void ServoControllerUART::reset()
 {
     dashee::GPIO gpio(18, dashee::GPIO::OUT);
     gpio.low();
     gpio.high();
+
+    // Important 
+    dashee::sleep(10000);
 }
 
 /**
@@ -126,10 +133,12 @@ short int ServoControllerUART::getError() const
     for (int n = 0, total = 0; n < 2; total++)
     {
         if (total > 10)
+        {
             throw ExceptionServoController(
 		    "Reading ServoControllerUART::getError, ran more "
 		    " than 10 times"
 		);
+        }
 
         int ec = read(this->fd, response+n, 1);
         if(ec < 0)
