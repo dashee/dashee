@@ -25,6 +25,7 @@
 #include <dashee/Threads/Lock/ReadWrite.h>
 #include <dashee/Server.h>
 #include <dashee/Vehicle.h>
+#include <dashee/Buffer.h>
 
 #include "signals.h"
 #include "Container.h"
@@ -48,7 +49,7 @@ extern dashee::Threads::LockReadWrite lockRELOAD;
  * represented by the defined variable
  */
 #define DASHEE_SERVOD_THREADS_BUFFERSIZE 30
-extern std::queue<unsigned char> buffer;
+extern dashee::Buffer<unsigned char> buffer;
 
 // Thread to wait for a data, and update the controller
 void threadInitilizeContainer(Container * c);

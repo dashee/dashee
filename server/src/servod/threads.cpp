@@ -12,7 +12,7 @@ dashee::Threads::LockReadWrite lockEXIT = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockRELOAD = dashee::Threads::LockReadWrite();
 
 // Define our thread shared globals
-std::queue<unsigned char> buffer = std::queue<unsigned char>();
+dashee::Buffer<unsigned char> buffer = dashee::Buffer<unsigned char>();
 
 /**
  * This is a simple thread that is run to initilize the controller

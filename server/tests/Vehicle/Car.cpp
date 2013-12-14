@@ -51,7 +51,7 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
  */ 
 void dashee::test::VehicleCar::testTransforQueue()
 {
-    std::queue<unsigned char> q;
+    dashee::Buffer<unsigned char> q;
     
     // Push one command and see the status
     q.push(0);

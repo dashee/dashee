@@ -29,13 +29,13 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
 # All the objects that are built for tests
 OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
-    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o)
+    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o Buffer.o)
 
 # All the binaries which will be built
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
 TESTS := $(addprefix $(TESTDIR)/, testThreads testConfig testUART testGPIO \
-    testDummy testVehicleCar)
+    testDummy testVehicleCar testBuffer)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
