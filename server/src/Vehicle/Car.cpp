@@ -102,32 +102,30 @@ unsigned short int VehicleCar::getThrottleChannel()
  *
  * @param buffer The std::queue holding our values.
  */
-void VehicleCar::read(std::queue<unsigned char> * buffer)
+void VehicleCar::read(Buffer<unsigned char> * buffer)
 {
     while (!buffer->empty())
     {
 	// Found a command byte
 	if (buffer->front() == 0)
 	{
-	    // Remove the last element
 	    buffer->pop();
 
 	    // Ensure the size is still sufficent to do the next two commands
 	    if (buffer->size() < 2)
 		break;
 
-	    // Set the yaw, and remove the element
-	    this->setYaw(static_cast<unsigned short int>(buffer->front()));
-	    buffer->pop();
-
-	    // Set the throttle and remove the element
-	    this->setThrottle(static_cast<unsigned short int>(buffer->front()));
-	    buffer->pop();
+	    // Set the yaw and throttle from the buffer
+	    this->setYaw(static_cast<unsigned short int>(buffer->next()));
+	    this->setThrottle(static_cast<unsigned short int>(buffer->next()));
 	}
 
 	// Invalid byte, continue
 	else
+	{
+	    dashee::Log::warning(4, "Invalid command %d", buffer->front());
 	    buffer->pop();
+	}
     }
 }
 

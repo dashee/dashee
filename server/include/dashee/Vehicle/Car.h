@@ -46,7 +46,7 @@ public:
     unsigned short int getThrottleChannel();
     
     // Update our model from a buffer
-    virtual void read(std::queue<unsigned char> * buffer);
+    virtual void read(Buffer<unsigned char> * buffer);
 
     // Update our physical model    
     virtual void update();
