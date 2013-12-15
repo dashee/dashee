@@ -4,6 +4,9 @@
 This python program sets the ADXL345 and reads the Acceleration values from it.
 Full documentation of the ADXL345 acellerometer can be found on:
     https://www.sparkfun.com/datasheets/Sensors/Accelerometer/ADXL345.pdf
+
+The example of the source code is morphed from 
+https://github.com/pimoroni/adxl345-python
 '''
 
 import smbus
