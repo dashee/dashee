@@ -10,21 +10,6 @@ import smbus
 import time
 import math
 
-##
-# Gets the two's int into the correct value required
-#
-# @param val the value to convert
-# @param len the length of the value
-#
-# @returns the converted value
-def twosToInt(val, len):
- 
-    # Convert twos compliment to integer
-    if(val & (1 << len - 1)):
-        val = val - (1<<len)
-
-    return val
-
 # Define some Globals
 bus = smbus.SMBus(1)
 address = 0x1e
