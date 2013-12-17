@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 '''
-This python program reads the compas HMC5883L and returns the current degrees 
+This python program reads the compass HMC5883L and returns the current degrees 
 the compass is pointing to.
 
 TODO: still need to fix the actual values, I believe the values are off
@@ -9,6 +9,21 @@ TODO: still need to fix the actual values, I believe the values are off
 import smbus
 import time
 import math
+
+##
+# Gets the two's int into the correct value required
+#
+# @param val the value to convert
+# @param len the length of the value
+#
+# @returns the converted value
+def twosToInt(val, len):
+ 
+    # Convert twos compliment to integer
+    if(val & (1 << len - 1)):
+        val = val - (1<<len)
+
+    return val
 
 # Define some Globals
 bus = smbus.SMBus(1)
@@ -31,7 +46,7 @@ while True:
     valZ = (bus.read_byte_data(address, 0x07) << 8) \
         | bus.read_byte_data(address, 0x08)
 
-    # Update the values to be of two compliemnt
+    # Update the values to be of two compliment
     valX = twosToInt(valX, 16);
     valY = twosToInt(valY, 16);
     valZ = twosToInt(valZ, 16);

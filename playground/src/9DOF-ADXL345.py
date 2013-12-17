@@ -2,7 +2,7 @@
 
 '''
 This python program sets the ADXL345 and reads the Acceleration values from it.
-Full documentation of the ADXL345 acellerometer can be found on:
+Full documentation of the ADXL345 accelerometer can be found on:
     https://www.sparkfun.com/datasheets/Sensors/Accelerometer/ADXL345.pdf
 
 The example of the source code is morphed from 
@@ -29,7 +29,7 @@ def twosToInt(val, len):
     return val
 
 ##
-# Enable the measurment value
+# Enable the measurement value
 #
 # @param bus to write
 # @param address the device address
@@ -71,9 +71,13 @@ def getValue(bus, address):
     valY = twosToInt(valY, 16);
     valZ = twosToInt(valZ, 16);
 
-    valX *= 0.001
-    valY *= 0.001
-    valZ *= 0.001
+    valX *= 0.004
+    valY *= 0.004
+    valZ *= 0.004
+
+    valX *= 9.80665
+    valY *= 9.80665
+    valZ *= 9.80665
 
     valX = round(valX, 4)
     valY = round(valY, 4)
@@ -86,7 +90,7 @@ bus = smbus.SMBus(1)
 address = 0x53
 
 setBandwidthRate(bus, address, 0x0B);
-setRange(bus, address, 0x00);
+setRange(bus, address, 0x03);
 enableMeasurement(bus, address);
 
 # Loop through and get the values
@@ -94,6 +98,6 @@ while True:
     
     (valX, valY, valZ) = getValue(bus, address);
 
-    print "{0:-3f}".format(valX), "{0:-3f}".format(valY), "{0:-3f}".format(valZ)
+    print "{0: 3f}".format(valX), "{0: 3f}".format(valY), "{0: 3f}".format(valZ)
 
-    time.sleep(0.05)
+    time.sleep(0.06)
