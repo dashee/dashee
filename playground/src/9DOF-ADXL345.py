@@ -100,4 +100,4 @@ while True:
 
     print "{0: 3f}".format(valX), "{0: 3f}".format(valY), "{0: 3f}".format(valZ)
 
-    time.sleep(0.06)
+    time.sleep(0.04)
