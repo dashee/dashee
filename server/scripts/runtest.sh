@@ -21,7 +21,7 @@ TESTDIR=./bin/tests
 TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
-TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy"
+TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testCoordinate"
 TEST_PI="testGPIO testUART"
 TEST_DUMMY="testDummy"
 

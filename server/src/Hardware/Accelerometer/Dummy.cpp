@@ -15,7 +15,7 @@ dashee::Hardware::AccelerometerDummy::AccelerometerDummy()
  */ 
 float dashee::Hardware::AccelerometerDummy::read() const
 {
-    return 1.0f;
+    return 0.0f;
 }
 
 /**
