@@ -37,7 +37,6 @@ protected:
 public:
     // Construct and pass through to parent
     Coordinate();
-
     Coordinate(const T x, const T y, const T z);
 
     void setX(const T x);
@@ -47,6 +46,12 @@ public:
     T getX() const;
     T getY() const;
     T getZ() const;
+
+    bool operator==(const Coordinate<T> & rhs) const;
+    bool operator!=(const Coordinate<T> & rhs) const;
+
+    Coordinate<T> operator+(const Coordinate<T> & rhs);
+    Coordinate<T> operator-(const Coordinate<T> & rhs);
 
     virtual ~Coordinate();
 };

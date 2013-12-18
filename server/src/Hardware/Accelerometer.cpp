@@ -1,16 +1,18 @@
 #include <dashee/Hardware/Accelerometer.h>
 
+using namespace dashee::Hardware;
+
 /**
- * Do nothing construct
+ * Default our variables
  */
-dashee::Hardware::Accelerometer::Accelerometer()
+Accelerometer::Accelerometer()
 {
+    this->coordinate = dashee::Coordinate<float>();
 }
 
 /**
  * Do nothing destruct
  */
-dashee::Hardware::Accelerometer::~Accelerometer()
+Accelerometer::~Accelerometer()
 {
-
 }

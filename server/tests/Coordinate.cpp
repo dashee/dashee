@@ -1,17 +1,19 @@
 #include "Coordinate.h"
 
+using namespace dashee::test;
+
 /**
  * Set up our coordinate
  */
-void dashee::test::Coordinate::setUp()
+void Coordinate::setUp()
 {
-   this->coordinate = new dashee::Coordinate<float>();     
+   this->coordinate = new dashee::Coordinate<float>();
 }
 
 /**
  * Test construction values as set by default
  */
-void dashee::test::Coordinate::testEmptyConstructions()
+void Coordinate::testEmptyConstructions()
 {
     CPPUNIT_ASSERT(this->coordinate->getX() == 0.0f);
     CPPUNIT_ASSERT(this->coordinate->getY() == 0.0f);
@@ -21,7 +23,7 @@ void dashee::test::Coordinate::testEmptyConstructions()
 /**
  * Test construction of the object with values
  */
-void dashee::test::Coordinate::testValueConstructions()
+void Coordinate::testValueConstructions()
 {
     // Positive Values
     dashee::Coordinate<int> c1(10,5,20);
@@ -45,7 +47,7 @@ void dashee::test::Coordinate::testValueConstructions()
 /**
  * Test setting and getting X
  */
-void dashee::test::Coordinate::testSetAndGetX()
+void Coordinate::testSetAndGetX()
 {
     CPPUNIT_ASSERT(this->coordinate->getX() == 0.0f);
     this->coordinate->setX(1.9f);
@@ -57,7 +59,7 @@ void dashee::test::Coordinate::testSetAndGetX()
 /**
  * Test setting and getting Y
  */
-void dashee::test::Coordinate::testSetAndGetY()
+void Coordinate::testSetAndGetY()
 {
     CPPUNIT_ASSERT(this->coordinate->getY() == 0.0f);
     this->coordinate->setY(1.9f);
@@ -69,7 +71,7 @@ void dashee::test::Coordinate::testSetAndGetY()
 /**
  * Test setting and getting Y
  */
-void dashee::test::Coordinate::testSetAndGetZ()
+void Coordinate::testSetAndGetZ()
 {
     CPPUNIT_ASSERT(this->coordinate->getZ() == 0.0f);
     this->coordinate->setZ(1.9f);
@@ -79,9 +81,46 @@ void dashee::test::Coordinate::testSetAndGetZ()
 }
 
 /**
+ * Test the equality operator
+ */
+void Coordinate::testOperatorEquality()
+{
+    // Check equality with two new objects
+    CPPUNIT_ASSERT(dashee::Coordinate<int>() == dashee::Coordinate<int>());
+
+    // Check equality with no value contractor and normal constructor
+    CPPUNIT_ASSERT(
+	    dashee::Coordinate<int>() == dashee::Coordinate<int>(0, 0, 0)
+	);
+
+    // Create c1, and c2 and test their equality
+    dashee::Coordinate<float> c1(0.0f, 1.0f, 2.0f);
+    dashee::Coordinate<float> c2(0.0f, 1.0f, 2.0f);
+    CPPUNIT_ASSERT(c1 == c2);
+
+    // Change this coordinate and test equality
+    c1.setX(0.0f);
+    c1.setY(1.0f);
+    c1.setZ(2.0f);
+    CPPUNIT_ASSERT(c1 != dashee::Coordinate<float>());
+}
+
+/**
+ * Test the plus and minus operator
+ */
+void Coordinate::testOperatorPlusMinus()
+{
+    // Create c1, and c2 and test the value with + and -
+    dashee::Coordinate<float> c1(0.0f, 1.0f, 2.0f);
+    dashee::Coordinate<float> c2(0.0f, 1.0f, 2.0f);
+    CPPUNIT_ASSERT((c1 + c2) == dashee::Coordinate<float>(0.0f, 2.0f, 4.0f));
+    CPPUNIT_ASSERT((c1 - c2) == dashee::Coordinate<float>(0.0f, 0.0f, 0.0f));
+}
+
+/**
  * Tear down our objects
  */
-void dashee::test::Coordinate::tearDown()
+void Coordinate::tearDown()
 {
     delete this->coordinate;
 }

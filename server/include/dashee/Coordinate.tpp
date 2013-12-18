@@ -100,6 +100,70 @@ template <class T> T dashee::Coordinate<T>::getZ() const
 }
 
 /**
+ * Operator which tests the equality of two coordinates.
+ *
+ * @param rhs The right hand side to test against
+ */
+template <class T> 
+bool dashee::Coordinate<T>::operator ==(const dashee::Coordinate<T>& rhs) const
+{
+    return 
+	this->x == rhs.getX() && 
+	this->y == rhs.getY() && 
+	this->z == rhs.getZ();
+}
+
+/**
+ * Operator which tests the non-equality of two coordinates.
+ *
+ * @param rhs The right hand side to test against
+ */
+template <class T> 
+bool dashee::Coordinate<T>::operator !=(const dashee::Coordinate<T>& rhs) const
+{
+    return 
+	this->x != rhs.getX() ||
+	this->y != rhs.getY() ||
+	this->z != rhs.getZ();
+}
+
+/**
+ * Add the values of the rhs parameter to this object
+ *
+ * @param rhs The right hand side to add from
+ */
+template <class T>
+dashee::Coordinate<T> dashee::Coordinate<T>::operator+(
+	const dashee::Coordinate<T> &rhs
+    )
+{
+    dashee::Coordinate<T> result;
+    result.setX(this->getX() + rhs.getX());
+    result.setY(this->getY() + rhs.getY());
+    result.setZ(this->getZ() + rhs.getZ());
+
+    return result;
+}
+
+/**
+ * Subtract the values of the rhs parameter to this object
+ *
+ * @param rhs The right hand side to add from
+ */
+template <class T>
+dashee::Coordinate<T> dashee::Coordinate<T>::operator-(
+	const dashee::Coordinate<T> &rhs
+    )
+{
+    dashee::Coordinate<T> result;
+    result.setX(this->getX() - rhs.getX());
+    result.setY(this->getY() - rhs.getY());
+    result.setZ(this->getZ() - rhs.getZ());
+
+    return result;
+}
+
+/**
  * Do nothing destruct
  */
 template <class T> dashee::Coordinate<T>::~Coordinate()

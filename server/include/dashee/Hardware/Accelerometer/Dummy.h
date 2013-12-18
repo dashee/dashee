@@ -19,9 +19,11 @@ namespace dashee
     }
 }
 
-
 /**
- * Class that holds the interface for our Accelerometer
+ * Class that holds the interface for our Accelerometer.
+ *
+ * This dummy class helps replicate a strict environment so we can carry out 
+ * testing, without outside disturbance.
  */
 class dashee::Hardware::AccelerometerDummy 
     : public dashee::Hardware::Accelerometer
@@ -30,14 +32,35 @@ private:
 
 protected:
 
+    /**
+     * The delta provides a way to set the delta value of an axis, 
+     * during update. Helpful to make this class dynamic
+     */
+    dashee::Coordinate<float> delta;
+
+    /**
+     * The maximum number any axis of a coordinate can read.
+     *
+     * This helpful variable reverses our delta values, when the MAX axis is 
+     * reached, note in some cases this is not helpful so 0 represents no max.
+     */
+    const static float MAX = 15.0f;
+
 public:
     AccelerometerDummy();
 
-    // Return the value read
-    float read() const;
+    // Set the value of the delta
+    void setDelta(dashee::Coordinate<float> delta);
+    dashee::Coordinate<float> getDelta() const;
 
+    // Return the last known value
+    dashee::Coordinate<float> read() const;
+
+    // Update the sensor
+    void update();
+
+    // Destruct
     virtual ~AccelerometerDummy();
 };
 
 #endif
-
