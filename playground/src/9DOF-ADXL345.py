@@ -98,6 +98,6 @@ while True:
     
     (valX, valY, valZ) = getValue(bus, address);
 
-    print "{0: 3f}".format(valX), "{0: 3f}".format(valY), "{0: 3f}".format(valZ)
+    print "{0: 12f}".format(valX), "{0: 12f}".format(valY), "{0: 12f}".format(valZ)
 
     time.sleep(0.04)
