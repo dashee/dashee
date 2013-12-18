@@ -71,9 +71,9 @@ def getValue(bus, address):
     valY = twosToInt(valY, 16);
     valZ = twosToInt(valZ, 16);
 
-    valX *= 0.004
-    valY *= 0.004
-    valZ *= 0.004
+    valX *= 0.00415
+    valY *= 0.00415
+    valZ *= 0.00415
 
     valX *= 9.80665
     valY *= 9.80665
