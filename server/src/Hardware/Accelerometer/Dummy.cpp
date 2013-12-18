@@ -1,10 +1,11 @@
 #include <dashee/Hardware/Accelerometer/Dummy.h>
 
+using namespace dashee::Hardware;
+
 /**
  * Do nothing construct
  */
-dashee::Hardware::AccelerometerDummy::AccelerometerDummy()
-    : dashee::Hardware::Accelerometer()
+AccelerometerDummy::AccelerometerDummy() : Accelerometer()
 {
     this->delta = dashee::Coordinate<float>();
 }
@@ -14,9 +15,7 @@ dashee::Hardware::AccelerometerDummy::AccelerometerDummy()
  *
  * @param delta the Delta coordinate
  */
-void dashee::Hardware::AccelerometerDummy::setDelta(
-	dashee::Coordinate<float> delta
-    )
+void AccelerometerDummy::setDelta(dashee::Coordinate<float> delta)
 {
     this->delta = delta;
 }
@@ -26,7 +25,7 @@ void dashee::Hardware::AccelerometerDummy::setDelta(
  *
  * @returns Coordinate that the current delta is set to
  */
-dashee::Coordinate<float> dashee::Hardware::AccelerometerDummy::getDelta() const
+dashee::Coordinate<float> AccelerometerDummy::getDelta() const
 {
     return this->delta;
 }   
@@ -36,7 +35,7 @@ dashee::Coordinate<float> dashee::Hardware::AccelerometerDummy::getDelta() const
  *
  * @returns float value
  */ 
-dashee::Coordinate<float> dashee::Hardware::AccelerometerDummy::read() const
+dashee::Coordinate<float> AccelerometerDummy::read() const
 {
     return this->coordinate;
 }
@@ -48,15 +47,28 @@ dashee::Coordinate<float> dashee::Hardware::AccelerometerDummy::read() const
  * the delta values are reset when the actual value of the accelerometer reaches
  * the max
  */
-void dashee::Hardware::AccelerometerDummy::update()
+void AccelerometerDummy::update()
 {
     this->coordinate = this->coordinate + this->delta;
+    
+    if (MAX != 0)
+    {
+	// Reverse the delta, if the coordinate is out of MAX range
+	if (this->coordinate.getX() > MAX)
+	    this->delta.setX(this->delta.getX() * -1);
+
+	if (this->coordinate.getY() > MAX)
+	    this->delta.setY(this->delta.getY() * -1);
+
+	if (this->coordinate.getZ() > MAX)
+	    this->delta.setZ(this->delta.getZ() * -1);
+    }
+
 }
 
 /**
  * Do nothing destruct
  */
-dashee::Hardware::AccelerometerDummy::~AccelerometerDummy()
+AccelerometerDummy::~AccelerometerDummy()
 {
-
 }

@@ -1,9 +1,11 @@
 #include "Hardware/Accelerometer/Dummy.h"
 
+using namespace dashee::test::Hardware;
+
 /**
  * Create a new pointer to the dummy object
  */
-void dashee::test::Hardware::AccelerometerDummy::setUp()
+void AccelerometerDummy::setUp()
 {
     this->accelerometer = new dashee::Hardware::AccelerometerDummy();
 }
@@ -11,7 +13,7 @@ void dashee::test::Hardware::AccelerometerDummy::setUp()
 /**
  * Test the default state of the loaded class
  */
-void dashee::test::Hardware::AccelerometerDummy::testDefaultLoad()
+void AccelerometerDummy::testDefaultLoad()
 {
 
 }
@@ -19,7 +21,7 @@ void dashee::test::Hardware::AccelerometerDummy::testDefaultLoad()
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void dashee::test::Hardware::AccelerometerDummy::testReadAndUpdate()
+void AccelerometerDummy::testReadAndUpdate()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
@@ -51,7 +53,7 @@ void dashee::test::Hardware::AccelerometerDummy::testReadAndUpdate()
 /**
  * Test setting and getting of delta values
  */
-void dashee::test::Hardware::AccelerometerDummy::testSetAndGetDelta()
+void AccelerometerDummy::testSetAndGetDelta()
 {
     // Test the default value
     CPPUNIT_ASSERT(
@@ -79,7 +81,7 @@ void dashee::test::Hardware::AccelerometerDummy::testSetAndGetDelta()
 /**
  * Delete the pointer to the accelerometer
  */
-void dashee::test::Hardware::AccelerometerDummy::tearDown()
+void AccelerometerDummy::tearDown()
 {
     delete this->accelerometer;
 }
