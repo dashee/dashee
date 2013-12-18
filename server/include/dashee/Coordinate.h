@@ -50,6 +50,9 @@ public:
     bool operator==(const Coordinate<T> & rhs) const;
     bool operator!=(const Coordinate<T> & rhs) const;
 
+    Coordinate<T> operator+(const Coordinate<T> & rhs);
+    Coordinate<T> operator-(const Coordinate<T> & rhs);
+
     virtual ~Coordinate();
 };
 

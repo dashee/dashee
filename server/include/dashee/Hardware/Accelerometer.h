@@ -38,6 +38,7 @@ public:
 
     // Return the value of read
     virtual dashee::Coordinate<float> read() const = 0;
+    virtual void update() = 0;
 
     virtual ~Accelerometer();
 };

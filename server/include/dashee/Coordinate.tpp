@@ -128,6 +128,42 @@ bool dashee::Coordinate<T>::operator !=(const dashee::Coordinate<T>& rhs) const
 }
 
 /**
+ * Add the values of the rhs parameter to this object
+ *
+ * @param rhs The right hand side to add from
+ */
+template <class T>
+dashee::Coordinate<T> dashee::Coordinate<T>::operator+(
+	const dashee::Coordinate<T> &rhs
+    )
+{
+    dashee::Coordinate<T> result;
+    result.setX(this->getX() + rhs.getX());
+    result.setY(this->getY() + rhs.getY());
+    result.setZ(this->getZ() + rhs.getZ());
+
+    return result;
+}
+
+/**
+ * Subtract the values of the rhs parameter to this object
+ *
+ * @param rhs The right hand side to add from
+ */
+template <class T>
+dashee::Coordinate<T> dashee::Coordinate<T>::operator-(
+	const dashee::Coordinate<T> &rhs
+    )
+{
+    dashee::Coordinate<T> result;
+    result.setX(this->getX() - rhs.getX());
+    result.setY(this->getY() - rhs.getY());
+    result.setZ(this->getZ() - rhs.getZ());
+
+    return result;
+}
+
+/**
  * Do nothing destruct
  */
 template <class T> dashee::Coordinate<T>::~Coordinate()

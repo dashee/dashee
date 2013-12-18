@@ -40,6 +40,7 @@ class dashee::test::Coordinate : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetX);
     
     CPPUNIT_TEST(testOperatorEquality);
+    CPPUNIT_TEST(testOperatorPlusMinus);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -55,6 +56,7 @@ protected:
     void testSetAndGetZ();
 
     void testOperatorEquality();
+    void testOperatorPlusMinus();
 
 public:
     void setUp();

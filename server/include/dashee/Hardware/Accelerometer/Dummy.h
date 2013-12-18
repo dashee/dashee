@@ -30,11 +30,18 @@ private:
 
 protected:
 
+    dashee::Coordinate<float> delta;
+
 public:
     AccelerometerDummy();
 
+    // Set the value of the delta
+    void setDelta(dashee::Coordinate<float> delta);
+    dashee::Coordinate<float> getDelta() const;
+
     // Return the value read
     dashee::Coordinate<float> read() const;
+    void update();
 
     virtual ~AccelerometerDummy();
 };

@@ -96,12 +96,23 @@ void dashee::test::Coordinate::testOperatorEquality()
     dashee::Coordinate<float> c2(0.0f, 1.0f, 2.0f);
     CPPUNIT_ASSERT(c1 == c2);
 
-    this->coordinate->setX(0.0f);
-    this->coordinate->setY(1.0f);
-    this->coordinate->setZ(2.0f);
-    CPPUNIT_ASSERT(c1 == *(this->coordinate));
-
+    // Change this coordinate and test equality
+    c1.setX(0.0f);
+    c1.setY(1.0f);
+    c1.setZ(2.0f);
     CPPUNIT_ASSERT(c1 != dashee::Coordinate<float>());
+}
+
+/**
+ * Test the plus and minus operator
+ */
+void dashee::test::Coordinate::testOperatorPlusMinus()
+{
+    // Create c1, and c2 and test the value with + and -
+    dashee::Coordinate<float> c1(0.0f, 1.0f, 2.0f);
+    dashee::Coordinate<float> c2(0.0f, 1.0f, 2.0f);
+    CPPUNIT_ASSERT((c1 + c2) == dashee::Coordinate<float>(0.0f, 2.0f, 4.0f));
+    CPPUNIT_ASSERT((c1 - c2) == dashee::Coordinate<float>(0.0f, 0.0f, 0.0f));
 }
 
 /**

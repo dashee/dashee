@@ -13,17 +13,15 @@ void dashee::test::Hardware::Accelerometer::setUp()
  */
 void dashee::test::Hardware::Accelerometer::testDefaultLoad()
 {
-
+    throw dashee::Exception("Cannot testDefaultLoad abstract class");
 }
 
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void dashee::test::Hardware::Accelerometer::testRead()
+void dashee::test::Hardware::Accelerometer::testReadAndUpdate()
 {
-    CPPUNIT_ASSERT(
-	    this->accelerometer->read() == Coordinate<float>(0.0f,0.0f,0.0f)
-	);
+    throw dashee::Exception("Cannot testRead in an abstract class");
 }
 
 /**
