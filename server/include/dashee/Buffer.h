@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Vehicle/Multirotor/Quad/X.h
+ * @file include/dashee/Buffer.h
  *
  * @section LICENSE
  *
