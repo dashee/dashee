@@ -25,17 +25,19 @@ OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
     Server/UDP.o common.o daemon.o Vehicle.o Vehicle/Car.o \
     Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
     Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
-    Threads/Scope.o)
+    Threads/Scope.o Hardware/Accelerometer.o Hardware/Accelerometer/Dummy.o)
 # All the objects that are built for tests
 OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
     ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
-    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o Buffer.o)
+    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o Buffer.o \
+    Hardware/Accelerometer.o Hardware/Accelerometer/Dummy.o Coordinate.o)
 
 # All the binaries which will be built
 LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
 BINARIES := $(addprefix $(BINDIR)/, servo servod)
 TESTS := $(addprefix $(TESTDIR)/, testThreads testConfig testUART testGPIO \
-    testDummy testVehicleCar testBuffer)
+    testDummy testVehicleCar testBuffer testHardwareAccelerometerDummy \
+    testCoordinate)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
@@ -50,7 +52,7 @@ libraries: $(LIBRARIES)
 # Creates the binaries, in non debug mode
 release: clean test $(BINARIES) $(LIBRARIES)
 
-# A helpfull function for debug configurations
+# A helpful function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
 debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
 debug: test $(BINARIES) tags

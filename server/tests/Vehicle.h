@@ -27,8 +27,7 @@ namespace dashee
 }
 
 /**
- * ServoController test class for
- * unit testing known components
+ * Test the vehicle class as a general rule
  */
 class dashee::test::Vehicle : public CppUnit::TestFixture
 {
