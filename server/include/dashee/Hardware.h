@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Hardware/Accelerometer.h
+ * @file include/dashee/Hardware.h
  *
  * @section LICENSE
  *
@@ -8,6 +8,8 @@
  */
 #ifndef DASHEE_HARDWARE_ACCELEROMETER_H_
 #define DASHEE_HARDWARE_ACCELEROMETER_H_
+
+#include <dashee/Hardware.h>
 
 namespace dashee
 {
@@ -20,20 +22,19 @@ namespace dashee
 /**
  * Class that holds the interface for our Accelerometer
  */
-class dashee::Hardware::Accelerometer
+template <class T> 
+class dashee::Hardware::Accelerometer : public dashee::Hardware
 {
 private:
+    Accelerometer();
 
 protected:
-    Accelerometer();
 
 public:
 
-    // Return the value of read
-    virtual float read() const = 0;
+    virtual float read() = 0;
 
     virtual ~Accelerometer();
 };
 
 #endif
-
