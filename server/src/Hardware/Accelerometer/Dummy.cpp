@@ -13,9 +13,9 @@ dashee::Hardware::AccelerometerDummy::AccelerometerDummy()
  *
  * @returns float value
  */ 
-float dashee::Hardware::AccelerometerDummy::read() const
+dashee::Coordinate<float> dashee::Hardware::AccelerometerDummy::read() const
 {
-    return 0.0f;
+    return this->coordinate;
 }
 
 /**

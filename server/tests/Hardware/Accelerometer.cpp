@@ -21,7 +21,9 @@ void dashee::test::Hardware::Accelerometer::testDefaultLoad()
  */
 void dashee::test::Hardware::Accelerometer::testRead()
 {
-    CPPUNIT_ASSERT(this->accelerometer->read() == 0.0f);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->read() == Coordinate<float>(0.0f,0.0f,0.0f)
+	);
 }
 
 /**

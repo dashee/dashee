@@ -34,7 +34,7 @@ public:
     AccelerometerDummy();
 
     // Return the value read
-    float read() const;
+    dashee::Coordinate<float> read() const;
 
     virtual ~AccelerometerDummy();
 };

@@ -100,6 +100,34 @@ template <class T> T dashee::Coordinate<T>::getZ() const
 }
 
 /**
+ * Operator which tests the equality of two coordinates.
+ *
+ * @param rhs The right hand side to test against
+ */
+template <class T> 
+bool dashee::Coordinate<T>::operator ==(const dashee::Coordinate<T>& rhs) const
+{
+    return 
+	this->x == rhs.getX() && 
+	this->y == rhs.getY() && 
+	this->z == rhs.getZ();
+}
+
+/**
+ * Operator which tests the non-equality of two coordinates.
+ *
+ * @param rhs The right hand side to test against
+ */
+template <class T> 
+bool dashee::Coordinate<T>::operator !=(const dashee::Coordinate<T>& rhs) const
+{
+    return 
+	this->x != rhs.getX() ||
+	this->y != rhs.getY() ||
+	this->z != rhs.getZ();
+}
+
+/**
  * Do nothing destruct
  */
 template <class T> dashee::Coordinate<T>::~Coordinate()

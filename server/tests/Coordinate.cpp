@@ -79,6 +79,32 @@ void dashee::test::Coordinate::testSetAndGetZ()
 }
 
 /**
+ * Test the equality operator
+ */
+void dashee::test::Coordinate::testOperatorEquality()
+{
+    // Check equality with two new objects
+    CPPUNIT_ASSERT(dashee::Coordinate<int>() == dashee::Coordinate<int>());
+
+    // Check equality with no value contractor and normal constructor
+    CPPUNIT_ASSERT(
+	    dashee::Coordinate<int>() == dashee::Coordinate<int>(0, 0, 0)
+	);
+
+    // Create c1, and c2 and test their equality
+    dashee::Coordinate<float> c1(0.0f, 1.0f, 2.0f);
+    dashee::Coordinate<float> c2(0.0f, 1.0f, 2.0f);
+    CPPUNIT_ASSERT(c1 == c2);
+
+    this->coordinate->setX(0.0f);
+    this->coordinate->setY(1.0f);
+    this->coordinate->setZ(2.0f);
+    CPPUNIT_ASSERT(c1 == *(this->coordinate));
+
+    CPPUNIT_ASSERT(c1 != dashee::Coordinate<float>());
+}
+
+/**
  * Tear down our objects
  */
 void dashee::test::Coordinate::tearDown()
