@@ -16,19 +16,18 @@ include ../makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built for binaries
-OBJECTS := $(addprefix src/, 
-    servod/Container.o \
-    servod/signals.o
+OBJECTS = $(addprefix src/, servod/Container.o \
+    servod/signals.o \
     servod/threads.o \
     )
 # All the objects that are built for libraries
-OBJECTSLIB := $(addprefix src/, 
-    common.o \
+OBJECTSLIB = $(addprefix src/, common.o \
     Config.o \
     daemon.o \
     GPIO.o \
-    Hardware/Accelerometer/Dummy.o
+    Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
+    I2C.o \
     Log.o \
     Server.o \
     Server/UDP.o \
@@ -42,24 +41,22 @@ OBJECTSLIB := $(addprefix src/,
     Servo/USB.o \
     Threads/Lock/Mutex.o \
     Threads/Lock/ReadWrite.o \
-    Threads/Scope.o 
+    Threads/Scope.o \
     Threads/Thread.o \
     Vehicle/Car.o \
     Vehicle/Multirotor.o \
     Vehicle/Multirotor/Quad.o \
     Vehicle/Multirotor/Quad/X.o \
-    Vehicle.o \
-    )
+    Vehicle.o)
 # All the objects that are built for tests
-OBJECTSTEST := $(addprefix tests/, 
-    Buffer.o \
+OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Config.o \
     Coordinate.o \
     dashee.o \
     GPIO.o \
     Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
-    I2C.o\
+    I2C.o \
     ServoController/Dummy.o \
     ServoController.o \
     ServoController/UART.o \
@@ -68,30 +65,22 @@ OBJECTSTEST := $(addprefix tests/,
     Servo/UART.o \
     Threads.o \
     Vehicle/Car.o \
-    Vehicle.o 
-    )
-
+    Vehicle.o)
 # All the libraries which will be build
-LIBRARIES := $(addprefix $(LIBDIR)/, 
-    libdashee.so
-    )
+LIBRARIES = $(addprefix $(LIBDIR)/, libdashee.so)
 # All the binaries that will be built
-BINARIES := $(addprefix $(BINDIR)/, 
-    servo \
-    servod
-    )
+BINARIES = $(addprefix $(BINDIR)/, servo servod)
 # All the tests which will be use to test the program
-TESTS := $(addprefix $(TESTDIR)/, 
-    testBuffer \
+TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testConfig \
-    testCoordinate
+    testCoordinate \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \
+    testI2C \
     testThreads \
     testUART \
-    testVehicleCar \
-    )
+    testVehicleCar)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
