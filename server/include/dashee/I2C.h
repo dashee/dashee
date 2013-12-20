@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
 
 #include <dashee/common.h>
@@ -35,7 +36,7 @@ class dashee::I2C
 
 private:
     // Helpful initialize function used by all constructors
-    void init(const std::string dev);
+    void init(const std::string dev, const unsigned char slaveAddress);
 
 protected:
     /**
@@ -54,11 +55,21 @@ protected:
      */
     char * buffer;
 
+    /**
+     * This is the current Slave we are working on, it is used as a store
+     * to make the user's life easier
+     */
+    unsigned char slaveAddress;
+
 public:
 
     // Open the device using just an integer
-    I2C(const int devNumber);
-    I2C(const std::string dev);
+    I2C(const int devNumber, const unsigned char slaveAddress = 0x00);
+    I2C(const std::string dev, const unsigned char slaveAddress = 0x00);
+
+    // Set and get the value of the slave
+    void setSlaveAddress(const unsigned char slaveAddress);
+    unsigned char getSlaveAddress() const;
 
     // Clean up
     virtual ~I2C();

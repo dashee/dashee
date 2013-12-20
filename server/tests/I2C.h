@@ -35,6 +35,11 @@ class dashee::test::I2C
     
     CPPUNIT_TEST(testIntConstruction);
     CPPUNIT_TEST(testStringConstruction);
+
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidAddress, 
+	    dashee::ExceptionI2C
+	);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -44,6 +49,9 @@ private:
 protected:
     void testIntConstruction();
     void testStringConstruction();
+
+    void testSetAndGetAddress();
+    void testInvalidAddress();
 
 public:
     void setUp();
