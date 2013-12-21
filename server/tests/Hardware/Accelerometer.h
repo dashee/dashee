@@ -36,7 +36,7 @@ class dashee::test::Hardware::Accelerometer : public CppUnit::TestFixture
     
     CPPUNIT_TEST_SUITE(Accelerometer);
 
-    CPPUNIT_TEST(testRead);
+    CPPUNIT_TEST(testReadAndUpdate);
     CPPUNIT_TEST(testDefaultLoad);
 
     CPPUNIT_TEST_SUITE_END();
@@ -45,10 +45,8 @@ private:
 
 protected:
 
-    dashee::Hardware::Accelerometer * accelerometer;
-
     virtual void testDefaultLoad();
-    virtual void testRead();
+    virtual void testReadAndUpdate();
 
 public:
     virtual void setUp();

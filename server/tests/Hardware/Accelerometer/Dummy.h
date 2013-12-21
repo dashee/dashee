@@ -38,12 +38,24 @@ class dashee::test::Hardware::AccelerometerDummy
 	    AccelerometerDummy,
 	    Accelerometer
 	);
+
+    // Add the custom Dummy tests
+    CPPUNIT_TEST(testSetAndGetDelta);
     
     CPPUNIT_TEST_SUITE_END();
 
 private:
 
 protected:
+
+    /**
+     * Instance of the accelerometer to test
+     */
+    dashee::Hardware::AccelerometerDummy * accelerometer;
+
+    virtual void testDefaultLoad();
+    virtual void testReadAndUpdate();
+    virtual void testSetAndGetDelta();
 
 public:
     virtual void setUp();

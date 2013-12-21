@@ -36,8 +36,11 @@ class dashee::test::Coordinate : public CppUnit::TestFixture
     CPPUNIT_TEST(testValueConstructions);
 
     CPPUNIT_TEST(testSetAndGetX);
-    CPPUNIT_TEST(testSetAndGetX);
-    CPPUNIT_TEST(testSetAndGetX);
+    CPPUNIT_TEST(testSetAndGetY);
+    CPPUNIT_TEST(testSetAndGetZ);
+    
+    CPPUNIT_TEST(testOperatorEquality);
+    CPPUNIT_TEST(testOperatorPlusMinus);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -51,6 +54,9 @@ protected:
     void testSetAndGetX();
     void testSetAndGetY();
     void testSetAndGetZ();
+
+    void testOperatorEquality();
+    void testOperatorPlusMinus();
 
 public:
     void setUp();
