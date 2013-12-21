@@ -50,8 +50,8 @@ int main(void)
     // we need to change the slave address!
     opResult = ioctl(i2cHandle, I2C_SLAVE, xlAddress);
     txBuffer[0] = 0x00;  // This is the address to read from.
-    opResult = write(i2cHandle, txBuffer, 1);
-    if (opResult != 1) printf("No ACK bit!\n");
+    //opResult = write(i2cHandle, txBuffer, 1);
+    //if (opResult != 1) printf("No ACK bit!\n");
     opResult = read(i2cHandle, rxBuffer, 1);
     printf("Part ID: %d\n", (int)rxBuffer[0]); // should print 229
 }

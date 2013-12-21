@@ -16,28 +16,71 @@ include ../makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built for binaries
-OBJECTS := $(addprefix src/, servod/threads.o \
-    servod/Container.o servod/signals.o)
+OBJECTS = $(addprefix src/, servod/Container.o \
+    servod/signals.o \
+    servod/threads.o \
+    )
 # All the objects that are built for libraries
-OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
-    Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
-    ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
-    Server/UDP.o common.o daemon.o Vehicle.o Vehicle/Car.o \
-    Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
-    Threads/Scope.o Hardware/Accelerometer.o Hardware/Accelerometer/Dummy.o)
+OBJECTSLIB = $(addprefix src/, common.o \
+    Config.o \
+    daemon.o \
+    GPIO.o \
+    Hardware/Accelerometer/Dummy.o \
+    Hardware/Accelerometer.o \
+    I2C.o \
+    Log.o \
+    Server.o \
+    Server/UDP.o \
+    ServoController/Dummy.o \
+    ServoController.o \
+    ServoController/UART.o \
+    ServoController/USB.o \
+    Servo/Dummy.o \
+    Servo.o \
+    Servo/UART.o \
+    Servo/USB.o \
+    Threads/Lock/Mutex.o \
+    Threads/Lock/ReadWrite.o \
+    Threads/Scope.o \
+    Threads/Thread.o \
+    Vehicle/Car.o \
+    Vehicle/Multirotor.o \
+    Vehicle/Multirotor/Quad.o \
+    Vehicle/Multirotor/Quad/X.o \
+    Vehicle.o)
 # All the objects that are built for tests
-OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
-    ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
-    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o Buffer.o \
-    Hardware/Accelerometer.o Hardware/Accelerometer/Dummy.o Coordinate.o)
-
-# All the binaries which will be built
-LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
-BINARIES := $(addprefix $(BINDIR)/, servo servod)
-TESTS := $(addprefix $(TESTDIR)/, testThreads testConfig testUART testGPIO \
-    testDummy testVehicleCar testBuffer testHardwareAccelerometerDummy \
-    testCoordinate)
+OBJECTSTEST = $(addprefix tests/, Buffer.o \
+    Config.o \
+    Coordinate.o \
+    dashee.o \
+    GPIO.o \
+    Hardware/Accelerometer/Dummy.o \
+    Hardware/Accelerometer.o \
+    I2C.o \
+    ServoController/Dummy.o \
+    ServoController.o \
+    ServoController/UART.o \
+    Servo/Dummy.o \
+    Servo.o \
+    Servo/UART.o \
+    Threads.o \
+    Vehicle/Car.o \
+    Vehicle.o)
+# All the libraries which will be build
+LIBRARIES = $(addprefix $(LIBDIR)/, libdashee.so)
+# All the binaries that will be built
+BINARIES = $(addprefix $(BINDIR)/, servo servod)
+# All the tests which will be use to test the program
+TESTS = $(addprefix $(TESTDIR)/, testBuffer \
+    testConfig \
+    testCoordinate \
+    testDummy \
+    testGPIO \
+    testHardwareAccelerometerDummy \
+    testI2C \
+    testThreads \
+    testUART \
+    testVehicleCar)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')

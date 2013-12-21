@@ -22,7 +22,7 @@ TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
 TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testCoordinate"
-TEST_PI="testGPIO testUART"
+TEST_PI="testGPIO testUART testI2C"
 TEST_DUMMY="testDummy"
 
 ##
@@ -126,7 +126,7 @@ runtest()
 #
 # @returns 0 if all tests passed 1 if one failed
 # @retval 0 All tests passed
-# @retval 0 Atleast one test failed
+# @retval 0 At least one test failed
 #
 runtests()
 {
