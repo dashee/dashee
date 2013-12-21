@@ -83,6 +83,52 @@ void I2C::testSet10BitAddressFlag()
 }
 
 /**
+ * Test working register functionality
+ */
+void I2C::testSetAndGetWorkingRegister()
+{
+    dashee::I2C accelerometer(1, 0x53);
+    
+    // Test default values
+    CPPUNIT_ASSERT(accelerometer.getWorkingRegister() == 0x00);
+
+    // Test changed values
+    accelerometer.setWorkingRegister(0x01);
+    CPPUNIT_ASSERT(accelerometer.getWorkingRegister() == 0x01);
+}
+
+/**
+ * This test the reading the value from the register
+ */
+void I2C::testReadWriteRegister()
+{
+    std::vector<unsigned char> val;
+
+    // Test reading and writing to the accelerometer
+    dashee::I2C accelerometer(1, 0x53);
+    val = accelerometer.readFromRegister(0x00, 1);
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 229);
+    val = accelerometer.read();
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 229);
+    val = accelerometer.read(1);
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 229);
+
+    // Test reading and writing to the gyro
+    dashee::I2C gyro(1, 0x68);
+    val = gyro.readFromRegister(0x00, 1);
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 105);
+    val = gyro.readFromRegister(0x00, 1);
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 105);
+
+    // TODO test reading and writing to the magnetometer
+}
+
+/**
  * Invalid addresses should throw exceptions
  */
 void I2C::testInvalidAddress()

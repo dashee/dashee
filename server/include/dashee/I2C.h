@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <vector>
 
 #include <dashee/common.h>
 #include <dashee/Exception/I2C.h>
@@ -61,6 +62,14 @@ protected:
      */
     unsigned char slaveAddress;
 
+    /**
+     * The working register used to read data, sometime it is faster
+     * to just set a register and keep reading from it, to do this we
+     * hold the value of our working register in a variable and by setting it
+     * we actually write to the device with the value
+     */
+    unsigned char workingRegister;
+
 public:
 
     // Open the device using just an integer
@@ -73,6 +82,19 @@ public:
     // Set and get the value of the slave
     void setSlaveAddress(const unsigned char slaveAddress);
     unsigned char getSlaveAddress() const;
+
+    // Set and get the working register
+    void setWorkingRegister(const unsigned char);
+    unsigned char getWorkingRegister() const;
+
+    // Read values from the register
+    std::vector<unsigned char> readFromRegister(
+	    const unsigned char reg, 
+	    const size_t numOfBytes
+	);
+    std::vector<unsigned char> read(const size_t numOfBytes = 1);
+    // write values to the register
+    //void writeToRegister(const std::vector<unsigned char> buffer);
 
     // Clean up
     virtual ~I2C();
