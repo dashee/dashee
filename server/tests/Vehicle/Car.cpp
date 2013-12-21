@@ -49,7 +49,7 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
 /**
  * Call transform on a static queue
  */ 
-void dashee::test::VehicleCar::testTransforQueue()
+void dashee::test::VehicleCar::testReadFromBuffer()
 {
     dashee::Buffer<unsigned char> q;
     
