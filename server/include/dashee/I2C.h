@@ -67,6 +67,9 @@ public:
     I2C(const int devNumber, const unsigned char slaveAddress = 0x00);
     I2C(const std::string dev, const unsigned char slaveAddress = 0x00);
 
+    // Set the 10 bit address value to true or false, using ioctl
+    void set10BitAddress(const bool flag);
+
     // Set and get the value of the slave
     void setSlaveAddress(const unsigned char slaveAddress);
     unsigned char getSlaveAddress() const;

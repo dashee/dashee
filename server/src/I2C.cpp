@@ -7,6 +7,7 @@ using namespace dashee;
  * using I2C::DEVICE_PREFIX
  *
  * @param devNumber The number of the I2C device to open
+ * @param slaveAddress The address to set the slave device to
  */
 I2C::I2C(const int devNumber, const unsigned char slaveAddress)
 {
@@ -18,6 +19,7 @@ I2C::I2C(const int devNumber, const unsigned char slaveAddress)
  * Initialize our I2C class with the given dev file path
  *
  * @param filePath The device file path
+ * @param slaveAddress The address to set the slave device to
  */
 I2C::I2C(const std::string filePath, const unsigned char slaveAddress)
 {
@@ -28,6 +30,9 @@ I2C::I2C(const std::string filePath, const unsigned char slaveAddress)
  * Initialize function used by our constructors.
  *
  * Open a handle to the device
+ * @param slaveAddress The address to set the slave device to
+ * 
+ * @throws ExceptionI2C If opening the device fails
  */
 void I2C::init(const std::string dev, const unsigned char slaveAddress)
 {
@@ -40,9 +45,8 @@ void I2C::init(const std::string dev, const unsigned char slaveAddress)
     this->buffer = new char[100];
     memset(this->buffer, 0, sizeof(*this->buffer) * 100);
 
-    // TODO move this out into its own little encapsulation
-    // Call it something like set10Bit(true/false)
-    ioctl(this->fd, I2C_TENBIT, 0);
+    // Set the 10 bit address flag to fals
+    this->set10BitAddress(false);
 
     // Set our slave value
     this->setSlaveAddress(slaveAddress);
@@ -52,6 +56,8 @@ void I2C::init(const std::string dev, const unsigned char slaveAddress)
  * Set the current slave
  *
  * @param slaveAddress The address of the slave
+ * 
+ * @throws ExceptionI2C If ioctl failed
  */
 void I2C::setSlaveAddress(const unsigned char slaveAddress)
 {
@@ -79,6 +85,27 @@ void I2C::setSlaveAddress(const unsigned char slaveAddress)
 unsigned char I2C::getSlaveAddress() const
 {
     return this->slaveAddress;   
+}
+
+/**
+ * Set the 10bit address flag using ioctl 
+ *
+ * @param flag the value to set it to
+ *
+ * @throws ExceptionI2C If ioctl failed
+ */
+void I2C::set10BitAddress(const bool flag)
+{
+    // The C++ Standard (4.2) says, that true == 1 and false == 0 so the below
+    // flag cast to int should be safe
+    int ec = ioctl(this->fd, I2C_TENBIT, flag);
+
+    if (ec != 0)
+	throw ExceptionI2C(
+		"Setting 10bit address flag failed ioctl cameback with '" + 
+		dashee::itostr(ec)  + 
+		"'"
+	    );
 }
 
 /**

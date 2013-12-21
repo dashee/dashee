@@ -51,6 +51,7 @@ protected:
     void testStringConstruction();
 
     void testSetAndGetAddress();
+    void testSet10BitAddressFlag();
     void testInvalidAddress();
 
 public:

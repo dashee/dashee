@@ -74,6 +74,15 @@ void I2C::testSetAndGetAddress()
 }
 
 /**
+ * Make sure this does not throw an exception
+ */
+void I2C::testSet10BitAddressFlag()
+{
+    this->i2c->set10BitAddress(true);
+    this->i2c->set10BitAddress(false);
+}
+
+/**
  * Invalid addresses should throw exceptions
  */
 void I2C::testInvalidAddress()
