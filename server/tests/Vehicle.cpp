@@ -288,7 +288,7 @@ void dashee::test::Vehicle::testSetAndGetThrottleTrim()
  *
  * It must be implemented in child classes
  */
-void dashee::test::Vehicle::testTransforQueue()
+void dashee::test::Vehicle::testReadFromBuffer()
 {
     throw dashee::Exception("This must be implemented by a child function");
 }

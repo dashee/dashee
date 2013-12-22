@@ -140,7 +140,6 @@ test: testbuild binfile
 	@echo ""
 
 # BUILD all the tests
-test: CFLAGS+=-Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
@@ -148,6 +147,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	install --mode=775 $< $@
 
 # Build our tests, binaries
+$(TESTDIR)/%: CFLAGS+=-Itests
 $(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
