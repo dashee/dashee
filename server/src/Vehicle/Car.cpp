@@ -18,7 +18,7 @@ VehicleCar::VehicleCar(
 
     this->setYaw(this->yaw);
     this->setThrottle(128);
-    this->throttleFallback = 128;
+    this->setThrottleFallback(128);
 
     if (config != NULL)
         this->loadFromConfig(config);

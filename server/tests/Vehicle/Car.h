@@ -42,8 +42,10 @@ class dashee::test::VehicleCar : public dashee::test::Vehicle
 private:
 protected:
     virtual void testSetAndGetThrottle();
-    virtual void testTransforQueue();
+    virtual void testReadFromBuffer();
+    virtual void testUpdate();
     virtual void testSetAndGetFromConfig();
+    virtual void testFallbackAndRevert();
 
 public:
     // Let the derived class deal with setting up the variables

@@ -65,6 +65,9 @@ OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Servo/UART.o \
     Threads.o \
     Vehicle/Car.o \
+    Vehicle/Multirotor.o \
+    Vehicle/Multirotor/Quad.o \
+    Vehicle/Multirotor/Quad/X.o \
     Vehicle.o)
 # All the libraries which will be build
 LIBRARIES = $(addprefix $(LIBDIR)/, libdashee.so)
@@ -77,6 +80,7 @@ TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \
+    testVehicleMultirotorQuadX \
     testI2C \
     testThreads \
     testUART \
@@ -140,7 +144,6 @@ test: testbuild binfile
 	@echo ""
 
 # BUILD all the tests
-test: CFLAGS+=-Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
@@ -148,6 +151,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	install --mode=775 $< $@
 
 # Build our tests, binaries
+$(TESTDIR)/%: CFLAGS+=-Itests
 $(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
@@ -161,7 +165,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	$(call print,"Building","data","$@")
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38 >/dev/null
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 >/dev/null
 
 # Builds the documentation
 documentation:
@@ -226,8 +230,8 @@ package-nightly: package
 	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
 	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
 
-# Build a package with all source code, but add a subfolder using xform to encapsulate
-# the files so when extracted all files are held inside a folder
+# Build a package with all source code, but add a subfolder using xform to 
+# encapsulate the files so when extracted all files are held inside a folder
 package-src:
 	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
 	# Tar up temporarily, so it can be extracted to a folder

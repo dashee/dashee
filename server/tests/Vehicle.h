@@ -49,16 +49,17 @@ class dashee::test::Vehicle : public CppUnit::TestFixture
     CPPUNIT_TEST(testSetAndGetYawTrim);
     CPPUNIT_TEST(testSetAndGetThrottleTrim);
     
-    // Test the transform queue value
-    CPPUNIT_TEST(testTransforQueue);
+    // Test reading from the server and updating
+    CPPUNIT_TEST(testReadFromBuffer);
+    CPPUNIT_TEST(testUpdate);
 
     // Test getting and setting from config
     CPPUNIT_TEST(testSetAndGetFromConfig);
 
-    // Test fallback and revert modes
+    // Test fall back and revert modes
     CPPUNIT_TEST(testFallbackAndRevert);
     
-    // Test invalid NULL when trying to set the follwoing
+    // Test invalid NULL when trying to set the following
     CPPUNIT_TEST_EXCEPTION(
 	    testExceptionVehiclesetServoControllerToNull, 
 	    dashee::ExceptionVehicle
@@ -124,12 +125,13 @@ protected:
     virtual void testSetAndGetThrottleTrim();
     
     // test running the transform function
-    virtual void testTransforQueue();
+    virtual void testReadFromBuffer();
+    virtual void testUpdate();
     
     // test set and get from Configuration variable
     virtual void testSetAndGetFromConfig();
 
-    // Test fallback and revert modes
+    // Test fall back and revert modes
     virtual void testFallbackAndRevert();
 
     // Test invalid set values
