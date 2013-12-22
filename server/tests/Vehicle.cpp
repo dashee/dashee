@@ -1,11 +1,13 @@
 #include "Vehicle.h"
 
+using namespace dashee::test;
+
 /**
  * Construct. 
  *
  * Set some constant values
  */ 
-dashee::test::Vehicle::Vehicle()
+Vehicle::Vehicle()
 {
 }
 
@@ -13,9 +15,9 @@ dashee::test::Vehicle::Vehicle()
  * Start up, and check to ensure that our servocontrollers pointers should not 
  * be null
  */ 
-void dashee::test::Vehicle::setUp()
+void Vehicle::setUp()
 {
-    if (dashee::test::Vehicle::servoController == NULL)
+    if (Vehicle::servoController == NULL)
 	throw dashee::ExceptionVehicle("ServoController must not be null");
 }
 
@@ -25,10 +27,10 @@ void dashee::test::Vehicle::setUp()
  *
  * But we can test GET value
  */
-void dashee::test::Vehicle::testSetAndGetServoController()
+void Vehicle::testSetAndGetServoController()
 {
     CPPUNIT_ASSERT(
-            dashee::test::Vehicle::servoController == 
+            Vehicle::servoController == 
             this->vehicle->getServoController()
         );
 }
@@ -39,7 +41,7 @@ void dashee::test::Vehicle::testSetAndGetServoController()
  * First test from 0-255, then test from 255-0, then from 0-255 in increments of
  * 8 and lastly 255-0 in increments of 8
  */
-void dashee::test::Vehicle::testSetAndGetPitch()
+void Vehicle::testSetAndGetPitch()
 {
     CPPUNIT_ASSERT(this->vehicle->getPitch() == 0);
 
@@ -68,7 +70,7 @@ void dashee::test::Vehicle::testSetAndGetPitch()
  * First test from 0-255, then test from 255-0, then from 0-255 in increments of
  * 8 and lastly 255-0 in increments of 8
  */
-void dashee::test::Vehicle::testSetAndGetRoll()
+void Vehicle::testSetAndGetRoll()
 {
     CPPUNIT_ASSERT(this->vehicle->getRoll() == 128);
 
@@ -97,7 +99,7 @@ void dashee::test::Vehicle::testSetAndGetRoll()
  * First test from 0-255, then test from 255-0, then from 0-255 in increments of
  * 8 and lastly 255-0 in increments of 8
  */
-void dashee::test::Vehicle::testSetAndGetYaw()
+void Vehicle::testSetAndGetYaw()
 {
     CPPUNIT_ASSERT(this->vehicle->getYaw() == 128);
 
@@ -123,7 +125,7 @@ void dashee::test::Vehicle::testSetAndGetYaw()
 /**
  * Test the Throttle value.
  */
-void dashee::test::Vehicle::testSetAndGetThrottle()
+void Vehicle::testSetAndGetThrottle()
 {
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 0);
 
@@ -152,7 +154,7 @@ void dashee::test::Vehicle::testSetAndGetThrottle()
  * is 0, and also when trim is x and the value is 255.
  *
  */
-void dashee::test::Vehicle::testSetAndGetPitchTrim()
+void Vehicle::testSetAndGetPitchTrim()
 {
     CPPUNIT_ASSERT(this->vehicle->getPitchTrim() == 0);
 
@@ -186,7 +188,7 @@ void dashee::test::Vehicle::testSetAndGetPitchTrim()
  *
  * @see testSetAndGetPitchTrim for description
  */
-void dashee::test::Vehicle::testSetAndGetRollTrim()
+void Vehicle::testSetAndGetRollTrim()
 {
     CPPUNIT_ASSERT(this->vehicle->getRollTrim() == 0);
 
@@ -220,7 +222,7 @@ void dashee::test::Vehicle::testSetAndGetRollTrim()
  *
  * @see testSetAndGetPitchTrim for description
  */
-void dashee::test::Vehicle::testSetAndGetYawTrim()
+void Vehicle::testSetAndGetYawTrim()
 {
     CPPUNIT_ASSERT(this->vehicle->getYawTrim() == 0);
 
@@ -254,7 +256,7 @@ void dashee::test::Vehicle::testSetAndGetYawTrim()
  *
  * @see testSetAndGetPitchTrim for description
  */
-void dashee::test::Vehicle::testSetAndGetThrottleTrim()
+void Vehicle::testSetAndGetThrottleTrim()
 {
     CPPUNIT_ASSERT(this->vehicle->getThrottleTrim() == 0);
 
@@ -284,11 +286,20 @@ void dashee::test::Vehicle::testSetAndGetThrottleTrim()
 }
 
 /**
- * This function is deisnged to call transform and test the throttle values.
+ * This function is designed to call transform and test the throttle values.
  *
  * It must be implemented in child classes
  */
-void dashee::test::Vehicle::testReadFromBuffer()
+void Vehicle::testReadFromBuffer()
+{
+    throw dashee::Exception("This must be implemented by a child function");
+}
+
+/**
+ * After reading from the server the update function applies the changes to 
+ * the physical model so it is important to test the actual changes
+ */
+void Vehicle::testUpdate()
 {
     throw dashee::Exception("This must be implemented by a child function");
 }
@@ -297,7 +308,7 @@ void dashee::test::Vehicle::testReadFromBuffer()
  * Create a dummy configuration file, and let our vehicle set the state from the
  * read configuration
  */
-void dashee::test::Vehicle::testSetAndGetFromConfig()
+void Vehicle::testSetAndGetFromConfig()
 {
     dashee::Config * config = new Config();
     config->set("pitch", 10);
@@ -328,7 +339,7 @@ void dashee::test::Vehicle::testSetAndGetFromConfig()
 /**
  * Test falling back and reverting
  */
-void dashee::test::Vehicle::testFallbackAndRevert()
+void Vehicle::testFallbackAndRevert()
 {
     // Test default values
     CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == 128);
@@ -375,7 +386,7 @@ void dashee::test::Vehicle::testFallbackAndRevert()
 /**
  * Test the exceptions when setting NULL pointers
  */
-void dashee::test::Vehicle::testExceptionVehiclesetServoControllerToNull()
+void Vehicle::testExceptionVehiclesetServoControllerToNull()
 {
     this->vehicle->setServoController(NULL);
 }
@@ -383,7 +394,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetServoControllerToNull()
 /**
  * Test Invalid value of Pitch
  */
-void dashee::test::Vehicle::testExceptionVehiclesetPitchNoRange()
+void Vehicle::testExceptionVehiclesetPitchNoRange()
 {
     this->vehicle->setPitch(-1000);
 }
@@ -391,7 +402,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetPitchNoRange()
 /**
  * Test Invalid value of Roll
  */
-void dashee::test::Vehicle::testExceptionVehiclesetRollNoRange()
+void Vehicle::testExceptionVehiclesetRollNoRange()
 {
     this->vehicle->setRoll(-1000);
 }
@@ -399,7 +410,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetRollNoRange()
 /**
  * Test Invalid value of Yaw
  */
-void dashee::test::Vehicle::testExceptionVehiclesetYawNoRange()
+void Vehicle::testExceptionVehiclesetYawNoRange()
 {
     this->vehicle->setYaw(-1000);
 }
@@ -407,7 +418,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetYawNoRange()
 /**
  * Test Invalid value of Throttle
  */
-void dashee::test::Vehicle::testExceptionVehiclesetThrottleNoRange()
+void Vehicle::testExceptionVehiclesetThrottleNoRange()
 {
     this->vehicle->setThrottle(-1000);
 }
@@ -415,7 +426,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetThrottleNoRange()
 /**
  * Test Invalid value of Pitch Trim
  */
-void dashee::test::Vehicle::testExceptionVehiclesetPitchTrimNoRange()
+void Vehicle::testExceptionVehiclesetPitchTrimNoRange()
 {
     this->vehicle->setPitchTrim(-1000);
 }
@@ -423,7 +434,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetPitchTrimNoRange()
 /**
  * Test Invalid value of Roll Trim
  */
-void dashee::test::Vehicle::testExceptionVehiclesetRollTrimNoRange()
+void Vehicle::testExceptionVehiclesetRollTrimNoRange()
 {
     this->vehicle->setRollTrim(-1000);
 }
@@ -431,7 +442,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetRollTrimNoRange()
 /**
  * Test Invalid value of Yaw Trim
  */
-void dashee::test::Vehicle::testExceptionVehiclesetYawTrimNoRange()
+void Vehicle::testExceptionVehiclesetYawTrimNoRange()
 {
     this->vehicle->setYawTrim(-1000);
 }
@@ -439,7 +450,7 @@ void dashee::test::Vehicle::testExceptionVehiclesetYawTrimNoRange()
 /**
  * Test Invalid value of Throttle Trim
  */
-void dashee::test::Vehicle::testExceptionVehiclesetThrottleTrimNoRange()
+void Vehicle::testExceptionVehiclesetThrottleTrimNoRange()
 {
     this->vehicle->setThrottle(-1000);
 }
@@ -447,10 +458,10 @@ void dashee::test::Vehicle::testExceptionVehiclesetThrottleTrimNoRange()
 /**
  * Clean up
  */
-void dashee::test::Vehicle::tearDown()
+void Vehicle::tearDown()
 {
     delete vehicle;
 }
 
-dashee::ServoController * dashee::test::Vehicle::servoController = NULL;
-unsigned int dashee::test::Vehicle::VEHICLE_TIMEOUT = 1;
+dashee::ServoController * Vehicle::servoController = NULL;
+unsigned int Vehicle::VEHICLE_TIMEOUT = 1;

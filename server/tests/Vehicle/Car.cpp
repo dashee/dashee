@@ -1,14 +1,16 @@
 #include "Vehicle/Car.h"
 
+using namespace dashee::test;
+
 /**
  * Start up
  */ 
-void dashee::test::VehicleCar::setUp()
+void VehicleCar::setUp()
 {
-    dashee::test::Vehicle::setUp();
+    Vehicle::setUp();
 
     this->vehicle = new dashee::VehicleCar(
-	    (dashee::ServoController *)dashee::test::Vehicle::servoController 
+	    (dashee::ServoController *)Vehicle::servoController 
 	);
 
     dashee::VehicleCar * temp 
@@ -22,7 +24,7 @@ void dashee::test::VehicleCar::setUp()
  * Overwrite our throttle function because it starts from 128
  * for our car
  */ 
-void dashee::test::VehicleCar::testSetAndGetThrottle()
+void VehicleCar::testSetAndGetThrottle()
 {
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 128);
 
@@ -49,7 +51,7 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
 /**
  * Call transform on a static queue
  */ 
-void dashee::test::VehicleCar::testReadFromBuffer()
+void VehicleCar::testReadFromBuffer()
 {
     dashee::Buffer<unsigned char> q;
     
@@ -111,10 +113,35 @@ void dashee::test::VehicleCar::testReadFromBuffer()
 }
 
 /**
+ * Test the changes from the motor it self
+ */
+void VehicleCar::testUpdate()
+{
+    dashee::ServoController * servoController 
+        = this->vehicle->getServoController();
+
+    dashee::VehicleCar * vehicleCar 
+        = static_cast<dashee::VehicleCar *>(this->vehicle);
+
+    vehicleCar->setYaw(10);
+    vehicleCar->setThrottle(11);
+    vehicleCar->update();
+
+    CPPUNIT_ASSERT(
+            servoController->getTarget(vehicleCar->getYawChannel()) == 10
+        );
+    CPPUNIT_ASSERT(
+            servoController->getTarget(
+                vehicleCar->getThrottleChannel()
+            ) == 11
+        );
+}
+
+/**
  * Create a dummy configuration file, and let our vehicle set the state from the
  * read configuration
  */
-void dashee::test::VehicleCar::testSetAndGetFromConfig()
+void VehicleCar::testSetAndGetFromConfig()
 {
     dashee::VehicleCar * vehicleCar = new dashee::VehicleCar(
 	    this->vehicle->getServoController()

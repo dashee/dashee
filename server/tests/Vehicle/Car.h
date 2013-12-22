@@ -43,6 +43,7 @@ private:
 protected:
     virtual void testSetAndGetThrottle();
     virtual void testReadFromBuffer();
+    virtual void testUpdate();
     virtual void testSetAndGetFromConfig();
 
 public:

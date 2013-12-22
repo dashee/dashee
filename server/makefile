@@ -65,6 +65,9 @@ OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Servo/UART.o \
     Threads.o \
     Vehicle/Car.o \
+    Vehicle/Multirotor.o \
+    Vehicle/Multirotor/Quad.o \
+    Vehicle/Multirotor/Quad/X.o \
     Vehicle.o)
 # All the libraries which will be build
 LIBRARIES = $(addprefix $(LIBDIR)/, libdashee.so)
@@ -77,6 +80,7 @@ TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \
+    testVehicleMultirotorQuadX \
     testI2C \
     testThreads \
     testUART \
@@ -226,8 +230,8 @@ package-nightly: package
 	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
 	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
 
-# Build a package with all source code, but add a subfolder using xform to encapsulate
-# the files so when extracted all files are held inside a folder
+# Build a package with all source code, but add a subfolder using xform to 
+# encapsulate the files so when extracted all files are held inside a folder
 package-src:
 	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
 	# Tar up temporarily, so it can be extracted to a folder
