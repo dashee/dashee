@@ -55,10 +55,10 @@ class dashee::test::Vehicle : public CppUnit::TestFixture
     // Test getting and setting from config
     CPPUNIT_TEST(testSetAndGetFromConfig);
 
-    // Test fallback and revert modes
+    // Test fall back and revert modes
     CPPUNIT_TEST(testFallbackAndRevert);
     
-    // Test invalid NULL when trying to set the follwoing
+    // Test invalid NULL when trying to set the following
     CPPUNIT_TEST_EXCEPTION(
 	    testExceptionVehiclesetServoControllerToNull, 
 	    dashee::ExceptionVehicle
@@ -129,7 +129,7 @@ protected:
     // test set and get from Configuration variable
     virtual void testSetAndGetFromConfig();
 
-    // Test fallback and revert modes
+    // Test fall back and revert modes
     virtual void testFallbackAndRevert();
 
     // Test invalid set values
