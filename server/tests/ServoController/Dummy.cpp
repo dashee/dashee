@@ -6,7 +6,8 @@
  */
 void dashee::test::ServoControllerDummy::setUp()
 {
-    this->servoController = new dashee::ServoControllerDummy("data/Servo.bin", 12);
+    this->servoController 
+	= new dashee::ServoControllerDummy("data/Servo.bin", 12);
 }
 
 /**
@@ -24,4 +25,3 @@ void dashee::test::ServoControllerDummy::testExceptionInvalidFile()
 {
     this->servoController = new dashee::ServoControllerDummy("poop", 12);
 }
-

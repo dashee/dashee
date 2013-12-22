@@ -50,7 +50,7 @@ ServoControllerDummy::ServoControllerDummy(
  * two bytes
  *
  * The response is returned in a two byte represented by char, Only one bit is 
- * always set in these two bytes, The error number is represeted by the nth bit
+ * always set in these two bytes, The error number is represented by the nth bit
  * set, For example
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts 

@@ -12,10 +12,10 @@ void VehicleMultirotorQuadX::setUp()
     dashee::VehicleMultirotorQuadX * temp 
 	= new dashee::VehicleMultirotorQuadX(Vehicle::servoController);
 
-    temp->changeServoMotor(0, 0);
-    temp->changeServoMotor(1, 1);
-    temp->changeServoMotor(2, 2);
-    temp->changeServoMotor(3, 3);
+    temp->changeServoMotor(0, 2);
+    temp->changeServoMotor(1, 4);
+    temp->changeServoMotor(2, 6);
+    temp->changeServoMotor(3, 8);
 
     this->vehicle = temp;
 }
