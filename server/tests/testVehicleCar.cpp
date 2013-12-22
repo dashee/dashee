@@ -28,7 +28,7 @@ int main(int argc, char ** argv)
 	// Load the appropriate servoController
 	if (strcmp(argv[1], "dummy") == 0)
 	    dashee::test::Vehicle::servoController
-		= new dashee::ServoControllerDummy(argv[2], 6);
+		= new dashee::ServoControllerDummy(argv[2], 12);
 
 	else if (strcmp(argv[1], "UART") == 0)
 	    dashee::test::Vehicle::servoController

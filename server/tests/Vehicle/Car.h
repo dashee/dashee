@@ -45,6 +45,7 @@ protected:
     virtual void testReadFromBuffer();
     virtual void testUpdate();
     virtual void testSetAndGetFromConfig();
+    virtual void testFallbackAndRevert();
 
 public:
     // Let the derived class deal with setting up the variables

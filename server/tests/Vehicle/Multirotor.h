@@ -35,6 +35,11 @@ class dashee::test::VehicleMultirotor
 	    dashee::test::VehicleMultirotor,
 	    dashee::test::Vehicle
 	);
+
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidMotorChannel, 
+	    dashee::ExceptionOutOfBounds
+	);
     
     // End
     CPPUNIT_TEST_SUITE_END();
@@ -44,6 +49,8 @@ protected:
 
     // Test reading from the server
     virtual void testReadFromBuffer();
+    virtual void testInvalidMotorChannel();
+    virtual void testFallbackAndRevert();
 
 public:
 };

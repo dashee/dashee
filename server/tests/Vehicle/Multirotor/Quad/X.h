@@ -10,7 +10,7 @@
 #ifndef DASHEE_TEST_MODEL_MULTIROTOR_QUAD_X_H_
 #define DASHEE_TEST_MODEL_MULTIROTOR_QUAD_X_H_
 
-#include <dashee/Vehicle/Multirotor/Quad.h>
+#include <dashee/Vehicle/Multirotor/Quad/X.h>
 #include "Vehicle/Multirotor/Quad.h"
 
 /**
@@ -46,6 +46,7 @@ protected:
     virtual void testUpdate();
 
 public:
+    virtual void setUp();
 };
 
 #endif

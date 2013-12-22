@@ -165,7 +165,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	$(call print,"Building","data","$@")
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38 >/dev/null
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 >/dev/null
 
 # Builds the documentation
 documentation:

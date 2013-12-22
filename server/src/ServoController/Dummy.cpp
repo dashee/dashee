@@ -39,7 +39,7 @@ ServoControllerDummy::ServoControllerDummy(
         throw ExceptionServoController(
                 "The binary file is of invalid size. Please "
                 "create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 "
-                "count=0 seek=38'"
+                "count=0 seek=72'"
             );
 }
 

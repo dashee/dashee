@@ -44,6 +44,7 @@ protected:
 
     // Load values from configuration and ensure that all values are good
     virtual void testSetAndGetFromConfig();
+    virtual void testInvalidMotorChannel();
 
 public:
 };

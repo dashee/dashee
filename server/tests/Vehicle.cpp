@@ -22,7 +22,7 @@ void Vehicle::setUp()
 }
 
 /**
- * We can't really test this accuratly as only one handle
+ * We can't really test this accurately as only one handle
  * can be open to a servocontroller.
  *
  * But we can test GET value
@@ -341,46 +341,7 @@ void Vehicle::testSetAndGetFromConfig()
  */
 void Vehicle::testFallbackAndRevert()
 {
-    // Test default values
-    CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getRollFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getYawFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getThrottleFallback() == 128);
-
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-    this->vehicle->revert();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-    this->vehicle->fallback();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == true);
-    this->vehicle->revert();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-
-    for (int x = 0; x < 255; x++)
-    {
-        this->vehicle->revert();
-        CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-            
-        this->vehicle->setPitchFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-        
-        this->vehicle->setRollFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-        
-        this->vehicle->setYawFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-
-        this->vehicle->setThrottleFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-
-        // TODO Test the pitch values after fallback
-        this->vehicle->fallback();
-        CPPUNIT_ASSERT(this->vehicle->getPitch() == x);
-        CPPUNIT_ASSERT(this->vehicle->getRoll() == x);
-        CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
-        CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
-
-        dashee::sleep(VEHICLE_TIMEOUT);
-    }
+    throw dashee::Exception("This must be implemented by a child function");
 }
 
 /**

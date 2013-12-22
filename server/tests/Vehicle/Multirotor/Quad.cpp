@@ -17,3 +17,14 @@ void VehicleMultirotorQuad::testSetAndGetFromConfig()
 
     this->vehicle->loadFromConfig(&config);
 }
+
+/**
+ * Ensure that an exception is thrown when the invalid channel is set
+ */
+void VehicleMultirotorQuad::testInvalidMotorChannel()
+{
+    dashee::VehicleMultirotorQuad * vehicleMultirotorQuad 
+	= static_cast<dashee::VehicleMultirotorQuad *>(this->vehicle);
+
+    vehicleMultirotorQuad->changeServoMotor(4, 2);
+}
