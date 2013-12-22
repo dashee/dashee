@@ -2,10 +2,10 @@
 #include <dashee/ServoController/UART.h>
 #include <dashee/ServoController/USB.h>
 #include <dashee/ServoController/Dummy.h>
-#include "Vehicle/Car.h"
+#include "Vehicle/Multirotor/Quad/X.h"
 #include "dashee.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::VehicleCar);
+CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::VehicleMultirotorQuadX);
 
 /**
  * Load the correct values into static variables

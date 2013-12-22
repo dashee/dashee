@@ -21,17 +21,17 @@ namespace dashee
  * Servo Dummy class for testing.
  *
  * This class defines the implementation to a binary file
- * which pretends to be a servo, It is usefull for testing
+ * which pretends to be a servo, It is useful for testing
  * if you don't have a board.
  *
  * The binary file represents the first two bytes as the error number
- * and consecative 4 bytes represent a channel, of these four bytes
+ * and consecutive 4 bytes represent a channel, of these four bytes
  * the first represents the channel number, the second Target, the third Speed
  * and the last acceleration. 
  *
  * This program presumes that there are SERVO_DUMMY_CHANNEL's in our file.
  *
- * This class represents one servo/channel at a time, The handel is held 
+ * This class represents one servo/channel at a time, The handle is held 
  * externally usually in the ServoController class, or its 
  * ServoController<CounterPart> version
  */

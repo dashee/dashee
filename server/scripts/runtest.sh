@@ -158,10 +158,12 @@ case "$RUN_TYPE" in
     "pi")
         runtests $TEST_PI
 	runtest testVehicleCar UART /dev/ttyAMA0 10
+	runtest testVehicleMultirotorQuadX UART /dev/ttyAMA0 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
 	runtest testVehicleCar dummy data/Servo.bin 0
+	runtest testVehicleMultirotorQuadX dummy data/Servo.bin 0
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2
