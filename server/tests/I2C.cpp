@@ -98,10 +98,13 @@ void I2C::testSetAndGetWorkingRegister()
 }
 
 /**
- * This test the reading the value from the register
+ * This test the reading the value from the register, of our accelerometer
+ * we need an actual device to perform this action as dummy devices would not 
+ * do. And for that we use the 9DOF accelerometer. 
  */
 void I2C::testReadWriteRegister()
 {
+    // Create a new instance of the vector which will store the values
     std::vector<unsigned char> val;
 
     // Test reading and writing to the accelerometer
@@ -109,23 +112,37 @@ void I2C::testReadWriteRegister()
     val = accelerometer.readFromRegister(0x00, 1);
     CPPUNIT_ASSERT(val.size() == 1);
     CPPUNIT_ASSERT(val[0] == 229);
+
+    // Ensure the read function works correctly
     val = accelerometer.read();
     CPPUNIT_ASSERT(val.size() == 1);
     CPPUNIT_ASSERT(val[0] == 229);
+
+    // Ensure calling read by setting the working register works
+    accelerometer.setWorkingRegister(0x00);
     val = accelerometer.read(1);
     CPPUNIT_ASSERT(val.size() == 1);
     CPPUNIT_ASSERT(val[0] == 229);
 
-    // Test reading and writing to the gyro
-    dashee::I2C gyro(1, 0x68);
-    val = gyro.readFromRegister(0x00, 1);
+    // Ensure that readFromRegister with the value passed as a references works
+    // well
+    val.clear();
+    accelerometer.readFromRegister(0x00, 1, &val);
     CPPUNIT_ASSERT(val.size() == 1);
-    CPPUNIT_ASSERT(val[0] == 105);
-    val = gyro.readFromRegister(0x00, 1);
-    CPPUNIT_ASSERT(val.size() == 1);
-    CPPUNIT_ASSERT(val[0] == 105);
+    CPPUNIT_ASSERT(val[0] == 229);
 
-    // TODO test reading and writing to the magnetometer
+    // Ensure that read with the value passed as reference works well
+    val.clear();
+    accelerometer.read(&val);
+    CPPUNIT_ASSERT(val.size() == 1);
+    CPPUNIT_ASSERT(val[0] == 229);
+
+    // Ensure that passing a vector as a parameter appends to the existing 
+    // vector rather than clearing it
+    accelerometer.readFromRegister(0x00, 1, &val);
+    CPPUNIT_ASSERT(val.size() == 2);
+    CPPUNIT_ASSERT(val[0] == 229);
+    CPPUNIT_ASSERT(val[1] == 229);
 }
 
 /**
