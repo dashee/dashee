@@ -32,7 +32,7 @@ int main(int argc, char ** argv)
 
 	else if (strcmp(argv[1], "UART") == 0)
 	    dashee::test::Vehicle::servoController
-		= new dashee::ServoControllerUART(argv[2]);
+		= new dashee::ServoControllerUART(argv[2], 12);
 
 	else
 	    throw dashee::Exception("Invalid ServoController");
