@@ -32,10 +32,9 @@ protected:
             Config * conf = NULL
         );
 
+public:
     // Overwrite the loadFromConfig and set the channel values
     virtual void loadFromConfig(Config * config);
-
-public:
 
     virtual ~VehicleMultirotorQuad();
 };
