@@ -150,7 +150,7 @@ unsigned char I2C::getWorkingRegister() const
 }
 
 /**
- * Read from a specific register.
+ * Read from a specfic register and update the buffer.
  *
  * The steps to read from a register is to write a register value to the
  * I2C device telling it we will now read from this buffer, and then call
@@ -158,20 +158,27 @@ unsigned char I2C::getWorkingRegister() const
  *
  * @param reg The register to read from
  * @param numOfBytes The number of bytes to read
+ * @param buffer The buffer to change
+ *
+ * @throws ExceptionI2C On failure of the I2C read or if the buffer is NULL
  */
-std::vector<unsigned char> I2C::readFromRegister(
+void I2C::readFromRegister(
 	const unsigned char reg, 
-	const size_t numOfBytes
+	const size_t numOfBytes,
+	std::vector<unsigned char> * const buffer
     )
 {
+    if (buffer == NULL)
+	throw ExceptionNullPointer("Buffer was NULL in I2C::readFromRegister");
+
     // Set the working register.
     this->setWorkingRegister(reg);
-    // Tell the device we will read from the reg register
-
-    std::vector<unsigned char> buffer;
-    buffer.resize(numOfBytes);
-
-    const ssize_t ec = ::read(this->fd, &buffer[0], numOfBytes);
+    
+    size_t buffer_size = buffer->size();
+    buffer->resize(buffer_size + numOfBytes, 0x00);
+    
+    const ssize_t ec 
+	= ::read(this->fd, &buffer->operator[](buffer_size), numOfBytes);
     if (ec != static_cast<ssize_t>(numOfBytes))
 	throw ExceptionI2C(
 		"Read failed in for register '" + dashee::ctostr(reg) + 
@@ -179,7 +186,26 @@ std::vector<unsigned char> I2C::readFromRegister(
 		dashee::itostr(ec) + ") were less than the" + 
 		" bytes expected(" + dashee::itostr(numOfBytes) + ")."
 	    );
+}
 
+/**
+ * Read from a specific register.
+ *
+ * Helpful shorthand for the readFromRegister function which uses the buffer as
+ * a pass by pointer
+ *
+ * @param reg The register to read from
+ * @param numOfBytes The number of bytes to read
+ *
+ * @returns A new vector of unsigned bytes with the values populated
+ */
+std::vector<unsigned char> I2C::readFromRegister(
+	const unsigned char reg, 
+	const size_t numOfBytes
+    )
+{
+    std::vector<unsigned char> buffer;
+    this->readFromRegister(reg, numOfBytes, &buffer);
     return buffer;
 }
 
@@ -190,14 +216,22 @@ std::vector<unsigned char> I2C::readFromRegister(
  * the register it is reading from, it presumes that the read values are coming
  * from the last working register.
  *
+ * @param buffer The buffer to write to from reading values
  * @param numOfBytes the number of bytes to read
  */
-std::vector<unsigned char> I2C::read(const size_t numOfBytes)
+void I2C::read(
+	std::vector<unsigned char> * const buffer, 
+	const size_t numOfBytes
+    )
 {
-    std::vector<unsigned char> buffer;
-    buffer.resize(numOfBytes);
+    if (buffer == NULL)
+	throw ExceptionNullPointer("Buffer was NULL in I2C::read");
 
-    const ssize_t ec = ::read(this->fd, &buffer[0], numOfBytes);
+    size_t buffer_size = buffer->size();
+    buffer->resize(buffer_size + numOfBytes, 0x00);
+
+    const ssize_t ec 
+	= ::read(this->fd, &buffer->operator[](buffer_size), numOfBytes);
     if (ec != static_cast<ssize_t>(numOfBytes))
 	throw ExceptionI2C(
 		"Read failed in for register '" + 
@@ -206,7 +240,21 @@ std::vector<unsigned char> I2C::read(const size_t numOfBytes)
 		dashee::itostr(ec) + ") were less than the" + 
 		" bytes expected(" + dashee::itostr(numOfBytes) + ")."
 	    );
+}
 
+/**
+ * Read bytes for the working register. 
+ *
+ * Helpful short hand for the reference read
+ *
+ * @param numOfBytes the number of bytes to read
+ *
+ * @returns A new vector of unsigned bytes with the values populated
+ */
+std::vector<unsigned char> I2C::read(const size_t numOfBytes)
+{
+    std::vector<unsigned char> buffer;
+    this->read(&buffer, numOfBytes);
     return buffer;
 }
 

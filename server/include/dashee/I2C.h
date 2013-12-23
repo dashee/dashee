@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <dashee/common.h>
+#include <dashee/Exception/NullPointer.h>
 #include <dashee/Exception/I2C.h>
 
 namespace dashee
@@ -88,11 +89,23 @@ public:
     unsigned char getWorkingRegister() const;
 
     // Read values from the register
+    void readFromRegister(
+	    const unsigned char reg, 
+	    const size_t numOfBytes,
+	    std::vector<unsigned char> * const buffer
+	);
     std::vector<unsigned char> readFromRegister(
 	    const unsigned char reg, 
 	    const size_t numOfBytes
 	);
+
+    // Read values from the working register
+    void read(
+	    std::vector<unsigned char> * const buffer,
+	    const size_t numOfBytes = 1
+	);
     std::vector<unsigned char> read(const size_t numOfBytes = 1);
+
     // write values to the register
     //void writeToRegister(const std::vector<unsigned char> buffer);
 
