@@ -22,6 +22,7 @@
 
 #include <dashee/common.h>
 #include <dashee/Exception/NullPointer.h>
+#include <dashee/Exception/OutOfBounds.h>
 #include <dashee/Exception/I2C.h>
 
 namespace dashee
@@ -63,14 +64,6 @@ protected:
      */
     unsigned char slaveAddress;
 
-    /**
-     * The working register used to read data, sometime it is faster
-     * to just set a register and keep reading from it, to do this we
-     * hold the value of our working register in a variable and by setting it
-     * we actually write to the device with the value
-     */
-    unsigned char workingRegister;
-
 public:
 
     // Open the device using just an integer
@@ -85,29 +78,33 @@ public:
     unsigned char getSlaveAddress() const;
 
     // Set and get the working register
-    void setWorkingRegister(const unsigned char);
-    unsigned char getWorkingRegister() const;
+    void setWorkingRegister(const unsigned char reg);
 
-    // Read values from the register
-    void readFromRegister(
+    // Read numOfBytes bytes from the register and store it in the buffer
+    void read(
 	    const unsigned char reg, 
-	    const size_t numOfBytes,
-	    std::vector<unsigned char> * const buffer
-	);
-    std::vector<unsigned char> readFromRegister(
-	    const unsigned char reg, 
+	    std::vector<unsigned char> * const buffer,
 	    const size_t numOfBytes
 	);
 
-    // Read values from the working register
+    // Read buffer.size() bytes from the register and store it in the buffer
     void read(
-	    std::vector<unsigned char> * const buffer,
-	    const size_t numOfBytes = 1
+	    const unsigned char reg, 
+	    std::vector<unsigned char> * const buffer
 	);
-    std::vector<unsigned char> read(const size_t numOfBytes = 1);
 
-    // write values to the register
-    //void writeToRegister(const std::vector<unsigned char> buffer);
+    // Write to the register reading the number of bytes from the buffer
+    void write(
+	    const unsigned char reg,
+	    const std::vector<unsigned char> * buffer, 
+	    const size_t numOfBytes
+	);
+
+    // Write to the register the number of bytes in buffer
+    void write(
+	    const unsigned char reg,
+	    const std::vector<unsigned char> * buffer
+	);
 
     // Clean up
     virtual ~I2C();
