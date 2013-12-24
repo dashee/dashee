@@ -35,11 +35,13 @@ class dashee::test::GPIO : public CppUnit::TestFixture
     
     CPPUNIT_TEST(testExportAndUnexport);
     CPPUNIT_TEST(testGetPin);
+    CPPUNIT_TEST(testSetAndGetDirection);
+    CPPUNIT_TEST(testReadAndWrite);
+    CPPUNIT_TEST(testHighAndLow);
     CPPUNIT_TEST(testDoubleExportUnExportIsOK);
 
     // Exceptions
     CPPUNIT_TEST_EXCEPTION(testInvalidPinValue, ExceptionGPIO);
-    CPPUNIT_TEST_EXCEPTION(testFailUnexportingInvalidFile, ExceptionGPIO);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -49,10 +51,12 @@ private:
 protected:
     void testExportAndUnexport();
     void testGetPin();
+    void testSetAndGetDirection();
+    void testReadAndWrite();
+    void testHighAndLow();
     void testDoubleExportUnExportIsOK();
 
     void testInvalidPinValue();
-    void testFailUnexportingInvalidFile();
 
 public:
     void setUp();

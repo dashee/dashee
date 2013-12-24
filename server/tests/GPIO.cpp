@@ -26,6 +26,40 @@ void GPIO::testExportAndUnexport()
 }
 
 /**
+ * Test the direction setters and getters
+ */
+void GPIO::testSetAndGetDirection()
+{
+    CPPUNIT_ASSERT(this->gpio->getDirection() == dashee::GPIO::OUT);
+    this->gpio->setDirection(dashee::GPIO::IN);
+    CPPUNIT_ASSERT(this->gpio->getDirection() == dashee::GPIO::IN);
+
+    dashee::GPIO::exportPin(23);
+    dashee::sleep(150000);
+    dashee::GPIO::setDirection(23, dashee::GPIO::OUT);
+    CPPUNIT_ASSERT(dashee::GPIO::getDirection(23) == dashee::GPIO::OUT);
+    dashee::GPIO::setDirection(23, dashee::GPIO::IN);
+    CPPUNIT_ASSERT(dashee::GPIO::getDirection(23) == dashee::GPIO::IN);
+    dashee::GPIO::unexportPin(23);
+}
+
+/**
+ * Test read and write to the gpio pin
+ */
+void GPIO::testReadAndWrite()
+{
+
+}
+
+/**
+ * Test setting the pin High and Low
+ */ 
+void GPIO::testHighAndLow()
+{
+
+}
+
+/**
  * The class is designed to ignore double exporting files which already exist
  *
  * This test just makes sure that we don't through an exception
@@ -50,14 +84,6 @@ void GPIO::testGetPin()
 void GPIO::testInvalidPinValue()
 {
     dashee::GPIO x(0, dashee::GPIO::OUT);
-}
-
-/**
- * Unexporting files that do not exist is wrong
- */
-void GPIO::testFailUnexportingInvalidFile()
-{
-    dashee::GPIO::unexportPin(23);
 }
 
 /**
