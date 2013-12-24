@@ -21,7 +21,7 @@ GPIO::GPIO(unsigned short int pin, char direction)
 {
     this->setPin(pin);
     this->exportPin();
-    dashee::sleep(90000);
+    dashee::sleep(150000);
     this->setDirection(direction);
 }
 
@@ -40,7 +40,9 @@ void GPIO::setPin(unsigned short int pin)
     if (pin < 1)
         throw ExceptionGPIO("pinNumber must be greater than 0");
 
+    //this->unexportPin();
     this->pin = pin;
+    //this->exportPin();
 }
 
 /**
@@ -87,7 +89,10 @@ void GPIO::exportPin(int pin)
     char buffer[3];
     ssize_t bytesToWrite = sprintf(buffer, "%d", pin);
     if (::write(fd, buffer, bytesToWrite) == -1)
-        throw ExceptionGPIO("Write failed for file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Write failed for file '" + 
+		(std::string)file + "'!"
+	    );
 
     ::close(fd);
 }
