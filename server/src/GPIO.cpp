@@ -21,7 +21,7 @@ GPIO::GPIO(unsigned short int pin, char direction)
 {
     this->setPin(pin);
     this->exportPin();
-    usleep(50000);
+    dashee::sleep(90000);
     this->setDirection(direction);
 }
 
