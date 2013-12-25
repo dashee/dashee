@@ -20,6 +20,9 @@
 
 #include <unistd.h>
 
+// Useful for encapsulating unused variables
+#define UNUSED(expr) do { (void)(expr); } while (0)
+
 namespace dashee
 {
     namespace test

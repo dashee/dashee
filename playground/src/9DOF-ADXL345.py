@@ -59,7 +59,7 @@ def setRange(bus, address, range_flag):
     # Read old values from the server
     value = bus.read_byte_data(address, register)
 
-    # Wipe the first 16 register values
+    # Wipe the first 4 bit register values
     value &= ~0x0F;
 
     # Change the range byte1 + byte0

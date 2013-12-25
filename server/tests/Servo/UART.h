@@ -13,6 +13,7 @@
 /**
  * Include Locals
  */
+#include <dashee/GPIO.h>
 #include <dashee/Servo/UART.h>
 #include "Servo.h"
 #include <termios.h>

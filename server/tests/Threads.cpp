@@ -6,7 +6,7 @@ dashee::Threads::LockMutex dashee::test::mutexRUN
 
 volatile int dashee::test::sharedVariable = 0;
 
-// Initilize the different lock types
+// Initialize the different lock types
 dashee::Threads::LockMutex dashee::test::lockMutex
     = dashee::Threads::LockMutex();
 dashee::Threads::LockReadWrite dashee::test::lockReadWrite
@@ -21,12 +21,13 @@ dashee::Threads::LockReadWrite dashee::test::lockReadWrite
  */ 
 void * dashee::test::donothing(void * nothing)
 {
+    UNUSED(nothing);
     CPPUNIT_ASSERT(true);
     return NULL;
 }
 
 /**
- * This is a function which infinatly loops till the RUN flag is changed
+ * This is a function which infinitely loops till the RUN flag is changed
  *
  * @param nothing not used
  * 
@@ -34,6 +35,7 @@ void * dashee::test::donothing(void * nothing)
  */
 void * dashee::test::waitTillExit(void * nothing)
 {
+    UNUSED(nothing);
     while (true)
     {
 	mutexRUN.lock();
@@ -69,8 +71,8 @@ void * dashee::test::doN(void * N)
 }
 
 /**
- * This will add 1 to the shared variables, Mutlple threads can be
- * set lose to this to ensure that the value acuumalates correctly
+ * This will add 1 to the shared variables, Multiple threads can be
+ * set lose to this to ensure that the value accumulates correctly
  *
  * @param l The dashee::Threads::Lock object
  *
@@ -106,6 +108,7 @@ void * dashee::test::addNTimes(void * l)
  */ 
 void * dashee::test::callSelf(void * nothing)
 {
+    UNUSED(nothing);
     CPPUNIT_ASSERT(dashee::Threads::Thread::self() > 0);
     dashee::Threads::Thread::exit();
     return NULL;
@@ -120,6 +123,7 @@ void * dashee::test::callSelf(void * nothing)
  */
 void * dashee::test::callExit(void * nothing)
 {
+    UNUSED(nothing);
     dashee::Threads::Thread::exit();
     CPPUNIT_ASSERT(true);
     return NULL;
@@ -165,8 +169,8 @@ void * dashee::test::scopeLocks(void * v)
 /**
  * Try double locking threads, and try to recover.
  *
- * This will fail in a non conventional way, The failiure is 
- * detected by the thread never comming out of lock in some cases
+ * This will fail in a non conventional way, The failure is 
+ * detected by the thread never coming out of lock in some cases
  *
  * So the only way you know it passed, is that if the test finished.
  *
@@ -225,7 +229,8 @@ void dashee::test::Threads::testWorking()
 }
 
 /**
- * You can't start a thread twice asynchronisly but you can do it synchronisly.
+ * You can't start a thread twice asynchronously but you can do it 
+ * synchronously.
  */
 void dashee::test::Threads::testMultiStarts()
 {
@@ -290,7 +295,7 @@ void dashee::test::Threads::testExits()
 }
 
 /**
- * Test Adding to sharedVariable using locking, lockas are passed in as value
+ * Test Adding to sharedVariable using locking, locks are passed in as value
  */
 void dashee::test::Threads::testLock()
 {

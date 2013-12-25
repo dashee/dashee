@@ -10,10 +10,10 @@ void VehicleMultirotorQuad::testSetAndGetFromConfig()
 {
     dashee::Config config;
 
-    config.set("vehicle-multirotor-m1", 2);
-    config.set("vehicle-multirotor-m2", 4);
-    config.set("vehicle-multirotor-m3", 6);
-    config.set("vehicle-multirotor-m4", 8);
+    config.set("vehicle-multirotor-quad-m1", 2);
+    config.set("vehicle-multirotor-quad-m2", 4);
+    config.set("vehicle-multirotor-quad-m3", 6);
+    config.set("vehicle-multirotor-quad-m4", 8);
 
     this->vehicle->loadFromConfig(&config);
 }
