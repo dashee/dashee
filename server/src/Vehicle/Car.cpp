@@ -54,7 +54,7 @@ void VehicleCar::loadFromConfig(Config * config)
  */
 void VehicleCar::setYawChannel(const unsigned short int channel)
 {
-    if (channel < 0 || channel > this->servoController->size())
+    if (channel > this->servoController->size())
         throw ExceptionVehicle("The throttle channel is invalid");
 
     this->yawChannel = channel;
@@ -81,7 +81,7 @@ unsigned short int VehicleCar::getYawChannel()
  */
 void VehicleCar::setThrottleChannel(const unsigned short int channel)
 {
-    if (channel < 0 || channel > this->servoController->size())
+    if (channel > this->servoController->size())
         throw ExceptionVehicle("The throttle channel is invalid");
 
     this->throttleChannel = channel;

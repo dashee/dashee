@@ -3,7 +3,7 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::I2C);
 
-int main(int argc, char ** argv)
+int main()
 {
     return dashee::test::run();
 }

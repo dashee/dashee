@@ -5,7 +5,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ServoUART);
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ServoControllerUART);
 
-int main(int argc, char ** argv)
+int main()
 {
     return dashee::test::run();
 }
