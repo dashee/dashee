@@ -1,5 +1,5 @@
 /**
- * @file tests/Coordinate.h
+ * @file tests/Point.h
  *
  * @section LICENSE
  *
@@ -7,11 +7,11 @@
  * mentioned at http://dashee.co.uk/license. 
  */
 
-#ifndef DASHEE_TEST_COORDINATE_H_
-#define DASHEE_TEST_COORDINATE_H_
+#ifndef DASHEE_TEST_POINT_H_
+#define DASHEE_TEST_POINT_H_
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <dashee/Coordinate.h>
+#include <dashee/Point.h>
 #include <dashee/Log.h>
 
 /*
@@ -21,7 +21,7 @@ namespace dashee
 {
     namespace test
     {
-        class Coordinate;
+        class Point;
     }
 }   
 
@@ -29,9 +29,9 @@ namespace dashee
  * Buffer test class for
  * unit testing known components
  */
-class dashee::test::Coordinate : public CppUnit::TestFixture
+class dashee::test::Point : public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(dashee::test::Coordinate);
+    CPPUNIT_TEST_SUITE(dashee::test::Point);
     
     CPPUNIT_TEST(testEmptyConstructions);
     CPPUNIT_TEST(testValueConstructions);
@@ -48,7 +48,7 @@ class dashee::test::Coordinate : public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    dashee::Coordinate<float> * coordinate;
+    dashee::Point<float> * point;
 
 protected:
     void testEmptyConstructions();

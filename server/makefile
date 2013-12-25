@@ -51,7 +51,7 @@ OBJECTSLIB = $(addprefix src/, common.o \
 # All the objects that are built for tests
 OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Config.o \
-    Coordinate.o \
+    Point.o \
     dashee.o \
     GPIO.o \
     Hardware/Accelerometer/Dummy.o \
@@ -76,7 +76,7 @@ BINARIES = $(addprefix $(BINDIR)/, servo servod)
 # All the tests which will be use to test the program
 TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testConfig \
-    testCoordinate \
+    testPoint \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \

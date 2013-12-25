@@ -7,7 +7,7 @@ using namespace dashee::Hardware;
  */
 AccelerometerDummy::AccelerometerDummy() : Accelerometer()
 {
-    this->delta = dashee::Coordinate<float>();
+    this->delta = dashee::Point<float>();
 }
 
 /**
@@ -15,7 +15,7 @@ AccelerometerDummy::AccelerometerDummy() : Accelerometer()
  *
  * @param delta the Delta coordinate
  */
-void AccelerometerDummy::setDelta(dashee::Coordinate<float> delta)
+void AccelerometerDummy::setDelta(dashee::Point<float> delta)
 {
     this->delta = delta;
 }
@@ -23,22 +23,12 @@ void AccelerometerDummy::setDelta(dashee::Coordinate<float> delta)
 /**
  * Get the existing delta value
  *
- * @returns Coordinate that the current delta is set to
+ * @returns Point that the current delta is set to
  */
-dashee::Coordinate<float> AccelerometerDummy::getDelta() const
+dashee::Point<float> AccelerometerDummy::getDelta() const
 {
     return this->delta;
 }   
-
-/**
- * Returns the last read values of the sensor
- *
- * @returns float value
- */ 
-dashee::Coordinate<float> AccelerometerDummy::read() const
-{
-    return this->coordinate;
-}
 
 /**
  * Update the Accelerometer.
@@ -49,21 +39,20 @@ dashee::Coordinate<float> AccelerometerDummy::read() const
  */
 void AccelerometerDummy::update()
 {
-    this->coordinate = this->coordinate + this->delta;
+    this->g = this->g + this->delta;
     
     if (MAX != 0)
     {
-	// Reverse the delta, if the coordinate is out of MAX range
-	if (this->coordinate.getX() > MAX)
+	// Reverse the delta, if the g is out of MAX range
+	if (this->g.getX() > MAX)
 	    this->delta.setX(this->delta.getX() * -1);
 
-	if (this->coordinate.getY() > MAX)
+	if (this->g.getY() > MAX)
 	    this->delta.setY(this->delta.getY() * -1);
 
-	if (this->coordinate.getZ() > MAX)
+	if (this->g.getZ() > MAX)
 	    this->delta.setZ(this->delta.getZ() * -1);
     }
-
 }
 
 /**

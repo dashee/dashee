@@ -21,12 +21,12 @@ TESTDIR=./bin/tests
 TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
-TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testCoordinate"
+TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testPoint"
 TEST_PI="testGPIO testI2C testUART"
 TEST_DUMMY="testDummy"
 
 ##
-# Prints the status in a colorfull format
+# Prints the status in a colorful format
 # 
 # @param $1 the String representing "PASSED" or "FAILED"
 # @param $2 the String representing the test
