@@ -42,6 +42,8 @@ class dashee::test::GPIO : public CppUnit::TestFixture
 
     // Exceptions
     CPPUNIT_TEST_EXCEPTION(testInvalidPinValue, ExceptionGPIO);
+    CPPUNIT_TEST_EXCEPTION(testInvalidReadPin, ExceptionGPIO);
+    CPPUNIT_TEST_EXCEPTION(testInvalidWritePin, ExceptionGPIO);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -57,6 +59,8 @@ protected:
     void testDoubleExportUnExportIsOK();
 
     void testInvalidPinValue();
+    void testInvalidReadPin();
+    void testInvalidWritePin();
 
 public:
     void setUp();

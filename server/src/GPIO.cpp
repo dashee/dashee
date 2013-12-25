@@ -289,7 +289,7 @@ void GPIO::write(int pin, unsigned short int value)
     if (fd == -1)
         throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
 
-    char buffer[3];
+    char buffer[3] = { 0 };
     ssize_t bytesToWrite;
 
     if (value == dashee::GPIO::HIGH || value == dashee::GPIO::LOW)
@@ -361,11 +361,17 @@ int GPIO::read(int pin)
     if (fd == -1)
         throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
 
-    char value[3];
+    char value[4] = { 0 };
     if (::read(fd, value, 3) < 0) 
         throw ExceptionGPIO("Failed to read file '" + (std::string)file + "'!");
 
     ::close(fd);
+
+    // Remove trailing next lines, stupid read comes back with the actual next line
+    for (size_t x = 0; x < 4; ++x)
+    {
+	if (value[x] == '\n') value[x] = 0;
+    }
 
     return strtol(value);
 }

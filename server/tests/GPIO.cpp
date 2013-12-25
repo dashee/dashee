@@ -48,7 +48,10 @@ void GPIO::testSetAndGetDirection()
  */
 void GPIO::testReadAndWrite()
 {
-
+    this->gpio->write(1);
+    CPPUNIT_ASSERT(this->gpio->read() == dashee::GPIO::HIGH);
+    this->gpio->write(0);
+    CPPUNIT_ASSERT(this->gpio->read() == dashee::GPIO::LOW);
 }
 
 /**
@@ -56,7 +59,10 @@ void GPIO::testReadAndWrite()
  */ 
 void GPIO::testHighAndLow()
 {
-
+    this->gpio->high();
+    CPPUNIT_ASSERT(this->gpio->read() == dashee::GPIO::HIGH);
+    this->gpio->low();
+    CPPUNIT_ASSERT(this->gpio->read() == dashee::GPIO::LOW);
 }
 
 /**
@@ -84,6 +90,22 @@ void GPIO::testGetPin()
 void GPIO::testInvalidPinValue()
 {
     dashee::GPIO x(0, dashee::GPIO::OUT);
+}
+
+/**
+ * Ensure reading an invalid pin throws an exception
+ */
+void GPIO::testInvalidReadPin()
+{
+    dashee::GPIO::read(23);
+}
+
+/**
+ * Test invalid write
+ */
+void GPIO::testInvalidWritePin()
+{
+    dashee::GPIO::write(23, 1);
 }
 
 /**
