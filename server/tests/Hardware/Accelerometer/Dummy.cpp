@@ -13,7 +13,7 @@ void AccelerometerDummy::setUp()
 /**
  * Test the default state of the loaded class
  */
-void AccelerometerDummy::testDefaultLoad()
+void AccelerometerDummy::testConstructDefault()
 {
 
 }
