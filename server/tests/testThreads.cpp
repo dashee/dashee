@@ -2,7 +2,7 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::Threads);
 
-int main(int argc, char ** argv)
+int main()
 {
     return dashee::test::run();
 }

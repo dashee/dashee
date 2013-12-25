@@ -25,7 +25,7 @@ Servo::Servo(const unsigned short int channel, unsigned short target)
  */
 void Servo::setTarget(unsigned short int target)
 {
-    if (target < 0 || target > 255)
+    if (target > 255)
         throw ExceptionServo(
                 "Target '" + 
                 dashee::itostr(target) + 

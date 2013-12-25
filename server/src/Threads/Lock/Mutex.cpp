@@ -36,6 +36,12 @@ dashee::Threads::LockMutex::LockMutex()
  */
 void dashee::Threads::LockMutex::lock(lockType type)
 {
+    if (type == Lock::LOCKTYPE_READ)
+        dashee::Log::warning(
+                7, 
+                "Note this is a mutex lock, it is always write"
+            );
+
     int ec = pthread_mutex_lock(this->mutex);
 
     switch (ec)
@@ -77,6 +83,12 @@ void dashee::Threads::LockMutex::lock(lockType type)
  */
 bool dashee::Threads::LockMutex::trylock(int ntimes, int npause, lockType type)
 {
+    if (type == Lock::LOCKTYPE_READ)
+        dashee::Log::warning(
+                7, 
+                "Note this is a mutex lock, it is always write"
+            );
+
     int n = 0;
     int ec;
     while ((ec = pthread_mutex_trylock(this->mutex)) != 0)
