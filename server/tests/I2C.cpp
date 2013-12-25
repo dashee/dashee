@@ -83,66 +83,110 @@ void I2C::testSet10BitAddressFlag()
 }
 
 /**
- * Test working register functionality
- */
-void I2C::testSetAndGetWorkingRegister()
-{
-    dashee::I2C accelerometer(1, 0x53);
-    
-    // Test default values
-    CPPUNIT_ASSERT(accelerometer.getWorkingRegister() == 0x00);
-
-    // Test changed values
-    accelerometer.setWorkingRegister(0x01);
-    CPPUNIT_ASSERT(accelerometer.getWorkingRegister() == 0x01);
-}
-
-/**
  * This test the reading the value from the register, of our accelerometer
  * we need an actual device to perform this action as dummy devices would not 
  * do. And for that we use the 9DOF accelerometer. 
  */
-void I2C::testReadWriteRegister()
+void I2C::testReadRegister()
 {
+    // Talk to the accelerometer
+    this->i2c->setSlaveAddress(0x53);
+
     // Create a new instance of the vector which will store the values
     std::vector<unsigned char> val;
 
-    // Test reading and writing to the accelerometer
-    dashee::I2C accelerometer(1, 0x53);
-    val = accelerometer.readFromRegister(0x00, 1);
+    // Read val.size bytes from the register
+    this->i2c->read(0x00, &val, 1);
     CPPUNIT_ASSERT(val.size() == 1);
     CPPUNIT_ASSERT(val[0] == 229);
 
-    // Ensure the read function works correctly
-    val = accelerometer.read();
+    // Read 1 byte from the register
+    this->i2c->read(0x00, &val, 1);
     CPPUNIT_ASSERT(val.size() == 1);
     CPPUNIT_ASSERT(val[0] == 229);
-
-    // Ensure calling read by setting the working register works
-    accelerometer.setWorkingRegister(0x00);
-    val = accelerometer.read(1);
-    CPPUNIT_ASSERT(val.size() == 1);
-    CPPUNIT_ASSERT(val[0] == 229);
-
-    // Ensure that readFromRegister with the value passed as a references works
-    // well
-    val.clear();
-    accelerometer.readFromRegister(0x00, 1, &val);
-    CPPUNIT_ASSERT(val.size() == 1);
-    CPPUNIT_ASSERT(val[0] == 229);
-
-    // Ensure that read with the value passed as reference works well
-    val.clear();
-    accelerometer.read(&val);
-    CPPUNIT_ASSERT(val.size() == 1);
-    CPPUNIT_ASSERT(val[0] == 229);
-
-    // Ensure that passing a vector as a parameter appends to the existing 
-    // vector rather than clearing it
-    accelerometer.readFromRegister(0x00, 1, &val);
+    
+    // Make sure the vector only overwrites from 0th element and leaves the 
+    // vector size intact to its size before it was passed to read
+    val.push_back(47);
+    CPPUNIT_ASSERT(val.size() == 2);
+    this->i2c->read(0x00, &val, 1);
     CPPUNIT_ASSERT(val.size() == 2);
     CPPUNIT_ASSERT(val[0] == 229);
-    CPPUNIT_ASSERT(val[1] == 229);
+    CPPUNIT_ASSERT(val[1] == 47);
+
+    // Make sure the vector is correctly resized
+    std::vector<unsigned char> emptyval;
+    CPPUNIT_ASSERT(emptyval.size() == 0);
+    this->i2c->read(0x00, &emptyval, 1);
+    CPPUNIT_ASSERT(emptyval.size() == 1);
+}
+
+/**
+ * Write to the register and test it's values by reading them
+ */
+void I2C::testWriteRegister()
+{
+    // Talk to the accelerometer
+    this->i2c->setSlaveAddress(0x53);
+    
+    std::vector<unsigned char> wbuffer(1, 0x00);
+    std::vector<unsigned char> rbuffer(1, 0x00);
+
+    // Get the value of the existing buffer
+    this->i2c->read(0x31, &rbuffer, 1);
+
+    // Clear the first 4 bits, so values such as ----1111 become
+    // ----0000 where the dash represents the old bits we don't want to change
+    rbuffer[0] = rbuffer[0] & ~0x0F;
+
+    // Write to the first 4 bits and set the value to ----0001
+    wbuffer[0] = rbuffer[0] | 0x01;
+
+    // Write to our register, the new value
+    this->i2c->write(0x31, &wbuffer);
+
+    // Read the set value from our buffer, but before we do ensure the clear it
+    rbuffer.clear();
+    this->i2c->read(0x31, &rbuffer, 1);
+    
+    // When asserting we want to assert that the value is 0x01 on the right side
+    CPPUNIT_ASSERT((rbuffer[0] & 0x0F) == 0x01);
+    
+    // Just like before, except this time set it to 0x02, and test the written
+    // value read back from the device
+    rbuffer[0] = rbuffer[0] & ~0x0F;
+    wbuffer[0] = rbuffer[0] | 0x02;
+    this->i2c->write(0x31, &wbuffer);
+    this->i2c->read(0x31, &rbuffer, 1);
+    CPPUNIT_ASSERT((rbuffer[0] & 0x0F) == 0x02);
+}
+
+/**
+ * Ensure this throws an exception as we are trying to read 0 bytes
+ */
+void I2C::testInvalidByteSizeWhenReading()
+{
+    std::vector<unsigned char> buffer;
+    this->i2c->read(0x31, &buffer, 0);
+}
+
+/**
+ * Ensure this throws an exception as we are trying to write 0 bytes
+ */
+void I2C::testInvalidByteSizeWhenWriting()
+{
+    std::vector<unsigned char> x;
+    this->i2c->write(0x31, &x, 0);
+}
+
+/**
+ * If you are trying to write more bytes than you should in a buffer,
+ * make sure you fail by throwing an OutOfBounds exception
+ */
+void I2C::testInvalidOutOfBoundsWhenWriting()
+{
+    std::vector<unsigned char> x;
+    this->i2c->write(0x31, &x, 10);
 }
 
 /**
@@ -151,6 +195,24 @@ void I2C::testReadWriteRegister()
 void I2C::testInvalidAddress()
 {
     this->i2c->setSlaveAddress(0xFF);
+}
+
+/**
+ * Ensure that an exception is thrown when a Null pointer for buffer is 
+ * passed as a pointer to read
+ */
+void I2C::testInvalidNullPointerRead()
+{
+    this->i2c->read(0x31, NULL, 1);
+}
+
+/**
+ * Ensure that an exception is thrown when a Null pointer for buffer is 
+ * passed as a pointer to write
+ */
+void I2C::testInvalidNullPointerWrite()
+{
+    this->i2c->write(0x31, NULL, 1);
 }
 
 /**

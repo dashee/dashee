@@ -38,13 +38,34 @@ class dashee::test::I2C
 
     CPPUNIT_TEST(testSetAndGetAddress);
     CPPUNIT_TEST(testSet10BitAddressFlag);
-    CPPUNIT_TEST(testSetAndGetWorkingRegister);
     
-    CPPUNIT_TEST(testReadWriteRegister);
-
+    CPPUNIT_TEST(testReadRegister);
+    CPPUNIT_TEST(testWriteRegister);
+    
+    // Exceptions
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidByteSizeWhenReading, 
+	    dashee::ExceptionI2C
+	);
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidByteSizeWhenWriting, 
+	    dashee::ExceptionI2C
+	);
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidOutOfBoundsWhenWriting, 
+	    dashee::ExceptionOutOfBounds
+	);
     CPPUNIT_TEST_EXCEPTION(
 	    testInvalidAddress, 
 	    dashee::ExceptionI2C
+	);
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidNullPointerRead, 
+	    dashee::ExceptionNullPointer
+	);
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidNullPointerWrite, 
+	    dashee::ExceptionNullPointer
 	);
     
     CPPUNIT_TEST_SUITE_END();
@@ -58,11 +79,16 @@ protected:
 
     void testSetAndGetAddress();
     void testSet10BitAddressFlag();
-    void testSetAndGetWorkingRegister();
 
-    void testReadWriteRegister();
+    void testReadRegister();
+    void testWriteRegister();
     
     void testInvalidAddress();
+    void testInvalidByteSizeWhenWriting();
+    void testInvalidByteSizeWhenReading();
+    void testInvalidOutOfBoundsWhenWriting();
+    void testInvalidNullPointerRead();
+    void testInvalidNullPointerWrite();
 
 public:
     void setUp();

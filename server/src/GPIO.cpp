@@ -21,7 +21,7 @@ GPIO::GPIO(unsigned short int pin, char direction)
 {
     this->setPin(pin);
     this->exportPin();
-    dashee::sleep(90000);
+    dashee::sleep(150000);
     this->setDirection(direction);
 }
 
@@ -40,7 +40,9 @@ void GPIO::setPin(unsigned short int pin)
     if (pin < 1)
         throw ExceptionGPIO("pinNumber must be greater than 0");
 
+    //this->unexportPin();
     this->pin = pin;
+    //this->exportPin();
 }
 
 /**
@@ -58,7 +60,7 @@ unsigned short int GPIO::getPin()
 /**
  * Export the given pin.
  *
- * The static version of the exportPin function usefull because this class 
+ * The static version of the exportPin function useful because this class 
  * can be static and initiated as the user wishes. This function is used to 
  * write the pinNumber to the GPIO export for exporting. The export file is
  * in `/sys/class/gpio/export`
@@ -87,7 +89,10 @@ void GPIO::exportPin(int pin)
     char buffer[3];
     ssize_t bytesToWrite = sprintf(buffer, "%d", pin);
     if (::write(fd, buffer, bytesToWrite) == -1)
-        throw ExceptionGPIO("Write failed for file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Write failed for file '" + 
+		(std::string)file + "'!"
+	    );
 
     ::close(fd);
 }
@@ -128,7 +133,9 @@ void GPIO::unexportPin(int pin)
     char buffer[3];
     ssize_t bytesToWrite = ::sprintf(buffer, "%d", pin);
     if (::write(fd, buffer, bytesToWrite) == -1)
-        throw ExceptionGPIO("Write failed for file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Write failed for file '" + (std::string)file + "'!"
+	    );
 
     ::close(fd);
 }
@@ -177,10 +184,14 @@ void GPIO::setDirection(int pin, char direction)
     else if(direction == dashee::GPIO::OUT)
         bytesToWrite = ::sprintf(buffer, "%s", "out");
     else
-        throw ExceptionGPIO("Value must be only IN or OUT in GPIO::setDirection");
+        throw ExceptionGPIO(
+		"Value must be only IN or OUT in GPIO::setDirection"
+	    );
 
     if (::write(fd, buffer, bytesToWrite) == -1)
-        throw ExceptionGPIO("Write failed for file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Write failed for file '" + (std::string)file + "'!"
+	    );
 
     ::close(fd);
 }
@@ -202,7 +213,7 @@ void GPIO::setDirection(char direction)
  * Return the direction of the given pin.
  *
  * Returns the value of the direction set
- * the valua is usually `out` or `in` the 
+ * the value is usually `out` or `in` the 
  * function converts this to 'o' or 'i' respectively, or in
  * our terms `IN` or `OUT` constant variables
  * 
@@ -222,7 +233,7 @@ char GPIO::getDirection(int pin)
     if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
-    int fd = ::open(file, O_WRONLY);
+    int fd = ::open(file, O_RDONLY);
     if (fd == -1)
         throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
 
@@ -232,9 +243,9 @@ char GPIO::getDirection(int pin)
 
     ::close(fd);
 
-    if (::strncmp(value, (const char *)dashee::GPIO::OUT, 1) == 0)
+    if (value[0] == dashee::GPIO::OUT)
         return dashee::GPIO::OUT;
-    else if (::strncmp(value, (const char *)dashee::GPIO::IN, 1) == 0)
+    else if (value[0] == dashee::GPIO::IN)
         return dashee::GPIO::IN;
     else
         throw ExceptionGPIO("Unknown direction value");
@@ -278,7 +289,7 @@ void GPIO::write(int pin, unsigned short int value)
     if (fd == -1)
         throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
 
-    char buffer[3];
+    char buffer[3] = { 0 };
     ssize_t bytesToWrite;
 
     if (value == dashee::GPIO::HIGH || value == dashee::GPIO::LOW)
@@ -287,7 +298,9 @@ void GPIO::write(int pin, unsigned short int value)
         throw ExceptionGPIO("Value must be only HIGHT or LOW in GPIO::write");
 
     if (::write(fd, buffer, bytesToWrite) == -1)
-        throw ExceptionGPIO("Write failed for file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Write failed for file '" + (std::string)file + "'!"
+	    );
 
     ::close(fd);
 }
@@ -344,15 +357,21 @@ int GPIO::read(int pin)
     if (!fexists(file))
         throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
 
-    int fd = ::open(file, O_WRONLY);
+    int fd = ::open(file, O_RDONLY);
     if (fd == -1)
         throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
 
-    char value[3];
+    char value[4] = { 0 };
     if (::read(fd, value, 3) < 0) 
         throw ExceptionGPIO("Failed to read file '" + (std::string)file + "'!");
 
     ::close(fd);
+
+    // Remove trailing next lines, stupid read comes back with the actual next line
+    for (size_t x = 0; x < 4; ++x)
+    {
+	if (value[x] == '\n') value[x] = 0;
+    }
 
     return strtol(value);
 }

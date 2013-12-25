@@ -12,6 +12,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/GPIO.h>
+#include <dashee/common.h>
 
 /*
  * Set the namespace
@@ -32,10 +33,17 @@ class dashee::test::GPIO : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(dashee::test::GPIO);
     
-    //CPPUNIT_TEST(testExport);
+    CPPUNIT_TEST(testExportAndUnexport);
+    CPPUNIT_TEST(testGetPin);
+    CPPUNIT_TEST(testSetAndGetDirection);
+    CPPUNIT_TEST(testReadAndWrite);
+    CPPUNIT_TEST(testHighAndLow);
+    CPPUNIT_TEST(testDoubleExportUnExportIsOK);
 
     // Exceptions
-    //CPPUNIT_TEST_EXCEPTION(testInvalidFile, Exception_);
+    CPPUNIT_TEST_EXCEPTION(testInvalidPinValue, ExceptionGPIO);
+    CPPUNIT_TEST_EXCEPTION(testInvalidReadPin, ExceptionGPIO);
+    CPPUNIT_TEST_EXCEPTION(testInvalidWritePin, ExceptionGPIO);
     
     CPPUNIT_TEST_SUITE_END();
 
@@ -43,7 +51,16 @@ private:
     dashee::GPIO * gpio;
 
 protected:
-    void testExport();
+    void testExportAndUnexport();
+    void testGetPin();
+    void testSetAndGetDirection();
+    void testReadAndWrite();
+    void testHighAndLow();
+    void testDoubleExportUnExportIsOK();
+
+    void testInvalidPinValue();
+    void testInvalidReadPin();
+    void testInvalidWritePin();
 
 public:
     void setUp();
