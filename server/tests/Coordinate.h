@@ -12,6 +12,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Coordinate.h>
+#include <dashee/Log.h>
 
 /*
  * Set the namespace
@@ -34,6 +35,8 @@ class dashee::test::Coordinate : public CppUnit::TestFixture
     
     CPPUNIT_TEST(testEmptyConstructions);
     CPPUNIT_TEST(testValueConstructions);
+    CPPUNIT_TEST(testCopyConstructor);
+    CPPUNIT_TEST(testAssingmentOperator);
 
     CPPUNIT_TEST(testSetAndGetX);
     CPPUNIT_TEST(testSetAndGetY);
@@ -50,6 +53,8 @@ private:
 protected:
     void testEmptyConstructions();
     void testValueConstructions();
+    void testCopyConstructor();
+    void testAssingmentOperator();
 
     void testSetAndGetX();
     void testSetAndGetY();

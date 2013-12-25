@@ -17,10 +17,21 @@ namespace dashee
 }
 
 /**
- * Helpful class which pops the value as its read
+ * Cartesian coordinate.
  *
- * This class holds information about the current model state and also mixes
- * the values from the input
+ * A simple class which encapsulates `[x, y, z]` Cartesian coordinates to be 
+ * used by other classes.
+ *
+ * Usage:
+ *
+ *     dashee::Coordiante<int> p1(0,1,3);
+ *     dashee::Coordinate<int> p2();
+ *
+ *     assert(p1 != p2);
+ *
+ *     p2.setY(2);
+ *     dashee::Coordinate<int> p3 = p1+p2;
+ *     assert(p3 == dashee::Coordinate<int>(0,3,3));
  */
 template <class T> 
 class dashee::Coordinate
@@ -28,10 +39,18 @@ class dashee::Coordinate
 protected:
 
     /**
-     * The x, y and z values of the coordinates
+     * X coordinate value.
      */
     T x;
+
+    /**
+     * Y coordinate value.
+     */
     T y;
+
+    /**
+     * Z coordinate value.
+     */
     T z;
 
 public:

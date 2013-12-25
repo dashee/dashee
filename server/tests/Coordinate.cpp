@@ -21,6 +21,36 @@ void Coordinate::testEmptyConstructions()
 }
 
 /**
+ * Test the copy constructor
+ */
+void Coordinate::testCopyConstructor()
+{
+    dashee::Coordinate<float> p1 = *this->coordinate;
+    CPPUNIT_ASSERT(p1.getX() == 0.0f);
+    CPPUNIT_ASSERT(p1.getY() == 0.0f);
+    CPPUNIT_ASSERT(p1.getZ() == 0.0f);
+}
+
+/**
+ * Test the assignment operator
+ */
+void Coordinate::testAssingmentOperator()
+{
+    dashee::Coordinate<float> p1;
+
+    {
+	dashee::Coordinate<float> p2(0.1f, 0.2f, 0.3f);
+
+	// Assign
+	p1 = p2;
+    }
+
+    CPPUNIT_ASSERT(p1.getX() == 0.1f);
+    CPPUNIT_ASSERT(p1.getY() == 0.2f);
+    CPPUNIT_ASSERT(p1.getZ() == 0.3f);
+}
+
+/**
  * Test construction of the object with values
  */
 void Coordinate::testValueConstructions()

@@ -12,13 +12,12 @@
 #define DASHEE_COORDINATE_TPP_
 
 /**
- * Construct the values and set all to 0's
+ * Do nothing constructor, rely the constructor of T
+ * to default X, Y and Z
  */
 template <class T> dashee::Coordinate<T>::Coordinate()
+    : x(T()), y(T()), z(T())
 {
-    memset(&this->x, 0, sizeof(T));
-    memset(&this->y, 0, sizeof(T));
-    memset(&this->z, 0, sizeof(T));
 }
 
 /**
