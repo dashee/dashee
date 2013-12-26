@@ -3,7 +3,7 @@
 using namespace dashee::test::Hardware;
 
 /**
- * Create a new pointer to the dummy object
+ * Initialize our accelerometer class
  */
 void AccelerometerADXL345::setUp()
 {
@@ -11,23 +11,33 @@ void AccelerometerADXL345::setUp()
 }
 
 /**
- * Test the default state of the loaded class
+ * Test the default state of the loaded class. This must always assume that the 
+ * `g` value is set to 0 from the default constructor.
  */
 void AccelerometerADXL345::testConstructDefault()
-{
-
-}
-
-/**
- * Test the read function by calling read on the Accelerometer
- */
-void AccelerometerADXL345::testReadAndUpdate()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
 	    == dashee::Point<float>(0.0f,0.0f,0.0f)
 	);
+}
 
+/**
+ * Test the read function by calling read on the Accelerometer.
+ *
+ * Given our initial `g` state is `[0,0,0]` post update we should at least
+ * get Z coordinate to be approximately 9.8 so we can safely assume that after
+ * the first update of our accelerometer we no longer are `[0,0,0]` but 
+ * somewhere approximately `[0,0,9.8]`. This is of course assuming that we are 
+ * not accelerating in the X or Y.
+ *
+ * I am not sure we can go further than the above simple testing otherwise 
+ * unless ofcourse we can simulate the exact forces applied to our sensor.
+ * 
+ * Good luck with that!
+ */
+void AccelerometerADXL345::testReadAndUpdate()
+{
     // Once updated the value of the accelerometer will not be the
     // constructed one, and run it twice just to be sure
     this->accelerometer->update();
