@@ -25,6 +25,7 @@ OBJECTSLIB = $(addprefix src/, common.o \
     Config.o \
     daemon.o \
     GPIO.o \
+    Hardware/Accelerometer/ADXL345.o \
     Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
     I2C.o \
@@ -54,8 +55,9 @@ OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Point.o \
     dashee.o \
     GPIO.o \
-    Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
+    Hardware/Accelerometer/ADXL345.o \
+    Hardware/Accelerometer/Dummy.o \
     I2C.o \
     ServoController/Dummy.o \
     ServoController.o \
@@ -80,6 +82,7 @@ TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \
+    testHardwareAccelerometerADXL345 \
     testVehicleMultirotorQuadX \
     testI2C \
     testThreads \

@@ -22,7 +22,7 @@ TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
 TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testPoint"
-TEST_PI="testGPIO testI2C testUART"
+TEST_PI="testGPIO testI2C testUART testHardwareAccelerometerADXL345"
 TEST_DUMMY="testDummy"
 
 ##
