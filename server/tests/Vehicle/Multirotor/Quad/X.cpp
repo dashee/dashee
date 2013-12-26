@@ -25,11 +25,13 @@ void VehicleMultirotorQuadX::setUp()
  */
 void VehicleMultirotorQuadX::testUpdate()
 {
-
     for (size_t x = 0; x < 255; ++x)
     {
 	this->vehicle->setThrottle(x);
 	this->vehicle->update();
 	dashee::sleep(VEHICLE_TIMEOUT);
     }
+
+    this->vehicle->setThrottle(0);
+    this->vehicle->update();
 }
