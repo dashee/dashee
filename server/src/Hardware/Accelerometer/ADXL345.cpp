@@ -7,7 +7,27 @@ using namespace dashee::Hardware;
  */
 AccelerometerADXL345::AccelerometerADXL345() : Accelerometer()
 {
+    this->isI2CAllocatedInternally = false;
     this->i2c = new dashee::I2C(1, 0x53);
+}
+
+/**
+ * This builds the Accelerometer with an existing I2C class. In this case the 
+ * i2c deletion is not handled by the AccelerometerADXL345 class. To determine 
+ * this we use the isI2CAllocatedInternally and set it to true, which is checked
+ * by the destructor on deleting the object.
+ *
+ * @param i2c The I2C handler to the correct device
+ *
+ * @throws ExceptionNullPointer The value of I2C was NULL
+ */
+AccelerometerADXL345::AccelerometerADXL345(dashee::I2C * i2c)
+{
+    if (i2c == NULL)
+	throw dashee::ExceptionNullPointer("I2c should be good");
+
+    this->isI2CAllocatedInternally = false;
+    this->i2c = i2c;
 }
 
 /**
@@ -19,10 +39,11 @@ void AccelerometerADXL345::update()
 }
 
 /**
- * Destroy the free store
+ * Destroy the free store memory only if I2C was internally allocated
  */
 AccelerometerADXL345::~AccelerometerADXL345()
 {
-    delete this->i2c;
+    if (isI2CAllocatedInternally)
+	delete this->i2c;
 }
 

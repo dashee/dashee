@@ -43,6 +43,11 @@ class dashee::Hardware::AccelerometerADXL345
     : public dashee::Hardware::Accelerometer
 {
 private:
+    bool isI2CAllocatedInternally;
+    
+    // Disable Copy and Assignment construction
+    AccelerometerADXL345(const AccelerometerADXL345 & rhs);
+    AccelerometerADXL345& operator=(const AccelerometerADXL345 & rhs);
 
 protected:
 
@@ -55,11 +60,7 @@ public:
 
     // Construct
     AccelerometerADXL345();
-    //AccelerometerADXL345(dashee::I2C * i2c);
-    //AccelerometerADXL345(const AccelerometerADXL345 & rhs);
-
-    // Assignment operation
-    //AccelerometerADXL345& operator=(const AccelerometerADXL345 & rhs);
+    AccelerometerADXL345(dashee::I2C * i2c);
 
     // Update the sensor
     void update();

@@ -23,6 +23,29 @@ void AccelerometerADXL345::testConstructDefault()
 }
 
 /**
+ * Test the construction when a I2C device is passed through. The only assertion
+ * we run is that the i2c object should be not null as the relationship is 
+ * aggregate.
+ */
+void AccelerometerADXL345::testConstructI2C()
+{
+    // Delete existing accelerometer from setUp
+    delete this->accelerometer;
+
+    // Create and destroy a AccelerometerADXL345 object with I2C
+    dashee::I2C * i2c = new dashee::I2C(1, 0x53);
+    this->accelerometer = new dashee::Hardware::AccelerometerADXL345(i2c);
+    delete this->accelerometer;
+
+    // Make sure that I2C was not deleted
+    CPPUNIT_ASSERT(i2c != NULL);
+
+    // Free and reset for tear down
+    delete i2c;
+    this->accelerometer = new dashee::Hardware::AccelerometerADXL345();
+}
+
+/**
  * Test the read function by calling read on the Accelerometer.
  *
  * Given our initial `g` state is `[0,0,0]` post update we should at least
@@ -50,6 +73,17 @@ void AccelerometerADXL345::testReadAndUpdate()
 	    this->accelerometer->read() 
 	    != dashee::Point<float>(0.0f,0.0f,0.0f)
 	);
+}
+
+/**
+ * Null pointers to the I2C construct are not allowed
+ */
+void AccelerometerADXL345::testInvalidI2C()
+{
+    dashee::I2C * i2c = NULL;
+    dashee::Hardware::AccelerometerADXL345 * temp 
+	= new dashee::Hardware::AccelerometerADXL345(i2c);
+    temp->update(); // Dummy so it does not complain about unused
 }
 
 /**

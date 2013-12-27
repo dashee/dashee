@@ -12,6 +12,7 @@
 
 #include "Hardware/Accelerometer.h"
 #include <dashee/Hardware/Accelerometer/ADXL345.h>
+#include <dashee/I2C.h>
 
 /*
  * Set the namespace
@@ -39,8 +40,14 @@ class dashee::test::Hardware::AccelerometerADXL345
 	    Accelerometer
 	);
 
-    // Add the custom ADXL345 tests
-    
+    // Test constructors
+    CPPUNIT_TEST(testConstructI2C);
+
+    // Test exceptions
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidI2C,
+	    dashee::ExceptionNullPointer
+	);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -53,11 +60,12 @@ protected:
     dashee::Hardware::AccelerometerADXL345 * accelerometer;
 
     virtual void testConstructDefault();
-    //virtual void testConstructI2C();
-    //virtual void testConstructCopy();
-    //virtual void testConstructAssingment();
+    virtual void testConstructI2C();
 
     virtual void testReadAndUpdate();
+
+    // Exceptions
+    virtual void testInvalidI2C();
 
 public:
     virtual void setUp();
