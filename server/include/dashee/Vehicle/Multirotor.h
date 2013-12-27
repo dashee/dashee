@@ -44,7 +44,7 @@ public:
     // Read from input
     virtual void read(Buffer<unsigned char> * buffer);
 
-    // Helpfull for Changing the motor to represent a different
+    // Helpful for Changing the motor to represent a different
     // servo
     void changeServoMotor(
             const unsigned short int motorNumber, 

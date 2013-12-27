@@ -22,7 +22,7 @@ ifeq ($(shell getconf LONG_BIT), 64)
 endif
 
 # Compiler options
-WOPTIONS=-Wall -fPIC
+WOPTIONS=-Wall -Wextra -fPIC
 INCLUDES=-Iinclude -L$(LIBDIR)
 CFLAGS=$(WOPTIONS) $(INCLUDES)
 LFLAGS=-shared -fpic

@@ -6,7 +6,8 @@
  */
 void dashee::test::ServoControllerDummy::setUp()
 {
-    this->servoController = new dashee::ServoControllerDummy("data/Servo.bin", 6);
+    this->servoController 
+	= new dashee::ServoControllerDummy("data/Servo.bin", 12);
 }
 
 /**
@@ -14,7 +15,7 @@ void dashee::test::ServoControllerDummy::setUp()
  */
 void dashee::test::ServoControllerDummy::testSizeValue()
 {
-    CPPUNIT_ASSERT(this->servoController->size() == 6);
+    CPPUNIT_ASSERT(this->servoController->size() == 12);
 }
 
 /**
@@ -22,6 +23,5 @@ void dashee::test::ServoControllerDummy::testSizeValue()
  */
 void dashee::test::ServoControllerDummy::testExceptionInvalidFile()
 {
-    this->servoController = new dashee::ServoControllerDummy("poop", 6);
+    this->servoController = new dashee::ServoControllerDummy("poop", 12);
 }
-

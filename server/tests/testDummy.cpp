@@ -5,7 +5,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ServoDummy);
 CPPUNIT_TEST_SUITE_REGISTRATION(dashee::test::ServoControllerDummy);
 
-int main(int argc, char ** argv)
+int main()
 {
     return dashee::test::run();
 }

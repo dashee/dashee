@@ -54,6 +54,7 @@ void signalTerminateHandler(int sig)
  */
 void signalNothingHandler(int sig)
 {
+    dashee::Log::info("SIGNAL: Nothing to do with sig:%d", sig);
     return;
 }
 

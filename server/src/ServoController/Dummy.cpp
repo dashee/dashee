@@ -39,7 +39,7 @@ ServoControllerDummy::ServoControllerDummy(
         throw ExceptionServoController(
                 "The binary file is of invalid size. Please "
                 "create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 "
-                "count=0 seek=38'"
+                "count=0 seek=72'"
             );
 }
 
@@ -50,7 +50,7 @@ ServoControllerDummy::ServoControllerDummy(
  * two bytes
  *
  * The response is returned in a two byte represented by char, Only one bit is 
- * always set in these two bytes, The error number is represeted by the nth bit
+ * always set in these two bytes, The error number is represented by the nth bit
  * set, For example
  * 
  *  00010000|00000000 - Will suggest Errornumber 3, as the erronumbering starts 

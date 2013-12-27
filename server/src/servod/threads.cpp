@@ -115,11 +115,13 @@ void * threadReadFromServer(void * s)
  */
 void * threadUpdateSensors(void * sensor)
 {
+    dashee::Log::info(8, "Remove this for warnings when in use %p", sensor);
+
     try
     {
         while(threadKeepGoing())
         {
-            //dashee::Log::info(3, "Sensor Step");
+            dashee::Log::info(3, "Sensor Step");
             dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SENSOR);
         }
     }

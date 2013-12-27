@@ -36,6 +36,14 @@ void dashee::test::ServoUART::setUp()
 
     if (tcsetattr(this->fd, TCSANOW, &options) < 0)
         CPPUNIT_FAIL("Initilizing UART failed");
+    
+    // Reset the GPIO pin
+    dashee::GPIO gpio(18, dashee::GPIO::OUT);
+    gpio.low();
+    gpio.high();
+
+    // Important 
+    dashee::sleep(10000);
 
     this->servo = new dashee::ServoUART(&this->fd, 2);
 }

@@ -1,28 +1,28 @@
 #include "Vehicle/Car.h"
 
+using namespace dashee::test;
+
 /**
  * Start up
  */ 
-void dashee::test::VehicleCar::setUp()
+void VehicleCar::setUp()
 {
-    dashee::test::Vehicle::setUp();
-
-    this->vehicle = new dashee::VehicleCar(
-	    (dashee::ServoController *)dashee::test::Vehicle::servoController 
-	);
+    Vehicle::setUp();
 
     dashee::VehicleCar * temp 
-        = static_cast<dashee::VehicleCar *>(this->vehicle);
+        = new dashee::VehicleCar(Vehicle::servoController);
 
     temp->setThrottleChannel(2);
     temp->setYawChannel(4);
+
+    this->vehicle = temp;
 }
 
 /**
  * Overwrite our throttle function because it starts from 128
  * for our car
  */ 
-void dashee::test::VehicleCar::testSetAndGetThrottle()
+void VehicleCar::testSetAndGetThrottle()
 {
     CPPUNIT_ASSERT(this->vehicle->getThrottle() == 128);
 
@@ -49,7 +49,7 @@ void dashee::test::VehicleCar::testSetAndGetThrottle()
 /**
  * Call transform on a static queue
  */ 
-void dashee::test::VehicleCar::testTransforQueue()
+void VehicleCar::testReadFromBuffer()
 {
     dashee::Buffer<unsigned char> q;
     
@@ -111,10 +111,35 @@ void dashee::test::VehicleCar::testTransforQueue()
 }
 
 /**
+ * Test the changes from the motor it self
+ */
+void VehicleCar::testUpdate()
+{
+    dashee::ServoController * servoController 
+        = this->vehicle->getServoController();
+
+    dashee::VehicleCar * vehicleCar 
+        = static_cast<dashee::VehicleCar *>(this->vehicle);
+
+    vehicleCar->setYaw(10);
+    vehicleCar->setThrottle(11);
+    vehicleCar->update();
+
+    CPPUNIT_ASSERT(
+            servoController->getTarget(vehicleCar->getYawChannel()) == 10
+        );
+    CPPUNIT_ASSERT(
+            servoController->getTarget(
+                vehicleCar->getThrottleChannel()
+            ) == 11
+        );
+}
+
+/**
  * Create a dummy configuration file, and let our vehicle set the state from the
  * read configuration
  */
-void dashee::test::VehicleCar::testSetAndGetFromConfig()
+void VehicleCar::testSetAndGetFromConfig()
 {
     dashee::VehicleCar * vehicleCar = new dashee::VehicleCar(
 	    this->vehicle->getServoController()
@@ -131,4 +156,51 @@ void dashee::test::VehicleCar::testSetAndGetFromConfig()
 
     delete config;
     delete vehicleCar;
+}
+
+/**
+ * Test falling back and reverting
+ */
+void VehicleCar::testFallbackAndRevert()
+{
+    // Test default values
+    CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == 128);
+    CPPUNIT_ASSERT(this->vehicle->getRollFallback() == 128);
+    CPPUNIT_ASSERT(this->vehicle->getYawFallback() == 128);
+    CPPUNIT_ASSERT(this->vehicle->getThrottleFallback() == 128);
+
+    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
+    this->vehicle->revert();
+    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
+    this->vehicle->fallback();
+    CPPUNIT_ASSERT(this->vehicle->isFallback() == true);
+    this->vehicle->revert();
+    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
+
+    for (int x = 0; x < 255; x++)
+    {
+        this->vehicle->revert();
+        CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
+            
+        this->vehicle->setPitchFallback(x);
+        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
+        
+        this->vehicle->setRollFallback(x);
+        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
+        
+        this->vehicle->setYawFallback(x);
+        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
+
+        this->vehicle->setThrottleFallback(x);
+        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
+
+        // TODO Test the pitch values after fallback
+        this->vehicle->fallback();
+        CPPUNIT_ASSERT(this->vehicle->getPitch() == x);
+        CPPUNIT_ASSERT(this->vehicle->getRoll() == x);
+        CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
+        CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
+
+        dashee::sleep(VEHICLE_TIMEOUT);
+    }
 }

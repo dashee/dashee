@@ -28,19 +28,19 @@ namespace dashee
 /**
  * GPIO class.
  *
- * This class is designed to run GPIO functions, each instance
- * of the class represents each instance of used pin
+ * This class is designed to run GPIO functions, each instance of the class 
+ * represents each instance of used pin
  *
- * An instance will export a GPIO ping and on close unexport the value
- * You can change directions of the given pin and read/write to the pin
+ * An instance will export a GPIO ping and on close unexport the value, You can 
+ * change directions of the given pin and read/write to the pin
  *
- * This class implements most of its main functions using statics, the intiated version
- * of this class calls these static functions passing its pin through
+ * This class implements most of its main functions using statics, the initiated
+ * version of this class calls these static functions passing its pin through
  *
  * It is better to use this class as a initiated version. As it will handle
- * exporting and unexporting. But if you wish to controll the handling of the 
- * export/unexport and then read or write you can do so using the static functions directly
- *
+ * exporting and unexporting. But if you wish to control the handling of the 
+ * export/unexport and then read or write you can do so using the static 
+ * functions directly
  */
 class dashee::GPIO
 {
@@ -59,6 +59,9 @@ protected:
     void exportPin();
     void unexportPin();
 
+    // Pin setter
+    void setPin(unsigned short int pinNumber);
+
 public:
 
     /** 
@@ -74,6 +77,9 @@ public:
      */
     static const char IN = 'i';
     static const char OUT = 'o';
+    
+    // Return the current pin we are working on to the user
+    unsigned short int getPin();
 
     // Build and destroy
     GPIO(unsigned short int pin, char direction);
@@ -82,10 +88,6 @@ public:
     // Un/Export Pin as statics
     static void exportPin(int pin);
     static void unexportPin(int pin);
-
-    // Pin setter
-    void setPin(unsigned short int pinNumber);
-    unsigned short int getPin();
 
     // Direction setter
     void setDirection(char direction);
