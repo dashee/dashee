@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Vehicle/Multirotor/Quad/X.h
+ * @file include/dashee/Buffer.h
  *
  * @section LICENSE
  *
@@ -18,7 +18,7 @@ namespace dashee
 }
 
 /**
- * Helpfull class which pops the value as its read
+ * Helpful class which pops the value as its read
  *
  * This class holds information about the current model state and also mixes
  * the values from the input

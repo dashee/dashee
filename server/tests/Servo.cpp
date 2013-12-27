@@ -28,15 +28,6 @@ void dashee::test::Servo::testSetAndGetTarget()
 
         dashee::sleep(timeout);
     }
-
-    for (unsigned short int x = 255; x > 0; --x)
-    {
-        this->servo->setTarget(x);
-        CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
-        CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
-
-        dashee::sleep(timeout);
-    }
 }
 
 /**

@@ -96,9 +96,6 @@ unsigned int dashee::Server::getPort()
  */
 void dashee::Server::setNumberOfBytesInBuffer(size_t numberOfBytesInBuffer)
 {
-    if (numberOfBytesInBuffer < 0)
-        throw Exception("The number of bytes must be positive");
-
     this->numberOfBytesInBuffer = numberOfBytesInBuffer;
 
 }

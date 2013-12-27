@@ -12,6 +12,7 @@ VehicleMultirotor::VehicleMultirotor(
 	Config * config
     ) : Vehicle(servoController, config)
 {
+    this->setThrottleFallback(0);
 }
 
 /**
@@ -28,6 +29,9 @@ void VehicleMultirotor::changeServoMotor(
         const unsigned short int servoChannel
     )
 {
+    if (motorNumber >= this->motors.size())
+	throw ExceptionOutOfBounds("Invalid motor number");
+
     this->motors[motorNumber] = this->servoController->getServo(servoChannel);
 }
 
@@ -45,7 +49,7 @@ void VehicleMultirotor::read(Buffer<unsigned char> * buffer)
 	{
 	    buffer->pop();
 
-	    // Ensure the size is still sufficent to do the next two commands
+	    // Ensure the size is still sufficient to do the next two commands
 	    if (buffer->size() < 4)
 		break;
 

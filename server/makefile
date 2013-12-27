@@ -16,26 +16,75 @@ include ../makefile.common
 DIRECTORIES:= $(BINDIR) $(LIBDIR) $(DATADIR) $(TESTDIR) $(INITDIR)
 
 # All the objects that are built for binaries
-OBJECTS := $(addprefix src/, servod/threads.o \
-    servod/Container.o servod/signals.o)
+OBJECTS = $(addprefix src/, servod/Container.o \
+    servod/signals.o \
+    servod/threads.o \
+    )
 # All the objects that are built for libraries
-OBJECTSLIB := $(addprefix src/, Log.o Config.o GPIO.o Servo.o \
-    Servo/Dummy.o Servo/USB.o Servo/UART.o Server.o  ServoController.o \
-    ServoController/Dummy.o ServoController/USB.o ServoController/UART.o \
-    Server/UDP.o common.o daemon.o Vehicle.o Vehicle/Car.o \
-    Vehicle/Multirotor.o Vehicle/Multirotor/Quad.o Vehicle/Multirotor/Quad/X.o \
-    Threads/Thread.o Threads/Lock/Mutex.o Threads/Lock/ReadWrite.o \
-    Threads/Scope.o)
+OBJECTSLIB = $(addprefix src/, common.o \
+    Config.o \
+    daemon.o \
+    GPIO.o \
+    Hardware/Accelerometer/Dummy.o \
+    Hardware/Accelerometer.o \
+    I2C.o \
+    Log.o \
+    Server.o \
+    Server/UDP.o \
+    ServoController/Dummy.o \
+    ServoController.o \
+    ServoController/UART.o \
+    ServoController/USB.o \
+    Servo/Dummy.o \
+    Servo.o \
+    Servo/UART.o \
+    Servo/USB.o \
+    Threads/Lock/Mutex.o \
+    Threads/Lock/ReadWrite.o \
+    Threads/Scope.o \
+    Threads/Thread.o \
+    Vehicle/Car.o \
+    Vehicle/Multirotor.o \
+    Vehicle/Multirotor/Quad.o \
+    Vehicle/Multirotor/Quad/X.o \
+    Vehicle.o)
 # All the objects that are built for tests
-OBJECTSTEST := $(addprefix tests/, dashee.o Threads.o ServoController.o \
-    ServoController/Dummy.o ServoController/UART.o GPIO.o Servo.o Servo/UART.o \
-    Servo/Dummy.o Config.o Vehicle.o Vehicle/Car.o Buffer.o)
-
-# All the binaries which will be built
-LIBRARIES := $(addprefix $(LIBDIR)/, libdashee.so)
-BINARIES := $(addprefix $(BINDIR)/, servo servod)
-TESTS := $(addprefix $(TESTDIR)/, testThreads testConfig testUART testGPIO \
-    testDummy testVehicleCar testBuffer)
+OBJECTSTEST = $(addprefix tests/, Buffer.o \
+    Config.o \
+    Coordinate.o \
+    dashee.o \
+    GPIO.o \
+    Hardware/Accelerometer/Dummy.o \
+    Hardware/Accelerometer.o \
+    I2C.o \
+    ServoController/Dummy.o \
+    ServoController.o \
+    ServoController/UART.o \
+    Servo/Dummy.o \
+    Servo.o \
+    Servo/UART.o \
+    Threads.o \
+    Vehicle/Car.o \
+    Vehicle/Multirotor.o \
+    Vehicle/Multirotor/Quad.o \
+    Vehicle/Multirotor/Quad/X.o \
+    Vehicle.o)
+# All the libraries which will be build
+LIBRARIES = $(addprefix $(LIBDIR)/, libdashee.so)
+# All the binaries that will be built
+BINARIES = $(addprefix $(BINDIR)/, servo servod)
+# All the tests which will be use to test the program
+TESTS = $(addprefix $(TESTDIR)/, testBuffer \
+    testConfig \
+    testCoordinate \
+    testDummy \
+    testGPIO \
+    testHardwareAccelerometerDummy \
+    testVehicleMultirotorQuadX \
+    testI2C \
+    testThreads \
+    testUART \
+    testVehicleCar)
 
 # Certain global variables used for packaging and installing
 REVISIONID?=$(shell svn info | grep -E '^Revision' | awk '{print $$2}')
@@ -50,7 +99,7 @@ libraries: $(LIBRARIES)
 # Creates the binaries, in non debug mode
 release: clean test $(BINARIES) $(LIBRARIES)
 
-# A helpfull function for debug configurations
+# A helpful function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
 debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
 debug: test $(BINARIES) tags
@@ -95,7 +144,6 @@ test: testbuild binfile
 	@echo ""
 
 # BUILD all the tests
-test: CFLAGS+=-Itests
 testbuild: $(TESTS) $(BINDIR)/runtest
 
 $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
@@ -103,6 +151,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	install --mode=775 $< $@
 
 # Build our tests, binaries
+$(TESTDIR)/%: CFLAGS+=-Itests
 $(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
@@ -116,7 +165,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	$(call print,"Building","data","$@")
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=38 >/dev/null
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 >/dev/null
 
 # Builds the documentation
 documentation:
@@ -181,8 +230,8 @@ package-nightly: package
 	$(call print,"Building","file","$(FILE)-nightly.tar.$(COMPRESSTYPE)")
 	mv $(FILE).tar.$(COMPRESSTYPE) $(FILE)-nightly.tar.$(COMPRESSTYPE)
 
-# Build a package with all source code, but add a subfolder using xform to encapsulate
-# the files so when extracted all files are held inside a folder
+# Build a package with all source code, but add a subfolder using xform to 
+# encapsulate the files so when extracted all files are held inside a folder
 package-src:
 	$(call print,"Building","file","dashee-src-$(BUILDID).tar.$(COMPRESSTYPE)")
 	# Tar up temporarily, so it can be extracted to a folder

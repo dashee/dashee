@@ -34,7 +34,7 @@ Vehicle::Vehicle(
     this->yawFallbackEnabled = true;
     this->throttleFallbackEnabled = true;
 
-    this->setPitch(0);
+    this->setPitch(128);
     this->setRoll(128);
     this->setYaw(128);
     this->setThrottle(0);
@@ -64,7 +64,7 @@ void Vehicle::setControl(
 	unsigned short int target
     )
 {
-    if (target < 0 || target > 255)
+    if (target > 255)
         throw ExceptionVehicle("Control value cannot be out the range of 0-255");
 
     control = target;
