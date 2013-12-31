@@ -8,7 +8,9 @@ using namespace dashee::Hardware;
 AccelerometerADXL345::AccelerometerADXL345() : Accelerometer()
 {
     this->isI2CAllocatedInternally = false;
-    this->i2c = new dashee::I2C(1, 0x53);
+    this->i2c = new dashee::I2C(1);
+    
+    this->init();
 }
 
 /**
@@ -28,7 +30,99 @@ AccelerometerADXL345::AccelerometerADXL345(dashee::I2C * i2c)
 
     this->isI2CAllocatedInternally = false;
     this->i2c = i2c;
+
+    this->init();
 }
+
+/**
+ * A simple init function used by all constructors. Helpful to put all generic
+ * initialization in one place
+ */
+void AccelerometerADXL345::init()
+{
+    this->i2c->setSlaveAddress(0x53);
+    this->setRange(2);
+}
+
+/**
+ * Set the range of the device.
+ *
+ * @param range The range to set to
+ *
+ * @throws ExceptionAccelerometerADXL345 If the range is invalid
+ */
+void AccelerometerADXL345::setRange(const unsigned short int range)
+{
+    unsigned char range_byte;
+
+    switch (range)
+    {
+	case 2:
+	    range_byte = 0x00;
+	    break;
+	case 4:
+	    range_byte = 0x01;
+	    break;
+	case 8:
+	    range_byte = 0x02;
+	    break;
+	case 16:
+	    range_byte = 0x03;
+	    break;
+	default:
+	    throw ExceptionAccelerometerADXL345(
+		    "Invalid range " + dashee::itostr(range)
+		);
+	    break;
+    }
+
+    std::vector<unsigned char> buffer;
+
+    this->i2c->read(REGISTER_DATA_FORMAT, &buffer, 1);
+
+    buffer[0] = (buffer[0] & ~0x3) | (range_byte);
+
+    this->i2c->write(REGISTER_DATA_FORMAT, &buffer, 1);
+}
+
+/**
+ * Get the value of the range itself from the DATA_FORMAT register.
+ *
+ * @returns the value of range
+ * 
+ * @throws ExceptionAccelerometerADXL345 If an invalid range is returned
+ */
+unsigned short int AccelerometerADXL345::getRange() const
+{
+    std::vector<unsigned char> buffer;
+    this->i2c->read(REGISTER_DATA_FORMAT, &buffer, 1);
+    unsigned char reg_range = 0x03 & buffer[0];
+
+    // Return the reg_range if it is within the known values
+    switch (reg_range)
+    {
+	case 0x00:
+	    return 2u;
+	    break;
+	case 0x01:
+	    return 4u;
+	    break;
+	case 0x02: 
+	    return 8u;
+	    break;
+	case 0x03:
+	    return 16u;
+	    break;
+	default:
+	    throw ExceptionAccelerometerADXL345(
+		    "Invalid range came back from the register"
+		);
+	    break;
+    }
+
+    // Should never happen
+    return 0u;
+}   
 
 /**
  * Update the g values by reading from the chip and storing locally.

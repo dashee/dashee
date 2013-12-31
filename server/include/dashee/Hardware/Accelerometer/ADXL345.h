@@ -11,6 +11,7 @@
 
 #include <dashee/I2C.h>
 #include <dashee/Hardware/Accelerometer.h>
+#include <dashee/Hardware/Exception/Accelerometer/ADXL345.h>
 
 namespace dashee
 {
@@ -32,6 +33,7 @@ namespace dashee
  *
  *     Coordinate<float> g;
  *     AccelerometerADXL345 accelerometer;
+ *     accelerometer.setRange(2);
  *
  *     while(true)
  *     {
@@ -43,7 +45,24 @@ class dashee::Hardware::AccelerometerADXL345
     : public dashee::Hardware::Accelerometer
 {
 private:
+
+    /**
+     * Variable set to true by our AccelerometerADXL345 which takes in an I2C 
+     * device.
+     *
+     * This variable is a flag that helps destructor delete the I2C variable, if
+     * it was generated internally by this class. Otherwise it is the callers
+     * responsibility to delete I2C.
+     */
     bool isI2CAllocatedInternally;
+
+    /**
+     * Last known range value is stored locally.
+     */
+    unsigned short int range;
+
+    // Generic initializers collated in a generic init function
+    void init();
     
     // Disable Copy and Assignment construction
     AccelerometerADXL345(const AccelerometerADXL345 & rhs);
@@ -58,9 +77,46 @@ protected:
 
 public:
 
+    /**
+     * The scale value used to convert register values into `g` value.
+     *
+     * The accelerometer has a constant scale which is used on the raw value
+     * to represent the scale of the `G`. How is this generated:
+     *
+     * Say you set your range to `+/-4g`, this give us a total of `8g` range, 
+     * and to scale this we divide the total by `2^bitrange`. Where `bitrange` 
+     * is the range of bits a data register represents. The `bitrange` can be 
+     * found on http://goo.gl/RyfX6J which are the following:
+     *
+     *     +/- | totalrange | bits-range
+     *     2g  | 4g         | 10
+     *     4g  | 8g         | 11
+     *     8g  | 16g        | 12
+     *     16g | 32g        | 13
+     *
+     * So applying the above formula we get `0.00390625` for each of the ranges.
+     *
+     * Example formula with range set to `+/-4g` or `0x01` in the 
+     * `DATA_FORMAT:Range` register:
+     *
+     *    (4 * 2) / (2 ^ 11)
+     *    = 8 / 2048
+     *    = 0.00390625
+     */
+    const static float SCALE = 0.00390625f;
+
+    /**
+     * The DATA_REGISTER address.
+     */
+    const static unsigned char REGISTER_DATA_FORMAT = 0x31;
+
     // Construct
     AccelerometerADXL345();
     AccelerometerADXL345(dashee::I2C * i2c);
+
+    // Get and set Range
+    void setRange(const unsigned short int);
+    unsigned short int getRange() const;
 
     // Update the sensor
     void update();

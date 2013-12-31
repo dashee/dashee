@@ -43,10 +43,18 @@ class dashee::test::Hardware::AccelerometerADXL345
     // Test constructors
     CPPUNIT_TEST(testConstructI2C);
 
+    // Accelerometer normal operation tests
+    CPPUNIT_TEST(testSetAndGetRange);
+
     // Test exceptions
     CPPUNIT_TEST_EXCEPTION(
 	    testInvalidI2C,
 	    dashee::ExceptionNullPointer
+	);
+    // Test exceptions
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidRange,
+	    dashee::Hardware::ExceptionAccelerometerADXL345
 	);
     CPPUNIT_TEST_SUITE_END();
 
@@ -62,10 +70,14 @@ protected:
     virtual void testConstructDefault();
     virtual void testConstructI2C();
 
+    virtual void testSetAndGetRange();
+    //virtual void testSetAndGetBandwidth();
+
     virtual void testReadAndUpdate();
 
     // Exceptions
     virtual void testInvalidI2C();
+    virtual void testInvalidRange();
 
 public:
     virtual void setUp();

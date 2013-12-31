@@ -46,6 +46,29 @@ void AccelerometerADXL345::testConstructI2C()
 }
 
 /**
+ * Test setting the range and getting the range values back from the server.
+ * The values that can be set are 2, 4, 8 and 16 anything else is invalid
+ * which is testing in testInvalidRange();
+ */
+void AccelerometerADXL345::testSetAndGetRange()
+{
+    // Check the initial value
+    CPPUNIT_ASSERT(this->accelerometer->getRange() == 2);
+
+    this->accelerometer->setRange(2);
+    CPPUNIT_ASSERT(this->accelerometer->getRange() == 2);
+
+    this->accelerometer->setRange(4);
+    CPPUNIT_ASSERT(this->accelerometer->getRange() == 4);
+    
+    this->accelerometer->setRange(8);
+    CPPUNIT_ASSERT(this->accelerometer->getRange() == 8);
+    
+    this->accelerometer->setRange(16);
+    CPPUNIT_ASSERT(this->accelerometer->getRange() == 16);
+}
+
+/**
  * Test the read function by calling read on the Accelerometer.
  *
  * Given our initial `g` state is `[0,0,0]` post update we should at least
@@ -84,6 +107,16 @@ void AccelerometerADXL345::testInvalidI2C()
     dashee::Hardware::AccelerometerADXL345 * temp 
 	= new dashee::Hardware::AccelerometerADXL345(i2c);
     temp->update(); // Dummy so it does not complain about unused
+}
+
+/**
+ * The accelerometer throws a custom exception when the range value is an 
+ * invalid value sent to setRange()
+ */
+void AccelerometerADXL345::testInvalidRange()
+{
+    // This should throw dashee::Hardware::ExceptionAccelerometerADXL345
+    this->accelerometer->setRange(7);
 }
 
 /**
