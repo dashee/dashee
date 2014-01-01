@@ -34,6 +34,9 @@ namespace dashee
  *     Coordinate<float> g;
  *     AccelerometerADXL345 accelerometer;
  *     accelerometer.setRange(2);
+ *     accelerometer.setBandwithRate(
+ *         AccelerometerADXL345::BandwidthRate::BW_200
+ *     );
  *
  *     while(true)
  *     {
@@ -56,11 +59,6 @@ private:
      */
     bool isI2CAllocatedInternally;
 
-    /**
-     * Last known range value is stored locally.
-     */
-    unsigned short int range;
-
     // Generic initializers collated in a generic init function
     void init();
     
@@ -76,6 +74,33 @@ protected:
     dashee::I2C * i2c;
 
 public:
+    
+    /**
+     * The different frequency rate for the sensor stick which the stick
+     * understands. 
+     *
+     * The convention is `BW_RATIONAL_IRRATIONAL`, so `BW_0_10`
+     * represents `0.10 Hz` in some cases BW_3200 represents `3200 Hz`
+     */
+    enum BandwidthRate
+    {
+	BW_0_10 = 0,
+	BW_0_20 = 1,
+	BW_0_39 = 2,
+	BW_0_78 = 3,
+	BW_1_56 = 4,
+	BW_3_13 = 5,
+	BW_6_25 = 6,
+	BW_12_5 = 7,
+	BW_25 = 8,
+	BW_50 = 9,
+	BW_100 = 10,
+	BW_200 = 11,
+	BW_400 = 12,
+	BW_800 = 13,
+	BW_1600 = 14,
+	BW_3200 = 15
+    };
 
     /**
      * The scale value used to convert register values into `g` value.
@@ -106,6 +131,11 @@ public:
     const static float SCALE = 0.00390625f;
 
     /**
+     * The BW_RATE address.
+     */
+    const static unsigned char REGISTER_BW_RATE = 0x2C;
+
+    /**
      * The DATA_REGISTER address.
      */
     const static unsigned char REGISTER_DATA_FORMAT = 0x31;
@@ -117,6 +147,9 @@ public:
     // Get and set Range
     void setRange(const unsigned short int);
     unsigned short int getRange() const;
+
+    void setBandwidthRate(const BandwidthRate rate);
+    BandwidthRate getBandwidthRate() const;
 
     // Update the sensor
     void update();

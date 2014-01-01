@@ -45,6 +45,7 @@ class dashee::test::Hardware::AccelerometerADXL345
 
     // Accelerometer normal operation tests
     CPPUNIT_TEST(testSetAndGetRange);
+    CPPUNIT_TEST(testSetAndGetBandwidth);
 
     // Test exceptions
     CPPUNIT_TEST_EXCEPTION(
@@ -54,6 +55,11 @@ class dashee::test::Hardware::AccelerometerADXL345
     // Test exceptions
     CPPUNIT_TEST_EXCEPTION(
 	    testInvalidRange,
+	    dashee::Hardware::ExceptionAccelerometerADXL345
+	);
+
+    CPPUNIT_TEST_EXCEPTION(
+	    testInvalidBandwidth,
 	    dashee::Hardware::ExceptionAccelerometerADXL345
 	);
     CPPUNIT_TEST_SUITE_END();
@@ -71,13 +77,14 @@ protected:
     virtual void testConstructI2C();
 
     virtual void testSetAndGetRange();
-    //virtual void testSetAndGetBandwidth();
+    virtual void testSetAndGetBandwidth();
 
     virtual void testReadAndUpdate();
 
     // Exceptions
     virtual void testInvalidI2C();
     virtual void testInvalidRange();
+    virtual void testInvalidBandwidth();
 
 public:
     virtual void setUp();

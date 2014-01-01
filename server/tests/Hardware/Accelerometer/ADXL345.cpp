@@ -69,6 +69,33 @@ void AccelerometerADXL345::testSetAndGetRange()
 }
 
 /**
+ * Test setting and getting the bandwidth, using enums instead of actual values
+ */
+void AccelerometerADXL345::testSetAndGetBandwidth()
+{
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_200
+	);
+
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_0_10
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_0_10
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_0_20
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_0_20
+	);
+}
+
+/**
  * Test the read function by calling read on the Accelerometer.
  *
  * Given our initial `g` state is `[0,0,0]` post update we should at least
@@ -117,6 +144,17 @@ void AccelerometerADXL345::testInvalidRange()
 {
     // This should throw dashee::Hardware::ExceptionAccelerometerADXL345
     this->accelerometer->setRange(7);
+}
+
+/**
+ * An invalid bandwidth range should throw an exception
+ */
+void AccelerometerADXL345::testInvalidBandwidth()
+{
+    this->accelerometer->setBandwidthRate(
+	    static_cast<dashee::Hardware::AccelerometerADXL345::BandwidthRate>
+	    (2000)
+	);
 }
 
 /**

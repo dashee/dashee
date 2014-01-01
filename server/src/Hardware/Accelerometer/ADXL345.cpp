@@ -42,6 +42,7 @@ void AccelerometerADXL345::init()
 {
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
+    this->setBandwidthRate(BW_200);
 }
 
 /**
@@ -122,7 +123,77 @@ unsigned short int AccelerometerADXL345::getRange() const
 
     // Should never happen
     return 0u;
-}   
+}
+
+/**
+ * Set the bandwidth range of the BW_RATE register
+ *
+ * @param rate the Rate to set to
+ *
+ * @throws ExceptionAccelerometerADXL345 If the rate value is wrong
+ */
+void AccelerometerADXL345::setBandwidthRate(
+	const BandwidthRate rate
+    )
+{
+    // Read the old values into the buffer.
+    std::vector<unsigned char> buffer(1, 0);
+    this->i2c->read(REGISTER_BW_RATE, &buffer, 1);
+
+    switch (rate)
+    {
+	// Set the new rate value, only in the 3:0 bit of the byte where the 7:4
+	// bits are carried from their last position.
+	case BW_0_10:
+	case BW_0_20:
+	case BW_0_39:
+	case BW_0_78:
+	case BW_1_56:
+	case BW_3_13:
+	case BW_6_25:
+	case BW_12_5:
+	case BW_25:
+	case BW_50:
+	case BW_100:
+	case BW_200:
+	case BW_400:
+	case BW_800:
+	case BW_1600:
+	case BW_3200:
+	    buffer[0] = (buffer[0] & 0xF0) | static_cast<unsigned char>(rate);
+	    break;
+	default:
+	    throw ExceptionAccelerometerADXL345(
+		    "Invalid Rate type when trying to set Bandwidth"
+		);
+	    break;
+    }
+    
+    // Write the new values to our device
+    this->i2c->write(REGISTER_BW_RATE, &buffer, 1);
+}
+
+/**
+ * Return the rate set on the board currently. 
+ *
+ * The rate is set in the REGSITER_BW_RATE register address, and the rate values
+ * are represented in 3:0 bit in the one byte returned. So our return blanks out
+ * all values in the 7:4 bit.
+ *
+ * No checks are made to ensure the value returned is correct. I can't think of
+ * a case where a check needs to be made so if it does please add it.
+ *
+ * @returns BandwidthRate the rate of Hertz currently set on the board.
+ */
+AccelerometerADXL345::BandwidthRate AccelerometerADXL345::getBandwidthRate() 
+    const
+{
+    std::vector<unsigned char> buffer(1, 0);
+    this->i2c->read(REGISTER_BW_RATE, &buffer, 1);
+
+    // Return only the values which represent the enum.
+    return static_cast<BandwidthRate>(buffer[0] & 0x0F);
+}
 
 /**
  * Update the g values by reading from the chip and storing locally.

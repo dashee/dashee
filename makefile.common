@@ -22,9 +22,10 @@ ifeq ($(shell getconf LONG_BIT), 64)
 endif
 
 # Compiler options
-WOPTIONS=-Wall -Wextra -fPIC
+WOPTIONS=-Wall -Wextra -Wswitch-enum -Wswitch-default -Wdouble-promotion \
+	 -Winit-self
 INCLUDES=-Iinclude -L$(LIBDIR)
-CFLAGS=$(WOPTIONS) $(INCLUDES)
+CFLAGS=$(WOPTIONS) -fPIC $(INCLUDES)
 LFLAGS=-shared -fpic
 
 # tar uses -a so we can change this for future
