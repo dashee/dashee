@@ -93,6 +93,118 @@ void AccelerometerADXL345::testSetAndGetBandwidth()
 	    this->accelerometer->getBandwidthRate() 
 	    == dashee::Hardware::AccelerometerADXL345::BW_0_20
 	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_0_39
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_0_39
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_0_78
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_0_78
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_1_56
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_1_56
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_3_13
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_3_13
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_6_25
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_6_25
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_12_5
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_12_5
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_25
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_25
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_50
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_50
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_100
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_100
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_200
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_200
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_400
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_400
+	);
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_800
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_800
+	);
+
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_1600
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_1600
+	);
+
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_3200
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getBandwidthRate() 
+	    == dashee::Hardware::AccelerometerADXL345::BW_3200
+	);
 }
 
 /**
@@ -123,6 +235,9 @@ void AccelerometerADXL345::testReadAndUpdate()
 	    this->accelerometer->read() 
 	    != dashee::Point<float>(0.0f,0.0f,0.0f)
 	);
+
+    //dashee::Point<float> gVector = this->accelerometer->read();
+    //CPPUNIT_ASSERT(gVector->getZ() > 8.5 && gVector->getZ() < 9.5);
 }
 
 /**
