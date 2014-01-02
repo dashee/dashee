@@ -139,7 +139,7 @@ bool ServerUDP::write(const char * message)
 		strlen(message), 
 		0, 
 		reinterpret_cast<struct sockaddr *>(&client_in), 
-		static_cast<socklen_t>(client_in_length)
+		client_in_length
 	    ) == -1
 	)
         throw ExceptionServer("Write failed with -1.");

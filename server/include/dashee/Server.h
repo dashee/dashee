@@ -85,7 +85,7 @@ protected:
      * recvfrom takes an int * for the length.
      * so we initialize the client length into a variable
      */
-    size_t client_in_length;
+    socklen_t client_in_length;
     
     /** 
      * The maximum size of the read/write buffer.
