@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Coordinate.tpp
+ * @file include/dashee/Point.tpp
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -8,17 +8,16 @@
  * mentioned at http://dashee.co.uk/license. 
  */
 
-#ifndef DASHEE_COORDINATE_TPP_
-#define DASHEE_COORDINATE_TPP_
+#ifndef DASHEE_POINT_TPP_
+#define DASHEE_POINT_TPP_
 
 /**
- * Construct the values and set all to 0's
+ * Do nothing constructor, rely the constructor of T
+ * to default X, Y and Z
  */
-template <class T> dashee::Coordinate<T>::Coordinate()
+template <class Coordinate> dashee::Point<Coordinate>::Point()
+    : x(Coordinate()), y(Coordinate()), z(Coordinate())
 {
-    memset(&this->x, 0, sizeof(T));
-    memset(&this->y, 0, sizeof(T));
-    memset(&this->z, 0, sizeof(T));
 }
 
 /**
@@ -28,10 +27,10 @@ template <class T> dashee::Coordinate<T>::Coordinate()
  * @param y The value of Y
  * @param z The value of Z
  */
-template <class T> dashee::Coordinate<T>::Coordinate(
-	const T x, 
-	const T y, 
-	const T z
+template <class Coordinate> dashee::Point<Coordinate>::Point(
+	const Coordinate x, 
+	const Coordinate y, 
+	const Coordinate z
     )
 {
     this->setX(x);
@@ -44,7 +43,7 @@ template <class T> dashee::Coordinate<T>::Coordinate(
  *
  * @param x the value to set
  */
-template <class T> void dashee::Coordinate<T>::setX(const T x)
+template <class Coordinate> void dashee::Point<Coordinate>::setX(const Coordinate x)
 {
     this->x = x;
 }
@@ -54,7 +53,7 @@ template <class T> void dashee::Coordinate<T>::setX(const T x)
  *
  * @param y the value to set
  */
-template <class T> void dashee::Coordinate<T>::setY(const T y)
+template <class Coordinate> void dashee::Point<Coordinate>::setY(const Coordinate y)
 {
     this->y = y;
 }
@@ -64,7 +63,7 @@ template <class T> void dashee::Coordinate<T>::setY(const T y)
  *
  * @param z the value to set
  */
-template <class T> void dashee::Coordinate<T>::setZ(const T z)
+template <class Coordinate> void dashee::Point<Coordinate>::setZ(const Coordinate z)
 {
     this->z = z;
 }
@@ -74,7 +73,7 @@ template <class T> void dashee::Coordinate<T>::setZ(const T z)
  *
  * @returns value of x
  */
-template <class T> T dashee::Coordinate<T>::getX() const
+template <class Coordinate> Coordinate dashee::Point<Coordinate>::getX() const
 {
     return x;
 }
@@ -84,7 +83,7 @@ template <class T> T dashee::Coordinate<T>::getX() const
  *
  * @returns value of y
  */
-template <class T> T dashee::Coordinate<T>::getY() const
+template <class Coordinate> Coordinate dashee::Point<Coordinate>::getY() const
 {
     return y;
 }
@@ -94,7 +93,7 @@ template <class T> T dashee::Coordinate<T>::getY() const
  *
  * @returns value of z
  */
-template <class T> T dashee::Coordinate<T>::getZ() const
+template <class Coordinate> Coordinate dashee::Point<Coordinate>::getZ() const
 {
     return z;
 }
@@ -104,8 +103,8 @@ template <class T> T dashee::Coordinate<T>::getZ() const
  *
  * @param rhs The right hand side to test against
  */
-template <class T> 
-bool dashee::Coordinate<T>::operator ==(const dashee::Coordinate<T>& rhs) const
+template <class Coordinate> 
+bool dashee::Point<Coordinate>::operator ==(const dashee::Point<Coordinate>& rhs) const
 {
     return 
 	this->x == rhs.getX() && 
@@ -118,8 +117,8 @@ bool dashee::Coordinate<T>::operator ==(const dashee::Coordinate<T>& rhs) const
  *
  * @param rhs The right hand side to test against
  */
-template <class T> 
-bool dashee::Coordinate<T>::operator !=(const dashee::Coordinate<T>& rhs) const
+template <class Coordinate> 
+bool dashee::Point<Coordinate>::operator !=(const dashee::Point<Coordinate>& rhs) const
 {
     return 
 	this->x != rhs.getX() ||
@@ -132,12 +131,12 @@ bool dashee::Coordinate<T>::operator !=(const dashee::Coordinate<T>& rhs) const
  *
  * @param rhs The right hand side to add from
  */
-template <class T>
-dashee::Coordinate<T> dashee::Coordinate<T>::operator+(
-	const dashee::Coordinate<T> &rhs
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::Point<Coordinate>::operator+(
+	const dashee::Point<Coordinate> &rhs
     )
 {
-    dashee::Coordinate<T> result;
+    dashee::Point<Coordinate> result;
     result.setX(this->getX() + rhs.getX());
     result.setY(this->getY() + rhs.getY());
     result.setZ(this->getZ() + rhs.getZ());
@@ -150,12 +149,12 @@ dashee::Coordinate<T> dashee::Coordinate<T>::operator+(
  *
  * @param rhs The right hand side to add from
  */
-template <class T>
-dashee::Coordinate<T> dashee::Coordinate<T>::operator-(
-	const dashee::Coordinate<T> &rhs
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::Point<Coordinate>::operator-(
+	const dashee::Point<Coordinate> &rhs
     )
 {
-    dashee::Coordinate<T> result;
+    dashee::Point<Coordinate> result;
     result.setX(this->getX() - rhs.getX());
     result.setY(this->getY() - rhs.getY());
     result.setZ(this->getZ() - rhs.getZ());
@@ -166,10 +165,9 @@ dashee::Coordinate<T> dashee::Coordinate<T>::operator-(
 /**
  * Do nothing destruct
  */
-template <class T> dashee::Coordinate<T>::~Coordinate()
+template <class Coordinate> dashee::Point<Coordinate>::~Point()
 {
 
 }
 
 #endif
-

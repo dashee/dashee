@@ -31,8 +31,33 @@ namespace dashee
 }
 
 /**
- * Wrapper around the I2C interface, which provides read
- * and write register functionality
+ * Communicate with an I2C device.
+ *
+ * Wrapper around the I2C interface, which provides read and write functionality
+ * to the given register. A vector buffer is passed through to read and write 
+ * to. If no size is passed the size of the buffer is used.
+ *
+ * The I2C device interface is designed for the RaspberryPi so it assumes that 
+ * the I2C device file is located under /dev/i2c-x where X is the number 
+ * represented, in the dashee::I2C(int, const unsigned char) constructor.
+ *
+ * Usage:
+ *
+ *     // Create a new instance
+ *     dashee::I2C accelerometer(1, 0x53);
+ *
+ *     // Buffer to read to
+ *     vector<unsigned char> buffer;
+ *
+ *     // Read 1 byte from a register
+ *     accelerometer.read(0x00, &buffer, 1);
+ *     std::cout << buffer[0] << std::endl;
+ *
+ *     // Reading 6 bytes from a register
+ *     accelerometer.read(0x32, &buffer, 6);
+ *
+ *     buffer[0] = 0xFF;
+ *     accelerometer.write(0x31, &buffer, 1);
  */
 class dashee::I2C
 {

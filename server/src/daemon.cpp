@@ -23,7 +23,7 @@ pid_t dashee::startDaemon(
     if (!dashee::fexists(logfile))
         throw Exception(
 		"Cannot start, log file is invalid '" + 
-		(std::string)logfile + 
+		static_cast<std::string>(logfile) + 
 		"' not found"
 	    );
 
@@ -55,14 +55,15 @@ pid_t dashee::startDaemon(
     // Change working directory
     if (chdir(workingdir) < 0)
         throw Exception(
-		"Cannot change directory '" 
-		+ (std::string)workingdir + 
+		"Cannot change directory '" +
+		static_cast<std::string>(workingdir) + 
 		"'"
 	    );
 
     if (!dashee::createPID(pidfile, true))
         throw Exception(
-		"PID '" + (std::string)pidfile + "' file already exists"
+		"PID '" + static_cast<std::string>(pidfile) + 
+		"' file already exists"
 	    );
 
     // Close STDIN and STDOUT
@@ -91,7 +92,7 @@ bool dashee::createPID(const char * filepath, bool overwrite)
     if (fd == NULL)
         throw Exception(
 		"PID file '" + 
-		(std::string)filepath + 
+		static_cast<std::string>(filepath) + 
 		"' could not opened for writing"
 	    );
 

@@ -25,6 +25,7 @@ OBJECTSLIB = $(addprefix src/, common.o \
     Config.o \
     daemon.o \
     GPIO.o \
+    Hardware/Accelerometer/ADXL345.o \
     Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
     I2C.o \
@@ -51,11 +52,12 @@ OBJECTSLIB = $(addprefix src/, common.o \
 # All the objects that are built for tests
 OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Config.o \
-    Coordinate.o \
+    Point.o \
     dashee.o \
     GPIO.o \
-    Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
+    Hardware/Accelerometer/ADXL345.o \
+    Hardware/Accelerometer/Dummy.o \
     I2C.o \
     ServoController/Dummy.o \
     ServoController.o \
@@ -76,10 +78,11 @@ BINARIES = $(addprefix $(BINDIR)/, servo servod)
 # All the tests which will be use to test the program
 TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testConfig \
-    testCoordinate \
+    testPoint \
     testDummy \
     testGPIO \
     testHardwareAccelerometerDummy \
+    testHardwareAccelerometerADXL345 \
     testVehicleMultirotorQuadX \
     testI2C \
     testThreads \
@@ -113,7 +116,7 @@ $(DIRECTORIES):
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
-$(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
+$(OBJECTSTEST): CFLAGS+=-Wno-overflow -Wno-deprecated-declarations -Itests
 $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -140,7 +143,7 @@ $(BINDIR)/servod: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 # Build and run all the tests
 test: testbuild binfile
 	@echo "\nRUNNING TESTS"
-	bin/runtest $(TYPE) 2> /dev/null
+	COLOR=$(COLOR) bin/runtest $(TYPE) 2> /dev/null
 	@echo ""
 
 # BUILD all the tests
@@ -151,7 +154,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	install --mode=775 $< $@
 
 # Build our tests, binaries
-$(TESTDIR)/%: CFLAGS+=-Itests
+$(TESTDIR)/%: CFLAGS+=-Itests -Wno-deprecated-declarations
 $(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")
@@ -165,7 +168,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	$(call print,"Building","data","$@")
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 >/dev/null
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 2>/dev/null
 
 # Builds the documentation
 documentation:
@@ -285,6 +288,3 @@ cleanall: clean
 	$(RM) $(DIRECTORIES)
 	$(call print,"Deleting","directory","etc")
 	$(RM) etc
-	$(call print,"Deleting","objects","find *.o")
-	find src/ -name "*.o" -type f -delete
-	find tests/ -name "*.o" -type f -delete

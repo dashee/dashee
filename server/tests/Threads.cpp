@@ -222,7 +222,7 @@ void dashee::test::Threads::setUp()
 void dashee::test::Threads::testWorking()
 {
     this->thread = new dashee::Threads::Thread(dashee::test::donothing);
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
 
     delete this->thread;
@@ -235,15 +235,15 @@ void dashee::test::Threads::testWorking()
 void dashee::test::Threads::testMultiStarts()
 {
     this->thread = new dashee::Threads::Thread(donothing);
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
     CPPUNIT_ASSERT(true);
 
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
     CPPUNIT_ASSERT(true);
     
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
     CPPUNIT_ASSERT(true);
 
@@ -256,7 +256,7 @@ void dashee::test::Threads::testMultiStarts()
 void dashee::test::Threads::testSelfCall()
 {
     this->thread = new dashee::Threads::Thread(callSelf);
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
 
     delete this->thread;
@@ -269,7 +269,7 @@ void dashee::test::Threads::testExits()
 {
     // A simple exit call
     this->thread = new dashee::Threads::Thread(callExit);
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
     delete this->thread;
 
@@ -439,8 +439,8 @@ void dashee::test::Threads::testScopeLock()
 void dashee::test::Threads::testCallingOneStartOnly()
 {
     this->thread = new dashee::Threads::Thread(donothing);
-    this->thread->start((void *)NULL);
-    this->thread->start((void *)NULL);
+    this->thread->start(static_cast<void *>(NULL));
+    this->thread->start(static_cast<void *>(NULL));
     this->thread->join();
 }
 

@@ -125,7 +125,7 @@ int main(int argc, char ** argv)
         
         // Start our threads
         threadServer.start(static_cast<void *>(container->getServer()));
-        threadSensor.start((void *)NULL);
+        threadSensor.start(static_cast<void *>(NULL));
         threadController.start(static_cast<void *>(container));
 
         // Wait for threads to gracefully stop

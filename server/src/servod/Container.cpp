@@ -238,6 +238,8 @@ void Container::loadConfig()
                     case 7:
                         this->config->set("pidfile", optarg);
                         break;
+		    default:
+			break;
                 }
                 break;
             // Set the logfile location
@@ -278,6 +280,10 @@ void Container::loadConfig()
                         "' requires a value"
                     );
                 break;
+
+	    // FIXME: This should be same as '?'
+	    default:
+		break;
         }
     }
 
@@ -500,7 +506,7 @@ Container::~Container()
 // Initilize our constants for SERVOCONTROLLER
 const char * Container::SERVOCONTROLLER_DEVICE = "/dev/ttyAMA0";
 const unsigned int Container::SERVOCONTROLLER_TYPE = 1u;
-const unsigned int Container::SERVOCONTROLLER_CHANNELS = 6u;
+const unsigned int Container::SERVOCONTROLLER_CHANNELS = 12u;
 
 // Initilize our constants for CONFIG
 const char * Container::CONFIG = "./etc/dashee/servod.conf";

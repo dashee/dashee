@@ -39,7 +39,11 @@ ServoControllerDummy::ServoControllerDummy(
         throw ExceptionServoController(
                 "The binary file is of invalid size. Please "
                 "create one with 'dd if=/dev/zero of=data/Servo.bin bs=1 "
-                "count=0 seek=72'"
+                "count=0 seek='" + 
+		dashee::itostr(
+		    (ServoDummy::headerByteSize + 
+			(ServoDummy::channelByteSize * channels))
+		) + "'"
             );
 }
 
@@ -61,7 +65,7 @@ ServoControllerDummy::ServoControllerDummy(
 short int ServoControllerDummy::getError() const
 {
     fseek(fd, 0, SEEK_SET);
-    return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));
+    return static_cast<short int>(sqrt(fgetc(fd) + (256*fgetc(fd))));
 }
 
 /**

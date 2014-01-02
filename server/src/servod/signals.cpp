@@ -38,13 +38,13 @@ void signalTerminateHandler(int sig)
     dashee::Threads::Scope scope(&lockEXIT);
 
     EXIT = 1;
+
+    dashee::Log::info(3, "Terminate signal %d called.", sig);
     
     // Only do this if the sig is different to the sent signal
     // otherwise you will go into a recursive loop
     if (sig != SIGALRM)
 	signalAllThreads(SIGALRM);
-
-    dashee::Log::info(3, "Terminate signal %d called.", sig);
 }
 
 /**
@@ -54,7 +54,7 @@ void signalTerminateHandler(int sig)
  */
 void signalNothingHandler(int sig)
 {
-    dashee::Log::info("SIGNAL: Nothing to do with sig:%d", sig);
+    dashee::Log::info(10, "SIGNAL: Nothing to do with sig:%d", sig);
     return;
 }
 
@@ -68,9 +68,13 @@ void signalAllThreads(int sig)
 {
     for (size_t x = 0; x < signalThreads.size(); x++)
     {
+	dashee::Log::info(5, "Terminating thread %d", x);
+
 	if (signalThreads[x] != NULL)
 	    signalThreads[x]->signal(sig);
     }
+	
+    dashee::Log::info(5, "All threads terminated");
 }
 
 /**

@@ -74,5 +74,5 @@ short int ServoControllerUSB::getError() const
         throw ExceptionServoController();
     
     //TODO This needs to be fixed, its wrong at the moment
-    return (short int)sqrt(response[0] + 256*response[1]);
+    return static_cast<short int>(sqrt(response[0] + 256*response[1]));
 }
