@@ -168,7 +168,7 @@ binfile: $(DATADIR)/Servo.bin
 # It represents our dump servo, for testing
 $(DATADIR)/Servo.bin: | $(DATADIR)
 	$(call print,"Building","data","$@")
-	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 >/dev/null
+	dd if=/dev/zero of=$(DATADIR)/Servo.bin bs=1 count=0 seek=74 2>/dev/null
 
 # Builds the documentation
 documentation:
@@ -288,6 +288,3 @@ cleanall: clean
 	$(RM) $(DIRECTORIES)
 	$(call print,"Deleting","directory","etc")
 	$(RM) etc
-	$(call print,"Deleting","objects","find *.o")
-	find src/ -name "*.o" -type f -delete
-	find tests/ -name "*.o" -type f -delete
