@@ -50,7 +50,7 @@ protected:
     /** 
      * Socket handler.
      *
-     * This is our filedescriptor for our socket
+     * This is our file descriptor for our socket
      */
     int socketfd;
 
@@ -71,7 +71,7 @@ protected:
     struct sockaddr_in server_in;
     
     /**
-     * Socket addresss for the client.
+     * Socket address for the client.
      *
      * Initialize our client socket settings
      * this is used to communicate back to the client
@@ -83,9 +83,9 @@ protected:
      * Socket client address length.
      *
      * recvfrom takes an int * for the length.
-     * so we initialize the client lenght into a variable
+     * so we initialize the client length into a variable
      */
-    int client_in_length;
+    size_t client_in_length;
     
     /** 
      * The maximum size of the read/write buffer.
@@ -174,7 +174,7 @@ public:
     // Write back to our client
     virtual bool write(const char *) = 0;
     
-    // An empty virtual desructor
+    // An empty virtual destructor
     virtual ~Server();
 };
 

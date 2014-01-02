@@ -40,7 +40,8 @@ void ServoDummy::setTarget(unsigned short int target)
         if (
             fseek(
                 fd, 
-                headerByteSize + (((int)this->channel) * channelByteSize), 
+                headerByteSize + 
+		    ((static_cast<int>(this->channel)) * channelByteSize), 
                 SEEK_SET
             ) != 0
         )
@@ -51,7 +52,7 @@ void ServoDummy::setTarget(unsigned short int target)
         buffer[1] = converted >> 8;
         
         //Write to our servo
-        fwrite((const char *)buffer, 2, sizeof(buffer), fd);
+        fwrite(static_cast<const void *>(buffer), 2, sizeof(buffer), fd);
     }
     catch (ExceptionInvalidValue e)
     {
@@ -84,7 +85,8 @@ unsigned short int ServoDummy::getTarget(const bool fromcache)
     if (
         fseek(
             fd, 
-            headerByteSize + (((int)this->channel) * channelByteSize), 
+            headerByteSize + 
+		((static_cast<int>(this->channel)) * channelByteSize), 
             SEEK_SET
         ) != 0
     )

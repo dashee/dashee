@@ -22,7 +22,7 @@ long int dashee::strtol(const char * string, const int base)
     if (end == string || *end != '\0' || errno == ERANGE)
         throw ExceptionInvalidNumber(
                 "dashee::strtol : Number '" + 
-                (std::string)string + 
+                static_cast<std::string>(string) + 
                 "' is invalid"
             );
 

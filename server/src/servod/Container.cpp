@@ -238,6 +238,8 @@ void Container::loadConfig()
                     case 7:
                         this->config->set("pidfile", optarg);
                         break;
+		    default:
+			break;
                 }
                 break;
             // Set the logfile location
@@ -278,6 +280,10 @@ void Container::loadConfig()
                         "' requires a value"
                     );
                 break;
+
+	    // FIXME: This should be same as '?'
+	    default:
+		break;
         }
     }
 

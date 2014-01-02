@@ -128,7 +128,7 @@ public:
      *    = 8 / 2048
      *    = 0.00390625
      */
-    const static float SCALE = 0.00390625f;
+    static constexpr float SCALE = 0.00390625f;
 
     /**
      * The BW_RATE address.

@@ -116,7 +116,7 @@ $(DIRECTORIES):
 
 # All of our objects are passed through this, To add a new object
 # Add to the OBJECTS directory
-$(OBJECTSTEST): CFLAGS+=-Wno-overflow -Itests
+$(OBJECTSTEST): CFLAGS+=-Wno-overflow -Wno-deprecated-declarations -Itests
 $(OBJECTS) $(OBJECTSLIB) $(OBJECTSTEST): %.o: %.cpp
 	$(call print,"Building","object","$@")
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -154,7 +154,7 @@ $(BINDIR)/runtest: $(SCRIPTSDIR)/runtest.sh
 	install --mode=775 $< $@
 
 # Build our tests, binaries
-$(TESTDIR)/%: CFLAGS+=-Itests
+$(TESTDIR)/%: CFLAGS+=-Itests -Wno-deprecated-declarations
 $(TESTDIR)/%: tests/%.cpp \
     $(LIBRARIES) $(OBJECTS) $(OBJECTSTEST) | $(TESTDIR)
 	$(call print,"Building","tests","$@")

@@ -44,7 +44,7 @@ protected:
      * This helpful variable reverses our delta values, when the MAX axis is 
      * reached, note in some cases this is not helpful so 0 represents no max.
      */
-    const static float MAX = 15.0f;
+    static constexpr float MAX = 15.0f;
 
 public:
     AccelerometerDummy();

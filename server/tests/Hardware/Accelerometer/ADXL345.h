@@ -34,6 +34,7 @@ namespace dashee
 class dashee::test::Hardware::AccelerometerADXL345
     : public dashee::test::Hardware::Accelerometer
 {
+
     // Register test
     CPPUNIT_TEST_SUB_SUITE(
 	    AccelerometerADXL345,

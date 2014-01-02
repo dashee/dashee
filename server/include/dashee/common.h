@@ -54,9 +54,9 @@ namespace dashee
     template<class T>
         T constrain(T value, T min, T max);
 
-    // Helpfull function to encapsulate usleep so 0 usleep is not run
+    // Helpful function to encapsulate usleep so 0 usleep is not run
     void sleep(const unsigned int timeout);
-};
+}
 
 #include <dashee/common.tpp>
 

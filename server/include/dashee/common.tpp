@@ -37,22 +37,26 @@ template<class T> void dashee::map(
 {
     if (*value < fromLow)
 	throw ExceptionInvalidValue(
-	    "The value " + dashee::itostr(*value) + " in dashee::map was not within its low " + itostr(fromLow) + " from range."
+	    "The value " + dashee::itostr(*value) + 
+	    " in dashee::map was not within its low " + itostr(fromLow) + 
+	    " from range."
 	);
     else if (*value > fromHigh)
 	throw ExceptionInvalidValue(
 	    "The value in dashee::map was not within its high from range."
 	);
 
-    double fromRange = (double)(fromHigh - fromLow);
-    double toRange = (double)(toHigh - toLow);
+    double fromRange = static_cast<double>(fromHigh - fromLow);
+    double toRange = static_cast<double>(toHigh - toLow);
 
     if (fromRange == 0)
 	throw Exception("Division by 0 in dashee::map for fromRange");
 
-    double scaled = ((double)*value - fromLow) / fromRange;
+    double scaled = (static_cast<double>(*value) - fromLow) / fromRange;
 
-    *value = static_cast<T>(round((double)toLow + (scaled * toRange)));
+    *value = static_cast<T>(
+	    round(static_cast<double>(toLow) + (scaled * toRange))
+	);
 }
 
 /**

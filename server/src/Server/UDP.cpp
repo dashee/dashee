@@ -7,8 +7,8 @@ using namespace dashee;
  *
  * Our constructor sends the port to our base class, Along with that it also
  * initialized our @p socketfd by calling socket. It then sets and initializes
- * our @p server_in variable given the port, and any interface. Once all is done, 
- * it binds our server to a port. Any errors, will throw an exception
+ * our @p server_in variable given the port, and any interface. Once all is 
+ * done, it binds our server to a port. Any errors, will throw an exception
  *
  * @param port The port the server will run on
  *
@@ -22,15 +22,22 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
     
     server_in.sin_family = AF_INET; //IPV4
     server_in.sin_port = htons(port);
-    server_in.sin_addr.s_addr = htons(INADDR_ANY); //Any interfacea
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+    server_in.sin_addr.s_addr = htons(INADDR_ANY); //Any interface
+#pragma GCC diagnostic pop
     
     //Bind, Note the second parameter needs to be a sockaddr
-    if (bind(socketfd, (struct sockaddr *) &server_in, sizeof(server_in)) == -1)
-        throw ExceptionServer();
+    if (
+	    bind(
+		socketfd, 
+		reinterpret_cast<const struct sockaddr *>(&server_in), 
+		sizeof(server_in)
+	    ) == -1
+	)
+        throw ExceptionServer("Binding failed");
 
-    // Initaize our mask variable as pselect will jump out on
-    // SIGTERM
-    memset((sigset_t *)&mask, 0, sizeof(mask));
+    // Initialize our mask variable as pselect will jump out on SIGTERM
+    memset(static_cast<void *>(&mask), 0, sizeof(mask));
     sigemptyset (&mask);
     sigaddset (&mask, SIGINT|SIGTERM);
 
@@ -41,11 +48,11 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
 /**
  * Process from the client and store into buffer.
  *
- * Our wrapper to the recvfrom function, This is designed to set our buffer to null
- * and then do a recvfrom give the socket. The recvfrom will set our @p client_in variable
- * so it can be used to write data back to the client
+ * Our wrapper to the recvfrom function, This is designed to set our buffer to 
+ * null and then do a recvfrom give the socket. The recvfrom will set our @p 
+ * client_in variable so it can be used to write data back to the client
  *
- * @throws ExceptionServer - When recvfrom comes back with an error 
+ * @throws ExceptionServer When recvfrom comes back with an error 
  *
  * @returns always true
  * @retval TRUE always returned
@@ -60,15 +67,15 @@ void ServerUDP::process()
             buffer, 
             SERVER_BUFFER_SIZE, 
             0, 
-            (struct sockaddr *)&client_in, 
-            (socklen_t *)&client_in_length
+            reinterpret_cast<struct sockaddr *>(&client_in), 
+            static_cast<socklen_t *>(&client_in_length)
         );
 
     //Recieave from client        
     if (numberOfBytesInBuffer == -1)
         throw ExceptionServer();
 
-    this->setNumberOfBytesInBuffer((size_t)numberOfBytesInBuffer);
+    this->setNumberOfBytesInBuffer(static_cast<size_t>(numberOfBytesInBuffer));
 }
 
 /**
@@ -92,8 +99,10 @@ bool ServerUDP::read()
     // Wait and timeout
     int select_return = wait();
     
+#pragma GCC diagnostic ignored "-Wold-style-cast"
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {
+#pragma GCC diagnostic pop
 	process();
 	return true;
     }
@@ -123,7 +132,16 @@ bool ServerUDP::read()
 bool ServerUDP::write(const char * message)
 {
     //const char message[] = "Error: Invalid Range, number must be between 1-100\n";
-    if (sendto(socketfd, message, strlen(message), 0, (struct sockaddr *) &client_in, client_in_length) == -1)
+    if (
+	    sendto(
+		socketfd, 
+		message, 
+		strlen(message), 
+		0, 
+		reinterpret_cast<struct sockaddr *>(&client_in), 
+		static_cast<socklen_t>(client_in_length)
+	    ) == -1
+	)
         throw ExceptionServer("Write failed with -1.");
 
     return true;

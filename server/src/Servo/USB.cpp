@@ -95,7 +95,7 @@ unsigned short int ServoUSB::getTarget(const bool fromcache)
 
     unsigned char command[2];
     command[0] = 0x90;
-    command[1] = (char)this->channel;
+    command[1] = static_cast<char>(this->channel);
 
     if(write(*fd, command, sizeof(command)) == -1)
         throw ExceptionServo();

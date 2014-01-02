@@ -80,18 +80,22 @@ void GPIO::exportPin(int pin)
     const char * file = "/sys/class/gpio/export";
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
     
     int fd = ::open(file, O_WRONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char buffer[3];
     ssize_t bytesToWrite = sprintf(buffer, "%d", pin);
     if (::write(fd, buffer, bytesToWrite) == -1)
         throw ExceptionGPIO(
 		"Write failed for file '" + 
-		(std::string)file + "'!"
+		static_cast<std::string>(file) + "'!"
 	    );
 
     ::close(fd);
@@ -124,17 +128,22 @@ void GPIO::unexportPin(int pin)
     const char * file = "/sys/class/gpio/unexport";
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
     
     int fd = ::open(file, O_WRONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char buffer[3];
     ssize_t bytesToWrite = ::sprintf(buffer, "%d", pin);
     if (::write(fd, buffer, bytesToWrite) == -1)
         throw ExceptionGPIO(
-		"Write failed for file '" + (std::string)file + "'!"
+		"Write failed for file '" + 
+		static_cast<std::string>(file) + "'!"
 	    );
 
     ::close(fd);
@@ -170,11 +179,15 @@ void GPIO::setDirection(int pin, char direction)
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/direction", pin);
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
 
     int fd = ::open(file, O_WRONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char buffer[3];
     ssize_t bytesToWrite;
@@ -190,7 +203,8 @@ void GPIO::setDirection(int pin, char direction)
 
     if (::write(fd, buffer, bytesToWrite) == -1)
         throw ExceptionGPIO(
-		"Write failed for file '" + (std::string)file + "'!"
+		"Write failed for file '" + 
+		static_cast<std::string>(file) + "'!"
 	    );
 
     ::close(fd);
@@ -231,15 +245,21 @@ char GPIO::getDirection(int pin)
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/direction", pin);
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
 
     int fd = ::open(file, O_RDONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char value[3];
     if (::read(fd, value, 3) < 0) 
-        throw ExceptionGPIO("Failed to read file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Failed to read file '" + static_cast<std::string>(file) + "'!"
+	    );
 
     ::close(fd);
 
@@ -283,11 +303,15 @@ void GPIO::write(int pin, unsigned short int value)
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/value", pin);
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
 
     int fd = ::open(file, O_WRONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char buffer[3] = { 0 };
     ssize_t bytesToWrite;
@@ -299,7 +323,8 @@ void GPIO::write(int pin, unsigned short int value)
 
     if (::write(fd, buffer, bytesToWrite) == -1)
         throw ExceptionGPIO(
-		"Write failed for file '" + (std::string)file + "'!"
+		"Write failed for file '" + 
+		static_cast<std::string>(file) + "'!"
 	    );
 
     ::close(fd);
@@ -355,19 +380,26 @@ int GPIO::read(int pin)
     ::snprintf(file, 100, "/sys/class/gpio/gpio%d/value", pin);
 
     if (!fexists(file))
-        throw ExceptionGPIO("File '" + (std::string)file + "' does not exist!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' does not exist!"
+	    );
 
     int fd = ::open(file, O_RDONLY);
     if (fd == -1)
-        throw ExceptionGPIO("File '" + (std::string)file + "' failed to open!");
+        throw ExceptionGPIO(
+		"File '" + static_cast<std::string>(file) + "' failed to open!"
+	    );
 
     char value[4] = { 0 };
     if (::read(fd, value, 3) < 0) 
-        throw ExceptionGPIO("Failed to read file '" + (std::string)file + "'!");
+        throw ExceptionGPIO(
+		"Failed to read file '" + static_cast<std::string>(file) + "'!"
+	    );
 
     ::close(fd);
 
-    // Remove trailing next lines, stupid read comes back with the actual next line
+    // Remove trailing next lines, stupid read comes back with the actual next 
+    // line
     for (size_t x = 0; x < 4; ++x)
     {
 	if (value[x] == '\n') value[x] = 0;

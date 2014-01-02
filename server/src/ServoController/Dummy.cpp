@@ -61,7 +61,7 @@ ServoControllerDummy::ServoControllerDummy(
 short int ServoControllerDummy::getError() const
 {
     fseek(fd, 0, SEEK_SET);
-    return (short int)sqrt(fgetc(fd) + (256*fgetc(fd)));
+    return static_cast<short int>(sqrt(fgetc(fd) + (256*fgetc(fd))));
 }
 
 /**

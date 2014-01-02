@@ -2,6 +2,8 @@
 
 using namespace dashee::Hardware;
 
+//const static float AccelerometerADXL345::SCALE = 0.00390625f;
+
 /**
  * Create a new instance of a our Accelerometer.
  */
