@@ -506,7 +506,7 @@ Container::~Container()
 // Initilize our constants for SERVOCONTROLLER
 const char * Container::SERVOCONTROLLER_DEVICE = "/dev/ttyAMA0";
 const unsigned int Container::SERVOCONTROLLER_TYPE = 1u;
-const unsigned int Container::SERVOCONTROLLER_CHANNELS = 6u;
+const unsigned int Container::SERVOCONTROLLER_CHANNELS = 12u;
 
 // Initilize our constants for CONFIG
 const char * Container::CONFIG = "./etc/dashee/servod.conf";
