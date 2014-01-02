@@ -143,7 +143,7 @@ $(BINDIR)/servod: src/servod.cpp $(OBJECTS) | $(BINDIR) $(LIBRARIES)
 # Build and run all the tests
 test: testbuild binfile
 	@echo "\nRUNNING TESTS"
-	bin/runtest $(TYPE) 2> /dev/null
+	COLOR=$(COLOR) bin/runtest $(TYPE) 2> /dev/null
 	@echo ""
 
 # BUILD all the tests

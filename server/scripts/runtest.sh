@@ -40,10 +40,18 @@ printstatus()
 
     case "$1" in
         "PASSED" | "P" | "p" | 0)
-            echo -en "\E[0;32;1mPASSED\E[0m"
+            if [ "$COLOR" == "true" ]; then
+                echo -en "\E[0;32;1mPASSED\E[0m"
+            else
+                echo -en "PASSED"
+            fi
             ;;
         *)
-            echo -en "\E[0;31;1mFAILED\E[0m"
+            if [ "$COLOR" == "true" ]; then
+                echo -en "\E[0;31;1mPASSED\E[0m"
+            else
+                echo -en "FAILED"
+            fi
             ;;
     esac
 
