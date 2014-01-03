@@ -42,6 +42,7 @@ AccelerometerADXL345::AccelerometerADXL345(dashee::I2C * i2c)
  */
 void AccelerometerADXL345::init()
 {
+    this->dataBuffer = std::vector<unsigned char>(6, 0);
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
     this->setBandwidthRate(BW_200);
@@ -202,7 +203,19 @@ AccelerometerADXL345::BandwidthRate AccelerometerADXL345::getBandwidthRate()
  */
 void AccelerometerADXL345::update()
 {
-    this->g = dashee::Point<float>(0.0f, 0.0f, 0.1f);
+    // Read 6 bytes from the data register, starting from DATAX0 and all the way
+    // to DATAZ1
+    this->i2c->read(REGISTER_DATAX0, &this->dataBuffer, 6);
+    
+    int16_t valX = dataBuffer[0] | (dataBuffer[1] << 8);
+    int16_t valY = dataBuffer[2] | (dataBuffer[3] << 8);
+    int16_t valZ = dataBuffer[4] | (dataBuffer[5] << 8);
+
+    this->g = dashee::Point<float>(
+	    static_cast<float>(valX), 
+	    static_cast<float>(valY), 
+	    static_cast<float>(valZ)
+	);
 }
 
 /**

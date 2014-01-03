@@ -50,6 +50,12 @@ class dashee::Hardware::AccelerometerADXL345
 private:
 
     /**
+     * The buffer used by update. Easier to initialize it once, rather than 
+     * initialize and resize it every time update is called.
+     */
+    std::vector<unsigned char> dataBuffer;
+
+    /**
      * Variable set to true by our AccelerometerADXL345 which takes in an I2C 
      * device.
      *
@@ -139,6 +145,16 @@ public:
      * The DATA_REGISTER address.
      */
     const static unsigned char REGISTER_DATA_FORMAT = 0x31;
+
+    /**
+     * The DATA values
+     */
+    const static unsigned char REGISTER_DATAX0 = 0x32;
+    const static unsigned char REGISTER_DATAX1 = 0x33;
+    const static unsigned char REGISTER_DATAY0 = 0x34;
+    const static unsigned char REGISTER_DATAY1 = 0x35;
+    const static unsigned char REGISTER_DATAZ0 = 0x36;
+    const static unsigned char REGISTER_DATAZ1 = 0x37;
 
     // Construct
     AccelerometerADXL345();

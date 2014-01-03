@@ -213,8 +213,12 @@ void AccelerometerADXL345::testSetAndGetBandwidth()
  * Given our initial `g` state is `[0,0,0]` post update we should at least
  * get Z coordinate to be approximately 9.8 so we can safely assume that after
  * the first update of our accelerometer we no longer are `[0,0,0]` but 
- * somewhere approximately `[0,0,9.8]`. This is of course assuming that we are 
+ * somewhere approximately `[0,0,1.0]`. This is of course assuming that we are 
  * not accelerating in the X or Y.
+ *
+ * Another guess we can take in the test bed is to rely on the sensor level so 
+ * the Z axis is registering atleast `1g`, and so we can tests for approximation
+ * of Z axis where `0.5 >= Z axis < 1.5`. Change this as you may,
  *
  * I am not sure we can go further than the above simple testing otherwise 
  * unless ofcourse we can simulate the exact forces applied to our sensor.
@@ -236,8 +240,23 @@ void AccelerometerADXL345::testReadAndUpdate()
 	    != dashee::Point<float>(0.0f,0.0f,0.0f)
 	);
 
-    //dashee::Point<float> gVector = this->accelerometer->read();
-    //CPPUNIT_ASSERT(gVector->getZ() > 8.5 && gVector->getZ() < 9.5);
+    // We are on earth so lets assume we are experiencing approximately 1g 
+    // pointing down, and pretty stable in X, and Y plane, therefore we can 
+    // test for approximate range values. The test here might change according
+    // to the sensor, as different sensors are calibrated differently.
+    //
+    // Another thing to make sure is to run it a few times before confirming the
+    // test has passed.
+    //
+    // The values here are represented as values that came out of the sensor
+    for (size_t x = 0; x < 500; ++x)
+    {
+	dashee::Point<float> gVector = this->accelerometer->read();
+	CPPUNIT_ASSERT(gVector.getX() > 4.0f && gVector.getX() < 12.0f);
+	CPPUNIT_ASSERT(gVector.getY() > -5.0f && gVector.getY() < 5.0f);
+	CPPUNIT_ASSERT(gVector.getZ() > 235.0f && gVector.getZ() < 245.0f);
+	dashee::sleep(1000);
+    }
 }
 
 /**
