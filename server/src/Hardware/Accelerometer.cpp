@@ -7,7 +7,7 @@ using namespace dashee::Hardware;
  */
 Accelerometer::Accelerometer()
 {
-    this->g = dashee::Point<float>();
+    this->g = dashee::Point<double>();
 }
 
 /**
@@ -15,7 +15,7 @@ Accelerometer::Accelerometer()
  *
  * @returns float value
  */ 
-dashee::Point<float> Accelerometer::read() const
+dashee::Point<double> Accelerometer::read() const
 {
     return this->g;
 }

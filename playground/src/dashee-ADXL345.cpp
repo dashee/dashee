@@ -13,7 +13,7 @@ int main()
     while (true)
     {
 	a.update();
-	dashee::Point<float> temp = a.read();
+	dashee::Point<double> temp = a.read();
 	std::cout << 
 	   temp.getX() << ", " <<
 	   temp.getY() << ", " <<

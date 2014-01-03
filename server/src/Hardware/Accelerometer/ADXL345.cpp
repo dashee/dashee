@@ -206,15 +206,18 @@ void AccelerometerADXL345::update()
     // Read 6 bytes from the data register, starting from DATAX0 and all the way
     // to DATAZ1
     this->i2c->read(REGISTER_DATAX0, &this->dataBuffer, 6);
-    
+ 
+    // The values are in 16 bit two's compliement so make cast them into a 16 
+    // bit signed int
     int16_t valX = dataBuffer[0] | (dataBuffer[1] << 8);
     int16_t valY = dataBuffer[2] | (dataBuffer[3] << 8);
     int16_t valZ = dataBuffer[4] | (dataBuffer[5] << 8);
 
-    this->g = dashee::Point<float>(
-	    static_cast<float>(valX), 
-	    static_cast<float>(valY), 
-	    static_cast<float>(valZ)
+    // Convert the values into float
+    this->g = dashee::Point<double>(
+	    static_cast<double>(valX), 
+	    static_cast<double>(valY), 
+	    static_cast<double>(valZ)
 	);
 }
 
@@ -226,4 +229,3 @@ AccelerometerADXL345::~AccelerometerADXL345()
     if (isI2CAllocatedInternally)
 	delete this->i2c;
 }
-

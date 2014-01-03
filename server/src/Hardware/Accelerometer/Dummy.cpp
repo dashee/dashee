@@ -7,7 +7,7 @@ using namespace dashee::Hardware;
  */
 AccelerometerDummy::AccelerometerDummy() : Accelerometer()
 {
-    this->delta = dashee::Point<float>();
+    this->delta = dashee::Point<double>();
 }
 
 /**
@@ -15,7 +15,7 @@ AccelerometerDummy::AccelerometerDummy() : Accelerometer()
  *
  * @param delta the Delta coordinate
  */
-void AccelerometerDummy::setDelta(dashee::Point<float> delta)
+void AccelerometerDummy::setDelta(dashee::Point<double> delta)
 {
     this->delta = delta;
 }
@@ -25,7 +25,7 @@ void AccelerometerDummy::setDelta(dashee::Point<float> delta)
  *
  * @returns Point that the current delta is set to
  */
-dashee::Point<float> AccelerometerDummy::getDelta() const
+dashee::Point<double> AccelerometerDummy::getDelta() const
 {
     return this->delta;
 }   
@@ -45,13 +45,13 @@ void AccelerometerDummy::update()
     {
 	// Reverse the delta, if the g is out of MAX range
 	if (this->g.getX() > MAX)
-	    this->delta.setX(this->delta.getX() * -1);
+	    this->delta.setX(this->delta.getX() * -1.0);
 
 	if (this->g.getY() > MAX)
-	    this->delta.setY(this->delta.getY() * -1);
+	    this->delta.setY(this->delta.getY() * -1.0);
 
 	if (this->g.getZ() > MAX)
-	    this->delta.setZ(this->delta.getZ() * -1);
+	    this->delta.setZ(this->delta.getZ() * -1.0);
     }
 }
 

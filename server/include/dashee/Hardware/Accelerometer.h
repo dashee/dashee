@@ -34,7 +34,7 @@ protected:
      * The coordinates which hold the last value of the gravitational pull in 
      * three axis.
      */
-    dashee::Point<float> g;
+    dashee::Point<double> g;
 
     // Default the in class variables
     Accelerometer();
@@ -42,7 +42,7 @@ protected:
 public:
 
     // Return the value of read from the sensor
-    virtual dashee::Point<float> read() const;
+    virtual dashee::Point<double> read() const;
 
     // Update the value of this class from the sensor
     virtual void update() = 0;

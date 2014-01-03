@@ -18,7 +18,7 @@ void AccelerometerADXL345::testConstructDefault()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Point<float>(0.0f,0.0f,0.0f)
+	    == dashee::Point<double>(0.0f,0.0f,0.0f)
 	);
 }
 
@@ -232,12 +232,12 @@ void AccelerometerADXL345::testReadAndUpdate()
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    != dashee::Point<float>(0.0f,0.0f,0.0f)
+	    != dashee::Point<double>(0.0,0.0,0.0)
 	);
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    != dashee::Point<float>(0.0f,0.0f,0.0f)
+	    != dashee::Point<double>(0.0,0.0,0.0)
 	);
 
     // We are on earth so lets assume we are experiencing approximately 1g 
@@ -251,10 +251,10 @@ void AccelerometerADXL345::testReadAndUpdate()
     // The values here are represented as values that came out of the sensor
     for (size_t x = 0; x < 500; ++x)
     {
-	dashee::Point<float> gVector = this->accelerometer->read();
-	CPPUNIT_ASSERT(gVector.getX() > 4.0f && gVector.getX() < 12.0f);
-	CPPUNIT_ASSERT(gVector.getY() > -5.0f && gVector.getY() < 5.0f);
-	CPPUNIT_ASSERT(gVector.getZ() > 235.0f && gVector.getZ() < 245.0f);
+	dashee::Point<double> gVector = this->accelerometer->read();
+	CPPUNIT_ASSERT(gVector.getX() > 4.0 && gVector.getX() < 12.0);
+	CPPUNIT_ASSERT(gVector.getY() > -5.0 && gVector.getY() < 5.0);
+	CPPUNIT_ASSERT(gVector.getZ() > 235.0 && gVector.getZ() < 245.0);
 	dashee::sleep(1000);
     }
 }

@@ -134,7 +134,7 @@ public:
      *    = 8 / 2048
      *    = 0.00390625
      */
-    static constexpr float SCALE = 0.00390625f;
+    static constexpr double SCALE = 0.00390625;
 
     /**
      * The BW_RATE address.
