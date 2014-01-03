@@ -46,7 +46,10 @@ class dashee::test::Hardware::AccelerometerADXL345
 
     // Accelerometer normal operation tests
     CPPUNIT_TEST(testSetAndGetRange);
+    CPPUNIT_TEST(testSetAndGetScaleType);
     CPPUNIT_TEST(testSetAndGetBandwidth);
+    
+    CPPUNIT_TEST(testReadAndUpdateScaled);
 
     // Test exceptions
     CPPUNIT_TEST_EXCEPTION(
@@ -78,9 +81,12 @@ protected:
     virtual void testConstructI2C();
 
     virtual void testSetAndGetRange();
+    virtual void testSetAndGetScaleType();
     virtual void testSetAndGetBandwidth();
 
+    // Read values from the sensor
     virtual void testReadAndUpdate();
+    virtual void testReadAndUpdateScaled();
 
     // Exceptions
     virtual void testInvalidI2C();

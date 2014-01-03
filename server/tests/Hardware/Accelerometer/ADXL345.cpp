@@ -18,7 +18,7 @@ void AccelerometerADXL345::testConstructDefault()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Point<float>(0.0f,0.0f,0.0f)
+	    == dashee::Point<double>(0.0f,0.0f,0.0f)
 	);
 }
 
@@ -66,6 +66,42 @@ void AccelerometerADXL345::testSetAndGetRange()
     
     this->accelerometer->setRange(16);
     CPPUNIT_ASSERT(this->accelerometer->getRange() == 16);
+}
+
+/**
+ * Test to see setting and getting the scale factor value. This does not test
+ * the actual scaling.
+ */
+void AccelerometerADXL345::testSetAndGetScaleType()
+{
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
+
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_MS2
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_MS2
+	);
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
 }
 
 /**
@@ -213,8 +249,12 @@ void AccelerometerADXL345::testSetAndGetBandwidth()
  * Given our initial `g` state is `[0,0,0]` post update we should at least
  * get Z coordinate to be approximately 9.8 so we can safely assume that after
  * the first update of our accelerometer we no longer are `[0,0,0]` but 
- * somewhere approximately `[0,0,9.8]`. This is of course assuming that we are 
+ * somewhere approximately `[0,0,1.0]`. This is of course assuming that we are 
  * not accelerating in the X or Y.
+ *
+ * Another guess we can take in the test bed is to rely on the sensor level so 
+ * the Z axis is registering atleast `1g`, and so we can tests for approximation
+ * of Z axis where `0.5 >= Z axis < 1.5`. Change this as you may,
  *
  * I am not sure we can go further than the above simple testing otherwise 
  * unless ofcourse we can simulate the exact forces applied to our sensor.
@@ -228,16 +268,101 @@ void AccelerometerADXL345::testReadAndUpdate()
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    != dashee::Point<float>(0.0f,0.0f,0.0f)
+	    != dashee::Point<double>(0.0,0.0,0.0)
 	);
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    != dashee::Point<float>(0.0f,0.0f,0.0f)
+	    != dashee::Point<double>(0.0,0.0,0.0)
 	);
 
-    //dashee::Point<float> gVector = this->accelerometer->read();
-    //CPPUNIT_ASSERT(gVector->getZ() > 8.5 && gVector->getZ() < 9.5);
+    // We are on earth so lets assume we are experiencing approximately 1g 
+    // pointing down, and pretty stable in X, and Y plane, therefore we can 
+    // test for approximate range values. The test here might change according
+    // to the sensor, as different sensors are calibrated differently.
+    //
+    // Another thing to make sure is to run it a few times before confirming the
+    // test has passed.
+    //
+    // The values here are represented as values that came out of the sensor
+    for (size_t x = 0; x < 500; ++x)
+    {
+	dashee::Point<double> gVector = this->accelerometer->read();
+	CPPUNIT_ASSERT(gVector.getX() > 4.0 && gVector.getX() < 12.0);
+	CPPUNIT_ASSERT(gVector.getY() > -5.0 && gVector.getY() < 5.0);
+	CPPUNIT_ASSERT(gVector.getZ() > 230.0 && gVector.getZ() < 245.0);
+	dashee::sleep(1000);
+    }
+}
+
+/**
+ * Test to ensure that our scaling is good.
+ */
+void AccelerometerADXL345::testReadAndUpdateScaled()
+{
+    size_t iterateTimes = 100;
+    
+    this->accelerometer->setBandwidthRate(
+	    dashee::Hardware::AccelerometerADXL345::BW_800
+	);
+
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+
+    for (size_t x = 0; x < iterateTimes; ++x)
+    {
+	this->accelerometer->update();
+	dashee::Point<double> gVector = this->accelerometer->read();
+
+	/*
+	// Good for debugging
+	dashee::Log::info(
+		1, 
+		"Val %f, %f, %f", 
+		gVector.getX(), 
+		gVector.getY(), 
+		gVector.getZ()
+	    );
+	*/
+
+	CPPUNIT_ASSERT(gVector.getX() > -0.1);
+	CPPUNIT_ASSERT(gVector.getX() < 0.1);
+	CPPUNIT_ASSERT(gVector.getY() > -0.1);
+	CPPUNIT_ASSERT(gVector.getY() < 0.1);
+	CPPUNIT_ASSERT(gVector.getZ() > 0.85);
+	CPPUNIT_ASSERT(gVector.getZ() < 1.15);
+	dashee::sleep(1000);
+    }
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_MS2
+	);
+
+    for (size_t x = 0; x < iterateTimes; ++x)
+    {
+	this->accelerometer->update();
+	dashee::Point<double> gVector = this->accelerometer->read();
+
+	/*
+	// Good for debugging
+	dashee::Log::info(
+		1, 
+		"Val %f, %f, %f", 
+		gVector.getX(), 
+		gVector.getY(), 
+		gVector.getZ()
+	    );
+	*/
+
+	CPPUNIT_ASSERT(gVector.getX() > 0.0);
+	CPPUNIT_ASSERT(gVector.getX() < 0.5);
+	CPPUNIT_ASSERT(gVector.getY() > -0.3);
+	CPPUNIT_ASSERT(gVector.getY() < 0.3);
+	CPPUNIT_ASSERT(gVector.getZ() > 8.5);
+	CPPUNIT_ASSERT(gVector.getZ() < 10.0);
+	dashee::sleep(1000);
+    }
 }
 
 /**

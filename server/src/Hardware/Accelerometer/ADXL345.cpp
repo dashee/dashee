@@ -2,7 +2,11 @@
 
 using namespace dashee::Hardware;
 
-//const static float AccelerometerADXL345::SCALE = 0.00390625f;
+// Initialize our constants
+const double AccelerometerADXL345::SCALE = 0.00390625;
+const double AccelerometerADXL345::GRAVITY = 9.80665;
+const double AccelerometerADXL345::MS2SCALE 
+    = AccelerometerADXL345::SCALE * AccelerometerADXL345::GRAVITY;
 
 /**
  * Create a new instance of a our Accelerometer.
@@ -42,9 +46,11 @@ AccelerometerADXL345::AccelerometerADXL345(dashee::I2C * i2c)
  */
 void AccelerometerADXL345::init()
 {
+    this->dataBuffer = std::vector<unsigned char>(6, 0);
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
     this->setBandwidthRate(BW_200);
+    this->setScaleType(SCALE_RAW);
 }
 
 /**
@@ -128,6 +134,43 @@ unsigned short int AccelerometerADXL345::getRange() const
 }
 
 /**
+ * Set the scale factor. The value here is used to scale the raw values
+ * from the server
+ *
+ * @param scale The scale factor to set
+ *
+ * @throws ExceptionAccelerometerADXL345 If the ScaleFactor is out of range
+ */
+void AccelerometerADXL345::setScaleType(const ScaleType scale)
+{
+    switch (scale)
+    {
+	// Set the new rate value, only in the 3:0 bit of the byte where the 7:4
+	// bits are carried from their last position.
+	case SCALE_RAW:
+	case SCALE_G:
+	case SCALE_MS2:
+	    this->scale = scale;
+	    break;
+	default:
+	    throw ExceptionAccelerometerADXL345(
+		    "Invalid ScaleFactor when trying to set scale"
+		);
+	    break;
+    }
+}
+
+/**
+ * Get the value of the current scale.
+ *
+ * @return the current scale value
+ */
+AccelerometerADXL345::ScaleType AccelerometerADXL345::getScaleType() const
+{
+    return this->scale;
+}
+
+/**
  * Set the bandwidth range of the BW_RATE register
  *
  * @param rate the Rate to set to
@@ -199,10 +242,42 @@ AccelerometerADXL345::BandwidthRate AccelerometerADXL345::getBandwidthRate()
 
 /**
  * Update the g values by reading from the chip and storing locally.
+ *
+ * The values of g are scaled depending on the current @scale value
  */
 void AccelerometerADXL345::update()
 {
-    this->g = dashee::Point<float>(0.0f, 0.0f, 0.1f);
+    // Read 6 bytes from the data register, starting from DATAX0 and all the way
+    // to DATAZ1
+    this->i2c->read(REGISTER_DATAX0, &this->dataBuffer, 6);
+ 
+    // The values are in 16 bit two's compliment so make cast them into a 16 
+    // bit signed int
+    int16_t valX = dataBuffer[0] | (dataBuffer[1] << 8);
+    int16_t valY = dataBuffer[2] | (dataBuffer[3] << 8);
+    int16_t valZ = dataBuffer[4] | (dataBuffer[5] << 8);
+
+    // Convert the values into float
+    this->g = dashee::Point<double>(
+	    static_cast<double>(valX), 
+	    static_cast<double>(valY), 
+	    static_cast<double>(valZ)
+	);
+
+    // Scale our values according to the current scale type
+    switch (scale)
+    {
+	case SCALE_G:
+	    this->g *= AccelerometerADXL345::SCALE;
+	    break;
+	case SCALE_MS2:
+	    this->g *= AccelerometerADXL345::MS2SCALE;
+	    break;
+	// Nothing to do
+	case SCALE_RAW:
+	default:
+	    break;
+    }
 }
 
 /**
@@ -213,4 +288,3 @@ AccelerometerADXL345::~AccelerometerADXL345()
     if (isI2CAllocatedInternally)
 	delete this->i2c;
 }
-

@@ -50,6 +50,12 @@ class dashee::Hardware::AccelerometerADXL345
 private:
 
     /**
+     * The buffer used by update. Easier to initialize it once, rather than 
+     * initialize and resize it every time update is called.
+     */
+    std::vector<unsigned char> dataBuffer;
+
+    /**
      * Variable set to true by our AccelerometerADXL345 which takes in an I2C 
      * device.
      *
@@ -103,6 +109,28 @@ public:
     };
 
     /**
+     * This enum represents how our g values are scaled after update. It is 
+     * helpful to allow a use to read values in RAW(as they are in the senor), 
+     * G(Number of G's on the sensor) or MS2 (short for meters per second 
+     * squared). The scale can be represented as:
+     *
+     *  - RAW - this->g * 1.0
+     *  - G = this->g * SCALE
+     *  - MS2 = this->g * SCALE * GRAVITY
+     */
+    enum ScaleType
+    {
+	SCALE_RAW,
+	SCALE_G,
+	SCALE_MS2
+    };
+
+    /**
+     * The scale type used currently.
+     */
+    ScaleType scale;
+
+    /**
      * The scale value used to convert register values into `g` value.
      *
      * The accelerometer has a constant scale which is used on the raw value
@@ -128,7 +156,18 @@ public:
      *    = 8 / 2048
      *    = 0.00390625
      */
-    static constexpr float SCALE = 0.00390625f;
+    static const double SCALE;
+
+    /**
+     * The gravitational constant.
+     */
+    static const double GRAVITY;
+
+    /**
+     * The constant use to convert G into m/s^2 value. The number here is 
+     * derived from SCALE * GRAVITY
+     */
+    static const double MS2SCALE;
 
     /**
      * The BW_RATE address.
@@ -140,14 +179,29 @@ public:
      */
     const static unsigned char REGISTER_DATA_FORMAT = 0x31;
 
+    /**
+     * The DATA values
+     */
+    const static unsigned char REGISTER_DATAX0 = 0x32;
+    const static unsigned char REGISTER_DATAX1 = 0x33;
+    const static unsigned char REGISTER_DATAY0 = 0x34;
+    const static unsigned char REGISTER_DATAY1 = 0x35;
+    const static unsigned char REGISTER_DATAZ0 = 0x36;
+    const static unsigned char REGISTER_DATAZ1 = 0x37;
+
     // Construct
     AccelerometerADXL345();
     AccelerometerADXL345(dashee::I2C * i2c);
 
-    // Get and set Range
+    // Set and Get Range
     void setRange(const unsigned short int);
     unsigned short int getRange() const;
 
+    // Set and Get Scale Factor
+    void setScaleType(const ScaleType scale);
+    ScaleType getScaleType() const;
+
+    // Set and Get Bandwidth
     void setBandwidthRate(const BandwidthRate rate);
     BandwidthRate getBandwidthRate() const;
 

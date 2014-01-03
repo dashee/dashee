@@ -86,9 +86,6 @@ void * threadReadFromServer(void * s)
                 while (buffer.size() > DASHEE_SERVOD_THREADS_BUFFERSIZE) 
                     buffer.pop();
             }
-
-            //dashee::Log::info(3, "Server Step");
-            //dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SERVER);
         }
     }
     catch (dashee::Exception ex)
@@ -121,7 +118,7 @@ void * threadUpdateSensors(void * sensor)
     {
         while(threadKeepGoing())
         {
-            dashee::Log::info(3, "Sensor Step");
+            //dashee::Log::info(3, "Sensor Step");
             dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SENSOR);
         }
     }
