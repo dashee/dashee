@@ -156,7 +156,18 @@ public:
      *    = 8 / 2048
      *    = 0.00390625
      */
-    static constexpr double SCALE = 0.00390625;
+    static const double SCALE;
+
+    /**
+     * The gravitational constant.
+     */
+    static const double GRAVITY;
+
+    /**
+     * The constant use to convert G into m/s^2 value. The number here is 
+     * derived from SCALE * GRAVITY
+     */
+    static const double MS2SCALE;
 
     /**
      * The BW_RATE address.

@@ -9,6 +9,7 @@
 int main()
 {
     dashee::Hardware::AccelerometerADXL345 a;
+    a.setScaleType(dashee::Hardware::AccelerometerADXL345::SCALE_G);
 
     while (true)
     {

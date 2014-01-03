@@ -72,7 +72,9 @@ public:
 
     Point<Coordinate> operator+(const Point<Coordinate> & rhs);
     Point<Coordinate> operator-(const Point<Coordinate> & rhs);
+
     Point<Coordinate> operator*(const Coordinate & rhs);
+    Point<Coordinate>& operator*=(const Coordinate & rhs);
 
     virtual ~Point();
 };

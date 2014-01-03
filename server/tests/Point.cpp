@@ -156,6 +156,9 @@ void Point::testOperatorMultiply()
     dashee::Point<float> p1(0.0f, 1.0f, 2.0f);
     CPPUNIT_ASSERT((p1 * 0.5f) == dashee::Point<float>(0.0f, 0.5f, 1.0f));
     CPPUNIT_ASSERT((p1 * 2.0f) == dashee::Point<float>(0.0f, 2.0f, 4.0f));
+
+    p1 *= 0.5f;
+    CPPUNIT_ASSERT(p1 == dashee::Point<float>(0.0f, 0.5f, 1.0f));
 }
 
 /**

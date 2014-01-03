@@ -174,7 +174,7 @@ dashee::Point<Coordinate> dashee::Point<Coordinate>::operator-(
  *
  * @param rhs The value to multiply all coordinates by
  *
- * @returns Point<Coordinate> The new value
+ * @returns The new value as a Point<Coordinate>
  */
 template <class Coordinate>
 dashee::Point<Coordinate> dashee::Point<Coordinate>::operator*(
@@ -186,6 +186,25 @@ dashee::Point<Coordinate> dashee::Point<Coordinate>::operator*(
 	    this->getY() * rhs,
 	    this->getZ() * rhs
 	);
+}
+
+/**
+ * Multiply the value of Coordinate to all the coordinates of the point.
+ *
+ * @param rhs The value to multiply all coordinates by
+ *
+ * @returns itself as the changed value
+ */
+template <class Coordinate>
+dashee::Point<Coordinate>& dashee::Point<Coordinate>::operator*=(
+	const Coordinate &rhs
+    )
+{
+    this->setX(this->getX() * rhs);
+    this->setY(this->getY() * rhs);
+    this->setZ(this->getZ() * rhs);
+
+    return *this;
 }
 
 /**
