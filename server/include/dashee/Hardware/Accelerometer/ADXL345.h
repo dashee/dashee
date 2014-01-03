@@ -109,6 +109,28 @@ public:
     };
 
     /**
+     * This enum represents how our g values are scaled after update. It is 
+     * helpful to allow a use to read values in RAW(as they are in the senor), 
+     * G(Number of G's on the sensor) or MS2 (short for meters per second 
+     * squared). The scale can be represented as:
+     *
+     *  - RAW - this->g * 1.0
+     *  - G = this->g * SCALE
+     *  - MS2 = this->g * SCALE * GRAVITY
+     */
+    enum ScaleType
+    {
+	SCALE_RAW,
+	SCALE_G,
+	SCALE_MS2
+    };
+
+    /**
+     * The scale type used currently.
+     */
+    ScaleType scale;
+
+    /**
      * The scale value used to convert register values into `g` value.
      *
      * The accelerometer has a constant scale which is used on the raw value
@@ -160,10 +182,15 @@ public:
     AccelerometerADXL345();
     AccelerometerADXL345(dashee::I2C * i2c);
 
-    // Get and set Range
+    // Set and Get Range
     void setRange(const unsigned short int);
     unsigned short int getRange() const;
 
+    // Set and Get Scale Factor
+    void setScaleType(const ScaleType scale);
+    ScaleType getScaleType() const;
+
+    // Set and Get Bandwidth
     void setBandwidthRate(const BandwidthRate rate);
     BandwidthRate getBandwidthRate() const;
 

@@ -46,6 +46,7 @@ void AccelerometerADXL345::init()
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
     this->setBandwidthRate(BW_200);
+    this->setScaleType(SCALE_RAW);
 }
 
 /**
@@ -126,6 +127,43 @@ unsigned short int AccelerometerADXL345::getRange() const
 
     // Should never happen
     return 0u;
+}
+
+/**
+ * Set the scale factor. The value here is used to scale the raw values
+ * from the server
+ *
+ * @param scale The scale factor to set
+ *
+ * @throws ExceptionAccelerometerADXL345 If the ScaleFactor is out of range
+ */
+void AccelerometerADXL345::setScaleType(const ScaleType scale)
+{
+    switch (scale)
+    {
+	// Set the new rate value, only in the 3:0 bit of the byte where the 7:4
+	// bits are carried from their last position.
+	case SCALE_RAW:
+	case SCALE_G:
+	case SCALE_MS2:
+	    this->scale = scale;
+	    break;
+	default:
+	    throw ExceptionAccelerometerADXL345(
+		    "Invalid ScaleFactor when trying to set scale"
+		);
+	    break;
+    }
+}
+
+/**
+ * Get the value of the current scale.
+ *
+ * @return the current scale value
+ */
+AccelerometerADXL345::ScaleType AccelerometerADXL345::getScaleType() const
+{
+    return this->scale;
 }
 
 /**

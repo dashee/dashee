@@ -69,6 +69,42 @@ void AccelerometerADXL345::testSetAndGetRange()
 }
 
 /**
+ * Test to see setting and getting the scale factor value. This does not test
+ * the actual scaling.
+ */
+void AccelerometerADXL345::testSetAndGetScaleType()
+{
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
+
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_MS2
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_MS2
+	);
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_RAW
+	);
+}
+
+/**
  * Test setting and getting the bandwidth, using enums instead of actual values
  */
 void AccelerometerADXL345::testSetAndGetBandwidth()
@@ -255,6 +291,27 @@ void AccelerometerADXL345::testReadAndUpdate()
 	CPPUNIT_ASSERT(gVector.getX() > 4.0 && gVector.getX() < 12.0);
 	CPPUNIT_ASSERT(gVector.getY() > -5.0 && gVector.getY() < 5.0);
 	CPPUNIT_ASSERT(gVector.getZ() > 235.0 && gVector.getZ() < 245.0);
+	dashee::sleep(1000);
+    }
+}
+
+/**
+ * Test to ensure that our scaling is good.
+ */
+void AccelerometerADXL345::testReadAndUpdateScaled()
+{
+    size_t iterateTimes = 100;
+
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_G
+	);
+
+    for (size_t x = 0; x < iterateTimes; ++x)
+    {
+	dashee::Point<double> gVector = this->accelerometer->read();
+	//CPPUNIT_ASSERT(gVector.getX() > 4.0 && gVector.getX() < 12.0);
+	//CPPUNIT_ASSERT(gVector.getY() > -5.0 && gVector.getY() < 5.0);
+	//CPPUNIT_ASSERT(gVector.getZ() > 235.0 && gVector.getZ() < 245.0);
 	dashee::sleep(1000);
     }
 }
