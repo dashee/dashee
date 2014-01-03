@@ -43,7 +43,8 @@ template <class Coordinate> dashee::Point<Coordinate>::Point(
  *
  * @param x the value to set
  */
-template <class Coordinate> void dashee::Point<Coordinate>::setX(const Coordinate x)
+template <class Coordinate> 
+void dashee::Point<Coordinate>::setX(const Coordinate x)
 {
     this->x = x;
 }
@@ -53,7 +54,8 @@ template <class Coordinate> void dashee::Point<Coordinate>::setX(const Coordinat
  *
  * @param y the value to set
  */
-template <class Coordinate> void dashee::Point<Coordinate>::setY(const Coordinate y)
+template <class Coordinate> 
+void dashee::Point<Coordinate>::setY(const Coordinate y)
 {
     this->y = y;
 }
@@ -63,7 +65,8 @@ template <class Coordinate> void dashee::Point<Coordinate>::setY(const Coordinat
  *
  * @param z the value to set
  */
-template <class Coordinate> void dashee::Point<Coordinate>::setZ(const Coordinate z)
+template <class Coordinate> 
+void dashee::Point<Coordinate>::setZ(const Coordinate z)
 {
     this->z = z;
 }
@@ -104,7 +107,9 @@ template <class Coordinate> Coordinate dashee::Point<Coordinate>::getZ() const
  * @param rhs The right hand side to test against
  */
 template <class Coordinate> 
-bool dashee::Point<Coordinate>::operator ==(const dashee::Point<Coordinate>& rhs) const
+bool dashee::Point<Coordinate>::operator ==(
+	const dashee::Point<Coordinate>& rhs
+    ) const
 {
     return 
 	this->x == rhs.getX() && 
@@ -118,7 +123,9 @@ bool dashee::Point<Coordinate>::operator ==(const dashee::Point<Coordinate>& rhs
  * @param rhs The right hand side to test against
  */
 template <class Coordinate> 
-bool dashee::Point<Coordinate>::operator !=(const dashee::Point<Coordinate>& rhs) const
+bool dashee::Point<Coordinate>::operator !=(
+	const dashee::Point<Coordinate>& rhs
+    ) const
 {
     return 
 	this->x != rhs.getX() ||
@@ -160,6 +167,25 @@ dashee::Point<Coordinate> dashee::Point<Coordinate>::operator-(
     result.setZ(this->getZ() - rhs.getZ());
 
     return result;
+}
+
+/**
+ * Multiply the value of Coordinate to all the coordinates of the point.
+ *
+ * @param rhs The value to multiply all coordinates by
+ *
+ * @returns Point<Coordinate> The new value
+ */
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::Point<Coordinate>::operator*(
+	const Coordinate &rhs
+    )
+{
+    return dashee::Point<Coordinate>(
+	    this->getX() * rhs,
+	    this->getY() * rhs,
+	    this->getZ() * rhs
+	);
 }
 
 /**

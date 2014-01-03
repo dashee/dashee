@@ -62,6 +62,7 @@ protected:
 
     void testOperatorEquality();
     void testOperatorPlusMinus();
+    void testOperatorMultiply();
 
 public:
     void setUp();

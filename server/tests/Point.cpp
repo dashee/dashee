@@ -148,6 +148,17 @@ void Point::testOperatorPlusMinus()
 }
 
 /**
+ * Test the plus and minus operator
+ */
+void Point::testOperatorMultiply()
+{
+    // Multiply p1 by 2.0 and 0.5
+    dashee::Point<float> p1(0.0f, 1.0f, 2.0f);
+    CPPUNIT_ASSERT((p1 * 0.5f) == dashee::Point<float>(0.0f, 0.5f, 1.0f));
+    CPPUNIT_ASSERT((p1 * 2.0f) == dashee::Point<float>(0.0f, 2.0f, 4.0f));
+}
+
+/**
  * Tear down our objects
  */
 void Point::tearDown()
