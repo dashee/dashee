@@ -104,21 +104,28 @@ void * threadReadFromServer(void * s)
 }
 
 /**
- * Read from sensor and update the sensor model, passed by the pointer
+ * Update our sensors every tick.
  *
- * @param sensor The pointer to the SensorIMU
+ * @param c The pointer to the container which holds points to the sensors
  *
  * @returns Nothing
  */
-void * threadUpdateSensors(void * sensor)
+void * threadUpdateSensors(void * c)
 {
-    dashee::Log::info(8, "Remove this for warnings when in use %p", sensor);
+    Container * container = static_cast<Container *>(c);
 
     try
     {
         while(threadKeepGoing())
         {
-            //dashee::Log::info(3, "Sensor Step");
+	    {
+		dashee::Threads::Scope scopeSensor(&lockSensor);
+
+		container->getHardwareAccelerometer()->update();
+		//container->getHardwareGyro()->update();
+		//container->getHardwareMagnometer()->update();
+	    }
+
             dashee::sleep(DASHEE_SERVOD_THREADS_TICK_SENSOR);
         }
     }
@@ -151,7 +158,6 @@ void * threadStepController(void * c)
 {
     Container * container = static_cast<Container *>(c);
     dashee::Vehicle * vehicle = container->getVehicle();
-    //dashee::Sensor * sensor = contianer->getSensor();
 
     try
     {

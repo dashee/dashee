@@ -49,8 +49,8 @@ void AccelerometerADXL345::init()
     this->dataBuffer = std::vector<unsigned char>(6, 0);
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
-    this->setBandwidthRate(BW_200);
-    this->setScaleType(SCALE_RAW);
+    this->setBandwidthRate(BW_800);
+    this->setScaleType(SCALE_G);
 }
 
 /**
