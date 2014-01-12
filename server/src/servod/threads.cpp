@@ -25,7 +25,7 @@ dashee::Buffer<unsigned char> buffer = dashee::Buffer<unsigned char>();
 /**
  * This is a simple thread that is run to initialize the controller
  *
- * @param controller The controller to set the locks to
+ * @param container The controller to set the locks to
  */
 void threadInitilizeContainer(Container * container)
 {

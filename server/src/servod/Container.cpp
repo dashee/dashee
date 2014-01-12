@@ -84,9 +84,9 @@ void Container::setLockVehicle(dashee::Threads::Lock * lockVehicle)
 }
 
 /**
- * Set the lockServoController variable
+ * Set the lockHardwareServoController variable
  *
- * @param lockServoController The pointer to the lock
+ * @param lockHardwareServoController The pointer to the lock
  *
  * @throws dashee::Exception if the pointer is NULL
  */
@@ -532,7 +532,7 @@ void Container::reloadConfiguration()
  * load our config from file, note the key 'config' must already be set, 
  * otherwise and exception is thrown
  *
- * @param dashee::ExceptionConfig();
+ * @throws dashee::ExceptionConfig when invalid load
  */ 
 void Container::reloadConfig()
 {

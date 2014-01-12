@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Exception/ServoController.h
+ * @file include/dashee/Hardware/Exception/ServoController.h
  *
  * @section LICENSE
  *

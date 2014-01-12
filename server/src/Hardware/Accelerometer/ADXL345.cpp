@@ -243,7 +243,7 @@ AccelerometerADXL345::BandwidthRate AccelerometerADXL345::getBandwidthRate()
 /**
  * Update the g values by reading from the chip and storing locally.
  *
- * The values of g are scaled depending on the current @scale value
+ * The values of g are scaled depending on the current scale value
  */
 void AccelerometerADXL345::update()
 {

@@ -1,5 +1,5 @@
 /**
- * @file src/servod/signal.h
+ * @file src/servod/signals.h
  * @author Shahmir Javaid
  *
  * @section LICENSE
@@ -8,8 +8,8 @@
  * mentioned at http://dashee.co.uk/license.  
  */
 
-#ifndef DASHEE_SERVOD_SIGNAL_H_
-#define DASHEE_SERVOD_SIGNAL_H_
+#ifndef DASHEE_SERVOD_SIGNALS_H_
+#define DASHEE_SERVOD_SIGNALS_H_
 
 #include "threads.h"
 #include <dashee/Log.h>
