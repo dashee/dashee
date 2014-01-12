@@ -31,11 +31,11 @@ protected:
     /**
      * List of all motors
      */
-    std::vector<Servo *> motors;
+    std::vector<dashee::Hardware::Servo *> motors;
 
     // Construct and pass through to parent
     VehicleMultirotor(
-            ServoController * servoController, 
+            dashee::Hardware::ServoController * servoController, 
             Config * conf = NULL
         );
 

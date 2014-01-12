@@ -29,7 +29,7 @@ protected:
 public:
     // Construct and pass through to parent
     VehicleMultirotorQuadX(
-            ServoController * servoController, 
+            dashee::Hardware::ServoController * servoController, 
             Config * conf = NULL
         );
 

@@ -22,8 +22,9 @@ TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
 TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testPoint"
-TEST_PI="testGPIO testI2C testUART testHardwareAccelerometerADXL345"
-TEST_DUMMY="testDummy"
+TEST_PI="testGPIO testI2C testHardwareServoControllerUART \
+    testHardwareServoUART testHardwareAccelerometerADXL345"
+TEST_DUMMY="testHardwareServoControllerDummy testHardwareServoDummy"
 
 ##
 # Prints the status in a colorful format

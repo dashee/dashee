@@ -12,21 +12,21 @@
 
 #include <getopt.h> /* for getopts_long() */
 
-#include <dashee/Log.h>
 #include <dashee/Config.h>
 #include <dashee/Exception.h>
+#include <dashee/Hardware/Accelerometer/ADXL345.h>
+#include <dashee/Hardware/Accelerometer/Dummy.h>
+#include <dashee/Hardware/ServoController/Dummy.h>
+#include <dashee/Hardware/ServoController/UART.h>
+#include <dashee/Hardware/ServoController/USB.h>
+#include <dashee/Log.h>
+#include <dashee/Server/UDP.h>
 #include <dashee/Threads/Exception.h>
 #include <dashee/Threads/Lock.h>
 #include <dashee/Threads/Scope.h>
-#include <dashee/Server/UDP.h>
-#include <dashee/ServoController/USB.h>
-#include <dashee/ServoController/UART.h>
-#include <dashee/ServoController/Dummy.h>
-#include <dashee/Vehicle.h>
 #include <dashee/Vehicle/Car.h>
+#include <dashee/Vehicle.h>
 #include <dashee/Vehicle/Multirotor/Quad/X.h>
-#include <dashee/Hardware/Accelerometer/ADXL345.h>
-#include <dashee/Hardware/Accelerometer/Dummy.h>
 
 /**
  * Contain pointers to objects, and encapsulating loading, reloading and 
@@ -58,9 +58,9 @@ protected:
      */
     dashee::Config * config;
     dashee::Server * server;
-    dashee::ServoController * servoController;
-    dashee::Vehicle * vehicle;
+    dashee::Hardware::ServoController * servoController;
     dashee::Hardware::Accelerometer * accelerometer;
+    dashee::Vehicle * vehicle;
 
     /**
      * Locks which help exclusively do operation so the outside
@@ -68,34 +68,34 @@ protected:
      */
     dashee::Threads::Lock * lockConfig;
     dashee::Threads::Lock * lockServer;
-    dashee::Threads::Lock * lockServoController;
-    dashee::Threads::Lock * lockVehicle;
+    dashee::Threads::Lock * lockHardwareServoController;
     dashee::Threads::Lock * lockHardwareAccelerometer;
+    dashee::Threads::Lock * lockVehicle;
     
     void loadConfig();
     void loadServer();
-    void loadServoController();
-    void loadVehicle();
+    void loadHardwareServoController();
     void loadHardwareAccelerometer();
+    void loadVehicle();
 
     // The functions used to reload the values
     void reloadConfig();
     void reloadServer();
-    void reloadServoController();
-    void reloadVehicle();
+    void reloadHardwareServoController();
     void reloadHardwareAccelerometer();
+    void reloadVehicle();
 
 public:
 
     // Public static constant variables used for defaults
-    static const char * SERVOCONTROLLER_DEVICE;
-    static const unsigned int SERVOCONTROLLER_TYPE;
-    static const unsigned int SERVOCONTROLLER_CHANNELS;
     static const char * CONFIG;
+    static const char * HARDWARE_ACCELEROMETER_TYPE;
+    static const char * HARDWARE_SERVOCONTROLLER_DEVICE;
+    static const char * VEHICLE_TYPE;
+    static const unsigned int HARDWARE_SERVOCONTROLLER_CHANNELS;
+    static const unsigned int HARDWARE_SERVOCONTROLLER_TYPE;
     static const unsigned int SERVER_PORT;
     static const unsigned int SERVER_TIMEOUT;
-    static const char * VEHICLE_TYPE;
-    static const char * HARDWARE_ACCELEROMETER_TYPE;
 
     // Construct
     Container(int argc, char ** argv);
@@ -103,8 +103,8 @@ public:
     // Set lock as
     void setLockConfig(dashee::Threads::Lock * lock);
     void setLockServer(dashee::Threads::Lock * lock);
-    void setLockServoController(dashee::Threads::Lock * lock);
     void setLockVehicle(dashee::Threads::Lock * lock);
+    void setLockHardwareServoController(dashee::Threads::Lock * lock);
     void setLockHardwareAccelerometer(dashee::Threads::Lock * lock);
 
     void setConfig(dashee::Config * config);
@@ -113,12 +113,14 @@ public:
     void setServer(dashee::Server * server);
     dashee::Server * getServer() const;
 
-    void setServoController(dashee::ServoController * servoController);
-    dashee::ServoController * getServoController() const;
-    
     void setVehicle(dashee::Vehicle * vehicle);
     dashee::Vehicle * getVehicle() const;
 
+    void setHardwareServoController(
+	    dashee::Hardware::ServoController * servoController
+	);
+    dashee::Hardware::ServoController * getHardwareServoController() const;
+    
     void setHardwareAccelerometer(
 	    dashee::Hardware::Accelerometer * accelerometer
 	);

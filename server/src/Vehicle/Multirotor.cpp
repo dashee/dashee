@@ -8,7 +8,7 @@ using namespace dashee;
  * Build the motors array, as multirotor
  */
 VehicleMultirotor::VehicleMultirotor(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
 	Config * config
     ) : Vehicle(servoController, config)
 {

@@ -1,21 +1,29 @@
 #include "threads.h"
 
-// Define our locks
+// Device locks
 dashee::Threads::LockReadWrite lockConfig = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockServer = dashee::Threads::LockReadWrite();
-dashee::Threads::LockReadWrite lockServoController 
+dashee::Threads::LockReadWrite lockHardwareServoController 
     = dashee::Threads::LockReadWrite();
-dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockVehicle = dashee::Threads::LockReadWrite();
+
+// Unique to this file locks
 dashee::Threads::LockMutex lockBuffer = dashee::Threads::LockMutex();
+
+// System Locks
 dashee::Threads::LockReadWrite lockEXIT = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockRELOAD = dashee::Threads::LockReadWrite();
+
+// Sensor Locks
+dashee::Threads::LockReadWrite lockHardwareAccelerometer
+    = dashee::Threads::LockReadWrite();
+dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 
 // Define our thread shared globals
 dashee::Buffer<unsigned char> buffer = dashee::Buffer<unsigned char>();
 
 /**
- * This is a simple thread that is run to initilize the controller
+ * This is a simple thread that is run to initialize the controller
  *
  * @param controller The controller to set the locks to
  */
@@ -30,8 +38,11 @@ void threadInitilizeContainer(Container * container)
     container->setLockServer(
             static_cast<dashee::Threads::Lock *>(&lockServer)
         );
-    container->setLockServoController(
-            static_cast<dashee::Threads::Lock *>(&lockServoController)
+    container->setLockHardwareServoController(
+            static_cast<dashee::Threads::Lock *>(&lockHardwareServoController)
+        );
+    container->setLockHardwareAccelerometer(
+            static_cast<dashee::Threads::Lock *>(&lockHardwareAccelerometer)
         );
     container->setLockVehicle(
             static_cast<dashee::Threads::Lock *>(&lockVehicle)
@@ -120,6 +131,9 @@ void * threadUpdateSensors(void * c)
         {
 	    {
 		dashee::Threads::Scope scopeSensor(&lockSensor);
+		dashee::Threads::Scope scopeHardwareAccelerometer(
+			&lockHardwareAccelerometer
+		    );
 
 		container->getHardwareAccelerometer()->update();
 		//container->getHardwareGyro()->update();
@@ -147,7 +161,7 @@ void * threadUpdateSensors(void * c)
 /**
  * This is our main loop which reads from servers, and sensors 
  * and updates the vehicle model. The controller itself holds all
- * the known pointer to different aspec of the systems and should
+ * the known pointer to different aspect of the systems and should
  * internally worry about locking different objects.
  *
  * @param c The pointer to the Controller
