@@ -32,7 +32,7 @@ public:
 
     // Construct and pass through to parent
     VehicleCar(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
         Config * conf = NULL
     );
 

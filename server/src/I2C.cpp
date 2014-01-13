@@ -30,6 +30,8 @@ I2C::I2C(const std::string filePath, const unsigned char slaveAddress)
  * Initialize function used by our constructors.
  *
  * Open a handle to the device
+ *
+ * @param dev The path of device to open
  * @param slaveAddress The address to set the slave device to
  * 
  * @throws ExceptionI2C If opening the device fails

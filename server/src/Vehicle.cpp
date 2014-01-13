@@ -11,7 +11,7 @@ using namespace dashee;
  * @param config The pointer to the configuration file
  */
 Vehicle::Vehicle(
-	ServoController * servoController, 
+	dashee::Hardware::ServoController * servoController, 
 	Config * config
     )
 {
@@ -46,10 +46,10 @@ Vehicle::Vehicle(
 /**
  * Set a control value.
  *
- * Helpfull to move the set function in one so set setYaw/setRoll/setPitch 
+ * Helpful to move the set function in one so set setYaw/setRoll/setPitch 
  * and setThrottle can be tied into one function.
  *
- * Note if the fallbackMode is enabled then we dont change the model
+ * Note if the fallbackMode is enabled then we don't change the model
  * values. Its a clever way of keeping the original values of the model
  * before fallback was enabled
  *
@@ -65,7 +65,9 @@ void Vehicle::setControl(
     )
 {
     if (target > 255)
-        throw ExceptionVehicle("Control value cannot be out the range of 0-255");
+        throw ExceptionVehicle(
+                "Control value cannot be out the range of 0-255"
+            );
 
     control = target;
 }
@@ -73,8 +75,8 @@ void Vehicle::setControl(
 /**
  * Set the control trim value.
  *
- * This is a helpfull function which allows to chanage the trim value
- * of major control surfaces, as thier validation logic is the same, we same
+ * This is a helpful function which allows to change the trim value
+ * of major control surfaces, as their validation logic is the same, we same
  * some space by combining it into one function
  * 
  * @param controlTrim The control surface who's trim to set
@@ -146,7 +148,7 @@ void Vehicle::setPitch(unsigned short int value)
  *
  * @returns the pitch value
  */ 
-unsigned short int Vehicle::getPitch(bool notrim)
+unsigned short int Vehicle::getPitch(bool notrim) const
 {
     if (notrim)
         return this->pitch;
@@ -175,7 +177,7 @@ void Vehicle::setRoll(unsigned short int value)
  *
  * @returns the roll value
  */ 
-unsigned short int Vehicle::getRoll(bool notrim)
+unsigned short int Vehicle::getRoll(bool notrim) const
 {
     if (notrim)
         return this->roll;
@@ -204,7 +206,7 @@ void Vehicle::setYaw(unsigned short int value)
  *
  * @returns the yaw value
  */ 
-unsigned short int Vehicle::getYaw(bool notrim)
+unsigned short int Vehicle::getYaw(bool notrim) const
 {
     if (notrim)
         return this->yaw;
@@ -233,7 +235,7 @@ void Vehicle::setThrottle(unsigned short int value)
  *
  * @returns the throttle value
  */ 
-unsigned short int Vehicle::getThrottle(bool notrim)
+unsigned short int Vehicle::getThrottle(bool notrim) const
 {
     if (notrim)
         return this->throttle;
@@ -260,7 +262,7 @@ void Vehicle::setPitchTrim(signed short int pitchTrim)
  *
  * @returns the pitch trim
  */
-signed short int Vehicle::getPitchTrim()
+signed short int Vehicle::getPitchTrim() const
 {
     return this->pitchTrim;
 }   
@@ -280,7 +282,7 @@ void Vehicle::setRollTrim(signed short int rollTrim)
  *
  * @returns the roll trim
  */
-signed short int Vehicle::getRollTrim()
+signed short int Vehicle::getRollTrim() const
 {
     return this->rollTrim;
 }   
@@ -300,7 +302,7 @@ void Vehicle::setYawTrim(signed short int yawTrim)
  *
  * @returns the yaw trim
  */
-signed short int Vehicle::getYawTrim()
+signed short int Vehicle::getYawTrim() const
 {
     return this->yawTrim;
 }   
@@ -320,7 +322,7 @@ void Vehicle::setThrottleTrim(signed short int throttleTrim)
  *
  * @returns the throttle trim
  */
-signed short int Vehicle::getThrottleTrim()
+signed short int Vehicle::getThrottleTrim() const
 {
     return this->throttleTrim;
 }   
@@ -340,7 +342,7 @@ void Vehicle::setPitchFallback(unsigned short int value)
  *
  * @returns the pitch fallback
  */
-unsigned short int Vehicle::getPitchFallback()
+unsigned short int Vehicle::getPitchFallback() const
 {
     return this->pitchFallback;
 }   
@@ -360,7 +362,7 @@ void Vehicle::setRollFallback(unsigned short int value)
  *
  * @returns the roll fallback
  */
-unsigned short int Vehicle::getRollFallback()
+unsigned short int Vehicle::getRollFallback() const
 {
     return this->rollFallback;
 }   
@@ -380,7 +382,7 @@ void Vehicle::setYawFallback(unsigned short int value)
  *
  * @returns the Yaw fallback
  */
-unsigned short int Vehicle::getYawFallback()
+unsigned short int Vehicle::getYawFallback() const
 {
     return this->yawFallback;
 }   
@@ -400,7 +402,7 @@ void Vehicle::setThrottleFallback(unsigned short int value)
  *
  * @returns the Throttle fallback
  */
-unsigned short int Vehicle::getThrottleFallback()
+unsigned short int Vehicle::getThrottleFallback() const
 {
     return this->throttleFallback;
 }   
@@ -410,7 +412,9 @@ unsigned short int Vehicle::getThrottleFallback()
  *
  * @param servoController The pointer to the servoController
  */
-void Vehicle::setServoController(ServoController * servoController)
+void Vehicle::setServoController(
+	dashee::Hardware::ServoController * servoController
+    )
 {
     if (servoController == NULL)
         throw ExceptionVehicle("ServoController cannot be null");
@@ -422,7 +426,7 @@ void Vehicle::setServoController(ServoController * servoController)
  *
  * @returns Pointer to the servoController object
  */
-ServoController * Vehicle::getServoController()
+dashee::Hardware::ServoController * Vehicle::getServoController() const
 {
     return this->servoController;
 }
@@ -433,7 +437,7 @@ ServoController * Vehicle::getServoController()
  * @retval TRUE the server is in fallback mode
  * @retval FALSE the server is not in fallback mode
  */ 
-bool Vehicle::isFallback()
+bool Vehicle::isFallback() const
 {
     return this->fallbackMode;
 }
@@ -485,5 +489,4 @@ void Vehicle::revert()
  */
 Vehicle::~Vehicle()
 {
-
 }

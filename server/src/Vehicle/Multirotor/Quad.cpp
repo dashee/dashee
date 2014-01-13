@@ -6,7 +6,7 @@ using namespace dashee;
  * Construct and pass to its parent
  */
 VehicleMultirotorQuad::VehicleMultirotorQuad(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
 	Config * config
     ) : VehicleMultirotor(servoController, config)
 {

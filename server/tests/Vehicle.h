@@ -12,7 +12,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dashee/Vehicle.h>
-#include <dashee/ServoController.h>
+#include <dashee/Hardware/ServoController.h>
 #include <dashee/Server/UDP.h>
 
 /**
@@ -156,7 +156,7 @@ public:
      */
     static unsigned int VEHICLE_TIMEOUT;
 
-    static dashee::ServoController * servoController;
+    static dashee::Hardware::ServoController * servoController;
 
     // Let the derived class deal with setting up the variables
     virtual void setUp();

@@ -49,8 +49,8 @@ void AccelerometerADXL345::init()
     this->dataBuffer = std::vector<unsigned char>(6, 0);
     this->i2c->setSlaveAddress(0x53);
     this->setRange(2);
-    this->setBandwidthRate(BW_200);
-    this->setScaleType(SCALE_RAW);
+    this->setBandwidthRate(BW_800);
+    this->setScaleType(SCALE_G);
 }
 
 /**
@@ -243,7 +243,7 @@ AccelerometerADXL345::BandwidthRate AccelerometerADXL345::getBandwidthRate()
 /**
  * Update the g values by reading from the chip and storing locally.
  *
- * The values of g are scaled depending on the current @scale value
+ * The values of g are scaled depending on the current scale value
  */
 void AccelerometerADXL345::update()
 {

@@ -1,24 +1,41 @@
 #include "Container.h"
 
+// Initialize our constants for CONFIG
+const char * Container::CONFIG = "./etc/dashee/servod.conf";
+
+// Initialize our constants for SERVER
+const unsigned int Container::SERVER_PORT = 2047u;
+const unsigned int Container::SERVER_TIMEOUT = 2u;
+
+// Initialize our constants for VEHICLE
+const char * Container::VEHICLE_TYPE = "Car";
+
+// Initialize our constants for HARDWARE_SERVOCONTROLLER
+const char * Container::HARDWARE_SERVOCONTROLLER_DEVICE = "/dev/ttyAMA0";
+const unsigned int Container::HARDWARE_SERVOCONTROLLER_TYPE = 1u;
+const unsigned int Container::HARDWARE_SERVOCONTROLLER_CHANNELS = 12u;
+
+// Initialize our Accelerometer default values
+const char * Container::HARDWARE_ACCELEROMETER_TYPE = "ADXL345";
+
 /**
  * Construct our object
  */
-Container::Container(int argc, char ** argv)
+Container::Container(int argc, char ** argv) 
+    : argc(argc), 
+      argv(argv), 
+      config(NULL), 
+      lockConfig(NULL), 
+      lockServer(NULL),
+      lockHardwareServoController(NULL), 
+      lockHardwareAccelerometer(NULL),
+      lockVehicle(NULL)
 {
-    this->argc = argc;
-    this->argv = argv;
-
-    this->config = NULL;
-
     this->loadConfig();
     this->loadServer();
-    this->loadServoController();
+    this->loadHardwareServoController();
+    this->loadHardwareAccelerometer();
     this->loadVehicle();
-
-    this->lockConfig = NULL;
-    this->lockServer = NULL;
-    this->lockServoController = NULL;
-    this->lockVehicle = NULL;
 }
 
 /**
@@ -52,23 +69,6 @@ void Container::setLockServer(dashee::Threads::Lock * lockServer)
 }
 
 /**
- * Set the lockServoController variable
- *
- * @param lockServoController The pointer to the lock
- *
- * @throws dashee::Exception if the pointer is NULL
- */
-void Container::setLockServoController(
-        dashee::Threads::Lock * lockServoController
-    )
-{
-    if (lockServoController == NULL)
-        throw dashee::Exception("Lock param cannot be NULL");
-
-    this->lockServoController = lockServoController;
-}
-
-/**
  * Set the lockVehicle variable
  *
  * @param lockVehicle The pointer to the lock
@@ -81,6 +81,43 @@ void Container::setLockVehicle(dashee::Threads::Lock * lockVehicle)
         throw dashee::Exception("Lock param cannot be NULL");
 
     this->lockVehicle = lockVehicle;
+}
+
+/**
+ * Set the lockHardwareServoController variable
+ *
+ * @param lockHardwareServoController The pointer to the lock
+ *
+ * @throws dashee::Exception if the pointer is NULL
+ */
+void Container::setLockHardwareServoController(
+        dashee::Threads::Lock * lockHardwareServoController
+    )
+{
+    if (lockHardwareServoController == NULL)
+        throw dashee::Exception("Lock param cannot be NULL");
+
+    this->lockHardwareServoController = lockHardwareServoController;
+}
+
+/**
+ * Set the lockHardwareAccelerometer variable
+ *
+ * @param lockHardwareAccelerometer The pointer to the lock
+ *
+ * @throws dashee::Exception if the pointer is NULL
+ */
+void Container::setLockHardwareAccelerometer(
+	dashee::Threads::Lock * lockHardwareAccelerometer
+    )
+{
+    if (lockHardwareAccelerometer == NULL)
+        throw dashee::Exception(
+		"Lock param cannot be NULL, when setting Hardware "
+		"Accelerometer Lock"
+	    );
+
+    this->lockHardwareAccelerometer = lockHardwareAccelerometer;
 }
 
 /**
@@ -101,7 +138,7 @@ void Container::setConfig(dashee::Config * config)
  *
  * @return the pointer to the config variable
  */
-dashee::Config * Container::getConfig()
+dashee::Config * Container::getConfig() const
 {
     return this->config;
 }
@@ -124,33 +161,9 @@ void Container::setServer(dashee::Server * server)
  *
  * @return the pointer to the server variable
  */
-dashee::Server * Container::getServer()
+dashee::Server * Container::getServer() const
 {
     return this->server;
-}
-
-/**
- * Set the pointer to the servoController variable
- *
- * @param servoController The pointer which points to the value of the 
- * servoController object
- */
-void Container::setServoController(dashee::ServoController * servoController)
-{
-    if (servoController == NULL)
-        throw new dashee::Exception("Cannot set servoController to NULL");
-
-    this->servoController = servoController;
-}
-
-/**
- * Get the pointer to the servoController variable
- *
- * @return the pointer to the servoController variable
- */
-dashee::ServoController * Container::getServoController()
-{
-    return this->servoController;
 }
 
 /**
@@ -171,9 +184,62 @@ void Container::setVehicle(dashee::Vehicle * vehicle)
  *
  * @return the pointer to the vehicle variable
  */
-dashee::Vehicle * Container::getVehicle()
+dashee::Vehicle * Container::getVehicle() const
 {
     return this->vehicle;
+}
+
+/**
+ * Set the pointer to the servoController variable
+ *
+ * @param servoController The pointer which points to the value of the 
+ * servoController object
+ */
+void Container::setHardwareServoController(
+	dashee::Hardware::ServoController * servoController
+    )
+{
+    if (servoController == NULL)
+        throw new dashee::Exception("Cannot set servoController to NULL");
+
+    this->servoController = servoController;
+}
+
+/**
+ * Get the pointer to the servoController variable
+ *
+ * @return the pointer to the servoController variable
+ */
+dashee::Hardware::ServoController * 
+    Container::getHardwareServoController() const
+{
+    return this->servoController;
+}
+
+/**
+ * Set the pointer to the Accelerometer variable
+ *
+ * @param accelerometer The pointer which points to the value of the 
+ *   accelerometer object
+ */
+void Container::setHardwareAccelerometer(
+	dashee::Hardware::Accelerometer * accelerometer
+    )
+{
+    if (accelerometer == NULL)
+        throw new dashee::Exception("Cannot set accelerometer to NULL");
+
+    this->accelerometer = accelerometer;
+}
+
+/**
+ * Get the pointer to the accelerometer variable
+ *
+ * @return the pointer to the accelerometer
+ */
+dashee::Hardware::Accelerometer * Container::getHardwareAccelerometer() const
+{
+    return this->accelerometer;
 }
 
 /**
@@ -220,7 +286,7 @@ void Container::loadConfig()
             case 0:
 
                 // Switch using the index int, Note that the number
-                // of the case x: is relevent to the long_options array above
+                // of the case x: is relevant to the long_options array above
                 switch (long_index)
                 {
                     // Type of Servo
@@ -310,63 +376,9 @@ void Container::loadServer()
 }
 
 /**
- * Load our ServoController
- *
- * @throws dashee::ExceptionServoController If error came back with a value
- * Or the servotype is invalid
- */
-void Container::loadServoController()
-{
-    const char * servoName = config->get("servo-name", SERVOCONTROLLER_DEVICE);
-    unsigned int servoChannels 
-        = config->getUInt("servo-channels", SERVOCONTROLLER_CHANNELS);
-
-    // Create a different servo-type depending on the variable
-    switch (config->getUInt("servo-type", SERVOCONTROLLER_TYPE))
-    {
-        case 1:
-            dashee::Log::info(1, "Loading UART device '%s'.", servoName);
-            this->servoController 
-                = new dashee::ServoControllerUART(servoName, servoChannels);
-            break;
-        case 2:
-            dashee::Log::info(1, "Loading USB device '%s'.", servoName);
-            this->servoController 
-                = new dashee::ServoControllerUSB(servoName, servoChannels);
-            break;
-        case 3:
-            dashee::Log::info(1, "Loading Dummy device '%s'.", servoName);
-            this->servoController = new dashee::ServoControllerDummy(
-                    servoName, 
-                    SERVOCONTROLLER_CHANNELS
-                );
-            break;
-        default:
-            throw dashee::ExceptionServoController(
-                    "Invalid servo-type '" + 
-                    dashee::itostr(
-                        this->config->getUInt(
-                            "servo-type", 
-                            SERVOCONTROLLER_TYPE
-                        )
-                        ) + 
-                    "'"
-                );
-            break;
-    }
-
-    // Print and clear errors
-    int error = this->servoController->getError();
-    if (error > 0)
-        throw dashee::ExceptionServoController(
-                "ServoController failed with eccode " + dashee::itostr(error)
-            );
-}
-
-/**
  * Load the vehicle
  *
- * @throws ExceptionVehicle incase something goes wrong
+ * @throws ExceptionVehicle in case something goes wrong
  */
 void Container::loadVehicle()
 {
@@ -400,10 +412,99 @@ void Container::loadVehicle()
 }
 
 /**
+ * Load our ServoController
+ *
+ * @throws dashee::ExceptionServoController If error came back with a value
+ * Or the servotype is invalid
+ */
+void Container::loadHardwareServoController()
+{
+    const char * servoName = config->get(
+	    "servo-name", 
+	    HARDWARE_SERVOCONTROLLER_DEVICE
+	);
+    unsigned int servoChannels 
+        = config->getUInt("servo-channels", HARDWARE_SERVOCONTROLLER_CHANNELS);
+
+    // Create a different servo-type depending on the variable
+    switch (config->getUInt("servo-type", HARDWARE_SERVOCONTROLLER_TYPE))
+    {
+        case 1:
+            dashee::Log::info(1, "Loading UART device '%s'.", servoName);
+            this->servoController 
+                = new dashee::Hardware::
+		    ServoControllerUART(servoName, servoChannels);
+            break;
+        case 2:
+            dashee::Log::info(1, "Loading USB device '%s'.", servoName);
+            this->servoController 
+                = new dashee::Hardware::
+		    ServoControllerUSB(servoName, servoChannels);
+            break;
+        case 3:
+            dashee::Log::info(1, "Loading Dummy device '%s'.", servoName);
+            this->servoController = new dashee::Hardware::ServoControllerDummy(
+                    servoName, 
+                    HARDWARE_SERVOCONTROLLER_CHANNELS
+                );
+            break;
+        default:
+            throw dashee::Hardware::ExceptionServoController(
+                    "Invalid servo-type '" + 
+                    dashee::itostr(
+                        this->config->getUInt(
+                            "servo-type", 
+                            HARDWARE_SERVOCONTROLLER_TYPE
+                        )
+                        ) + 
+                    "'"
+                );
+            break;
+    }
+
+    // Print and clear errors
+    int error = this->servoController->getError();
+    if (error > 0)
+        throw dashee::Hardware::ExceptionServoController(
+                "ServoController failed with eccode " + dashee::itostr(error)
+            );
+}
+
+/**
+ * Load our Accelerometer Hardware
+ */
+void Container::loadHardwareAccelerometer()
+{
+    const char * accelerometerType = config->get(
+	    "hardware-accelerometer-type", 
+	    HARDWARE_ACCELEROMETER_TYPE
+	);
+
+    if (strcmp(accelerometerType, "ADXL345") == 0)
+	this->accelerometer = new dashee::Hardware::AccelerometerADXL345();
+
+    else if (strcmp(accelerometerType, "Dummy") == 0)
+	this->accelerometer = new dashee::Hardware::AccelerometerDummy();
+
+    else
+        throw dashee::ExceptionVehicle(
+                "Invalid hardware-accelerometer-type '" + 
+                std::string(accelerometerType) + 
+                "'"
+            );
+    
+    dashee::Log::info(
+	    3, 
+	    "Hardware::Accelerometer set to '%s'.", 
+	    accelerometerType
+	);
+}
+
+/**
  * Reload configuration by re-reading the config file. Note the configuration 
  * is limited to only change a few variables during runtime.
  *
- * In some cases new variables are initilized and in others only reread 
+ * In some cases new variables are initialized and in others only reread 
  */
 void Container::reloadConfiguration()
 {
@@ -412,20 +513,26 @@ void Container::reloadConfiguration()
     
     dashee::Threads::Scope scopeConfig(this->lockConfig);
     dashee::Threads::Scope scopeServer(this->lockServer);
-    dashee::Threads::Scope scopeServoController(this->lockServoController);
     dashee::Threads::Scope scopeVehicle(this->lockVehicle);
+    dashee::Threads::Scope scopeHardwareServoController(
+	    this->lockHardwareServoController
+	);
+    dashee::Threads::Scope scopeHardwareAccelerometer(
+	    this->lockHardwareAccelerometer
+	);
     
     this->reloadConfig();
     this->reloadServer();
-    this->reloadServoController();
     this->reloadVehicle();
+    this->reloadHardwareServoController();
+    this->reloadHardwareAccelerometer();
 }
 
 /**
  * load our config from file, note the key 'config' must already be set, 
  * otherwise and exception is thrown
  *
- * @param dashee::ExceptionConfig();
+ * @throws dashee::ExceptionConfig when invalid load
  */ 
 void Container::reloadConfig()
 {
@@ -471,17 +578,6 @@ void Container::reloadServer()
             this->config->getUInt("server-timeoutM")
         );
 }
-
-/**
- * Call the load for servoController because the servocontroller needs to be
- * destroyed and reinitiated
- */ 
-void Container::reloadServoController()
-{
-    delete this->servoController;
-    this->loadServoController();
-}
-
 /**
  * Call the load function for vehicle, because the object can be destructed and
  * rebuilt again
@@ -490,6 +586,26 @@ void Container::reloadVehicle()
 {
     delete this->vehicle;
     this->loadVehicle();
+}
+
+
+/**
+ * Call the load for servoController because the servocontroller needs to be
+ * destroyed and re initiated
+ */ 
+void Container::reloadHardwareServoController()
+{
+    delete this->servoController;
+    this->loadHardwareServoController();
+}
+
+/**
+ * Reload the accelerometer by reading the configuration again
+ */
+void Container::reloadHardwareAccelerometer()
+{
+    delete this->accelerometer;
+    this->loadHardwareAccelerometer();
 }
 
 /**
@@ -501,19 +617,5 @@ Container::~Container()
     delete this->server;
     delete this->servoController;
     delete this->vehicle;
+    delete this->accelerometer;
 }
-
-// Initilize our constants for SERVOCONTROLLER
-const char * Container::SERVOCONTROLLER_DEVICE = "/dev/ttyAMA0";
-const unsigned int Container::SERVOCONTROLLER_TYPE = 1u;
-const unsigned int Container::SERVOCONTROLLER_CHANNELS = 12u;
-
-// Initilize our constants for CONFIG
-const char * Container::CONFIG = "./etc/dashee/servod.conf";
-
-// Initilize our constants for SERVER
-const unsigned int Container::SERVER_PORT = 2047u;
-const unsigned int Container::SERVER_TIMEOUT = 2u;
-
-// Initilize our constants for VEHICLE
-const char * Container::VEHICLE_TYPE = "Car";

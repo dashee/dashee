@@ -5,11 +5,11 @@ using namespace dashee;
 /**
  * Constructor
  *
- * @param servoController Object to control servoes
+ * @param servoController Object to control servos
  * @param config Load from configuration
  */ 
 VehicleCar::VehicleCar(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
 	Config * config
     ) : Vehicle(servoController, config)
 {

@@ -1,5 +1,5 @@
 /**
- * @file include/dashee/Coordinate.h
+ * @file include/dashee/I2C.h
  *
  * @section LICENSE
  *

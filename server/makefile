@@ -28,18 +28,18 @@ OBJECTSLIB = $(addprefix src/, common.o \
     Hardware/Accelerometer/ADXL345.o \
     Hardware/Accelerometer/Dummy.o \
     Hardware/Accelerometer.o \
+    Hardware/ServoController/Dummy.o \
+    Hardware/ServoController.o \
+    Hardware/ServoController/UART.o \
+    Hardware/ServoController/USB.o \
+    Hardware/Servo/Dummy.o \
+    Hardware/Servo.o \
+    Hardware/Servo/UART.o \
+    Hardware/Servo/USB.o \
     I2C.o \
     Log.o \
     Server.o \
     Server/UDP.o \
-    ServoController/Dummy.o \
-    ServoController.o \
-    ServoController/UART.o \
-    ServoController/USB.o \
-    Servo/Dummy.o \
-    Servo.o \
-    Servo/UART.o \
-    Servo/USB.o \
     Threads/Lock/Mutex.o \
     Threads/Lock/ReadWrite.o \
     Threads/Scope.o \
@@ -59,12 +59,12 @@ OBJECTSTEST = $(addprefix tests/, Buffer.o \
     Hardware/Accelerometer/ADXL345.o \
     Hardware/Accelerometer/Dummy.o \
     I2C.o \
-    ServoController/Dummy.o \
-    ServoController.o \
-    ServoController/UART.o \
-    Servo/Dummy.o \
-    Servo.o \
-    Servo/UART.o \
+    Hardware/ServoController/Dummy.o \
+    Hardware/ServoController.o \
+    Hardware/ServoController/UART.o \
+    Hardware/Servo/Dummy.o \
+    Hardware/Servo.o \
+    Hardware/Servo/UART.o \
     Threads.o \
     Vehicle/Car.o \
     Vehicle/Multirotor.o \
@@ -79,14 +79,16 @@ BINARIES = $(addprefix $(BINDIR)/, servo servod)
 TESTS = $(addprefix $(TESTDIR)/, testBuffer \
     testConfig \
     testPoint \
-    testDummy \
     testGPIO \
+    testHardwareServoControllerDummy \
+    testHardwareServoDummy \
+    testHardwareServoControllerUART \
+    testHardwareServoUART \
     testHardwareAccelerometerDummy \
     testHardwareAccelerometerADXL345 \
     testVehicleMultirotorQuadX \
     testI2C \
     testThreads \
-    testUART \
     testVehicleCar)
 
 # Certain global variables used for packaging and installing
