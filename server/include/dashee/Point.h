@@ -13,7 +13,29 @@
 
 namespace dashee
 {
-    template <class Coordinate> class Point;
+    template <class Coordinate> 
+        class Point;
+
+    template <class Coordinate> 
+        Point<Coordinate> operator+(
+            const Point<Coordinate> & lhs,
+            const Point<Coordinate> & rhs
+        );
+    template <class Coordinate> 
+        Point<Coordinate> operator-(
+            const Point<Coordinate> & lhs,
+            const Point<Coordinate> & rhs
+        );
+    template <class Coordinate> 
+        Point<Coordinate> operator*(
+            const Point<Coordinate> & lhs,
+            const Coordinate & rhs
+        );
+    template <class Coordinate> 
+        Point<Coordinate> operator*(
+            const Coordinate & lhs,
+            const Point<Coordinate> & rhs
+        );
 }
 
 /**
@@ -57,6 +79,7 @@ protected:
 public:
     // Construct and pass through to parent
     Point();
+    Point(const Coordinate value);
     Point(const Coordinate x, const Coordinate y, const Coordinate z);
 
     void setX(const Coordinate x);
@@ -70,11 +93,7 @@ public:
     bool operator==(const Point<Coordinate> & rhs) const;
     bool operator!=(const Point<Coordinate> & rhs) const;
 
-    Point<Coordinate> operator+(const Point<Coordinate> & rhs);
-    Point<Coordinate> operator-(const Point<Coordinate> & rhs);
-
-    Point<Coordinate> operator*(const Coordinate & rhs);
-    Point<Coordinate>& operator*=(const Coordinate & rhs);
+    Point<Coordinate> & operator*=(const Coordinate & rhs);
 
     virtual ~Point();
 };
