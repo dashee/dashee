@@ -73,6 +73,26 @@ void ServoController::testSetAndGetTargetInverted()
 }
 
 /**
+ * Check the [] operator functions
+ */
+void ServoController::testOperatorSquareBracket()
+{
+    for (
+            unsigned short int servos = 0; 
+            servos < this->servoController->size(); 
+            servos++
+        ) 
+    {
+        dashee::Hardware::ServoController & sc = *this->servoController;
+
+        CPPUNIT_ASSERT(
+                &sc.getServo(servos) == &sc[servos]
+            );
+    }
+
+}
+
+/**
  * Checks the size of the servo value.
  *
  * @throws ExceptionServoController

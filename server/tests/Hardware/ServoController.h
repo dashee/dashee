@@ -85,6 +85,9 @@ protected:
 
     // Test that the servo's are valid when inverted
     void testSetAndGetTargetInverted();
+
+    // Test that operator[] behaves accordingly
+    void testOperatorSquareBracket();
     
     // test the size function
     virtual void testSizeValue();

@@ -56,7 +56,7 @@ unsigned short int ServoController::getTarget(
         throw ExceptionOutOfBounds(
                 "Invalid Channel " + 
                 dashee::itostr(channel) + 
-                " when trying to set target."
+                " when trying to get target."
             );
 
     return this->servos[channel]->getTarget();
@@ -71,16 +71,35 @@ unsigned short int ServoController::getTarget(
  *
  * @returns The pointer to the servo
  */
-Servo * ServoController::getServo(const unsigned short int channel) const
+Servo & ServoController::getServo(const unsigned short int channel)
 {
     if (channel >= this->size())
         throw ExceptionOutOfBounds(
                 "Invalid Channel " + 
                 dashee::itostr(channel) + 
-                " when trying to get target."
+                " when trying to get servo."
             );
 
-    return this->servos[channel];
+    return *this->servos[channel];
+}
+
+/**
+ * Helpful [] operator to get a servo
+ *
+ * @param channel The channel number to get
+ *
+ * @return The Servo it self
+ */
+Servo & ServoController::operator[](const size_t channel)
+{
+    if (channel >= this->size())
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to get servo[]."
+            );
+
+    return *this->servos[channel];
 }
 
 /**
@@ -126,7 +145,7 @@ void ServoController::invert(const unsigned short int channel, const bool value)
  *
  * @return The number of servos in ServoController::servos
  */
-unsigned int ServoController::size() const
+size_t ServoController::size() const
 {
     return this->servos.size();
 }

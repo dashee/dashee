@@ -87,15 +87,16 @@ public:
     void invert(const unsigned short int channel, const bool value);
     
     // Return the servo represented by the channel
-    virtual Servo * getServo(
+    Servo & getServo(
             const unsigned short int channel
-        ) const;
+        );
+    Servo & operator[](const size_t channel);
     
     // Get the error
     virtual short int getError() const = 0;
     
     // Get the channel size
-    virtual unsigned int size() const;
+    size_t size() const;
     
     // Delete and empty our @servo's array
     virtual ~ServoController();
