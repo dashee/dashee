@@ -1,6 +1,5 @@
 #include <dashee/Server/UDP.h>
 #include <dashee/Hardware/ServoController/UART.h>
-#include <dashee/Hardware/ServoController/USB.h>
 #include <dashee/Hardware/ServoController/Dummy.h>
 #include "Vehicle/Multirotor/Quad/X.h"
 #include "dashee.h"

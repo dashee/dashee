@@ -29,7 +29,7 @@ ServoControllerUART::ServoControllerUART(
 
     dashee::Log::info(5, "Device open with handler: %d", this->fd);
     
-    // Initilize our UART
+    // Initialize our UART
     this->init();
     
     // Create a servo class for each, servo channel that exists
@@ -72,7 +72,7 @@ void ServoControllerUART::init()
     if (tcsetattr(this->fd, TCSANOW, &options) < 0)
         throw ExceptionServoController("Initilizing UART failed");
     
-    dashee::Log::info(5, "Initlized UART with BAUD 9600");
+    dashee::Log::info(5, "Initialized UART with BAUD 9600");
 }
 
 /** 

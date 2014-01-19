@@ -51,13 +51,22 @@ protected:
      * This function gets and stores the last value
      * that the target was set to
      */
-    unsigned short target;
+    unsigned short int target;
+
+    /**
+     * The value of inverted set by this servo
+     */ 
+    bool inverted;
     
     // Set the @dev
     explicit Servo(
             const unsigned short int channel,
             unsigned short int target = 0
         );
+
+    // The physical functions that can be overwritten
+    virtual void setPhysicalTarget(unsigned short int target) = 0;
+    virtual unsigned short int getPhysicalTarget() = 0;
     
 public:
 
@@ -66,11 +75,17 @@ public:
 
     // Set the target of a given channel, The cache does not query the actual 
     // servo if it is set to true
-    virtual void setTarget(unsigned short int target);
-    virtual unsigned short int getTarget(const bool fromcache = false) = 0;
+    void setTarget(unsigned short int target);
+    unsigned short int getTarget(const bool fromcache = false);
+
+    // Check weather or not the servo is inverted
+    bool isInverted() const;
+
+    // Insert the servo
+    void invert(const bool inverted);
     
     // Destroy all internals, before cleanup
-    virtual ~Servo(){};
+    virtual ~Servo();
 };
 
 #endif

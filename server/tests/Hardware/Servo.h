@@ -40,6 +40,7 @@ class dashee::test::Hardware::Servo : public CppUnit::TestFixture
     
     // Set and Gets
     CPPUNIT_TEST(testSetAndGetTarget);
+    CPPUNIT_TEST(testSetAndGetTargetInverted);
     
     // Exception
     CPPUNIT_TEST_EXCEPTION(
@@ -71,6 +72,7 @@ protected:
 
     // test setTarget and getTarget
     virtual void testSetAndGetTarget();
+    virtual void testSetAndGetTargetInverted();
 
     // Check invalid exception when target is set
     void testExceptionInvalidPositiveTarget();

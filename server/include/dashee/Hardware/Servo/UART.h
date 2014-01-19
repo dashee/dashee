@@ -43,14 +43,14 @@ protected:
      * we use this to actually read and write to the device
      */
     int * fd;
+
+    //Set the target of a given channel
+    void setPhysicalTarget(unsigned short int target);
+    unsigned short int getPhysicalTarget();
     
 public:
     //Open our Servo Device
     explicit ServoUART(int * fd, const unsigned short int channel);
-
-    //Set the target of a given channel
-    void setTarget(unsigned short int target);
-    unsigned short int getTarget(const bool fromcache = false);
     
     //Close the device
     ~ServoUART();

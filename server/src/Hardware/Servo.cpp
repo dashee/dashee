@@ -10,10 +10,9 @@ using namespace dashee::Hardware;
  * @param target The initial target to set the value
  */
 Servo::Servo(const unsigned short int channel, unsigned short target)
-    : SERVO_LOW(3968), SERVO_HIGH(8000)
+    : target(target), inverted(false), SERVO_LOW(3968), SERVO_HIGH(8000)
 {
     this->channel = channel;
-    this->setTarget(target);
 }
 
 /** 
@@ -32,5 +31,56 @@ void Servo::setTarget(unsigned short int target)
                 "' is invalid"
             );
 
+    if (inverted)
+        target = static_cast<unsigned short int>((target - 255) * -1);
+
+    this->setPhysicalTarget(target);
     this->target = target;
+}
+
+/**
+ * Get the target value
+ *
+ * @param fromcache To be fast a helpful fromcache value is set
+ *
+ * @returns the value of the servo
+ */
+unsigned short int Servo::getTarget(const bool fromcache)
+{
+    if (fromcache)
+        return this->target;
+
+    unsigned short int target = this->getPhysicalTarget();
+
+    if (inverted)
+        return static_cast<unsigned short int>((target - 255) * -1);
+
+    return target;
+}
+
+/**
+ * Returns indicating inverted status
+ *
+ * @returns the boolean value of inverted or not
+ */
+bool Servo::isInverted() const
+{
+    return inverted;
+}
+
+/**
+ * Set the inverted value.
+ *
+ * @param inverted the value to set
+ */
+void Servo::invert(const bool inverted)
+{
+    this->inverted = inverted;
+}
+
+/**
+ * Destruct the servo
+ */ 
+Servo::~Servo()
+{
 }

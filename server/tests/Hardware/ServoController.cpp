@@ -42,6 +42,37 @@ void ServoController::testSetAndGetTarget()
 }
 
 /**
+ * Test the values are correct when inverted
+ */
+void ServoController::testSetAndGetTargetInverted()
+{
+    unsigned int timeout = 15;
+    if (dynamic_cast<dashee::Hardware::ServoControllerUART *>
+	    (this->servoController) == NULL)
+        timeout = 0;
+
+    for (
+            unsigned short int servos = 0; 
+            servos < this->servoController->size(); 
+            servos++
+        ) 
+    {
+        CPPUNIT_ASSERT(this->servoController->isInverted(servos) == false);
+
+        this->servoController->invert(servos, true);
+        CPPUNIT_ASSERT(this->servoController->isInverted(servos));
+        this->servoController->setTarget(servos, 0);
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 0);
+        dashee::sleep(timeout);
+
+        this->servoController->invert(servos, false);
+        CPPUNIT_ASSERT(this->servoController->isInverted(servos) == false);
+        CPPUNIT_ASSERT(this->servoController->getTarget(servos) == 255);
+        dashee::sleep(timeout);
+    }
+}
+
+/**
  * Checks the size of the servo value.
  *
  * @throws ExceptionServoController

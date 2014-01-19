@@ -46,14 +46,6 @@ class dashee::Hardware::ServoController
 private:
 
 protected:
-
-    /** 
-     * List of Servo's.
-     *
-     * List of Uninitialized servos, as a vector. This vector is initialized
-     * in the derived classes,
-     */
-    std::vector<Servo *> servos;
         
     /**
      * The device filename.
@@ -65,6 +57,14 @@ protected:
      * unless the object is being created every time
      */
     const char * dev;
+
+    /** 
+     * List of Servo's.
+     *
+     * List of Uninitialized servos, as a vector. This vector is initialized
+     * in the derived classes,
+     */
+    std::vector<Servo *> servos;
     
     // Set the @dev
     explicit ServoController(const char *);
@@ -79,6 +79,12 @@ public:
     virtual unsigned short int getTarget(
             const unsigned short int channel
         ) const;
+
+    // Check weather or not the value is inverted
+    bool isInverted(const unsigned short int channel) const;
+
+    // Set the invert value
+    void invert(const unsigned short int channel, const bool value);
     
     // Return the servo represented by the channel
     virtual Servo * getServo(

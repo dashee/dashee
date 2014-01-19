@@ -11,7 +11,7 @@ void Servo::setUp()
 }
 
 /**
- * @throws ExceptionServoController because this function is abstract
+ * Test setting and getting the servo values
  */
 void Servo::testSetAndGetTarget()
 {
@@ -30,6 +30,32 @@ void Servo::testSetAndGetTarget()
 
         dashee::sleep(timeout);
     }
+}
+
+/**
+ * Test the set and get of the Servo Target value when changing inverted
+ */ 
+void Servo::testSetAndGetTargetInverted()
+{
+    if (this->servo == NULL)
+	CPPUNIT_FAIL("Servo is not defined in testSetAndGetTarget");
+        
+    unsigned int timeout = 15;
+    if (dynamic_cast<dashee::Hardware::ServoUART *>(this->servo) == NULL)
+        timeout = 0;
+
+    CPPUNIT_ASSERT(this->servo->isInverted() == false);
+
+    this->servo->invert(true);
+    CPPUNIT_ASSERT(this->servo->isInverted());
+    this->servo->setTarget(0);
+    CPPUNIT_ASSERT(this->servo->getTarget() == 0);
+    dashee::sleep(timeout);
+
+    this->servo->invert(false);
+    CPPUNIT_ASSERT(this->servo->isInverted() == false);
+    CPPUNIT_ASSERT(this->servo->getTarget() == 255);
+    dashee::sleep(timeout);
 }
 
 /**
