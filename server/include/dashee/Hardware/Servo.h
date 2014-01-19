@@ -59,10 +59,7 @@ protected:
     bool inverted;
     
     // Set the @dev
-    explicit Servo(
-            const unsigned short int channel,
-            unsigned short int target = 0
-        );
+    explicit Servo(const unsigned short int channel);
 
     // The physical functions that can be overwritten
     virtual void setPhysicalTarget(unsigned short int target) = 0;

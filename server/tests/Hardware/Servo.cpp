@@ -25,8 +25,8 @@ void Servo::testSetAndGetTarget()
     for (unsigned short int x = 0; x < 256; x++)
     {
         this->servo->setTarget(x);
+        CPPUNIT_ASSERT(this->servo->getTarget() == x);
         CPPUNIT_ASSERT(this->servo->getTarget(true) == x);
-        CPPUNIT_ASSERT(this->servo->getTarget(false) == x);
 
         dashee::sleep(timeout);
     }
@@ -50,11 +50,13 @@ void Servo::testSetAndGetTargetInverted()
     CPPUNIT_ASSERT(this->servo->isInverted());
     this->servo->setTarget(0);
     CPPUNIT_ASSERT(this->servo->getTarget() == 0);
+    CPPUNIT_ASSERT(this->servo->getTarget(true) == 0);
     dashee::sleep(timeout);
 
     this->servo->invert(false);
     CPPUNIT_ASSERT(this->servo->isInverted() == false);
     CPPUNIT_ASSERT(this->servo->getTarget() == 255);
+    CPPUNIT_ASSERT(this->servo->getTarget(true) == 255);
     dashee::sleep(timeout);
 }
 

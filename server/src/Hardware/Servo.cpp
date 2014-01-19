@@ -9,8 +9,8 @@ using namespace dashee::Hardware;
  * @param channel The channel that this servo belongs to
  * @param target The initial target to set the value
  */
-Servo::Servo(const unsigned short int channel, unsigned short target)
-    : target(target), inverted(false), SERVO_LOW(3968), SERVO_HIGH(8000)
+Servo::Servo(const unsigned short int channel)
+    : target(0), inverted(false), SERVO_LOW(3968), SERVO_HIGH(8000)
 {
     this->channel = channel;
 }
@@ -31,10 +31,13 @@ void Servo::setTarget(unsigned short int target)
                 "' is invalid"
             );
 
-    if (inverted)
-        target = static_cast<unsigned short int>((target - 255) * -1);
+    if (this->inverted)
+        this->setPhysicalTarget(
+            static_cast<unsigned short int>((target - 255) * -1)
+        );
+    else
+        this->setPhysicalTarget(target);
 
-    this->setPhysicalTarget(target);
     this->target = target;
 }
 
@@ -54,7 +57,7 @@ unsigned short int Servo::getTarget(const bool fromcache)
 
     if (inverted)
         return static_cast<unsigned short int>((target - 255) * -1);
-
+        
     return target;
 }
 
@@ -69,12 +72,13 @@ bool Servo::isInverted() const
 }
 
 /**
- * Set the inverted value.
+ * Set the inverted value. Also flip the target value
  *
  * @param inverted the value to set
  */
 void Servo::invert(const bool inverted)
 {
+    this->target = static_cast<unsigned short int>((this->target - 255) * -1);
     this->inverted = inverted;
 }
 

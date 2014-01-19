@@ -13,7 +13,7 @@ using namespace dashee::Hardware;
  * @param channel The channel number this servo class represents
  */
 ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) 
-    : Servo(channel, 0), fd(fd)
+    : Servo(channel), fd(fd)
 {
     memset(this->buffer, 0, sizeof(unsigned char)*2);
 }
