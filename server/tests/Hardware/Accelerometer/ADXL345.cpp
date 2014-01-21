@@ -102,6 +102,14 @@ void AccelerometerADXL345::testSetAndGetScaleType()
 	    this->accelerometer->getScaleType() 
 	    == dashee::Hardware::AccelerometerADXL345::SCALE_G
 	);
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_FLIGHT
+	);
+    CPPUNIT_ASSERT(
+	    this->accelerometer->getScaleType() 
+	    == dashee::Hardware::AccelerometerADXL345::SCALE_FLIGHT
+	);
 }
 
 /**
@@ -374,6 +382,32 @@ void AccelerometerADXL345::testReadAndUpdateScaled()
 	CPPUNIT_ASSERT(gVector.getY() < 1.0);
 	CPPUNIT_ASSERT(gVector.getZ() > 8.5);
 	CPPUNIT_ASSERT(gVector.getZ() < 10.0);
+	dashee::sleep(1000);
+    }
+    
+    this->accelerometer->setScaleType(
+	    dashee::Hardware::AccelerometerADXL345::SCALE_FLIGHT
+	);
+
+    for (size_t x = 0; x < iterateTimes; ++x)
+    {
+	this->accelerometer->update();
+	dashee::Point<double> gVector = this->accelerometer->read();
+
+	/*
+	// Good for debugging
+	dashee::Log::info(
+		1, 
+		"Val %f, %f, %f", 
+		gVector.getX(), 
+		gVector.getY(), 
+		gVector.getZ()
+	    );
+	*/
+	CPPUNIT_ASSERT(gVector.getX() > -0.5 && gVector.getX() < 0.5);
+	CPPUNIT_ASSERT(gVector.getY() > -0.5 && gVector.getY() < 0.5);
+	CPPUNIT_ASSERT(gVector.getZ() > 200.0 && gVector.getZ() < 280.0);
+
 	dashee::sleep(1000);
     }
 }

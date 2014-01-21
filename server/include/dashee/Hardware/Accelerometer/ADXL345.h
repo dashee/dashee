@@ -9,6 +9,7 @@
 #ifndef DASHEE_HARDWARE_ACCELEROMETER_ADXL345_H_
 #define DASHEE_HARDWARE_ACCELEROMETER_ADXL345_H_
 
+#include <math.h>
 #include <dashee/I2C.h>
 #include <dashee/Hardware/Accelerometer.h>
 #include <dashee/Hardware/Exception/Accelerometer/ADXL345.h>
@@ -67,6 +68,9 @@ private:
 
     // Generic initializers collated in a generic init function
     void init();
+
+    // Calculate the pitch and roll values
+    void convertGintoPitchAndRoll();
     
     // Disable Copy and Assignment construction
     AccelerometerADXL345(const AccelerometerADXL345 & rhs);
@@ -122,7 +126,8 @@ public:
     {
 	SCALE_RAW,
 	SCALE_G,
-	SCALE_MS2
+	SCALE_MS2,
+	SCALE_FLIGHT
     };
 
     /**
