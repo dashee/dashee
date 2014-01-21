@@ -13,7 +13,7 @@ void Point::setUp()
 /**
  * Test construction values as set by default
  */
-void Point::testEmptyConstructions()
+void Point::testEmptyConstructor()
 {
     CPPUNIT_ASSERT(this->point->getX() == 0.0f);
     CPPUNIT_ASSERT(this->point->getY() == 0.0f);
@@ -21,14 +21,55 @@ void Point::testEmptyConstructions()
 }
 
 /**
- * Test the copy constructor
+ * Test the construction using one value
  */
+void Point::testOneValueConstructor()
+{
+    dashee::Point<int> p1(10);
+    CPPUNIT_ASSERT(p1.getX() == 10);
+    CPPUNIT_ASSERT(p1.getY() == 10);
+    CPPUNIT_ASSERT(p1.getZ() == 10);
+
+    dashee::Point<int> p2 = 5;
+    CPPUNIT_ASSERT(p2.getX() == 5);
+    CPPUNIT_ASSERT(p2.getY() == 5);
+    CPPUNIT_ASSERT(p2.getZ() == 5);
+}
+
+/**
+ * Test construction of the object with values
+ */
+void Point::testValueConstructor()
+{
+    // Positive Values
+    dashee::Point<int> p1(10,5,20);
+    CPPUNIT_ASSERT(p1.getX() == 10);
+    CPPUNIT_ASSERT(p1.getY() == 5);
+    CPPUNIT_ASSERT(p1.getZ() == 20);
+    
+    // Negative values
+    dashee::Point<int> p2(-10, -5, -20);
+    CPPUNIT_ASSERT(p2.getX() == -10);
+    CPPUNIT_ASSERT(p2.getY() == -5);
+    CPPUNIT_ASSERT(p2.getZ() == -20);
+    
+    // Mixed values
+    dashee::Point<int> p3(-10, 5, -20);
+    CPPUNIT_ASSERT(p3.getX() == -10);
+    CPPUNIT_ASSERT(p3.getY() == 5);
+    CPPUNIT_ASSERT(p3.getZ() == -20);
+}
+
+/**
+ * Test the copy constructor
+ */ 
 void Point::testCopyConstructor()
 {
-    dashee::Point<float> p1 = *this->point;
-    CPPUNIT_ASSERT(p1.getX() == 0.0f);
-    CPPUNIT_ASSERT(p1.getY() == 0.0f);
-    CPPUNIT_ASSERT(p1.getZ() == 0.0f);
+    dashee::Point<int> p1(10);
+    dashee::Point<int> p2 = p1;
+    CPPUNIT_ASSERT(p2.getX() == 10);
+    CPPUNIT_ASSERT(p2.getY() == 10);
+    CPPUNIT_ASSERT(p2.getZ() == 10);
 }
 
 /**
@@ -48,30 +89,6 @@ void Point::testAssingmentOperator()
     CPPUNIT_ASSERT(p1.getX() == 0.1f);
     CPPUNIT_ASSERT(p1.getY() == 0.2f);
     CPPUNIT_ASSERT(p1.getZ() == 0.3f);
-}
-
-/**
- * Test construction of the object with values
- */
-void Point::testValueConstructions()
-{
-    // Positive Values
-    dashee::Point<int> p1(10,5,20);
-    CPPUNIT_ASSERT(p1.getX() == 10);
-    CPPUNIT_ASSERT(p1.getY() == 5);
-    CPPUNIT_ASSERT(p1.getZ() == 20);
-    
-    // Negative values
-    dashee::Point<int> p2(-10, -5, -20);
-    CPPUNIT_ASSERT(p2.getX() == -10);
-    CPPUNIT_ASSERT(p2.getY() == -5);
-    CPPUNIT_ASSERT(p2.getZ() == -20);
-    
-    // Mixed values
-    dashee::Point<int> p3(-10, 5, -20);
-    CPPUNIT_ASSERT(p3.getX() == -10);
-    CPPUNIT_ASSERT(p3.getY() == 5);
-    CPPUNIT_ASSERT(p3.getZ() == -20);
 }
 
 /**
@@ -143,8 +160,13 @@ void Point::testOperatorPlusMinus()
     // Create p1, and p2 and test the value with + and -
     dashee::Point<float> p1(0.0f, 1.0f, 2.0f);
     dashee::Point<float> p2(0.0f, 1.0f, 2.0f);
+    dashee::Point<float> p3(0.1f, 0.1f, 0.1f);
     CPPUNIT_ASSERT((p1 + p2) == dashee::Point<float>(0.0f, 2.0f, 4.0f));
     CPPUNIT_ASSERT((p1 - p2) == dashee::Point<float>(0.0f, 0.0f, 0.0f));
+    CPPUNIT_ASSERT((p1 + p2 + p3) == dashee::Point<float>(0.1f, 2.1f, 4.1f));
+    CPPUNIT_ASSERT((p1 + p2 - p3) == dashee::Point<float>(-0.1f, 1.9f, 3.9f));
+    CPPUNIT_ASSERT((p1 - p2 + p3) == p3);
+
 }
 
 /**
@@ -155,7 +177,7 @@ void Point::testOperatorMultiply()
     // Multiply p1 by 2.0 and 0.5
     dashee::Point<float> p1(0.0f, 1.0f, 2.0f);
     CPPUNIT_ASSERT((p1 * 0.5f) == dashee::Point<float>(0.0f, 0.5f, 1.0f));
-    CPPUNIT_ASSERT((p1 * 2.0f) == dashee::Point<float>(0.0f, 2.0f, 4.0f));
+    CPPUNIT_ASSERT((2.0f * p1) == dashee::Point<float>(0.0f, 2.0f, 4.0f));
 
     p1 *= 0.5f;
     CPPUNIT_ASSERT(p1 == dashee::Point<float>(0.0f, 0.5f, 1.0f));

@@ -13,9 +13,8 @@ using namespace dashee::Hardware;
  * @param channel The channel number this servo class represents
  */
 ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel) 
-    : Servo(channel)
+    : Servo(channel), fd(fd)
 {
-    this->fd = fd;
     memset(this->buffer, 0, sizeof(unsigned char)*2);
 }
 
@@ -30,7 +29,7 @@ ServoDummy::ServoDummy(FILE * fd, const unsigned short int channel)
  * @throws ExceptionServo If writing to the board fails
  *                        or a ExceptionInvalidValue is caught
  */
-void ServoDummy::setTarget(unsigned short int target)
+void ServoDummy::setPhysicalTarget(unsigned short int target)
 {
     try
     {
@@ -60,8 +59,6 @@ void ServoDummy::setTarget(unsigned short int target)
             "Invalid setTarget(" + dashee::itostr(target) + ")"
         );
     }
-
-    Servo::setTarget(target);
 }
 
 /**
@@ -71,17 +68,12 @@ void ServoDummy::setTarget(unsigned short int target)
  * which hold the target information. Make sure to flush any write data
  * left over otherwise things will start looking messy.
  *
- * @param fromcache If set to true, then call the parent function
- *
  * @throws ExceptionServo If a read write error occurs
  *
  * @returns The target value of the servo.
  */
-unsigned short int ServoDummy::getTarget(const bool fromcache)
+unsigned short int ServoDummy::getPhysicalTarget()
 {
-    if (fromcache)
-        return this->target;
-
     if (
         fseek(
             fd, 

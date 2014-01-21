@@ -18,7 +18,6 @@
 #include <dashee/Hardware/Accelerometer/Dummy.h>
 #include <dashee/Hardware/ServoController/Dummy.h>
 #include <dashee/Hardware/ServoController/UART.h>
-#include <dashee/Hardware/ServoController/USB.h>
 #include <dashee/Log.h>
 #include <dashee/Server/UDP.h>
 #include <dashee/Threads/Exception.h>

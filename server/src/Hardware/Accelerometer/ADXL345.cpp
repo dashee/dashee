@@ -54,6 +54,42 @@ void AccelerometerADXL345::init()
 }
 
 /**
+ * A function which will turn Raw values into pitch and roll.
+ *
+ * Pitch = X = arctan( -Y / Z )
+ * Roll = Y = arctan( X / sqrt(Y^2 - Z^2) )
+ *
+ * See and credit goes to: http://goo.gl/OUnR75, note that pitch and roll for 
+ * ADXL345 is the other way around than the link suggest as the X and Y are 
+ * reversed
+ */
+void AccelerometerADXL345::convertGintoPitchAndRoll()
+{
+    dashee::Point<double> flight(0.0, 0.0, this->g.getZ());
+
+    // Make sure we don't divide by zero
+    if (this->g.getZ() != 0.0)
+	flight.setX(atan((-1 * this->g.getY())/this->g.getZ()));
+
+    double yDivideBy 
+	= pow(this->g.getY(), 2.0) - pow(this->g.getZ(), 2.0);
+
+    // Make sure we squareroot by 0
+    if (yDivideBy != 0.0)
+    {
+	if (yDivideBy < 0)
+	    yDivideBy = -1 * sqrt(-1 * yDivideBy);
+	else
+	    yDivideBy = sqrt(yDivideBy);
+
+	if (yDivideBy != 0.0)
+	    flight.setY(atan(this->g.getX() / yDivideBy));
+    }
+
+    this->g = flight;
+}
+
+/**
  * Set the range of the device.
  *
  * @param range The range to set to
@@ -150,6 +186,7 @@ void AccelerometerADXL345::setScaleType(const ScaleType scale)
 	case SCALE_RAW:
 	case SCALE_G:
 	case SCALE_MS2:
+	case SCALE_FLIGHT:
 	    this->scale = scale;
 	    break;
 	default:
@@ -272,6 +309,9 @@ void AccelerometerADXL345::update()
 	    break;
 	case SCALE_MS2:
 	    this->g *= AccelerometerADXL345::MS2SCALE;
+	    break;
+	case SCALE_FLIGHT:
+	    this->convertGintoPitchAndRoll();
 	    break;
 	// Nothing to do
 	case SCALE_RAW:

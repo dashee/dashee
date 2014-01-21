@@ -41,6 +41,7 @@ class dashee::test::Hardware::ServoController
     
     // Set and Gets
     CPPUNIT_TEST(testSetAndGetTarget);
+    CPPUNIT_TEST(testSetAndGetTargetInverted);
     CPPUNIT_TEST(testSizeValue);
     
     // Exception
@@ -81,6 +82,12 @@ protected:
 
     // test setTarget and getTarget
     void testSetAndGetTarget();
+
+    // Test that the servo's are valid when inverted
+    void testSetAndGetTargetInverted();
+
+    // Test that operator[] behaves accordingly
+    void testOperatorSquareBracket();
     
     // test the size function
     virtual void testSizeValue();

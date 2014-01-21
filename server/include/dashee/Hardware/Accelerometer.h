@@ -9,6 +9,7 @@
 #ifndef DASHEE_HARDWARE_ACCELEROMETER_H_
 #define DASHEE_HARDWARE_ACCELEROMETER_H_
 
+#include <dashee/Interface/Sensor.h>
 #include <dashee/Point.h>
 
 namespace dashee
@@ -22,7 +23,7 @@ namespace dashee
 /**
  * Class that holds the interface for our Accelerometer
  */
-class dashee::Hardware::Accelerometer
+class dashee::Hardware::Accelerometer : public dashee::Interface::Sensor
 {
 private:
 
@@ -43,9 +44,6 @@ public:
 
     // Return the value of read from the sensor
     virtual dashee::Point<double> read() const;
-
-    // Update the value of this class from the sensor
-    virtual void update() = 0;
 
     // Do nothing
     virtual ~Accelerometer();

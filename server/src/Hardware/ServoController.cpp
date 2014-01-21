@@ -12,9 +12,8 @@ using namespace dashee::Hardware;
  *
  * @param dev - The device name
  */
-ServoController::ServoController(const char * dev)
+ServoController::ServoController(const char * dev) : dev(dev)
 {
-    this->dev = dev;
 }
 
 /**
@@ -57,7 +56,7 @@ unsigned short int ServoController::getTarget(
         throw ExceptionOutOfBounds(
                 "Invalid Channel " + 
                 dashee::itostr(channel) + 
-                " when trying to set."
+                " when trying to get target."
             );
 
     return this->servos[channel]->getTarget();
@@ -72,16 +71,70 @@ unsigned short int ServoController::getTarget(
  *
  * @returns The pointer to the servo
  */
-Servo * ServoController::getServo(const unsigned short int channel) const
+Servo & ServoController::getServo(const unsigned short int channel)
 {
     if (channel >= this->size())
         throw ExceptionOutOfBounds(
                 "Invalid Channel " + 
                 dashee::itostr(channel) + 
-                " when trying to set."
+                " when trying to get servo."
             );
 
-    return this->servos[channel];
+    return *this->servos[channel];
+}
+
+/**
+ * Helpful [] operator to get a servo
+ *
+ * @param channel The channel number to get
+ *
+ * @return The Servo it self
+ */
+Servo & ServoController::operator[](const size_t channel)
+{
+    if (channel >= this->size())
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to get servo[]."
+            );
+
+    return *this->servos[channel];
+}
+
+/**
+ * Returns the flag representing weather a servo is inverted or not.
+ *
+ * @param channel The channel to check
+ */
+bool ServoController::isInverted(const unsigned short int channel) const
+{
+    if (channel >= this->size())
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying check isInverted."
+            );
+
+    return this->servos[channel]->isInverted();
+}
+
+/**
+ * Invert the value.
+ *
+ * @param channel The channel to invert
+ * @param value enable or disable invert
+ */ 
+void ServoController::invert(const unsigned short int channel, const bool value)
+{
+    if (channel >= this->size())
+        throw ExceptionOutOfBounds(
+                "Invalid Channel " + 
+                dashee::itostr(channel) + 
+                " when trying to invert."
+            );
+
+    return this->servos[channel]->invert(value);
 }
 
 /** 
@@ -92,7 +145,7 @@ Servo * ServoController::getServo(const unsigned short int channel) const
  *
  * @return The number of servos in ServoController::servos
  */
-unsigned int ServoController::size() const
+size_t ServoController::size() const
 {
     return this->servos.size();
 }

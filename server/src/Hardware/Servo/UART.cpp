@@ -15,9 +15,8 @@ using namespace dashee::Hardware;
  * @throws Exception_Servo If device opening fails, an exception will be thrown
  */
 ServoUART::ServoUART(int * fd, const unsigned short int channel) 
-    : Servo(channel)
+    : Servo(channel), fd(fd)
 {
-    this->fd = fd;
 }
 
 /**
@@ -39,7 +38,7 @@ ServoUART::ServoUART(int * fd, const unsigned short int channel)
  *
  * @throws ExceptionServo If writing to the board fails
  */
-void ServoUART::setTarget(unsigned short int target)
+void ServoUART::setPhysicalTarget(unsigned short int target)
 {
     try
     {
@@ -71,8 +70,6 @@ void ServoUART::setTarget(unsigned short int target)
             "Invalid setTarget(" + dashee::itostr(target) + ")"
         );
     }
-
-    Servo::setTarget(target);
 }
 
 /**
@@ -91,17 +88,12 @@ void ServoUART::setTarget(unsigned short int target)
  *  3rd byte - The command to set target it is 0x10
  *  4th byte - The channel
  *
- * @param fromcache Return the model target value and don't query the Servo
- *
  * @throws ExceptionServo If a read write error occurs
  *
  * @returns The Target value of a channel
  */
-unsigned short int ServoUART::getTarget(const bool fromcache)
+unsigned short int ServoUART::getPhysicalTarget()
 {
-    if (fromcache)
-        return this->target;
-
     unsigned char command[4];
     command[0] = 0xAA;
     command[1] = 0xC;

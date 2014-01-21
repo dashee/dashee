@@ -49,7 +49,7 @@ printstatus()
             ;;
         *)
             if [ "$COLOR" == "true" ]; then
-                echo -en "\E[0;31;1mPASSED\E[0m"
+                echo -en "\E[0;31;1mFAILED\E[0m"
             else
                 echo -en "FAILED"
             fi

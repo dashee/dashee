@@ -33,8 +33,9 @@ class dashee::test::Point : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(dashee::test::Point);
     
-    CPPUNIT_TEST(testEmptyConstructions);
-    CPPUNIT_TEST(testValueConstructions);
+    CPPUNIT_TEST(testEmptyConstructor);
+    CPPUNIT_TEST(testOneValueConstructor);
+    CPPUNIT_TEST(testValueConstructor);
     CPPUNIT_TEST(testCopyConstructor);
     CPPUNIT_TEST(testAssingmentOperator);
 
@@ -51,8 +52,9 @@ private:
     dashee::Point<float> * point;
 
 protected:
-    void testEmptyConstructions();
-    void testValueConstructions();
+    void testEmptyConstructor();
+    void testOneValueConstructor();
+    void testValueConstructor();
     void testCopyConstructor();
     void testAssingmentOperator();
 

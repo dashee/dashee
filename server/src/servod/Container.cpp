@@ -436,12 +436,6 @@ void Container::loadHardwareServoController()
 		    ServoControllerUART(servoName, servoChannels);
             break;
         case 2:
-            dashee::Log::info(1, "Loading USB device '%s'.", servoName);
-            this->servoController 
-                = new dashee::Hardware::
-		    ServoControllerUSB(servoName, servoChannels);
-            break;
-        case 3:
             dashee::Log::info(1, "Loading Dummy device '%s'.", servoName);
             this->servoController = new dashee::Hardware::ServoControllerDummy(
                     servoName, 

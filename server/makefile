@@ -31,11 +31,9 @@ OBJECTSLIB = $(addprefix src/, common.o \
     Hardware/ServoController/Dummy.o \
     Hardware/ServoController.o \
     Hardware/ServoController/UART.o \
-    Hardware/ServoController/USB.o \
     Hardware/Servo/Dummy.o \
     Hardware/Servo.o \
     Hardware/Servo/UART.o \
-    Hardware/Servo/USB.o \
     I2C.o \
     Log.o \
     Server.o \

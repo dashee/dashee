@@ -21,6 +21,20 @@ template <class Coordinate> dashee::Point<Coordinate>::Point()
 }
 
 /**
+ * Create a Point from one value.
+ *
+ * @param value The value to use to create a point
+ */
+template <class Coordinate> dashee::Point<Coordinate>::Point(
+        const Coordinate value
+    )
+{
+    this->setX(value);
+    this->setY(value);
+    this->setZ(value);
+}
+
+/**
  * Set the value of the coordinates from the outset of the construction
  *
  * @param x The value of X
@@ -132,62 +146,6 @@ bool dashee::Point<Coordinate>::operator !=(
 	this->y != rhs.getY() ||
 	this->z != rhs.getZ();
 }
-
-/**
- * Add the values of the rhs parameter to this object
- *
- * @param rhs The right hand side to add from
- */
-template <class Coordinate>
-dashee::Point<Coordinate> dashee::Point<Coordinate>::operator+(
-	const dashee::Point<Coordinate> &rhs
-    )
-{
-    dashee::Point<Coordinate> result;
-    result.setX(this->getX() + rhs.getX());
-    result.setY(this->getY() + rhs.getY());
-    result.setZ(this->getZ() + rhs.getZ());
-
-    return result;
-}
-
-/**
- * Subtract the values of the rhs parameter to this object
- *
- * @param rhs The right hand side to add from
- */
-template <class Coordinate>
-dashee::Point<Coordinate> dashee::Point<Coordinate>::operator-(
-	const dashee::Point<Coordinate> &rhs
-    )
-{
-    dashee::Point<Coordinate> result;
-    result.setX(this->getX() - rhs.getX());
-    result.setY(this->getY() - rhs.getY());
-    result.setZ(this->getZ() - rhs.getZ());
-
-    return result;
-}
-
-/**
- * Multiply the value of Coordinate to all the coordinates of the point.
- *
- * @param rhs The value to multiply all coordinates by
- *
- * @returns The new value as a Point<Coordinate>
- */
-template <class Coordinate>
-dashee::Point<Coordinate> dashee::Point<Coordinate>::operator*(
-	const Coordinate &rhs
-    )
-{
-    return dashee::Point<Coordinate>(
-	    this->getX() * rhs,
-	    this->getY() * rhs,
-	    this->getZ() * rhs
-	);
-}
-
 /**
  * Multiply the value of Coordinate to all the coordinates of the point.
  *
@@ -196,8 +154,8 @@ dashee::Point<Coordinate> dashee::Point<Coordinate>::operator*(
  * @returns itself as the changed value
  */
 template <class Coordinate>
-dashee::Point<Coordinate>& dashee::Point<Coordinate>::operator*=(
-	const Coordinate &rhs
+dashee::Point<Coordinate> & dashee::Point<Coordinate>::operator*=(
+	const Coordinate & rhs
     )
 {
     this->setX(this->getX() * rhs);
@@ -213,6 +171,84 @@ dashee::Point<Coordinate>& dashee::Point<Coordinate>::operator*=(
 template <class Coordinate> dashee::Point<Coordinate>::~Point()
 {
 
+}
+
+/**
+ * Add the values of the left hand side to the right hand side
+ *
+ * @param lhs The Point to add to
+ * @param rhs The Point to add from
+ *
+ * @returns The subtracted point
+ */
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::operator+(
+	const dashee::Point<Coordinate> & lhs,
+	const dashee::Point<Coordinate> & rhs
+    )
+{
+    return dashee::Point<Coordinate>(
+            lhs.getX() + rhs.getX(),
+            lhs.getY() + rhs.getY(),
+            lhs.getZ() + rhs.getZ()
+        );
+}
+
+/**
+ * Subtract the values of the rhs parameter to this object
+ *
+ * @param lhs The Point to subtract to
+ * @param rhs The Point to subtract from
+ *
+ * @returns The subtracted point
+ */
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::operator-(
+	const dashee::Point<Coordinate> & lhs,
+	const dashee::Point<Coordinate> & rhs
+    )
+{
+    return dashee::Point<Coordinate>(
+            lhs.getX() - rhs.getX(),
+            lhs.getY() - rhs.getY(),
+            lhs.getZ() - rhs.getZ()
+        );
+}
+
+/**
+ * Multiply the value of of two Points 
+ *
+ * @param lhs The value to multiply all coordinates by
+ * @param rhs The value to multiply all coordinates by
+ *
+ * @returns The multiplied point
+ */
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::operator*(
+        const Point<Coordinate> & lhs,
+	const Coordinate & rhs
+    )
+{
+    return dashee::Point<Coordinate>(
+            lhs.getX() * rhs,
+            lhs.getY() * rhs,
+            lhs.getZ() * rhs
+        );
+}
+
+/**
+ * Multiply the value of a point with a template type
+ *
+ * @param lhs The template parameter to multiply from
+ * @param rhs The point to multiply to
+ */
+template <class Coordinate>
+dashee::Point<Coordinate> dashee::operator*(
+        const Coordinate & lhs,
+        const Point<Coordinate> & rhs
+    )
+{
+    return operator*(rhs, lhs);
 }
 
 #endif

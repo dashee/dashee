@@ -59,7 +59,7 @@ private:
     /**
      * The temp buffer used for read/write.
      *
-     * 2 Byte buffere used to read and write to our binary file
+     * 2 Byte buffer used to read and write to our binary file
      */
     unsigned char buffer[2];
 
@@ -80,14 +80,14 @@ protected:
      * friendship.
      */
     friend class ServoControllerDummy;
+
+    //Set the target of a given channel
+    void setPhysicalTarget(unsigned short int target);
+    unsigned short int getPhysicalTarget();
     
 public:
     //Open our Servo Device
     explicit ServoDummy(FILE * fd, const unsigned short int channel);
-
-    //Set the target of a given channel
-    void setTarget(unsigned short int target);
-    unsigned short int getTarget(const bool fromcache = false);
     
     //Close the device
     ~ServoDummy();

@@ -32,7 +32,7 @@ void VehicleMultirotor::changeServoMotor(
     if (motorNumber >= this->motors.size())
 	throw ExceptionOutOfBounds("Invalid motor number");
 
-    this->motors[motorNumber] = this->servoController->getServo(servoChannel);
+    this->motors[motorNumber] = &this->servoController->getServo(servoChannel);
 }
 
 /**
