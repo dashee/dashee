@@ -10,6 +10,7 @@
 #define DASHEE_HARDWARE_ACCELEROMETER_ADXL345_H_
 
 #include <math.h>
+#include <dashee/constants.h>
 #include <dashee/I2C.h>
 #include <dashee/Hardware/Accelerometer.h>
 #include <dashee/Hardware/Exception/Accelerometer/ADXL345.h>
@@ -69,8 +70,11 @@ private:
     // Generic initializers collated in a generic init function
     void init();
 
-    // Calculate the pitch and roll values
-    void convertGintoPitchAndRoll();
+    // Calculate the values of X and Y to pitch
+    void toRadians();
+
+    // Convert the values of X and Y to degrees
+    void toDegrees();
     
     // Disable Copy and Assignment construction
     AccelerometerADXL345(const AccelerometerADXL345 & rhs);
@@ -127,7 +131,8 @@ public:
 	SCALE_RAW,
 	SCALE_G,
 	SCALE_MS2,
-	SCALE_FLIGHT
+	SCALE_RADIANS,
+	SCALE_DEGREES
     };
 
     /**
@@ -162,11 +167,6 @@ public:
      *    = 0.00390625
      */
     static const double SCALE;
-
-    /**
-     * The gravitational constant.
-     */
-    static const double GRAVITY;
 
     /**
      * The constant use to convert G into m/s^2 value. The number here is 

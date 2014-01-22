@@ -4,9 +4,8 @@ using namespace dashee::Hardware;
 
 // Initialize our constants
 const double AccelerometerADXL345::SCALE = 0.00390625;
-const double AccelerometerADXL345::GRAVITY = 9.80665;
 const double AccelerometerADXL345::MS2SCALE 
-    = AccelerometerADXL345::SCALE * AccelerometerADXL345::GRAVITY;
+    = AccelerometerADXL345::SCALE * dashee::GRAVITY;
 
 /**
  * Create a new instance of a our Accelerometer.
@@ -63,7 +62,7 @@ void AccelerometerADXL345::init()
  * ADXL345 is the other way around than the link suggest as the X and Y are 
  * reversed
  */
-void AccelerometerADXL345::convertGintoPitchAndRoll()
+void AccelerometerADXL345::toRadians()
 {
     dashee::Point<double> flight(0.0, 0.0, this->g.getZ());
 
@@ -87,6 +86,16 @@ void AccelerometerADXL345::convertGintoPitchAndRoll()
     }
 
     this->g = flight;
+}
+
+/**
+ * Converts the radian values to degrees.
+ */ 
+void AccelerometerADXL345::toDegrees()
+{
+    this->toRadians();
+    this->g.setX((this->g.getX() * 180) / dashee::PI);
+    this->g.setY((this->g.getY() * 180) / dashee::PI);
 }
 
 /**
@@ -186,7 +195,8 @@ void AccelerometerADXL345::setScaleType(const ScaleType scale)
 	case SCALE_RAW:
 	case SCALE_G:
 	case SCALE_MS2:
-	case SCALE_FLIGHT:
+	case SCALE_RADIANS:
+	case SCALE_DEGREES:
 	    this->scale = scale;
 	    break;
 	default:
@@ -310,8 +320,11 @@ void AccelerometerADXL345::update()
 	case SCALE_MS2:
 	    this->g *= AccelerometerADXL345::MS2SCALE;
 	    break;
-	case SCALE_FLIGHT:
-	    this->convertGintoPitchAndRoll();
+	case SCALE_RADIANS:
+	    this->toRadians();
+	    break;
+	case SCALE_DEGREES:
+	    this->toDegrees();
 	    break;
 	// Nothing to do
 	case SCALE_RAW:
