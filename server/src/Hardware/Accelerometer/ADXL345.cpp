@@ -68,7 +68,7 @@ void AccelerometerADXL345::toRadians()
 
     // Make sure we don't divide by zero
     if (this->g.getZ() != 0.0)
-	flight.setX(atan((-1 * this->g.getY())/this->g.getZ()));
+	flight.setX(atan2((-1 * this->g.getY()), this->g.getZ()));
 
     double yDivideBy 
 	= pow(this->g.getY(), 2.0) - pow(this->g.getZ(), 2.0);
@@ -82,11 +82,12 @@ void AccelerometerADXL345::toRadians()
 	    yDivideBy = sqrt(yDivideBy);
 
 	if (yDivideBy != 0.0)
-	    flight.setY(atan(this->g.getX() / yDivideBy));
+	    flight.setY(atan2(this->g.getY(), yDivideBy));
     }
 
     this->g = flight;
 }
+
 
 /**
  * Converts the radian values to degrees.
@@ -321,7 +322,8 @@ void AccelerometerADXL345::update()
 	    this->g *= AccelerometerADXL345::MS2SCALE;
 	    break;
 	case SCALE_RADIANS:
-	    this->toRadians();
+	    //this->toRadians();
+	    this->toRadians2();
 	    break;
 	case SCALE_DEGREES:
 	    this->toDegrees();
