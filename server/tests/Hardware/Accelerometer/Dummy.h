@@ -54,7 +54,7 @@ protected:
     dashee::Hardware::AccelerometerDummy * accelerometer;
 
     virtual void testConstructDefault();
-    virtual void testReadAndUpdate();
+    virtual void testUpdateAndRead();
     virtual void testSetAndGetDelta();
 
 public:
