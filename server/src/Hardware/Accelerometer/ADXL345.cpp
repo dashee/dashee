@@ -322,8 +322,7 @@ void AccelerometerADXL345::update()
 	    this->g *= AccelerometerADXL345::MS2SCALE;
 	    break;
 	case SCALE_RADIANS:
-	    //this->toRadians();
-	    this->toRadians2();
+	    this->toRadians();
 	    break;
 	case SCALE_DEGREES:
 	    this->toDegrees();

@@ -49,7 +49,12 @@ class dashee::test::Hardware::AccelerometerADXL345
     CPPUNIT_TEST(testSetAndGetScaleType);
     CPPUNIT_TEST(testSetAndGetBandwidth);
     
-    CPPUNIT_TEST(testReadAndUpdateScaled);
+    CPPUNIT_TEST(testUpdateAndRead);
+    CPPUNIT_TEST(testUpdateAndReadScaledRaw);
+    CPPUNIT_TEST(testUpdateAndReadScaledG);
+    CPPUNIT_TEST(testUpdateAndReadScaledMS2);
+    CPPUNIT_TEST(testUpdateAndReadScaledRadians);
+    CPPUNIT_TEST(testUpdateAndReadScaledDegrees);
 
     // Test exceptions
     CPPUNIT_TEST_EXCEPTION(
@@ -70,6 +75,8 @@ class dashee::test::Hardware::AccelerometerADXL345
 
 private:
 
+    static const size_t iterateTimes = 500;
+
 protected:
 
     /**
@@ -85,8 +92,12 @@ protected:
     virtual void testSetAndGetBandwidth();
 
     // Read values from the sensor
-    virtual void testReadAndUpdate();
-    virtual void testReadAndUpdateScaled();
+    virtual void testUpdateAndRead();
+    virtual void testUpdateAndReadScaledRaw();
+    virtual void testUpdateAndReadScaledG();
+    virtual void testUpdateAndReadScaledMS2();
+    virtual void testUpdateAndReadScaledRadians();
+    virtual void testUpdateAndReadScaledDegrees();
 
     // Exceptions
     virtual void testInvalidI2C();
