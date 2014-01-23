@@ -21,7 +21,7 @@ void AccelerometerDummy::testConstructDefault()
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void AccelerometerDummy::testReadAndUpdate()
+void AccelerometerDummy::testUpdateAndRead()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 

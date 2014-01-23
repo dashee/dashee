@@ -21,7 +21,7 @@ void Accelerometer::testConstructDefault()
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void Accelerometer::testReadAndUpdate()
+void Accelerometer::testUpdateAndRead()
 {
     throw dashee::Exception("Cannot testRead in an abstract class");
 }
