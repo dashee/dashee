@@ -13,7 +13,7 @@ void AccelerometerDummy::setUp()
 /**
  * Test the default state of the loaded class
  */
-void AccelerometerDummy::testDefaultLoad()
+void AccelerometerDummy::testConstructDefault()
 {
 
 }
@@ -21,11 +21,11 @@ void AccelerometerDummy::testDefaultLoad()
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void AccelerometerDummy::testReadAndUpdate()
+void AccelerometerDummy::testUpdateAndRead()
 {
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Coordinate<float>(0.0f,0.0f,0.0f)
+	    == dashee::Point<double>(0.0,0.0,0.0)
 	);
 
     // By default because delta is [0, 0, 0] the update should do nothing
@@ -33,20 +33,20 @@ void AccelerometerDummy::testReadAndUpdate()
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Coordinate<float>(0.0f,0.0f,0.0f)
+	    == dashee::Point<double>(0.0,0.0,0.0)
 	);
 
-    this->accelerometer->setDelta(dashee::Coordinate<float>(0.01, 0.01, 0.01));
+    this->accelerometer->setDelta(dashee::Point<double>(0.01, 0.01, 0.01));
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Coordinate<float>(0.01f,0.01f,0.01f)
+	    == dashee::Point<double>(0.01,0.01,0.01)
 	);
     
     this->accelerometer->update();
     CPPUNIT_ASSERT(
 	    this->accelerometer->read() 
-	    == dashee::Coordinate<float>(0.02f,0.02f,0.02f)
+	    == dashee::Point<double>(0.02,0.02,0.02)
 	);
 }
 
@@ -58,23 +58,23 @@ void AccelerometerDummy::testSetAndGetDelta()
     // Test the default value
     CPPUNIT_ASSERT(
 	    this->accelerometer->getDelta() 
-	    == dashee::Coordinate<float>(0.0f, 0.0f, 0.0f)
+	    == dashee::Point<double>(0.0, 0.0, 0.0)
 	);
 
     // Test setting to positive
-    this->accelerometer->setDelta(dashee::Coordinate<float>(0.01, 0.01, 0.01));
+    this->accelerometer->setDelta(dashee::Point<double>(0.01, 0.01, 0.01));
     CPPUNIT_ASSERT(
 	    this->accelerometer->getDelta() 
-	    == dashee::Coordinate<float>(0.01f, 0.01f, 0.01f)
+	    == dashee::Point<double>(0.01, 0.01, 0.01)
 	);
     
     // Test setting negative values
     this->accelerometer->setDelta(
-	    dashee::Coordinate<float>(-0.01f, -0.01f, -0.01f)
+	    dashee::Point<double>(-0.01, -0.01, -0.01)
 	);
     CPPUNIT_ASSERT(
 	    this->accelerometer->getDelta() 
-	    == dashee::Coordinate<float>(-0.01f, -0.01f, -0.01f)
+	    == dashee::Point<double>(-0.01, -0.01, -0.01)
 	);
 }
 

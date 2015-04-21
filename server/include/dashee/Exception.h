@@ -62,7 +62,7 @@ public:
     virtual ~Exception() throw(){}
 
     // Returns the message
-    virtual const char* what()
+    virtual const char* what() const throw()
     {
         return message;
     }

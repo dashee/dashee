@@ -21,12 +21,13 @@ TESTDIR=./bin/tests
 TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
-TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testCoordinate"
-TEST_PI="testGPIO testI2C testUART"
-TEST_DUMMY="testDummy"
+TEST_GENERAL="testThreads testBuffer testHardwareAccelerometerDummy testPoint"
+TEST_PI="testGPIO testI2C testHardwareServoControllerUART \
+    testHardwareServoUART testHardwareAccelerometerADXL345"
+TEST_DUMMY="testHardwareServoControllerDummy testHardwareServoDummy"
 
 ##
-# Prints the status in a colorfull format
+# Prints the status in a colorful format
 # 
 # @param $1 the String representing "PASSED" or "FAILED"
 # @param $2 the String representing the test
@@ -40,10 +41,18 @@ printstatus()
 
     case "$1" in
         "PASSED" | "P" | "p" | 0)
-            echo -en "\E[0;32;1mPASSED\E[0m"
+            if [ "$COLOR" == "true" ]; then
+                echo -en "\E[0;32;1mPASSED\E[0m"
+            else
+                echo -en "PASSED"
+            fi
             ;;
         *)
-            echo -en "\E[0;31;1mFAILED\E[0m"
+            if [ "$COLOR" == "true" ]; then
+                echo -en "\E[0;31;1mFAILED\E[0m"
+            else
+                echo -en "FAILED"
+            fi
             ;;
     esac
 

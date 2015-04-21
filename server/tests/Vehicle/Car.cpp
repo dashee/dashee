@@ -115,7 +115,7 @@ void VehicleCar::testReadFromBuffer()
  */
 void VehicleCar::testUpdate()
 {
-    dashee::ServoController * servoController 
+    dashee::Hardware::ServoController * servoController 
         = this->vehicle->getServoController();
 
     dashee::VehicleCar * vehicleCar 

@@ -3,10 +3,17 @@ CC=g++
 MKDIR=mkdir -p
 RM=rm -Rf
 
-# Helpful print function
-define print
-	printf "%10s %-10s '\033[32;1m%s\033[0m'\n" $(1) $(2) $(3)
-endef
+# Print a colored output by default, otherwise define print without colors
+COLOR?=true
+ifeq ($(COLOR), true)
+    define print
+	    printf "%10s %-10s '\033[33;1m%s\033[0m'\n" $(1) $(2) $(3)
+    endef
+else
+    define print
+	    printf "%10s %-10s '%s'\n" $(1) $(2) $(3)
+    endef
+endif
 
 # Set directories as variables
 BINDIR?=bin
@@ -16,15 +23,17 @@ SCRIPTSDIR=scripts
 DATADIR=data
 BIT=$(shell arch)
 
-# Change variables according to archtecture bit type
+# Change variables according to architecture bit type
 ifeq ($(shell getconf LONG_BIT), 64)
     LIBDIR=lib64
 endif
 
 # Compiler options
-WOPTIONS=-Wall -Wextra -fPIC
+WOPTIONS=-Wall -Wextra -Wuninitialized -Wswitch-enum -Wswitch-default \
+	 -Wdouble-promotion -Winit-self -Wold-style-cast -Woverloaded-virtual \
+	 -Wmissing-declarations -pedantic -Werror
 INCLUDES=-Iinclude -L$(LIBDIR)
-CFLAGS=$(WOPTIONS) $(INCLUDES)
+CFLAGS=$(WOPTIONS) -std=c++0x -fPIC $(INCLUDES)
 LFLAGS=-shared -fpic
 
 # tar uses -a so we can change this for future

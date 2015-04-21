@@ -13,11 +13,11 @@
  * this port by reading and writing to it. The read write protocol is defined by
  * the POLOLU board which we are using for this program
  *
- * The POLOLU Maestro board allows us to controll servo using the POLOLU 
+ * The POLOLU Maestro board allows us to control servo using the POLOLU 
  * protocol. This protocol is more clearly defined in Servo.h.
  *
- * Given the control of the device this program also handels a UDP server which 
- * allows forign programs to interface with it, and control the POLOLU board 
+ * Given the control of the device this program also handles a UDP server which 
+ * allows foreign programs to interface with it, and control the POLOLU board 
  * using a network protocol
  *
  * This server is not daemonized, as its mostly run in debug mode.
@@ -51,13 +51,13 @@
  * @param argc The number of arguments
  * @param argv The arguments array
  *
- * @returns 0 on successfull shutdown and any other number for error.
- * @retval 0 Successfull process
+ * @returns 0 on successful shutdown and any other number for error.
+ * @retval 0 Successful process
  * @retval -5 Failed on Vehicle init
  * @retval -4 Failed on Configuration
- * @retval -3 Failed because an Exception occrred
+ * @retval -3 Failed because an Exception occurred
  * @retval -2 Failed because runtime::error exception occurred
- * @retval -1 Failed because exception occured when fallback activated
+ * @retval -1 Failed because exception occurred when fall back activated
  */
 int main(int argc, char ** argv)
 {    
@@ -93,7 +93,7 @@ int main(int argc, char ** argv)
         
         container = new Container(argc, argv);
         
-        // Initilize the container
+        // Initialize the container
         threadInitilizeContainer(container);
  
         // Load sighandler and set the config
@@ -110,7 +110,7 @@ int main(int argc, char ** argv)
             );
 #endif
 
-        // Helpfull message to let the user know the service is configured
+        // Helpful message to let the user know the service is configured
         // and will now try starting
         dashee::Log::info(
                 1, 
@@ -125,7 +125,7 @@ int main(int argc, char ** argv)
         
         // Start our threads
         threadServer.start(static_cast<void *>(container->getServer()));
-        threadSensor.start((void *)NULL);
+        threadSensor.start(static_cast<void *>(container));
         threadController.start(static_cast<void *>(container));
 
         // Wait for threads to gracefully stop
@@ -133,7 +133,7 @@ int main(int argc, char ** argv)
         threadSensor.join();
         threadController.join();
     
-        // Cleanup our refrences
+        // Cleanup our references
         dashee::Log::info(2, "Performing cleanups.");
         delete container;
 

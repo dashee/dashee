@@ -128,7 +128,9 @@ bool Config::isValidKey(const char * const key)
 void Config::set(const char * key, const char * value, const bool overwrite)
 {
     if(!isValidKey(key))
-        throw ExceptionConfig("Key '" + (std::string)key + "' is invalid");
+        throw ExceptionConfig(
+		"Key '" + static_cast<std::string>(key) + "' is invalid"
+	    );
 
     // A previous, key exists and we should delete the char array from memory
     // If threading, this requires locking. Otherwise the world will blow up
@@ -213,7 +215,7 @@ void Config::set(const char * key, const float value, const bool overwrite)
     // Create a new buf, and send to Config::set
     // Also create and add new key value
     char buf[30];
-    sprintf(buf, "%f", value);
+    sprintf(buf, "%f", static_cast<double>(value));
     set(key, buf, overwrite);
 }
 
@@ -247,7 +249,8 @@ bool Config::isKeySet(const char * key)
  */
 const char * Config::get(const char * key, const char * defaultvalue)
 {
-    std::map<const char *, char *>::iterator it = configs.find((char *)key);
+    std::map<const char *, char *>::iterator it 
+	= configs.find(static_cast<const char *>(key));
 
     if (it != configs.end())
         return it->second;
@@ -274,13 +277,15 @@ int Config::getInt(const char * key, const int defaultvalue)
         buf << defaultvalue;
 
         //Converts a buffer to an int
-        return dashee::strtol((char *)Config::get(key, buf.str().c_str()));
+        return dashee::strtol(
+		static_cast<const char *>(Config::get(key, buf.str().c_str()))
+	    );
     }
     catch (ExceptionInvalidNumber ex)
     {
         throw ExceptionConfig(
             "Config::get_int('" + 
-            (std::string)key + 
+            static_cast<std::string>(key) + 
             "') because the value was invalid"
         );
     }
@@ -305,13 +310,15 @@ unsigned int Config::getUInt(const char * key, const unsigned int defaultvalue)
         buf << defaultvalue;
 
         //Converts a buffer to an int
-        return dashee::strtol((char *)Config::get(key, buf.str().c_str()));
+        return dashee::strtol(
+		static_cast<const char *>(Config::get(key, buf.str().c_str()))
+	    );
     }
     catch (ExceptionInvalidNumber ex)
     {
         throw ExceptionConfig(
             "Config::get_uint('" + 
-            (std::string)key + 
+            static_cast<std::string>(key) + 
             "') because the value was invalid"
         );
     }
@@ -334,7 +341,10 @@ float Config::getFloat(const char * key, const float defaultvalue)
     buf << defaultvalue;
 
     //Converts a buffer to a float
-    return strtof((char *)Config::get(key, buf.str().c_str()), (char **)NULL);
+    return strtof(
+	    static_cast<const char *>(Config::get(key, buf.str().c_str())), 
+	    static_cast<char **>(NULL)
+	);
 }
 
 /**

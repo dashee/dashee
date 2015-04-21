@@ -36,7 +36,7 @@ protected:
      * The delta provides a way to set the delta value of an axis, 
      * during update. Helpful to make this class dynamic
      */
-    dashee::Coordinate<float> delta;
+    dashee::Point<double> delta;
 
     /**
      * The maximum number any axis of a coordinate can read.
@@ -44,17 +44,14 @@ protected:
      * This helpful variable reverses our delta values, when the MAX axis is 
      * reached, note in some cases this is not helpful so 0 represents no max.
      */
-    const static float MAX = 15.0f;
+    static constexpr double MAX = 15.0;
 
 public:
     AccelerometerDummy();
 
     // Set the value of the delta
-    void setDelta(dashee::Coordinate<float> delta);
-    dashee::Coordinate<float> getDelta() const;
-
-    // Return the last known value
-    dashee::Coordinate<float> read() const;
+    void setDelta(dashee::Point<double> delta);
+    dashee::Point<double> getDelta() const;
 
     // Update the sensor
     void update();

@@ -386,5 +386,5 @@ void Vehicle::tearDown()
     delete vehicle;
 }
 
-dashee::ServoController * Vehicle::servoController = NULL;
+dashee::Hardware::ServoController * Vehicle::servoController = NULL;
 unsigned int Vehicle::VEHICLE_TIMEOUT = 1;

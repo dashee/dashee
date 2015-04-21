@@ -92,14 +92,14 @@ def getValue(bus, address):
 
     # How many g's am I accelerating, 0.00415 mg seems
     # to be the most nominal value to get the correct bearings
-    valX *= 0.00415
-    valY *= 0.00415
-    valZ *= 0.00415
+    #valX *= 0.00390625
+    #valY *= 0.00390625
+    #valZ *= 0.00390625
 
     # Given earths gravity what is my acceleration m/s^2
-    valX *= 9.80665
-    valY *= 9.80665
-    valZ *= 9.80665
+    #valX *= 9.80665
+    #valY *= 9.80665
+    #valZ *= 9.80665
 
     # Get some rounding going before returning home
     valX = round(valX, 7)

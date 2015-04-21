@@ -9,7 +9,8 @@
 #ifndef DASHEE_HARDWARE_ACCELEROMETER_H_
 #define DASHEE_HARDWARE_ACCELEROMETER_H_
 
-#include <dashee/Coordinate.h>
+#include <dashee/Interface/Sensor.h>
+#include <dashee/Point.h>
 
 namespace dashee
 {
@@ -22,16 +23,19 @@ namespace dashee
 /**
  * Class that holds the interface for our Accelerometer
  */
-class dashee::Hardware::Accelerometer
+class dashee::Hardware::Accelerometer : public dashee::Interface::Sensor
 {
 private:
 
 protected:
 
     /**
-     * The coordinates which hold the gravitational pull in three axis.
+     * The g coordinates.
+     *
+     * The coordinates which hold the last value of the gravitational pull in 
+     * three axis.
      */
-    dashee::Coordinate<float> coordinate;
+    dashee::Point<double> g;
 
     // Default the in class variables
     Accelerometer();
@@ -39,10 +43,7 @@ protected:
 public:
 
     // Return the value of read from the sensor
-    virtual dashee::Coordinate<float> read() const = 0;
-
-    // Update the value of this class from the sensor
-    virtual void update() = 0;
+    virtual dashee::Point<double> read() const;
 
     // Do nothing
     virtual ~Accelerometer();

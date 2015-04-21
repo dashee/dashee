@@ -28,7 +28,7 @@ protected:
 
     // Construct and pass through to parent
     VehicleMultirotorQuad(
-            ServoController * servoController, 
+            dashee::Hardware::ServoController * servoController, 
             Config * conf = NULL
         );
 

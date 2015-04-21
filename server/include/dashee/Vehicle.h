@@ -13,7 +13,7 @@
 
 #include <dashee/Exception/Vehicle.h>
 
-#include <dashee/ServoController.h>
+#include <dashee/Hardware/ServoController.h>
 #include <dashee/Server.h>
 #include <dashee/Config.h>
 #include <dashee/Buffer.h>
@@ -28,10 +28,10 @@ namespace dashee
  *
  * The model class allows to change the model type
  * of the current system, For example the way Plane's
- * are delt is different to Quadcopter or Helicopters.
+ * are dealt is different to Quadcopter or Helicopters.
  *
  * For this you need a middle man, which converts the channel
- * values comming from the client and converts them into a correct model of
+ * values coming from the client and converts them into a correct model of
  * the plane.
  *
  * For example PITCH UP on on a Multirotor or a Helicopter requires to set
@@ -47,7 +47,7 @@ protected:
     /**
      * The pointer to our servocontroller
      */ 
-    dashee::ServoController * servoController;
+    dashee::Hardware::ServoController * servoController;
     
     /**
      * The value that represent our 4 major
@@ -89,7 +89,7 @@ protected:
     bool throttleFallbackEnabled;
 
     /**
-     * Repreents the models current
+     * Represents the models current
      * fallback state. This is required by
      * revert and fallback to act on
      */ 
@@ -97,11 +97,11 @@ protected:
     
     // Construct our model
     Vehicle(
-            ServoController * servoController, 
+            dashee::Hardware::ServoController * servoController, 
             Config * conf = NULL
         );
     
-    // Helpfull function for setYaw/setRoll/setPitch and setThrottle
+    // Helpful function for setYaw/setRoll/setPitch and setThrottle
     void setControl(unsigned short int & control, unsigned short int value);
     void setControlTrim(signed short int & control, signed short int value);
 
@@ -113,49 +113,51 @@ public:
     // Simple functions which represnt the flight controls
     // of any model
     virtual void setPitch(unsigned short int pitch);
-    virtual unsigned short int getPitch(bool notrim = false);
+    virtual unsigned short int getPitch(bool notrim = false) const;
 
     virtual void setRoll(unsigned short int roll);
-    virtual unsigned short int getRoll(bool notrim = false);
+    virtual unsigned short int getRoll(bool notrim = false) const;
 
     virtual void setYaw(unsigned short int yaw);
-    virtual unsigned short int getYaw(bool notrim = false);
+    virtual unsigned short int getYaw(bool notrim = false) const;
 
     virtual void setThrottle(unsigned short int throttle);
-    virtual unsigned short int getThrottle(bool notrim = false);
+    virtual unsigned short int getThrottle(bool notrim = false) const;
 
     // Sets for trim values
     void setPitchTrim(signed short int pitchTriam);
-    signed short int getPitchTrim();
+    signed short int getPitchTrim() const;
 
     void setRollTrim(signed short int rollTrim);
-    signed short int getRollTrim();
+    signed short int getRollTrim() const;
 
     void setYawTrim(signed short int yawTrim);
-    signed short int getYawTrim();
+    signed short int getYawTrim() const;
 
     void setThrottleTrim(signed short int throttleTrim);
-    signed short int getThrottleTrim();
+    signed short int getThrottleTrim() const;
 
-    // Sets form the fallbacks
+    // Sets from the fallback
     void setPitchFallback(unsigned short int pitch);
-    unsigned short int getPitchFallback();
+    unsigned short int getPitchFallback() const;
 
     void setRollFallback(unsigned short int roll);
-    unsigned short int getRollFallback();
+    unsigned short int getRollFallback() const;
 
     void setYawFallback(unsigned short int yaw);
-    unsigned short int getYawFallback();
+    unsigned short int getYawFallback() const;
 
     void setThrottleFallback(unsigned short int throttle);
-    unsigned short int getThrottleFallback();
+    unsigned short int getThrottleFallback() const;
 
     // Set and get ServoController
-    void setServoController(ServoController * servoController);
-    ServoController * getServoController();
+    void setServoController(
+            dashee::Hardware::ServoController * servoController
+        );
+    dashee::Hardware::ServoController * getServoController() const;
 
     // Simple function to return the value of fallbackMode
-    bool isFallback();
+    bool isFallback() const;
 
     // Update our model from a buffer stored in queue
     virtual void read(Buffer<unsigned char> * buffer) = 0;

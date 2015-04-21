@@ -53,8 +53,8 @@ protected:
      */
     dashee::Hardware::AccelerometerDummy * accelerometer;
 
-    virtual void testDefaultLoad();
-    virtual void testReadAndUpdate();
+    virtual void testConstructDefault();
+    virtual void testUpdateAndRead();
     virtual void testSetAndGetDelta();
 
 public:

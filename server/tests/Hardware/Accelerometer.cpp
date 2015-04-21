@@ -13,15 +13,15 @@ void Accelerometer::setUp()
 /**
  * Test the default state of the loaded class
  */
-void Accelerometer::testDefaultLoad()
+void Accelerometer::testConstructDefault()
 {
-    throw dashee::Exception("Cannot testDefaultLoad abstract class");
+    throw dashee::Exception("Cannot testConstructDefault abstract class");
 }
 
 /**
  * Test the read function by calling read on the Accelerometer
  */
-void Accelerometer::testReadAndUpdate()
+void Accelerometer::testUpdateAndRead()
 {
     throw dashee::Exception("Cannot testRead in an abstract class");
 }

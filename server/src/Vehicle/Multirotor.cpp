@@ -8,7 +8,7 @@ using namespace dashee;
  * Build the motors array, as multirotor
  */
 VehicleMultirotor::VehicleMultirotor(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
 	Config * config
     ) : Vehicle(servoController, config)
 {
@@ -32,7 +32,7 @@ void VehicleMultirotor::changeServoMotor(
     if (motorNumber >= this->motors.size())
 	throw ExceptionOutOfBounds("Invalid motor number");
 
-    this->motors[motorNumber] = this->servoController->getServo(servoChannel);
+    this->motors[motorNumber] = &this->servoController->getServo(servoChannel);
 }
 
 /**

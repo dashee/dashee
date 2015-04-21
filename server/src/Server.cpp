@@ -19,11 +19,11 @@ dashee::Server::Server(unsigned int port)
     client_in_length = sizeof(client_in);
 
     // 0 our server_in variable
-    memset((char *) &server_in, 0, sizeof(server_in));
+    memset(static_cast<void *>(&server_in), 0, sizeof(server_in));
 
     // Initaize our mask variable as pselect will jump out on
     // SIGTERM
-    memset((sigset_t *)&mask, 0, sizeof(mask));
+    memset(static_cast<void *>(&mask), 0, sizeof(mask));
     sigemptyset (&mask);
     sigaddset (&mask, SIGINT|SIGTERM);
 
@@ -171,15 +171,17 @@ void dashee::Server::appendBufferTo(std::queue<unsigned char> * q)
 int dashee::Server::wait()
 {   
     FD_ZERO(&select_read);
+#pragma GCC diagnostic ignored "-Wold-style-cast"
     FD_SET(socketfd, &select_read);
+#pragma GCC diagnostic pop
     
     return pselect(
 	    socketfd+1, 
 	    &select_read, 
-	    NULL, 
-	    NULL, 
-	    &pselect_timeout, 
-	    &origmask
+	    static_cast<fd_set *>(NULL), 
+	    static_cast<fd_set *>(NULL), 
+	    const_cast<const struct timespec *>(&pselect_timeout), 
+	    const_cast<const sigset_t *>(&origmask)
 	);
 }
 
@@ -188,5 +190,4 @@ int dashee::Server::wait()
  */
 dashee::Server::~Server()
 {
-
 }

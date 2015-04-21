@@ -6,7 +6,7 @@ using namespace dashee;
  * Construct and pass to its parent
  */
 VehicleMultirotorQuadX::VehicleMultirotorQuadX(
-        ServoController * servoController, 
+        dashee::Hardware::ServoController * servoController, 
 	Config * config
     ) : VehicleMultirotorQuad(servoController, config)
 {
@@ -24,14 +24,14 @@ void VehicleMultirotorQuadX::update()
     short int m4 = this->getThrottle();
 
     // {1, 1, -1, -1}
-    short int pitchTranslate = (short int)(this->getPitch()-128);
+    short int pitchTranslate = static_cast<short int>(this->getPitch()-128);
     m1 += pitchTranslate;
     m2 += pitchTranslate;
     m3 -= pitchTranslate;
     m4 -= pitchTranslate;
     
     // {1, -1, -1, 1}
-    short int rollTranslate = (short int)(this->getRoll()-128);
+    short int rollTranslate = static_cast<short int>(this->getRoll()-128);
     m1 += rollTranslate;
     m2 -= rollTranslate;
     m3 -= rollTranslate;

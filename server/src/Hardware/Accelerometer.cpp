@@ -7,7 +7,17 @@ using namespace dashee::Hardware;
  */
 Accelerometer::Accelerometer()
 {
-    this->coordinate = dashee::Coordinate<float>();
+    this->g = dashee::Point<double>();
+}
+
+/**
+ * Returns the last read values of the sensor
+ *
+ * @returns float value
+ */ 
+dashee::Point<double> Accelerometer::read() const
+{
+    return this->g;
 }
 
 /**

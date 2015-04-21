@@ -30,7 +30,7 @@
 #include "signals.h"
 #include "Container.h"
 
-// The ammount of time to sleep on each tick of the threads main loop
+// The amount of time to sleep on each tick of the threads main loop
 #define DASHEE_SERVOD_THREADS_TICK_CONTROLLER 25000
 #define DASHEE_SERVOD_THREADS_TICK_SERVER 25000
 #define DASHEE_SERVOD_THREADS_TICK_SENSOR 25000
@@ -38,7 +38,8 @@
 extern dashee::Threads::LockReadWrite lockSensor;
 extern dashee::Threads::LockReadWrite lockConfig;
 extern dashee::Threads::LockReadWrite lockSever;
-extern dashee::Threads::LockReadWrite lockServoController;
+extern dashee::Threads::LockReadWrite lockHardwareServoController;
+extern dashee::Threads::LockReadWrite lockHardwareAccelerometer;
 extern dashee::Threads::LockReadWrite lockVehicle;
 extern dashee::Threads::LockMutex lockBuffer;
 extern dashee::Threads::LockReadWrite lockEXIT;

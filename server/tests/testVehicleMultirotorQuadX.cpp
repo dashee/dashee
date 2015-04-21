@@ -1,7 +1,6 @@
 #include <dashee/Server/UDP.h>
-#include <dashee/ServoController/UART.h>
-#include <dashee/ServoController/USB.h>
-#include <dashee/ServoController/Dummy.h>
+#include <dashee/Hardware/ServoController/UART.h>
+#include <dashee/Hardware/ServoController/Dummy.h>
 #include "Vehicle/Multirotor/Quad/X.h"
 #include "dashee.h"
 
@@ -28,11 +27,11 @@ int main(int argc, char ** argv)
 	// Load the appropriate servoController
 	if (strcmp(argv[1], "dummy") == 0)
 	    dashee::test::Vehicle::servoController
-		= new dashee::ServoControllerDummy(argv[2], 12);
+		= new dashee::Hardware::ServoControllerDummy(argv[2], 12);
 
 	else if (strcmp(argv[1], "UART") == 0)
 	    dashee::test::Vehicle::servoController
-		= new dashee::ServoControllerUART(argv[2], 12);
+		= new dashee::Hardware::ServoControllerUART(argv[2], 12);
 
 	else
 	    throw dashee::Exception("Invalid ServoController");
