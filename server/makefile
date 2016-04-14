@@ -105,7 +105,7 @@ release: clean test $(BINARIES) $(LIBRARIES)
 # A helpful function for debug configurations
 debug: CFLAGS:=-g -DDEBUG $(CFLAGS)
 debug: LFLAGS:=-g -DDEBUG $(LFLAGS)
-debug: test $(BINARIES) tags
+debug: test $(BINARIES)
 
 # This is our main handler for created directories,
 # To add a directory to the list modify the DIRECTORIES
@@ -255,11 +255,6 @@ cleantest:
 # This will remove our data/Servo.bin file, to build it again 
 cleandata:
 	$(RM) $(DATADIR)/Servo.bin
-
-# Will generate ctags for vim
-.PHONY: tags
-tags:
-	@ctags -R .
     
 # Cleans all the .o files from our src directory
 # And finally cleans all directories.
@@ -270,8 +265,6 @@ clean: cleanobjects cleantest
 	$(RM) $(BINDIR)
 	$(call print,"Deleting","directory","$(LIBDIR)")
 	$(RM) $(LIBDIR)
-	$(call print,"Deleting","file","tags")
-	$(RM) tags
 	$(call print,"Deleting","directory","doc/html")
 	$(RM) docs/html
 	$(call print,"Deleting","directory","doc/xml")
