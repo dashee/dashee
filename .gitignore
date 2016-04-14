@@ -1,20 +1,15 @@
 *.o
 
-server/bin
-server/lib64
-server/lib
-server/data
-server/etc
-server/docs/html
-server/docs/xml
-server/tags
+bin
+lib64
+lib
+data
+etc
+docs/html
+docs/xml
 
 client/ps3/bin
 
 playground/lib64
 playground/bin
 playground/lib
-
-www/website/application/configs
-www/website/sass/css
-www/website/public/download
