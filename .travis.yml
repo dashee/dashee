@@ -1,8 +1,8 @@
 language: cpp
-
 before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -y libcppunit-dev
-
-script:
-    make test -s
+- sudo apt-get -qq update
+- sudo apt-get install -y libcppunit-dev
+script: make test -s
+notifications:
+  slack:
+    secure: FhI9/mOX2bao2oLaG7vgVm/gmHSwFmovwSY0cT3HG7OmCEXSiBiELKBGbJawUXpcYa9+GpawgVO2d0Jc8Jw7kZBe1X3atpk+69Rhp6G2VwOh/ApR1T92j7kp1BZXQZz5QQ2z9LNULJWDH3SMXF6YPl/lDOAlKubnooxTncVEKPc=
