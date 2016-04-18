@@ -21,8 +21,13 @@ add_library(
         ${INCLUDE_FILES}
 )
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+find_package(Threads REQUIRED)
 add_executable(servod src/servod.cpp)
 target_link_libraries(servod dashee)
+target_link_libraries(servod Threads::Threads)
+
 
 add_custom_command(
         COMMAND cp ${PROJECT_SOURCE_DIR}/files/examples/servod-dummy.conf .
