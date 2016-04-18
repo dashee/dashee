@@ -11,8 +11,13 @@
 
 #include <cstring>
 #include <stdlib.h>
-#include <linux/i2c.h>
-#include <linux/i2c-dev.h>
+#ifdef __APPLE__
+    #define I2C_TENBIT 0
+    #define I2C_SLAVE 0
+#else
+    #include <linux/i2c.h>
+    #include <linux/i2c-dev.h>
+#endif
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

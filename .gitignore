@@ -1,8 +1,6 @@
 *.o
 
-bin
-lib64
-lib
+build
 data
 etc
 docs/html
@@ -13,3 +11,5 @@ client/ps3/bin
 playground/lib64
 playground/bin
 playground/lib
+
+.idea/
