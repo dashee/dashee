@@ -46,14 +46,14 @@ target_link_libraries(dasheetest dashee cppunit)
 ##
 # Add the executables
 #
-find_package(Threads REQUIRED)
+#find_package(Threads REQUIRED)
 add_executable(servod src/servod.cpp)
-target_link_libraries(servod dashee Threads::Threads)
+target_link_libraries(servod dashee pthread)
 
 # TODO move this into a forloop
 add_executable(testPoint tests/testPoint.cpp)
 target_include_directories(testPoint PRIVATE tests/)
-target_link_libraries(testPoint dashee dasheetest cppunit)
+target_link_libraries(testPoint dashee dasheetest cppunit pthread)
 
 ##
 # Some custom commands that are helpful when debugging
