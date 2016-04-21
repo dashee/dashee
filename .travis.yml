@@ -1,11 +1,13 @@
 language: cpp
-before_install:
-- sudo apt-get -qq update
-- sudo apt-get install -y cmake libcppunit-dev
+install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y cmake libcppunit-dev
+before_script:
+  - cmake .
+  - make
 script: 
-    - cmake . && make
+    - ./testPoint
 sudo: required
 dist: trusty
 notifications:
-  slack:
-    secure: FhI9/mOX2bao2oLaG7vgVm/gmHSwFmovwSY0cT3HG7OmCEXSiBiELKBGbJawUXpcYa9+GpawgVO2d0Jc8Jw7kZBe1X3atpk+69Rhp6G2VwOh/ApR1T92j7kp1BZXQZz5QQ2z9LNULJWDH3SMXF6YPl/lDOAlKubnooxTncVEKPc=
+  slack: 'dashee:LfPfKQOhQ0NK2vUmSJ8iuruX'
