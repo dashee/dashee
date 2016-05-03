@@ -22,6 +22,7 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
     
     server_in.sin_family = AF_INET; //IPV4
     server_in.sin_port = htons(port);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
     server_in.sin_addr.s_addr = htons(INADDR_ANY); //Any interface
 #pragma GCC diagnostic pop
@@ -98,7 +99,8 @@ bool ServerUDP::read()
 {
     // Wait and timeout
     int select_return = wait();
-    
+
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
     if (select_return > 0 && FD_ISSET(socketfd, &select_read))
     {

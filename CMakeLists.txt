@@ -40,8 +40,7 @@ add_library(
         SHARED
         ${TEST_LIB_FILES}
 )
-# TODO this is not working!
-set_target_properties(dasheetest PROPERTIES CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-constant-conversion")
+set_target_properties(dasheetest PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -Wno-constant-conversion")
 target_include_directories(dasheetest PUBLIC tests include)
 target_link_libraries(dasheetest dashee cppunit)
 
