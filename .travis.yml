@@ -3,7 +3,9 @@ install:
   - sudo apt-get -qq update
   - sudo apt-get install -y cmake libcppunit-dev
 before_script:
-  - cmake .
+  - mkdir build
+  - cd build
+  - cmake ..
   - make
 script: 
     - ./runtest.sh
