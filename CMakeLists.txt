@@ -74,6 +74,26 @@ add_executable(testBuffer tests/testBuffer.cpp)
 target_include_directories(testBuffer PRIVATE tests/)
 target_link_libraries(testBuffer dashee dasheetest cppunit pthread)
 
+add_executable(testVehicleCar tests/testVehicleCar.cpp)
+target_include_directories(testVehicleCar PRIVATE tests/)
+target_link_libraries(testVehicleCar dashee dasheetest cppunit pthread)
+
+add_executable(testVehicleMultirotorQuadX tests/testVehicleMultirotorQuadX.cpp)
+target_include_directories(testVehicleMultirotorQuadX PRIVATE tests/)
+target_link_libraries(testVehicleMultirotorQuadX dashee dasheetest cppunit pthread)
+
+add_executable(testHardwareServoControllerDummy tests/testHardwareServoControllerDummy.cpp)
+target_include_directories(testHardwareServoControllerDummy PRIVATE tests/)
+target_link_libraries(testHardwareServoControllerDummy dashee dasheetest cppunit pthread)
+
+add_executable(testHardwareServoDummy tests/testHardwareServoDummy.cpp)
+target_include_directories(testHardwareServoDummy PRIVATE tests/)
+target_link_libraries(testHardwareServoDummy dashee dasheetest cppunit pthread)
+
+add_executable(testHardwareAccelerometerDummy tests/testHardwareServoDummy.cpp)
+target_include_directories(testHardwareAccelerometerDummy PRIVATE tests/)
+target_link_libraries(testHardwareAccelerometerDummy dashee dasheetest cppunit pthread)
+
 ##
 # Some custom commands that are helpful when debugging
 #

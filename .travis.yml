@@ -6,7 +6,7 @@ before_script:
   - cmake .
   - make
 script: 
-    - ./testPoint
+    - ./runtest.sh
 sudo: required
 dist: trusty
 notifications:
