@@ -1,7 +1,7 @@
-FROM ubuntu
+FROM ubuntu:latest
 
 RUN apt-get update -qq -y && apt-get upgrade -qq -y
-RUN apt-get install g++ make libcppunit-dev -qq -y
+RUN apt-get install g++ cmake libcppunit-dev -qq -y
 
 ADD . /code
 WORKDIR /code

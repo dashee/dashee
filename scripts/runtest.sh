@@ -17,7 +17,7 @@ RUN_TYPE=${1-dummy}
 RETURN_EC=0
 
 # The directory where all the tests are stored
-TESTDIR=./bin/tests
+TESTDIR=.
 TEMPDIR=$(mktemp -d)
 
 # List of all tests to run
@@ -66,8 +66,8 @@ runtest()
 {
     # If the test does not exist skip
     if [ ! -f $TESTDIR/$1 ]; then
-	echo "Tests '$1' not found skipping..."
-	continue;
+	    echo "Tests '$1' not found skipping..."
+	    continue;
     fi;
 
     # Run the test
@@ -75,51 +75,7 @@ runtest()
     TEST_EC=$?
 
     if [ $TEST_EC -ne 0 ]; then
-	RETURN_EC=1
-    fi
-
-    printstatus $TEST_EC $1
-}
-
-##
-# Run an individual test
-#
-runtest()
-{
-    # If the test does not exist skip
-    if [ ! -f $TESTDIR/$1 ]; then
-	echo "Tests '$1' not found skipping..."
-	continue;
-    fi;
-
-    # Run the test
-    $TESTDIR/$@
-    TEST_EC=$?
-
-    if [ $TEST_EC -ne 0 ]; then
-	RETURN_EC=1
-    fi
-
-    printstatus $TEST_EC $1
-}
-
-##
-# Run an individual test
-#
-runtest()
-{
-    # If the test does not exist skip
-    if [ ! -f $TESTDIR/$1 ]; then
-	echo "Tests '$1' not found skipping..."
-	continue;
-    fi;
-
-    # Run the test
-    $TESTDIR/$@
-    TEST_EC=$?
-
-    if [ $TEST_EC -ne 0 ]; then
-	RETURN_EC=1
+	    RETURN_EC=1
     fi
 
     printstatus $TEST_EC $1
@@ -166,13 +122,13 @@ runtest testConfig $TEMPDIR
 case "$RUN_TYPE" in 
     "pi")
         runtests $TEST_PI
-	runtest testVehicleCar UART /dev/ttyAMA0 10
-	runtest testVehicleMultirotorQuadX UART /dev/ttyAMA0 10
+	    runtest testVehicleCar UART /dev/ttyAMA0 10
+	    runtest testVehicleMultirotorQuadX UART /dev/ttyAMA0 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
-	runtest testVehicleCar dummy data/Servo.bin 0
-	runtest testVehicleMultirotorQuadX dummy data/Servo.bin 0
+	    runtest testVehicleCar dummy data/Servo.bin 0
+	    runtest testVehicleMultirotorQuadX dummy data/Servo.bin 0
         ;;
     *)
         echo "RUN_TYPE is not defined" >&2

@@ -109,7 +109,7 @@ void * dashee::test::addNTimes(void * l)
 void * dashee::test::callSelf(void * nothing)
 {
     UNUSED(nothing);
-    CPPUNIT_ASSERT(dashee::Threads::Thread::self() > 0);
+    CPPUNIT_ASSERT(dashee::Threads::Thread::self() > static_cast<pthread_t >(0));
     dashee::Threads::Thread::exit();
     return NULL;
 }

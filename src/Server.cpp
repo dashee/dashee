@@ -171,6 +171,7 @@ void dashee::Server::appendBufferTo(std::queue<unsigned char> * q)
 int dashee::Server::wait()
 {   
     FD_ZERO(&select_read);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
     FD_SET(socketfd, &select_read);
 #pragma GCC diagnostic pop

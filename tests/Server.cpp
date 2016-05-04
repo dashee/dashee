@@ -8,7 +8,7 @@
  */
 void dashee::test::Server::setUp()
 {
-    throw dashee::ExceptionServoController("This class is abstract");
+    throw dashee::ExceptionServer("This class is abstract");
 }
 
 /**
@@ -16,5 +16,5 @@ void dashee::test::Server::setUp()
  */
 void dashee::test::Server::tearDown()
 {
-    delete this->servoController;
+    //delete this->servoController;
 }

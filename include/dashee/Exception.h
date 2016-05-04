@@ -13,6 +13,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdexcept>
+#include <string>
 
 namespace dashee
 {
