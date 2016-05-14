@@ -1,22 +1,24 @@
 cmake_minimum_required(VERSION 3.0)
 project(dashee)
 
-##
-# Set the variables required for building to ensure
-# the build works on all platforms
-#
-if (APPLE)
-    set(CMAKE_SYSTEM_NAME Darwin)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
-
-##
-# If I am not on the Raspberry Pi, set the -std flag
-#
+# Set the RASPBERRY_PI Variable if we detect that the system
+# is running on a Pi
 include(CheckIncludeFile)
 CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h" RASPBERRY_PI)
-if (NOT RASPBERRY_PI)
+
+##
+# Dependant on operating system type we set the flags
+# Accordingly
+#
+if (RASPBERRY_PI)
+    message(STATUS "Detected a RaspberryPi System")
+elseif(APPLE)
+    set(CMAKE_SYSTEM_NAME Darwin)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    message(STATUS "Detected an Apple System")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    message(STATUS "Detected a Linux System")
 endif()
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -118,8 +120,6 @@ add_custom_command(
         POST_BUILD
         TARGET servod
 )
-message("${PROJECT_SOURCE_lDIR}/scripts/runtest.sh")
-message("${PROJECT_BINARY_DIR}/runtest.sh")
 
 add_custom_command(
         OUTPUT ${PROJECT_BINARY_DIR}/runtest.sh
