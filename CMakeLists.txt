@@ -10,7 +10,7 @@ CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h" RASPBERRY_PI)
 # Dependant on operating system type we set the flags
 # Accordingly
 #
-if (RASPBERRY_PI)
+if (DEFINED RASPBERRY_PI)
     message(STATUS "Detected a RaspberryPi System")
 elseif(APPLE)
     set(CMAKE_SYSTEM_NAME Darwin)
