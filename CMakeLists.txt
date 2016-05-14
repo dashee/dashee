@@ -6,14 +6,16 @@ project(dashee)
 # the build works on all platforms
 #
 if (APPLE)
-    SET(CMAKE_SYSTEM_NAME Darwin)
+    set(CMAKE_SYSTEM_NAME Darwin)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 ##
 # If I am not on the Raspberry Pi, set the -std flag
 #
-if (NOT CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h"))
+include(CheckIncludeFile)
+CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h" RASPBERRY_PI)
+if (NOT RASPBERRY_PI)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
