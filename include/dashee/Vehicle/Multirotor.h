@@ -47,7 +47,7 @@ public:
     // Helpful for Changing the motor to represent a different
     // servo
     void changeServoMotor(
-            const unsigned short int motorNumber, 
+            const unsigned short int motorNumber,
             const unsigned short int servoChannel
         );
 
