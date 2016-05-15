@@ -10,7 +10,8 @@ RUN mkdir -p build
 WORKDIR /code/build
 RUN cmake ..
 RUN make -j
+WORKDIR /code
 
-CMD servo --config=files/examples/servod-dummy.conf
+CMD ./build/servod --config=files/examples/servod-dummy.conf
 
 EXPOSE 2047

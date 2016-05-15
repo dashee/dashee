@@ -10,17 +10,19 @@ CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h" RASPBERRY_PI)
 # Dependant on operating system type we set the flags
 # Accordingly
 #
-if (DEFINED RASPBERRY_PI)
+if (EXISTS "/opt/vc/include/bcm_host.h")
+    # RASPBERRY PI
     message(STATUS "Detected a RaspberryPi System")
 elseif(APPLE)
+    # APPLE
     set(CMAKE_SYSTEM_NAME Darwin)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     message(STATUS "Detected an Apple System")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    # OTHER LINUX
     message(STATUS "Detected a Linux System")
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
