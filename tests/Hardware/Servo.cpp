@@ -82,7 +82,10 @@ void Servo::testExceptionInvalidNegativeTarget()
  */
 void Servo::testExceptionInvalidLargePositiveTarget()
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverflow"
     this->servo->setTarget(100084);
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -91,7 +94,10 @@ void Servo::testExceptionInvalidLargePositiveTarget()
  */
 void Servo::testExceptionInvalidLargeNegativeTarget()
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverflow"
     this->servo->setTarget(-234128989934832);
+#pragma GCC diagnostic pop
 }
 
 /**
