@@ -24,9 +24,6 @@ namespace dashee
  */
 class dashee::VehicleCar : public dashee::Vehicle
 {
-protected:
-    unsigned short int throttleChannel;
-    unsigned short int yawChannel;
 
 public:
 
@@ -35,21 +32,9 @@ public:
         dashee::Hardware::ServoController * servoController, 
         Config * conf = NULL
     );
-
-    // Overwrite the loadFromConfig and set the channel values
-    virtual void loadFromConfig(Config * config);
-    
-    // Overwrite our basic
-    void setYawChannel(const unsigned short int value);
-    unsigned short int getYawChannel();
-    void setThrottleChannel(const unsigned short int value);
-    unsigned short int getThrottleChannel();
     
     // Update our model from a buffer
     virtual void read(Buffer<unsigned char> * buffer);
-
-    // Update our physical model    
-    virtual void update();
 
     virtual ~VehicleCar();
 };

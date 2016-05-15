@@ -60,6 +60,15 @@ protected:
     unsigned short int throttle;
 
     /**
+     * These values represent the channel
+     * number each of our main control surfaces represent
+     */
+    unsigned short int pitchChannel;
+    unsigned short int rollChannel;
+    unsigned short int yawChannel;
+    unsigned short int throttleChannel;
+
+    /**
      * This trim value is represented
      * in +/- values, which have to be 
      * within the range of -128 and 128 
@@ -95,17 +104,17 @@ protected:
      */ 
     bool fallbackMode;
     
-    // Construct our model
-    Vehicle(
-            dashee::Hardware::ServoController * servoController, 
-            Config * conf = NULL
-        );
-    
     // Helpful function for setYaw/setRoll/setPitch and setThrottle
     void setControl(unsigned short int & control, unsigned short int value);
     void setControlTrim(signed short int & control, signed short int value);
 
 public:
+
+    // Construct our model
+    Vehicle(
+            dashee::Hardware::ServoController * servoController,
+            Config * conf = NULL
+    );
 
     // Loads from the configuration file
     virtual void loadFromConfig(Config * conf);
@@ -123,6 +132,19 @@ public:
 
     virtual void setThrottle(unsigned short int throttle);
     virtual unsigned short int getThrottle(bool notrim = false) const;
+
+    // Overwrite our basic channels
+    void setPitchChannel(const unsigned short int value);
+    unsigned short int getPitchChannel() const;
+
+    void setRollChannel(const unsigned short int value);
+    unsigned short int getRollChannel() const;
+
+    void setYawChannel(const unsigned short int value);
+    unsigned short int getYawChannel() const;
+
+    void setThrottleChannel(const unsigned short int value);
+    unsigned short int getThrottleChannel() const;
 
     // Sets for trim values
     void setPitchTrim(signed short int pitchTriam);
@@ -160,10 +182,10 @@ public:
     bool isFallback() const;
 
     // Update our model from a buffer stored in queue
-    virtual void read(Buffer<unsigned char> * buffer) = 0;
+    virtual void read(Buffer<unsigned char> * buffer);
 
     // Update our physical model
-    virtual void update() = 0;
+    virtual void update();
 
     // Function which initiate fallback mode
     virtual void fallback();

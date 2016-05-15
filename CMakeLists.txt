@@ -86,6 +86,10 @@ add_executable(testBuffer tests/testBuffer.cpp)
 target_include_directories(testBuffer PRIVATE tests/)
 target_link_libraries(testBuffer dashee dasheetest cppunit pthread)
 
+add_executable(testVehicle tests/testVehicle.cpp)
+target_include_directories(testVehicle PRIVATE tests/)
+target_link_libraries(testVehicle dashee dasheetest cppunit pthread)
+
 add_executable(testVehicleCar tests/testVehicleCar.cpp)
 target_include_directories(testVehicleCar PRIVATE tests/)
 target_link_libraries(testVehicleCar dashee dasheetest cppunit pthread)
@@ -120,7 +124,7 @@ add_custom_command(
         COMMENT "Creating binary data file."
         COMMAND dd if=/dev/zero of=data/Servo.bin bs=1 count=0 seek=74 2>/dev/null
         POST_BUILD
-        TARGET servod
+        TARGET servod testVehicle testVehicleCar testVehicleMultirotorQuadX
 )
 
 add_custom_command(
