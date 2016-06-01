@@ -11,16 +11,13 @@ CHECK_INCLUDE_FILE("/opt/vc/include/bcm_host.h" RASPBERRY_PI)
 # Accordingly
 #
 if (EXISTS "/opt/vc/include/bcm_host.h")
-    # RASPBERRY PI
-    message(STATUS "Detected a RaspberryPi System")
+    set(CMAKE_SYSTEM_NAME RaspberryPi)
 elseif(APPLE)
-    # APPLE
     set(CMAKE_SYSTEM_NAME Darwin)
-    message(STATUS "Detected an Apple System")
 else()
-    # OTHER LINUX
-    message(STATUS "Detected a Linux System")
+    set(CMAKE_SYSTEM_NAME Linux)
 endif()
+message(STATUS "Detected system as: ${CMAKE_SYSTEM_NAME}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -63,52 +60,17 @@ target_link_libraries(dasheetest dashee cppunit)
 add_executable(servod src/servod.cpp)
 target_link_libraries(servod dashee pthread)
 
-##
-# Generate the test Executables
-#
-add_executable(testThreads tests/testThreads.cpp)
-target_include_directories(testThreads PRIVATE tests/)
-target_link_libraries(testThreads dashee dasheetest cppunit pthread)
+file(GLOB TEST_SOURCES tests/test*.cpp)
+foreach( testsourcefile ${TEST_SOURCES} )
+    # I used a simple string replace, to cut off .cpp.
+    get_filename_component(TEST_FILE_NAME ${testsourcefile} NAME)
+    string( REPLACE ".cpp" "" TEST_NAME ${TEST_FILE_NAME} )
+    message(STATUS "Detected test: ${TEST_NAME}")
 
-add_executable(testPoint tests/testPoint.cpp)
-target_include_directories(testPoint PRIVATE tests/)
-target_link_libraries(testPoint dashee dasheetest cppunit pthread)
-
-add_executable(testI2C tests/testI2C.cpp)
-target_include_directories(testI2C PRIVATE tests/)
-target_link_libraries(testI2C dashee dasheetest cppunit pthread)
-
-add_executable(testConfig tests/testConfig.cpp)
-target_include_directories(testConfig PRIVATE tests/)
-target_link_libraries(testConfig dashee dasheetest cppunit pthread)
-
-add_executable(testBuffer tests/testBuffer.cpp)
-target_include_directories(testBuffer PRIVATE tests/)
-target_link_libraries(testBuffer dashee dasheetest cppunit pthread)
-
-add_executable(testVehicle tests/testVehicle.cpp)
-target_include_directories(testVehicle PRIVATE tests/)
-target_link_libraries(testVehicle dashee dasheetest cppunit pthread)
-
-add_executable(testVehicleCar tests/testVehicleCar.cpp)
-target_include_directories(testVehicleCar PRIVATE tests/)
-target_link_libraries(testVehicleCar dashee dasheetest cppunit pthread)
-
-add_executable(testVehicleMultirotorQuadX tests/testVehicleMultirotorQuadX.cpp)
-target_include_directories(testVehicleMultirotorQuadX PRIVATE tests/)
-target_link_libraries(testVehicleMultirotorQuadX dashee dasheetest cppunit pthread)
-
-add_executable(testHardwareServoControllerDummy tests/testHardwareServoControllerDummy.cpp)
-target_include_directories(testHardwareServoControllerDummy PRIVATE tests/)
-target_link_libraries(testHardwareServoControllerDummy dashee dasheetest cppunit pthread)
-
-add_executable(testHardwareServoDummy tests/testHardwareServoDummy.cpp)
-target_include_directories(testHardwareServoDummy PRIVATE tests/)
-target_link_libraries(testHardwareServoDummy dashee dasheetest cppunit pthread)
-
-add_executable(testHardwareAccelerometerDummy tests/testHardwareServoDummy.cpp)
-target_include_directories(testHardwareAccelerometerDummy PRIVATE tests/)
-target_link_libraries(testHardwareAccelerometerDummy dashee dasheetest cppunit pthread)
+    add_executable( ${TEST_NAME} tests/${TEST_FILE_NAME} )
+    target_include_directories(${TEST_NAME} PRIVATE tests/)
+    target_link_libraries(${TEST_NAME} dashee dasheetest cppunit pthread)
+endforeach( testsourcefile ${TEST_SOURCES} )
 
 ##
 # Some custom commands that are helpful when debugging
