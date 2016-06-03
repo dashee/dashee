@@ -197,7 +197,7 @@ unsigned short int Vehicle::getRoll(bool notrim) const
         return this->roll;
     
     return dashee::constrain(
-            this->roll - this->rollTrim, 
+            this->roll - this->rollTrim,
             0, 
             255
         );
@@ -647,6 +647,15 @@ void Vehicle::update()
 
     this->servoController->setTarget(
             this->getThrottleChannel(),
+            this->getThrottle()
+    );
+
+    dashee::Log::info(
+            4,
+            "Updated vehicle to %3up %3ur %3uy %3ut",
+            this->getPitch(),
+            this->getRoll(),
+            this->getYaw(),
             this->getThrottle()
     );
 }
