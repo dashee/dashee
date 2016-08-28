@@ -1,20 +1,20 @@
+# Object files used by systems
 *.o
 
-server/bin
-server/lib64
-server/lib
-server/data
-server/etc
-server/docs/html
-server/docs/xml
-server/tags
+# Usually for cmake we use the build directory
+# and in some cases I want to use build-mac or build-pi
+build
+build-*
 
+# Documentation files that are generated after
+docs/html
+docs/xml
+
+# Generated bin files
 client/ps3/bin
-
 playground/lib64
 playground/bin
 playground/lib
 
-www/website/application/configs
-www/website/sass/css
-www/website/public/download
+# InteliJ
+.idea/
