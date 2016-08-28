@@ -24,7 +24,7 @@ deleting the build directory
 
 ### Starting the program (in dummy mode). This is inside the build directory
     
-    $ ./servod --config=servod-dummy.conf
+    $ ./servod --config=files/examples/servod-dummy.conf
 
 You can run the servo program inside
 [docker](https://github.com/dashee/dashee/wiki/Docker).

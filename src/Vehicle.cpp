@@ -39,6 +39,11 @@ Vehicle::Vehicle(
     this->setYaw(128);
     this->setThrottle(0);
 
+    this->setPitchChannel(1);
+    this->setRollChannel(2);
+    this->setYawChannel(3);
+    this->setThrottleChannel(4);
+
     if (config != NULL)
         this->loadFromConfig(config);
 }
@@ -129,6 +134,15 @@ void Vehicle::loadFromConfig(Config * config)
         this->setYawFallback(config->getUInt("yaw-fallback"));
     if  (config->isKeySet("throttle-fallback"))
         this->setThrottleFallback(config->getUInt("throttle-fallback"));
+
+    if (config->isKeySet("pitch-channel"))
+        this->setPitchChannel(config->getUInt("pitch-channel"));
+    if (config->isKeySet("roll-channel"))
+        this->setRollChannel(config->getUInt("roll-channel"));
+    if (config->isKeySet("yaw-channel"))
+        this->setYawChannel(config->getUInt("yaw-channel"));
+    if (config->isKeySet("throttle-channel"))
+        this->setThrottleChannel(config->getUInt("throttle-channel"));
 }
 
 /**
@@ -183,7 +197,7 @@ unsigned short int Vehicle::getRoll(bool notrim) const
         return this->roll;
     
     return dashee::constrain(
-            this->roll - this->rollTrim, 
+            this->roll - this->rollTrim,
             0, 
             255
         );
@@ -245,6 +259,110 @@ unsigned short int Vehicle::getThrottle(bool notrim) const
             0, 
             255
         );
+}
+
+/**
+ * Set the pitch Servo channel.
+ *
+ * @param channel The value of the channel to set
+ *
+ * @throws ExceptionVehicle if channel is outside the constraints of the servoc
+ *  controller
+ */
+void Vehicle::setPitchChannel(const unsigned short int channel)
+{
+    if (channel > this->servoController->size())
+        throw ExceptionVehicle("The pitch channel is invalid");
+
+    this->pitchChannel = channel;
+}
+
+/**
+ * Get the yaw channel.
+ *
+ * @returns yaw channel.
+ */
+unsigned short int Vehicle::getPitchChannel() const
+{
+    return this->pitchChannel;
+}
+
+/**
+ * Set the roll Servo channel.
+ *
+ * @param channel The value of the channel to set
+ *
+ * @throws ExceptionVehicle if channel is outside the constraints of the servoc
+ *  controller
+ */
+void Vehicle::setRollChannel(const unsigned short int channel)
+{
+    if (channel > this->servoController->size())
+        throw ExceptionVehicle("The roll channel is invalid");
+
+    this->rollChannel = channel;
+}
+
+/**
+ * Get the roll channel.
+ *
+ * @returns roll channel.
+ */
+unsigned short int Vehicle::getRollChannel() const
+{
+    return this->rollChannel;
+}
+
+/**
+ * Set the yaw Servo channel.
+ *
+ * @param channel The value of the channel to set
+ *
+ * @throws ExceptionVehicle if channel is outside the constraints of the servoc
+ *  controller
+ */
+void Vehicle::setYawChannel(const unsigned short int channel)
+{
+    if (channel > this->servoController->size())
+        throw ExceptionVehicle("The yaw channel is invalid");
+
+    this->yawChannel = channel;
+}
+
+/**
+ * Get the yaw channel.
+ *
+ * @returns yaw channel.
+ */
+unsigned short int Vehicle::getYawChannel() const
+{
+    return this->yawChannel;
+}
+
+/**
+ * Set the throttle Servo channel.
+ *
+ * @param channel The value of the channel to set
+ *
+ * @throws ExceptionVehicle if channel is outside the constraints of the servoc
+ *  controller
+ */
+void Vehicle::setThrottleChannel(const unsigned short int channel)
+{
+    if (channel > this->servoController->size())
+        throw ExceptionVehicle("The throttle channel is invalid");
+
+    this->throttleChannel = channel;
+}
+
+/**
+ * Get the throttle channel.
+ *
+ * @returns throttle channel.
+ */
+unsigned short int Vehicle::getThrottleChannel() const
+{
+    return this->throttleChannel;
 }
 
 /**
@@ -471,6 +589,75 @@ void Vehicle::fallback()
 
     if (this->throttleFallbackEnabled)
         this->setThrottle(this->throttleFallback);
+}
+
+/**
+ * Read from the queue and update our model
+ *
+ * @param buffer The std::queue holding our values.
+ */
+void Vehicle::read(Buffer<unsigned char> * buffer)
+{
+    while (!buffer->empty())
+    {
+        // Found a command byte
+        if (buffer->front() == 0)
+        {
+            buffer->pop();
+
+            // Ensure the size is still sufficient to do the next two commands
+            if (buffer->size() < 4)
+                break;
+
+            // Set the yaw and throttle from the buffer
+            this->setPitch(static_cast<unsigned short int>(buffer->next()));
+            this->setRoll(static_cast<unsigned short int>(buffer->next()));
+            this->setYaw(static_cast<unsigned short int>(buffer->next()));
+            this->setThrottle(static_cast<unsigned short int>(buffer->next()));
+        }
+
+            // Invalid byte, continue
+        else
+        {
+            dashee::Log::warning(4, "Invalid command %d", buffer->front());
+            buffer->pop();
+        }
+    }
+}
+
+/**
+ * This function sends its current state to the physical model
+ */
+void Vehicle::update()
+{
+    this->servoController->setTarget(
+            this->getPitchChannel(),
+            this->getPitch()
+    );
+
+    this->servoController->setTarget(
+            this->getRollChannel(),
+            this->getRoll()
+    );
+
+    this->servoController->setTarget(
+            this->getYawChannel(),
+            this->getYaw()
+    );
+
+    this->servoController->setTarget(
+            this->getThrottleChannel(),
+            this->getThrottle()
+    );
+
+    dashee::Log::info(
+            4,
+            "Updated vehicle to %3up %3ur %3uy %3ut",
+            this->getPitch(),
+            this->getRoll(),
+            this->getYaw(),
+            this->getThrottle()
+    );
 }
 
 /**

@@ -390,10 +390,13 @@ void Container::loadVehicle()
 
     const char * modelType = config->get("vehicle-type", VEHICLE_TYPE);
 
-    if (strcmp(modelType, "Car") == 0)
-    {
+    if (strcmp(modelType, "Car") == 0) {
         this->vehicle 
             = new dashee::VehicleCar(this->servoController, this->config);
+    }
+    else if (strcmp(modelType, "Vehicle") == 0) {
+        this->vehicle
+                = new dashee::Vehicle(this->servoController, this->config);
     }
     else if (strcmp(modelType, "MultirotorQuadX") == 0)
         this->vehicle 

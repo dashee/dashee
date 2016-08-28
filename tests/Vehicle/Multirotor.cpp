@@ -90,53 +90,6 @@ void VehicleMultirotor::testReadFromBuffer()
 }
 
 /**
- * Test falling back and reverting
- */
-void VehicleMultirotor::testFallbackAndRevert()
-{
-    // Test default values
-    CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getRollFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getYawFallback() == 128);
-    CPPUNIT_ASSERT(this->vehicle->getThrottleFallback() == 0);
-
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-    this->vehicle->revert();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-    this->vehicle->fallback();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == true);
-    this->vehicle->revert();
-    CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-
-    for (int x = 0; x < 255; x++)
-    {
-        this->vehicle->revert();
-        CPPUNIT_ASSERT(this->vehicle->isFallback() == false);
-            
-        this->vehicle->setPitchFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-        
-        this->vehicle->setRollFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-        
-        this->vehicle->setYawFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-
-        this->vehicle->setThrottleFallback(x);
-        CPPUNIT_ASSERT(this->vehicle->getPitchFallback() == x);
-
-        // TODO Test the pitch values after fall back
-        this->vehicle->fallback();
-        CPPUNIT_ASSERT(this->vehicle->getPitch() == x);
-        CPPUNIT_ASSERT(this->vehicle->getRoll() == x);
-        CPPUNIT_ASSERT(this->vehicle->getYaw() == x);
-        CPPUNIT_ASSERT(this->vehicle->getThrottle() == x);
-
-        dashee::sleep(VEHICLE_TIMEOUT);
-    }
-}
-
-/**
  * The motor only has a max limit of channels, ensure that Quad or Hex vehicles
  * throw exceptions if the invalid set motor is set
  */ 

@@ -50,7 +50,6 @@ protected:
     // Test reading from the server
     virtual void testReadFromBuffer();
     virtual void testInvalidMotorChannel();
-    virtual void testFallbackAndRevert();
 
 public:
 };

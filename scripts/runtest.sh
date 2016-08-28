@@ -122,11 +122,13 @@ runtest testConfig $TEMPDIR
 case "$RUN_TYPE" in 
     "pi")
         runtests $TEST_PI
+        runtest testVehicle dummy data/Servo.bin 10
 	    runtest testVehicleCar UART /dev/ttyAMA0 10
 	    runtest testVehicleMultirotorQuadX UART /dev/ttyAMA0 10
         ;;
     "dummy")
         runtests $TEST_DUMMY
+        runtest testVehicle dummy data/Servo.bin 0
 	    runtest testVehicleCar dummy data/Servo.bin 0
 	    runtest testVehicleMultirotorQuadX dummy data/Servo.bin 0
         ;;
