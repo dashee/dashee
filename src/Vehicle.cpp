@@ -600,27 +600,20 @@ void Vehicle::read(Buffer<unsigned char> * buffer)
 {
     while (!buffer->empty())
     {
-        // Found a command byte
-        if (buffer->front() == 0)
-        {
-            buffer->pop();
-
-            // Ensure the size is still sufficient to do the next two commands
-            if (buffer->size() < 4)
+        auto mode = static_cast<unsigned short int>(buffer->next());
+        switch (mode) {
+            case VEHICLE_MODE_CONTROL:
+                // Set the yaw and throttle from the buffer
+                this->setPitch(static_cast<unsigned short int>(buffer->next()));
+                this->setRoll(static_cast<unsigned short int>(buffer->next()));
+                this->setYaw(static_cast<unsigned short int>(buffer->next()));
+                this->setThrottle(static_cast<unsigned short int>(buffer->next()));
                 break;
-
-            // Set the yaw and throttle from the buffer
-            this->setPitch(static_cast<unsigned short int>(buffer->next()));
-            this->setRoll(static_cast<unsigned short int>(buffer->next()));
-            this->setYaw(static_cast<unsigned short int>(buffer->next()));
-            this->setThrottle(static_cast<unsigned short int>(buffer->next()));
-        }
-
-            // Invalid byte, continue
-        else
-        {
-            dashee::Log::warning(4, "Invalid command %d", buffer->front());
-            buffer->pop();
+            case VEHICLE_MODE_PARTYMODE:
+                this->setYaw(0);
+                break;
+            default:
+                dashee::Log::warning(4, "Invalid Ccommand %d", mode);
         }
     }
 }
