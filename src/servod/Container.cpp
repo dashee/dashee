@@ -32,10 +32,15 @@ Container::Container(int argc, char ** argv)
       lockVehicle(NULL)
 {
     this->loadConfig();
+    dashee::Log::info(4, "Loaded Config");
     this->loadServer();
+    dashee::Log::info(4, "Loaded Server");
     this->loadHardwareServoController();
+    dashee::Log::info(4, "Loaded ServoController");
     this->loadHardwareAccelerometer();
+    dashee::Log::info(4, "Loaded HardwareAccelerometer");
     this->loadVehicle();
+    dashee::Log::info(4, "Loaded Vehicle");
 }
 
 /**

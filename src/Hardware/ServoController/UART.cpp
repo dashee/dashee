@@ -35,6 +35,7 @@ ServoControllerUART::ServoControllerUART(
     // Create a servo class for each, servo channel that exists
     for (int x = 0; x < channels; x++)
         servos.push_back(new ServoUART(&this->fd, x));
+    dashee::Log::info(3, "Created UART");
 }
 
 /**
@@ -48,8 +49,8 @@ void ServoControllerUART::init()
 {
     struct termios options;
     tcgetattr(this->fd, &options);
-    cfsetispeed(&options, B230400);
-    cfsetospeed(&options, B230400);
+    cfsetispeed(&options, B9600);
+    cfsetospeed(&options, B9600);
 
     options.c_cflag &= ~PARENB;
     options.c_cflag &= ~CSTOPB;
