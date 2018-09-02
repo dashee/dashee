@@ -39,6 +39,8 @@ void VehicleCar::read(Buffer<unsigned char> * buffer)
                 break;
 
             // Set the yaw and throttle from the buffer
+            this->setPitch(static_cast<unsigned short int>(buffer->next()));
+            this->setRoll(static_cast<unsigned short int>(buffer->next()));
             this->setYaw(static_cast<unsigned short int>(buffer->next()));
             this->setThrottle(static_cast<unsigned short int>(buffer->next()));
         }
