@@ -603,12 +603,6 @@ void Vehicle::read(Buffer<unsigned char> * buffer)
         auto mode = static_cast<unsigned short int>(buffer->next());
         switch (mode) {
             case VEHICLE_MODE_CONTROL:
-                // Ensure the size is still sufficient to do the next two commands
-                if (buffer->size() < 4) {
-                    dashee::Log::warning(4, "Invalid command %d", mode);
-                    break;
-                }
-
                 // Set the yaw and throttle from the buffer
                 this->setPitch(static_cast<unsigned short int>(buffer->next()));
                 this->setRoll(static_cast<unsigned short int>(buffer->next()));
@@ -619,9 +613,7 @@ void Vehicle::read(Buffer<unsigned char> * buffer)
                 this->setYaw(0);
                 break;
             default:
-                dashee::Log::warning(4, "Invalid command %d", buffer->front());
-                buffer->pop();
-
+                dashee::Log::warning(4, "Invalid Ccommand %d", mode);
         }
     }
 }
