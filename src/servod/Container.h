@@ -23,7 +23,6 @@
 #include <dashee/Threads/Exception.h>
 #include <dashee/Threads/Lock.h>
 #include <dashee/Threads/Scope.h>
-#include <dashee/Vehicle/Car.h>
 #include <dashee/Vehicle.h>
 #include <dashee/Vehicle/Multirotor/Quad/X.h>
 
