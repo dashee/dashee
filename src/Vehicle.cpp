@@ -578,17 +578,27 @@ void Vehicle::fallback()
     // @see this->setControl(...);
     this->fallbackMode = true;
 
-    if (this->pitchFallbackEnabled)
+    dashee::Log::warning(4, "Fallback enabled");
+
+    if (this->pitchFallbackEnabled) {
+        dashee::Log::warning(4, "Fallback pitch set to %d", this->pitchFallback);
         this->setPitch(this->pitchFallback);
+    }
 
-    if (this->rollFallbackEnabled)
+    if (this->rollFallbackEnabled) {
         this->setRoll(this->rollFallback);
+        dashee::Log::warning(4, "Fallback roll set to %d", this->rollFallback);
+    }
 
-    if (this->yawFallbackEnabled)
+    if (this->yawFallbackEnabled) {
         this->setYaw(this->yawFallback);
+        dashee::Log::warning(4, "Fallback yaw set to %d", this->yawFallback);
+    }
 
-    if (this->throttleFallbackEnabled)
+    if (this->throttleFallbackEnabled) {
         this->setThrottle(this->throttleFallback);
+        dashee::Log::warning(4, "Fallback throttle set to %d", this->throttleFallback);
+    }
 }
 
 /**
@@ -613,7 +623,7 @@ void Vehicle::read(Buffer<unsigned char> * buffer)
                 this->setYaw(0);
                 break;
             default:
-                dashee::Log::warning(4, "Invalid Ccommand %d", mode);
+                dashee::Log::warning(4, "Invalid Command %d", mode);
         }
     }
 }

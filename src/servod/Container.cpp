@@ -412,6 +412,11 @@ void Container::loadVehicle()
                 "'"
             );
 
+    this->vehicle->setRollFallback(static_cast<unsigned short int>(config->getUInt("vehicle-roll-fallback", 0U)));
+    this->vehicle->setYawFallback(static_cast<unsigned short int>(config->getUInt("vehicle-yaw-fallback", 0U)));
+    this->vehicle->setPitchFallback(static_cast<unsigned short int>(config->getUInt("vehicle-pitch-fallback", 0)));
+    this->vehicle->setThrottleFallback(static_cast<unsigned short int>(config->getUInt("vehicle-throttle-fallback", 0)));
+
     dashee::Log::info(3, "Model set to '%s'.", modelType);
 }
 
