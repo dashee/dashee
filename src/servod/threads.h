@@ -31,7 +31,7 @@
 #include "Container.h"
 
 // The amount of time to sleep on each tick of the threads main loop
-#define DASHEE_SERVOD_THREADS_TICK_CONTROLLER 25000
+#define DASHEE_SERVOD_THREADS_TICK_CONTROLLER 50000
 #define DASHEE_SERVOD_THREADS_TICK_SERVER 25000
 #define DASHEE_SERVOD_THREADS_TICK_SENSOR 25000
 
