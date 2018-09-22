@@ -1,5 +1,6 @@
 #include "threads.h"
 
+
 // Device locks
 dashee::Threads::LockReadWrite lockConfig = dashee::Threads::LockReadWrite();
 dashee::Threads::LockReadWrite lockServer = dashee::Threads::LockReadWrite();
@@ -21,6 +22,7 @@ dashee::Threads::LockReadWrite lockSensor = dashee::Threads::LockReadWrite();
 
 // Define our thread shared globals
 dashee::Buffer<unsigned char> buffer = dashee::Buffer<unsigned char>();
+std::chrono::milliseconds lastRead = static_cast<std::chrono::milliseconds>(0);
 
 /**
  * This is a simple thread that is run to initialize the controller
@@ -87,6 +89,9 @@ void * threadReadFromServer(void * s)
         {
             if (server->read())
             {
+                lastRead = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch()
+                );
                 dashee::Threads::Scope scope(&lockBuffer);
  
                 // Take the buffer   
@@ -198,8 +203,23 @@ void * threadStepController(void * c)
                 dashee::Threads::Scope scope(&lockBuffer);
                 dashee::Threads::Scope scopeVehicle(&lockVehicle);
 
-                vehicle->read(&buffer);
-                //vehicle->read(&sensor);
+                std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch()
+                );
+
+                std::chrono::milliseconds timeout = static_cast<std::chrono::milliseconds>(
+                        DASHEE_SERVOD_FALLBACK_TIMEOUT
+                );
+
+                if((currentTime - lastRead) > timeout){
+                    vehicle->fallback();
+                }
+                else {
+                    vehicle->revert();
+                    vehicle->read(&buffer);
+                    //vehicle->read(&sensor);
+                }
+
                 vehicle->update();
             }
 

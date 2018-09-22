@@ -32,10 +32,15 @@ Container::Container(int argc, char ** argv)
       lockVehicle(NULL)
 {
     this->loadConfig();
+    dashee::Log::info(4, "Loaded Config");
     this->loadServer();
+    dashee::Log::info(4, "Loaded Server");
     this->loadHardwareServoController();
+    dashee::Log::info(4, "Loaded ServoController");
     this->loadHardwareAccelerometer();
+    dashee::Log::info(4, "Loaded HardwareAccelerometer");
     this->loadVehicle();
+    dashee::Log::info(4, "Loaded Vehicle");
 }
 
 /**
@@ -390,11 +395,7 @@ void Container::loadVehicle()
 
     const char * modelType = config->get("vehicle-type", VEHICLE_TYPE);
 
-    if (strcmp(modelType, "Car") == 0) {
-        this->vehicle 
-            = new dashee::VehicleCar(this->servoController, this->config);
-    }
-    else if (strcmp(modelType, "Vehicle") == 0) {
+    if (strcmp(modelType, "Vehicle") == 0) {
         this->vehicle
                 = new dashee::Vehicle(this->servoController, this->config);
     }
@@ -410,6 +411,11 @@ void Container::loadVehicle()
                 std::string(modelType) + 
                 "'"
             );
+
+    this->vehicle->setRollFallback(static_cast<unsigned short int>(config->getUInt("vehicle-roll-fallback", 0U)));
+    this->vehicle->setYawFallback(static_cast<unsigned short int>(config->getUInt("vehicle-yaw-fallback", 0U)));
+    this->vehicle->setPitchFallback(static_cast<unsigned short int>(config->getUInt("vehicle-pitch-fallback", 0)));
+    this->vehicle->setThrottleFallback(static_cast<unsigned short int>(config->getUInt("vehicle-throttle-fallback", 0)));
 
     dashee::Log::info(3, "Model set to '%s'.", modelType);
 }

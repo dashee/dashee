@@ -23,6 +23,9 @@ namespace dashee
     class Vehicle;
 }
 
+#define VEHICLE_MODE_CONTROL 0
+#define VEHICLE_MODE_PARTYMODE 255
+
 /**
  * Virtual Vehicle class.
  *
