@@ -14,36 +14,35 @@ using namespace dashee;
  *
  * @throws ExceptionServer when socket call or bind call fails
  */
-ServerUDP::ServerUDP(unsigned int port) : Server(port)
-{
+ServerUDP::ServerUDP(unsigned int port) : Server(port) {
     socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0)
         throw ExceptionServer();
-    
+
     server_in.sin_family = AF_INET; //IPV4
     server_in.sin_port = htons(port);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
     server_in.sin_addr.s_addr = htons(INADDR_ANY); //Any interface
 #pragma GCC diagnostic pop
-    
+
     //Bind, Note the second parameter needs to be a sockaddr
     if (
-	    bind(
-		socketfd, 
-		reinterpret_cast<const struct sockaddr *>(&server_in), 
-		sizeof(server_in)
-	    ) == -1
-	)
+            bind(
+                    socketfd,
+                    reinterpret_cast<const struct sockaddr *>(&server_in),
+                    sizeof(server_in)
+            ) == -1
+            )
         throw ExceptionServer("Binding failed");
 
     // Initialize our mask variable as pselect will jump out on SIGTERM
     memset(static_cast<void *>(&mask), 0, sizeof(mask));
     sigemptyset (&mask);
-    sigaddset (&mask, SIGINT|SIGTERM);
+    sigaddset (&mask, SIGINT | SIGTERM);
 
     if (sigprocmask(SIG_BLOCK, &mask, &origmask) < 0)
-            throw ExceptionServer();
+        throw ExceptionServer();
 }
 
 /**
@@ -58,19 +57,18 @@ ServerUDP::ServerUDP(unsigned int port) : Server(port)
  * @returns always true
  * @retval TRUE always returned
  */
-void ServerUDP::process()
-{
+void ServerUDP::process() {
     memset(buffer, 0, sizeof(buffer));
     this->setNumberOfBytesInBuffer(0);
-    
+
     ssize_t numberOfBytesInBuffer = recvfrom(
-            socketfd, 
-            buffer, 
-            SERVER_BUFFER_SIZE, 
-            0, 
-            reinterpret_cast<struct sockaddr *>(&client_in), 
+            socketfd,
+            buffer,
+            SERVER_BUFFER_SIZE,
+            0,
+            reinterpret_cast<struct sockaddr *>(&client_in),
             static_cast<socklen_t *>(&client_in_length)
-        );
+    );
 
     //Recieave from client        
     if (numberOfBytesInBuffer == -1)
@@ -94,29 +92,27 @@ void ServerUDP::process()
  * @retval FALSE if there was nothing read and it timed out
  * 
  * @throws ExceptionServer If read fails
- */ 
-bool ServerUDP::read()
-{
+ */
+bool ServerUDP::read() {
     // Wait and timeout
     int select_return = wait();
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-    if (select_return > 0 && FD_ISSET(socketfd, &select_read))
-    {
+    if (select_return > 0 && FD_ISSET(socketfd, &select_read)) {
 #pragma GCC diagnostic pop
-	process();
-	return true;
+        process();
+        return true;
     }
 
-    // Timeout
+        // Timeout
     else if (select_return == 0)
-	return false;
-    
-    // If the errno is set to EINTR, that means
-    // a signal went off
+        return false;
+
+        // If the errno is set to EINTR, that means
+        // a signal went off
     else if (select_return == -1 && errno == EINTR)
-	return false;
+        return false;
     else
         throw ExceptionServer("ServerUDP::read failed with -1.");
 }
@@ -124,26 +120,25 @@ bool ServerUDP::read()
 /** 
  * Write to the client.
  *
- * This function will write to the client, Note that you need to get atleast
+ * This function will write to the client, Note that you need to get at least
  * one read, before you can send to client, as it wont know where it is going
  * 
  * @param message The message to send
  *
  * @throws ExceptionServer If write fails
  */
-bool ServerUDP::write(const char * message)
-{
+bool ServerUDP::write(const char *message) {
     //const char message[] = "Error: Invalid Range, number must be between 1-100\n";
     if (
-	    sendto(
-		socketfd, 
-		message, 
-		strlen(message), 
-		0, 
-		reinterpret_cast<struct sockaddr *>(&client_in), 
-		client_in_length
-	    ) == -1
-	)
+            sendto(
+                    socketfd,
+                    message,
+                    strlen(message),
+                    0,
+                    reinterpret_cast<struct sockaddr *>(&client_in),
+                    client_in_length
+            ) == -1
+            )
         throw ExceptionServer("Write failed with -1.");
 
     return true;

@@ -93,14 +93,18 @@ void * threadReadFromServer(void * s)
                         std::chrono::system_clock::now().time_since_epoch()
                 );
                 dashee::Threads::Scope scope(&lockBuffer);
- 
-                // Take the buffer   
-                server->appendBufferTo(&buffer);
 
-                // Remove any excess values, good to clean up incase this 
-                // just keeps growing till the cows come home
-                while (buffer.size() > DASHEE_SERVOD_THREADS_BUFFERSIZE) 
-                    buffer.pop();
+                if(server->getBufferByte(0) == '\1'){
+                    server->write("pong");
+                }
+                else {
+                    server->appendBufferTo(&buffer);
+
+                    // Remove any excess values, good to clean up in case this
+                    // just keeps growing till the cows come home
+                    while (buffer.size() > DASHEE_SERVOD_THREADS_BUFFERSIZE)
+                        buffer.pop();
+                }
             }
         }
     }
