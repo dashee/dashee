@@ -26,6 +26,7 @@
 #include <dashee/Server.h>
 #include <dashee/Vehicle.h>
 #include <dashee/Buffer.h>
+#include <chrono>
 
 #include "signals.h"
 #include "Container.h"
@@ -34,6 +35,8 @@
 #define DASHEE_SERVOD_THREADS_TICK_CONTROLLER 50000
 #define DASHEE_SERVOD_THREADS_TICK_SERVER 25000
 #define DASHEE_SERVOD_THREADS_TICK_SENSOR 25000
+#define DASHEE_SERVOD_FALLBACK_TIMEOUT 250
+
 
 extern dashee::Threads::LockReadWrite lockSensor;
 extern dashee::Threads::LockReadWrite lockConfig;
